@@ -1,0 +1,5 @@
+name: traveler-login
+schema: spec-driven
+description: Implement traveler account login with session management
+status: planned
+createdAt: 2026-06-01T00:00:00Z
