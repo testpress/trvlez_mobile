@@ -1,0 +1,5 @@
+name: traveler-profile-setup
+schema: spec-driven
+description: Implement traveler profile setup flow for onboarding and verification
+status: implemented
+createdAt: 2026-06-01T18:42:00Z
