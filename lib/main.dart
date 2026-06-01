@@ -7,6 +7,8 @@ import 'core/network/api_client.dart';
 import 'core/storage/token_storage.dart';
 import 'features/auth/data/auth_remote_data_source.dart';
 import 'features/auth/data/auth_repository.dart';
+import 'features/profile/data/profile_remote_data_source.dart';
+import 'features/profile/data/profile_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,20 +33,31 @@ void main() async {
     tokenStorage: tokenStorage,
   );
 
+  final profileRemoteDataSource = ProfileRemoteDataSource(
+    apiClient: apiClient,
+    tokenStorage: tokenStorage,
+  );
+  final profileRepository = ProfileRepository(
+    remoteDataSource: profileRemoteDataSource,
+  );
+
   runApp(TrvlEzApp(
     authNotifier: authNotifier,
     authRepository: authRepository,
+    profileRepository: profileRepository,
   ));
 }
 
 class TrvlEzApp extends StatelessWidget {
   final AuthNotifier authNotifier;
   final AuthRepository authRepository;
+  final ProfileRepository profileRepository;
 
   const TrvlEzApp({
     super.key,
     required this.authNotifier,
     required this.authRepository,
+    required this.profileRepository,
   });
 
   @override
@@ -55,7 +68,7 @@ class TrvlEzApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      routerConfig: createRouter(authNotifier, authRepository),
+      routerConfig: createRouter(authNotifier, authRepository, profileRepository),
     );
   }
 }

@@ -44,6 +44,29 @@ class ApiClient {
     }
   }
 
+  /// Sends a PATCH request to `{apiUrl}/{path}` with a JSON body.
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    required Map<String, dynamic> body,
+    String? authToken,
+  }) async {
+    final uri = Uri.parse('${AppConfig.apiUrl}$path');
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _headers(authToken: authToken),
+        body: jsonEncode(body),
+      );
+
+      return _handleResponse(response);
+    } on SocketException {
+      throw ApiException.network();
+    } on http.ClientException {
+      throw ApiException.network();
+    }
+  }
+
   /// Sends a POST request to `{apiUrl}/{path}` with URL-encoded form data.
   Future<Map<String, dynamic>> postForm(
     String path, {

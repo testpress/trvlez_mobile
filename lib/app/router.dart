@@ -5,9 +5,16 @@ import '../features/auth/data/auth_repository.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/registration_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
+import '../features/profile/data/profile_repository.dart';
+import '../features/profile/presentation/profile_notifier.dart';
+import '../features/profile/presentation/profile_setup_screen.dart';
 
 /// Central router configuration for the TrvlEz app.
-GoRouter createRouter(AuthNotifier authNotifier, AuthRepository authRepository) {
+GoRouter createRouter(
+  AuthNotifier authNotifier,
+  AuthRepository authRepository,
+  ProfileRepository profileRepository,
+) {
   return GoRouter(
     initialLocation: '/login',
     refreshListenable: authNotifier,
@@ -40,6 +47,12 @@ GoRouter createRouter(AuthNotifier authNotifier, AuthRepository authRepository) 
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => OnboardingScreen(authNotifier: authNotifier),
+      ),
+      GoRoute(
+        path: '/profile-setup',
+        builder: (context, state) => ProfileSetupScreen(
+          profileNotifier: ProfileNotifier(repository: profileRepository),
+        ),
       ),
     ],
   );
