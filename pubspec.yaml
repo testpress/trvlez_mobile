@@ -43,6 +43,7 @@ dependencies:
 
   # Secure storage for auth tokens
   flutter_secure_storage: ^9.2.4
+  go_router: ^17.2.3
 
 dev_dependencies:
   flutter_test:

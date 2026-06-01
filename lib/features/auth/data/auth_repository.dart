@@ -1,3 +1,4 @@
+import '../../../core/storage/token_storage.dart';
 import '../domain/signup_result.dart';
 import 'auth_remote_data_source.dart';
 
@@ -8,8 +9,12 @@ import 'auth_remote_data_source.dart';
 /// combine multiple data sources in the future.
 class AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
+  final TokenStorage tokenStorage;
 
-  const AuthRepository({required this.remoteDataSource});
+  const AuthRepository({
+    required this.remoteDataSource,
+    required this.tokenStorage,
+  });
 
   /// Creates a new traveler account and returns a [SignupResult].
   Future<SignupResult> signUp({
@@ -30,5 +35,18 @@ class AuthRepository {
       travelerProfileId: dto.travelerProfile.id,
       onboardingStep: dto.travelerProfile.onboardingStep,
     );
+  }
+
+  /// Logs in an existing traveler and saves the access token.
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    final dto = await remoteDataSource.login(
+      email: email,
+      password: password,
+    );
+
+    await tokenStorage.saveToken(dto.accessToken);
   }
 }

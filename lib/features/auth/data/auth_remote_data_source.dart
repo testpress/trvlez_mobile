@@ -1,4 +1,5 @@
 import '../../../core/network/api_client.dart';
+import 'login_response_dto.dart';
 import 'traveler_signup_dto.dart';
 
 /// Remote data source for authentication API calls.
@@ -30,5 +31,24 @@ class AuthRemoteDataSource {
     );
 
     return TravelerSignupResponseDto.fromJson(responseJson);
+  }
+
+  /// Logs in an existing traveler.
+  ///
+  /// Calls `POST /login/access-token` with URL-encoded credentials.
+  /// Returns the parsed [LoginResponseDto] containing the access token.
+  Future<LoginResponseDto> login({
+    required String email,
+    required String password,
+  }) async {
+    final responseJson = await apiClient.postForm(
+      '/login/access-token',
+      body: {
+        'username': email, // OAuth2 specification requires 'username'
+        'password': password,
+      },
+    );
+
+    return LoginResponseDto.fromJson(responseJson);
   }
 }

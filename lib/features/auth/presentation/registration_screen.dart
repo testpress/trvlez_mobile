@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/colors.dart';
 import '../../../core/network/api_client.dart';
+import '../../../core/storage/token_storage.dart';
 import '../data/auth_remote_data_source.dart';
 import '../data/auth_repository.dart';
 import 'registration_controller.dart';
@@ -41,7 +43,11 @@ class RegistrationScreenState extends State<RegistrationScreen>
 
     final apiClient = ApiClient();
     final dataSource = AuthRemoteDataSource(apiClient: apiClient);
-    final repository = AuthRepository(remoteDataSource: dataSource);
+    const tokenStorage = TokenStorage();
+    final repository = AuthRepository(
+      remoteDataSource: dataSource,
+      tokenStorage: tokenStorage,
+    );
     controller = RegistrationController(repository: repository);
 
     controller.addListener(onControllerChanged);
@@ -91,40 +97,9 @@ class RegistrationScreenState extends State<RegistrationScreen>
       ),
     );
 
-    // TODO: Navigate to login screen once it exists.
-    // For now, show a dialog since there's no login screen yet.
     Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: Text(
-            'Welcome to TrvlEz!',
-            style: GoogleFonts.nunito(fontWeight: FontWeight.w700),
-          ),
-          content: Text(
-            'Your account has been created. The login screen will be available soon.',
-            style: GoogleFonts.cabin(),
-          ),
-          actions: [
-            FilledButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Reset the form for another registration attempt
-                formKey.currentState?.reset();
-                fullNameController.clear();
-                emailController.clear();
-                passwordController.clear();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      context.go('/login');
     });
   }
 
@@ -525,7 +500,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
         ),
         GestureDetector(
           onTap: () {
-            // TODO: Navigate to login screen once it exists
+            context.go('/login');
           },
           child: Text(
             'Sign In',

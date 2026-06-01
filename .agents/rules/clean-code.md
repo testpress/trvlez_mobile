@@ -22,7 +22,6 @@ The goal is code that is **readable, maintainable, extensible, and production-gr
 - Avoid generic names: `data`, `result`, `info`, `temp`, `val`, `item`, `stuff`
 - Collections should be **plural**: `hotels`, `bookingIds`, `activeUsers`
 - Single items should be **singular**: `hotel`, `booking`, `user`
-- Prefix private members with underscore: `_counter`, `_isLoading`
 
 ### Functions and Methods
 - Use `camelCase` with a **verb prefix** that describes the action:
