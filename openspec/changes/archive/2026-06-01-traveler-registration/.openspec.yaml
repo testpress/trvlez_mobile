@@ -1,0 +1,5 @@
+name: traveler-registration
+schema: spec-driven
+description: Implement traveler account registration with client-side validation
+status: implemented
+createdAt: 2026-06-01T00:00:00Z
