@@ -6,10 +6,10 @@ import 'traveler_signup_dto.dart';
 /// Handles the raw HTTP calls and JSON ↔ DTO conversion.
 /// Throws [ApiException] on any failure.
 class AuthRemoteDataSource {
-  final ApiClient _apiClient;
+  final ApiClient apiClient;
 
   // ignore: prefer_initializing_formals
-  const AuthRemoteDataSource({required this._apiClient});
+  const AuthRemoteDataSource({required this.apiClient});
 
   /// Creates a new traveler account.
   ///
@@ -20,7 +20,7 @@ class AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    final responseJson = await _apiClient.post(
+    final responseJson = await apiClient.post(
       '/traveler/signup',
       body: {
         'full_name': fullName,

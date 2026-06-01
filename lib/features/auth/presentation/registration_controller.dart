@@ -8,17 +8,13 @@ import '../data/auth_repository.dart';
 /// Manages the signup API call lifecycle and exposes
 /// observable state for the UI to react to.
 class RegistrationController extends ChangeNotifier {
-  final AuthRepository _repository;
+  final AuthRepository repository;
 
-  RegistrationController({required this._repository});
+  RegistrationController({required this.repository});
 
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _isSuccess = false;
-
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get isSuccess => _isSuccess;
+  bool isLoading = false;
+  String? errorMessage;
+  bool isSuccess = false;
 
   /// Attempts to create a new traveler account.
   ///
@@ -29,32 +25,32 @@ class RegistrationController extends ChangeNotifier {
     required String email,
     required String password,
   }) async {
-    _isLoading = true;
-    _errorMessage = null;
-    _isSuccess = false;
+    isLoading = true;
+    errorMessage = null;
+    isSuccess = false;
     notifyListeners();
 
     try {
-      await _repository.signUp(
+      await repository.signUp(
         fullName: fullName,
         email: email,
         password: password,
       );
 
-      _isSuccess = true;
+      isSuccess = true;
     } on ApiException catch (e) {
-      _errorMessage = e.message;
+      errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'An unexpected error occurred. Please try again.';
+      errorMessage = 'An unexpected error occurred. Please try again.';
     } finally {
-      _isLoading = false;
+      isLoading = false;
       notifyListeners();
     }
   }
 
   /// Clears the current error message.
   void clearError() {
-    _errorMessage = null;
+    errorMessage = null;
     notifyListeners();
   }
 }

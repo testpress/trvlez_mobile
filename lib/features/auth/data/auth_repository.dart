@@ -7,9 +7,9 @@ import 'auth_remote_data_source.dart';
 /// Can be extended to add caching, offline support, or
 /// combine multiple data sources in the future.
 class AuthRepository {
-  final AuthRemoteDataSource _remoteDataSource;
+  final AuthRemoteDataSource remoteDataSource;
 
-  const AuthRepository({required this._remoteDataSource});
+  const AuthRepository({required this.remoteDataSource});
 
   /// Creates a new traveler account and returns a [SignupResult].
   Future<SignupResult> signUp({
@@ -17,7 +17,7 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final dto = await _remoteDataSource.signUp(
+    final dto = await remoteDataSource.signUp(
       fullName: fullName,
       email: email,
       password: password,

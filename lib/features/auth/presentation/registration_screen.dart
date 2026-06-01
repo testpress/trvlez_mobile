@@ -19,21 +19,21 @@ class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  State<RegistrationScreen> createState() => RegistrationScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen>
+class RegistrationScreenState extends State<RegistrationScreen>
     with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  late final RegistrationController _controller;
-  late final AnimationController _fadeController;
-  late final Animation<double> _fadeAnimation;
+  late final RegistrationController controller;
+  late final AnimationController fadeController;
+  late final Animation<double> fadeAnimation;
 
-  bool _isPasswordVisible = false;
+  bool isPasswordVisible = false;
 
   @override
   void initState() {
@@ -42,42 +42,42 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     final apiClient = ApiClient();
     final dataSource = AuthRemoteDataSource(apiClient: apiClient);
     final repository = AuthRepository(remoteDataSource: dataSource);
-    _controller = RegistrationController(repository: repository);
+    controller = RegistrationController(repository: repository);
 
-    _controller.addListener(_onControllerChanged);
+    controller.addListener(onControllerChanged);
 
-    _fadeController = AnimationController(
+    fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
+    fadeAnimation = CurvedAnimation(
+      parent: fadeController,
       curve: Curves.easeOut,
     );
-    _fadeController.forward();
+    fadeController.forward();
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onControllerChanged);
-    _controller.dispose();
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _fadeController.dispose();
+    controller.removeListener(onControllerChanged);
+    controller.dispose();
+    fullNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    fadeController.dispose();
     super.dispose();
   }
 
-  void _onControllerChanged() {
+  void onControllerChanged() {
     if (!mounted) return;
     setState(() {});
 
-    if (_controller.isSuccess) {
-      _showSuccessAndNavigate();
+    if (controller.isSuccess) {
+      showSuccessAndNavigate();
     }
   }
 
-  void _showSuccessAndNavigate() {
+  void showSuccessAndNavigate() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -115,10 +115,10 @@ class _RegistrationScreenState extends State<RegistrationScreen>
               onPressed: () {
                 Navigator.of(context).pop();
                 // Reset the form for another registration attempt
-                _formKey.currentState?.reset();
-                _fullNameController.clear();
-                _emailController.clear();
-                _passwordController.clear();
+                formKey.currentState?.reset();
+                fullNameController.clear();
+                emailController.clear();
+                passwordController.clear();
               },
               child: const Text('OK'),
             ),
@@ -128,19 +128,19 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     });
   }
 
-  void _onSubmit() {
-    if (!_formKey.currentState!.validate()) return;
+  void onSubmit() {
+    if (!formKey.currentState!.validate()) return;
 
-    _controller.signUp(
-      fullName: _fullNameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+    controller.signUp(
+      fullName: fullNameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text,
     );
   }
 
   // ─── Validation ───────────────────────────────────────────────────
 
-  String? _validateFullName(String? value) {
+  String? validateFullName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Full name is required';
     }
@@ -150,7 +150,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     return null;
   }
 
-  String? _validateEmail(String? value) {
+  String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
     }
@@ -162,7 +162,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     return null;
   }
 
-  String? _validatePassword(String? value) {
+  String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
@@ -188,15 +188,15 @@ class _RegistrationScreenState extends State<RegistrationScreen>
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: FadeTransition(
-              opacity: _fadeAnimation,
+              opacity: fadeAnimation,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildLogo(colorScheme),
+                  buildLogo(colorScheme),
                   const SizedBox(height: 32),
-                  _buildFormCard(theme, colorScheme),
+                  buildFormCard(theme, colorScheme),
                   const SizedBox(height: 24),
-                  _buildSignInLink(theme, colorScheme),
+                  buildSignInLink(theme, colorScheme),
                 ],
               ),
             ),
@@ -208,7 +208,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Logo Section ─────────────────────────────────────────────────
 
-  Widget _buildLogo(ColorScheme colorScheme) {
+  Widget buildLogo(ColorScheme colorScheme) {
     return Column(
       children: [
         // App icon — red rounded square with plane icon
@@ -256,7 +256,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Form Card ────────────────────────────────────────────────────
 
-  Widget _buildFormCard(ThemeData theme, ColorScheme colorScheme) {
+  Widget buildFormCard(ThemeData theme, ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxWidth: 480),
@@ -274,20 +274,20 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       ),
       padding: const EdgeInsets.all(28),
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeader(theme),
+            buildHeader(theme),
             const SizedBox(height: 28),
-            _buildErrorBanner(colorScheme),
-            _buildFullNameField(),
+            buildErrorBanner(colorScheme),
+            buildFullNameField(),
             const SizedBox(height: 16),
-            _buildEmailField(),
+            buildEmailField(),
             const SizedBox(height: 16),
-            _buildPasswordField(colorScheme),
+            buildPasswordField(colorScheme),
             const SizedBox(height: 24),
-            _buildSubmitButton(colorScheme),
+            buildSubmitButton(colorScheme),
           ],
         ),
       ),
@@ -296,7 +296,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Header ───────────────────────────────────────────────────────
 
-  Widget _buildHeader(ThemeData theme) {
+  Widget buildHeader(ThemeData theme) {
     return Column(
       children: [
         Text(
@@ -318,9 +318,9 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Error Banner ─────────────────────────────────────────────────
 
-  Widget _buildErrorBanner(ColorScheme colorScheme) {
-    final errorMessage = _controller.errorMessage;
-    if (errorMessage == null) return const SizedBox.shrink();
+  Widget buildErrorBanner(ColorScheme colorScheme) {
+    final errorMessageText = controller.errorMessage;
+    if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -344,7 +344,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  errorMessage,
+                  errorMessageText,
                   style: GoogleFonts.cabin(
                     fontSize: 14,
                     color: colorScheme.error,
@@ -352,7 +352,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                 ),
               ),
               GestureDetector(
-                onTap: _controller.clearError,
+                onTap: controller.clearError,
                 child: Icon(
                   Icons.close_rounded,
                   color: colorScheme.error.withAlpha(150),
@@ -368,7 +368,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Form Fields ──────────────────────────────────────────────────
 
-  Widget _buildFullNameField() {
+  Widget buildFullNameField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -378,9 +378,9 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: _fullNameController,
-          validator: _validateFullName,
-          enabled: !_controller.isLoading,
+          controller: fullNameController,
+          validator: validateFullName,
+          enabled: !controller.isLoading,
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
           style: GoogleFonts.cabin(fontSize: 15),
@@ -392,7 +392,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     );
   }
 
-  Widget _buildEmailField() {
+  Widget buildEmailField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -402,9 +402,9 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: _emailController,
-          validator: _validateEmail,
-          enabled: !_controller.isLoading,
+          controller: emailController,
+          validator: validateEmail,
+          enabled: !controller.isLoading,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           autocorrect: false,
@@ -417,7 +417,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     );
   }
 
-  Widget _buildPasswordField(ColorScheme colorScheme) {
+  Widget buildPasswordField(ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,18 +427,18 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: _passwordController,
-          validator: _validatePassword,
-          enabled: !_controller.isLoading,
-          obscureText: !_isPasswordVisible,
+          controller: passwordController,
+          validator: validatePassword,
+          enabled: !controller.isLoading,
+          obscureText: !isPasswordVisible,
           textInputAction: TextInputAction.done,
-          onFieldSubmitted: (_) => _onSubmit(),
+          onFieldSubmitted: (_) => onSubmit(),
           style: GoogleFonts.cabin(fontSize: 15),
           decoration: InputDecoration(
             hintText: 'Create a password (min 8 chars)',
             suffixIcon: IconButton(
               icon: Icon(
-                _isPasswordVisible
+                isPasswordVisible
                     ? Icons.visibility_off_outlined
                     : Icons.visibility_outlined,
                 color: colorScheme.onSurface.withAlpha(120),
@@ -446,7 +446,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
               ),
               onPressed: () {
                 setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
+                  isPasswordVisible = !isPasswordVisible;
                 });
               },
             ),
@@ -458,11 +458,11 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Submit Button ────────────────────────────────────────────────
 
-  Widget _buildSubmitButton(ColorScheme colorScheme) {
+  Widget buildSubmitButton(ColorScheme colorScheme) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: FilledButton(
-        onPressed: _controller.isLoading ? null : _onSubmit,
+        onPressed: controller.isLoading ? null : onSubmit,
         style: FilledButton.styleFrom(
           minimumSize: const Size(double.infinity, 56),
           backgroundColor: colorScheme.primary,
@@ -472,10 +472,10 @@ class _RegistrationScreenState extends State<RegistrationScreen>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          elevation: _controller.isLoading ? 0 : 2,
+          elevation: controller.isLoading ? 0 : 2,
           shadowColor: colorScheme.primary.withAlpha(60),
         ),
-        child: _controller.isLoading
+        child: controller.isLoading
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -512,7 +512,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
   // ─── Footer Link ──────────────────────────────────────────────────
 
-  Widget _buildSignInLink(ThemeData theme, ColorScheme colorScheme) {
+  Widget buildSignInLink(ThemeData theme, ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
