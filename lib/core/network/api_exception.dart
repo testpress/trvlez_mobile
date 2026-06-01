@@ -16,6 +16,14 @@ class ApiException implements Exception {
     );
   }
 
+  /// Session expired or invalid token (401).
+  factory ApiException.unauthorized() {
+    return const ApiException(
+      'Session expired. Please log in again.',
+      statusCode: 401,
+    );
+  }
+
   /// Server returned a known validation/business error (4xx).
   factory ApiException.fromStatusCode(int statusCode, String detail) {
     return ApiException(detail, statusCode: statusCode);

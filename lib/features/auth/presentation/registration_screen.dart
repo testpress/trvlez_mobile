@@ -3,9 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/colors.dart';
-import '../../../core/network/api_client.dart';
-import '../../../core/storage/token_storage.dart';
-import '../data/auth_remote_data_source.dart';
 import '../data/auth_repository.dart';
 import 'registration_controller.dart';
 
@@ -18,7 +15,9 @@ import 'registration_controller.dart';
 /// - Primary red CTA with loading state
 /// - "Already have an account? Sign in" footer link
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key});
+  final AuthRepository authRepository;
+
+  const RegistrationScreen({super.key, required this.authRepository});
 
   @override
   State<RegistrationScreen> createState() => RegistrationScreenState();
@@ -41,14 +40,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
   void initState() {
     super.initState();
 
-    final apiClient = ApiClient();
-    final dataSource = AuthRemoteDataSource(apiClient: apiClient);
-    const tokenStorage = TokenStorage();
-    final repository = AuthRepository(
-      remoteDataSource: dataSource,
-      tokenStorage: tokenStorage,
-    );
-    controller = RegistrationController(repository: repository);
+    controller = RegistrationController(repository: widget.authRepository);
 
     controller.addListener(onControllerChanged);
 

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../core/auth/auth_notifier.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/auth_repository.dart';
 
@@ -9,8 +10,12 @@ import '../data/auth_repository.dart';
 /// observable state for the UI to react to.
 class LoginController extends ChangeNotifier {
   final AuthRepository repository;
+  final AuthNotifier authNotifier;
 
-  LoginController({required this.repository});
+  LoginController({
+    required this.repository,
+    required this.authNotifier,
+  });
 
   bool isLoading = false;
   String? errorMessage;
@@ -35,6 +40,7 @@ class LoginController extends ChangeNotifier {
         password: password,
       );
 
+      await authNotifier.checkAuthStatus();
       isSuccess = true;
     } on ApiException catch (e) {
       errorMessage = e.message;

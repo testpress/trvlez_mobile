@@ -12,8 +12,12 @@ import 'api_exception.dart';
 /// All methods throw [ApiException] on failure.
 class ApiClient {
   final http.Client _client;
+  final void Function()? onUnauthorized;
 
-  ApiClient({http.Client? client}) : _client = client ?? http.Client();
+  ApiClient({
+    http.Client? client,
+    this.onUnauthorized,
+  }) : _client = client ?? http.Client();
 
   // ─── Public API ───────────────────────────────────────────────────
 
@@ -124,6 +128,11 @@ class ApiClient {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return body;
+    }
+
+    if (response.statusCode == 401) {
+      onUnauthorized?.call();
+      throw ApiException.unauthorized();
     }
 
     // FastAPI returns `{"detail": "..."} ` or `{"detail": [{"msg": "..."}]}`

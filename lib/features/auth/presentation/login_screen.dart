@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/network/api_client.dart';
-import '../../../core/storage/token_storage.dart';
-import '../data/auth_remote_data_source.dart';
+import '../../../core/auth/auth_notifier.dart';
 import '../data/auth_repository.dart';
 import 'login_controller.dart';
 
 /// Traveler login screen.
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final AuthRepository authRepository;
+  final AuthNotifier authNotifier;
+
+  const LoginScreen({
+    super.key,
+    required this.authRepository,
+    required this.authNotifier,
+  });
 
   @override
   State<LoginScreen> createState() => LoginScreenState();
@@ -32,14 +37,10 @@ class LoginScreenState extends State<LoginScreen>
   void initState() {
     super.initState();
 
-    final apiClient = ApiClient();
-    final dataSource = AuthRemoteDataSource(apiClient: apiClient);
-    final tokenStorage = const TokenStorage();
-    final repository = AuthRepository(
-      remoteDataSource: dataSource,
-      tokenStorage: tokenStorage,
+    controller = LoginController(
+      repository: widget.authRepository,
+      authNotifier: widget.authNotifier,
     );
-    controller = LoginController(repository: repository);
 
     controller.addListener(onControllerChanged);
 
@@ -67,10 +68,6 @@ class LoginScreenState extends State<LoginScreen>
   void onControllerChanged() {
     if (!mounted) return;
     setState(() {});
-
-    if (controller.isSuccess) {
-      context.go('/onboarding');
-    }
   }
 
   void onSubmit() {
