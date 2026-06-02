@@ -46,7 +46,10 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => OnboardingScreen(authNotifier: authNotifier),
+        builder: (context, state) => OnboardingScreen(
+          authNotifier: authNotifier,
+          profileRepository: profileRepository,
+        ),
       ),
       GoRoute(
         path: '/profile-setup',

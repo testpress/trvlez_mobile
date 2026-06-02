@@ -105,9 +105,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     );
 
     if (success && mounted) {
-      // Proceed to the next step or home
-      context.go('/home'); // Assuming /home is the main route, but let's check router or simply do nothing until we know. 
-      // I'll update it to just pop if there's a navigation flow.
+      // Proceed back to the onboarding journey
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/onboarding');
+      }
     }
   }
 
@@ -308,7 +311,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: selectedGender,
+          initialValue: selectedGender,
           decoration: const InputDecoration(
             hintText: 'Select your gender',
           ),
@@ -373,17 +376,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
             ),
           ),
         ),
-        if (selectedDateOfBirth == null && false) // We could add a validator text here if submitted without it
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 16),
-            child: Text(
-              'Date of Birth is required',
-              style: TextStyle(
-                color: colorScheme.error,
-                fontSize: 12,
-              ),
-            ),
-          ),
       ],
     );
   }
