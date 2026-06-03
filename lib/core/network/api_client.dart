@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -93,6 +94,46 @@ class ApiClient {
     }
   }
 
+  /// Sends a multipart POST request with progress tracking.
+  Future<Map<String, dynamic>> postMultipart(
+    String path, {
+    required File file,
+    required String fileField,
+    Map<String, String>? fields,
+    String? authToken,
+    void Function(double progress)? onProgress,
+  }) async {
+    final uri = Uri.parse('${AppConfig.apiUrl}$path');
+
+    try {
+      final request = _ProgressMultipartRequest('POST', uri, (bytes, total) {
+        if (onProgress != null && total > 0) {
+          onProgress(bytes / total);
+        }
+      });
+
+      request.headers.addAll(_headers(authToken: authToken));
+      // Remove content-type as multipart will add its own with boundary
+      request.headers.remove('Content-Type');
+
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+
+      final multipartFile = await http.MultipartFile.fromPath(fileField, file.path);
+      request.files.add(multipartFile);
+
+      final streamResponse = await _client.send(request);
+      final response = await http.Response.fromStream(streamResponse);
+
+      return _handleResponse(response);
+    } on SocketException {
+      throw ApiException.network();
+    } on http.ClientException {
+      throw ApiException.network();
+    }
+  }
+
   /// Sends a GET request to `{apiUrl}/{path}`.
   Future<Map<String, dynamic>> get(
     String path, {
@@ -174,5 +215,28 @@ class ApiClient {
     }
 
     throw ApiException.fromStatusCode(response.statusCode, message);
+  }
+}
+
+class _ProgressMultipartRequest extends http.MultipartRequest {
+  final void Function(int bytes, int total) onProgress;
+
+  _ProgressMultipartRequest(super.method, super.url, this.onProgress);
+
+  @override
+  http.ByteStream finalize() {
+    final byteStream = super.finalize();
+    final total = contentLength;
+    int bytes = 0;
+
+    final transformer = StreamTransformer<List<int>, List<int>>.fromHandlers(
+      handleData: (List<int> data, EventSink<List<int>> sink) {
+        bytes += data.length;
+        onProgress(bytes, total);
+        sink.add(data);
+      },
+    );
+
+    return http.ByteStream(byteStream.transform(transformer));
   }
 }

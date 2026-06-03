@@ -161,11 +161,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ? OnboardingStepState.completed 
                                 : (isProfileComplete ? OnboardingStepState.active : OnboardingStepState.upcoming),
                             onTap: (isProfileComplete && !isVerificationStarted && !isVerificationComplete) 
-                                ? () {
-                                    // Navigate to verification flow when it exists
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Verification flow coming soon.')),
-                                    );
+                                ? () async {
+                                    await context.push('/verification/passport-capture');
+                                    _loadProfile(); // Refresh when returning
                                   } 
                                 : null,
                           ),
