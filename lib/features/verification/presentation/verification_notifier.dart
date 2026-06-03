@@ -106,6 +106,8 @@ class VerificationNotifier extends ChangeNotifier {
         },
       );
       
+      await _repository.submitVerification();
+      
       _status = VerificationStatus.success;
       notifyListeners();
     } on ApiException catch (e) {

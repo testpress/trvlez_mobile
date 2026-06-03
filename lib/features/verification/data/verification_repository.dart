@@ -163,4 +163,15 @@ class VerificationRepository {
       authToken: token,
     );
   }
+
+  Future<void> submitVerification() async {
+    final token = await _tokenStorage.getToken();
+    if (token == null) throw ApiException.unauthorized();
+
+    await _apiClient.post(
+      '/traveler/verification/submit',
+      body: {},
+      authToken: token,
+    );
+  }
 }
