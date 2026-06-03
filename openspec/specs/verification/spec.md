@@ -131,7 +131,65 @@ Future<void> uploadSelfie();
 
 ---
 
-## 3. Approval & Sign-Off
+## 3. Traveler Verification Tracking Feature
+
+### 3.1 Purpose
+
+Provide travelers with a clear, universal home dashboard where they can track their ongoing verification process, understand any pending steps, and see actionable feedback if their verification fails.
+
+### 3.2 User Flow
+
+```
+1. User logs in.
+2. User is always navigated to the Home Screen.
+3. The Home Screen displays a dynamic Verification Banner based on the traveler's status:
+   - "Complete Your Profile" (routes to Onboarding)
+   - "Upload Your Documents" (routes to Onboarding)
+   - "Verification In Progress" (routes to Verification Status Screen)
+   - "Verification Unsuccessful" (routes to Verification Status Screen)
+4. Tapping a post-submission banner opens the Verification Status Screen.
+5. The Verification Status Screen displays:
+   - An animated icon showing the current review state (processing, verified, failed).
+   - A step-by-step checklist of progress.
+   - If failed, action buttons to resubmit documents or contact support.
+```
+
+### 3.3 Implementation Details
+
+#### Files
+- **lib/features/home/presentation/home_screen.dart** - Universal landing page
+- **lib/features/home/presentation/widgets/verification_banner.dart** - Dynamic context-aware banner
+- **lib/features/verification/presentation/verification_status_screen.dart** - Detailed tracking view
+- **lib/features/profile/domain/traveler_verification_state.dart** - Enum mapping for the exact backend states
+
+#### Dependencies
+- None specific to this feature.
+
+### 3.4 State Management
+
+**HomeNotifier (ChangeNotifier)**
+
+**State Variables:**
+```dart
+Profile? profile;
+VerificationStatus? verificationStatus;
+```
+
+**Methods:**
+```dart
+Future<void> loadProfile();
+```
+*Note: Evaluates both the `TravelerOnboardingStep` and `VerificationSessionStatus` to determine the accurate visual state (e.g., detecting if a submitted session has failed).*
+
+### 3.5 Related Documents
+
+- [Traveler Verification Status Design](../../changes/archive/2026-06-03-traveler-verification-status/design.md)
+- [Traveler Verification Status Proposal](../../changes/archive/2026-06-03-traveler-verification-status/proposal.md)
+- [Traveler Verification Status Tasks](../../changes/archive/2026-06-03-traveler-verification-status/tasks.md)
+
+---
+
+## 4. Approval & Sign-Off
 
 **Status:** ✅ Implemented
 **Implementation Date:** June 3, 2026
