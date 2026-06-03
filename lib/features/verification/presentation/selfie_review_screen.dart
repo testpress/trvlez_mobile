@@ -18,6 +18,7 @@ class SelfieReviewScreen extends StatefulWidget {
 class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
   VideoPlayerController? videoController;
   bool isPlaying = false;
+  bool _isUploadingLocally = false;
 
   @override
   void initState() {
@@ -56,9 +57,12 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
   }
 
   Future<void> handleUpload() async {
+    if (_isUploadingLocally) return;
+    setState(() => _isUploadingLocally = true);
     await widget.notifier.uploadSelfie();
 
     if (!mounted) return;
+    setState(() => _isUploadingLocally = false);
 
     if (widget.notifier.status == VerificationStatus.success) {
       // Navigate to the main app or success screen

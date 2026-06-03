@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../app/router.dart';
 import '../../../core/auth/auth_notifier.dart';
+import '../../../main.dart';
 import '../../profile/data/profile_repository.dart';
 import 'home_notifier.dart';
 import 'widgets/verification_banner.dart';
@@ -85,29 +90,101 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'TrvlEz',
-          style: GoogleFonts.nunito(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: colorScheme.primary,
-          ),
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/logo.svg',
+                  width: 18,
+                  height: 18,
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text.rich(
+              TextSpan(
+                text: 'Trvl',
+                style: GoogleFonts.inter(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: colorScheme.onSurface,
+                  letterSpacing: -0.5,
+                ),
+                children: [
+                  TextSpan(
+                    text: 'Ez',
+                    style: TextStyle(color: colorScheme.primary),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         centerTitle: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(Icons.person_outline_rounded),
-            tooltip: 'Profile',
-            onPressed: () {
-              // Future: navigate to profile screen
+            tooltip: 'Profile Options',
+            onSelected: (value) async {
+              if (value == 'theme') {
+                final current = TrvlEzApp.themeNotifier.value;
+                final newMode = current == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+                TrvlEzApp.themeNotifier.value = newMode;
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isDark', newMode == ThemeMode.dark);
+              }
+            },
+            itemBuilder: (context) {
+              final isDark = TrvlEzApp.themeNotifier.value == ThemeMode.dark;
+              return [
+                PopupMenuItem(
+                  value: 'theme',
+                  child: Row(
+                    children: [
+                      Icon(isDark ? Icons.light_mode : Icons.dark_mode, size: 20),
+                      const SizedBox(width: 8),
+                      Text(isDark ? 'Light Mode' : 'Dark Mode'),
+                    ],
+                  ),
+                ),
+              ];
             },
           ),
           IconButton(
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Sign out',
-            onPressed: () => widget.authNotifier.logout(),
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sign out'),
+                  content: const Text('Are you sure you want to sign out?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Sign out'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm == true) {
+                widget.authNotifier.logout();
+              }
+            },
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/nationalities.dart';
 import 'profile_notifier.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
@@ -20,9 +21,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
-  final nationalityController = TextEditingController();
+  final passportNumberController = TextEditingController();
+  
+  String? selectedNationality;
   String? selectedGender;
   DateTime? selectedDateOfBirth;
+  DateTime? selectedPassportExpiry;
 
   late final AnimationController fadeController;
   late final Animation<double> fadeAnimation;
@@ -49,9 +53,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
         if (profile != null && mounted) {
           setState(() {
             phoneController.text = profile.phone ?? '';
-            nationalityController.text = profile.nationality ?? '';
+            selectedNationality = profile.nationality;
+            passportNumberController.text = profile.passportNumber ?? '';
             selectedGender = profile.gender;
             selectedDateOfBirth = profile.dateOfBirth;
+            selectedPassportExpiry = profile.passportExpiry;
           });
         }
       });
@@ -62,7 +68,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
   void dispose() {
     widget.profileNotifier.removeListener(onNotifierChanged);
     phoneController.dispose();
-    nationalityController.dispose();
+    passportNumberController.dispose();
     fadeController.dispose();
     super.dispose();
   }
@@ -94,14 +100,100 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     }
   }
 
+  Future<void> _selectExpiryDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedPassportExpiry ?? DateTime.now().add(const Duration(days: 365)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme,
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != selectedPassportExpiry) {
+      setState(() {
+        selectedPassportExpiry = picked;
+      });
+    }
+  }
+
+  Future<void> _showNationalityPicker(BuildContext context, ColorScheme colorScheme) async {
+    String searchQuery = '';
+    
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final filtered = kNationalities
+                .where((n) => n.toLowerCase().contains(searchQuery.toLowerCase()))
+                .toList();
+                
+            return FractionallySizedBox(
+              heightFactor: 0.8,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  top: 16,
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TextField(
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          labelText: 'Search Nationality',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onChanged: (val) => setSheetState(() => searchQuery = val),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: filtered.length,
+                        itemBuilder: (context, index) {
+                          final n = filtered[index];
+                          return ListTile(
+                            title: Text(n, style: GoogleFonts.cabin()),
+                            onTap: () {
+                              setState(() => selectedNationality = n);
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> onSubmit() async {
     if (!formKey.currentState!.validate()) return;
 
     final success = await widget.profileNotifier.updateProfile(
       phone: phoneController.text.trim(),
-      nationality: nationalityController.text.trim(),
+      nationality: selectedNationality,
       gender: selectedGender,
       dateOfBirth: selectedDateOfBirth,
+      passportNumber: passportNumberController.text.trim().isNotEmpty ? passportNumberController.text.trim() : null,
+      passportExpiry: selectedPassportExpiry,
     );
 
     if (success && mounted) {
@@ -189,15 +281,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 16),
-            buildTextField(
-              controller: nationalityController,
-              label: 'Nationality',
-              hint: 'Enter your nationality',
-            ),
+            buildNationalityDropdown(colorScheme),
             const SizedBox(height: 16),
             buildGenderDropdown(colorScheme),
             const SizedBox(height: 16),
             buildDatePicker(colorScheme),
+            const SizedBox(height: 16),
+            buildTextField(
+              controller: passportNumberController,
+              label: 'Passport Number',
+              hint: 'Enter your passport number (optional)',
+            ),
+            const SizedBox(height: 16),
+            buildExpiryDatePicker(colorScheme),
             const SizedBox(height: 32),
             buildSubmitButton(colorScheme),
           ],
@@ -301,6 +397,51 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     );
   }
 
+  Widget buildNationalityDropdown(ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Nationality',
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: widget.profileNotifier.isLoading ? null : () => _showNationalityPicker(context, colorScheme),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: colorScheme.onSurface.withAlpha(50),
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  selectedNationality ?? 'Select Nationality',
+                  style: GoogleFonts.cabin(
+                    fontSize: 15,
+                    color: selectedNationality == null
+                        ? colorScheme.onSurface.withAlpha(150)
+                        : colorScheme.onSurface,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: colorScheme.onSurface.withAlpha(150),
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buildGenderDropdown(ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,6 +504,53 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
                   style: GoogleFonts.cabin(
                     fontSize: 15,
                     color: selectedDateOfBirth == null
+                        ? colorScheme.onSurface.withAlpha(150)
+                        : colorScheme.onSurface,
+                  ),
+                ),
+                Icon(
+                  Icons.calendar_today,
+                  color: colorScheme.onSurface.withAlpha(150),
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildExpiryDatePicker(ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Passport Expiry',
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: widget.profileNotifier.isLoading ? null : () => _selectExpiryDate(context),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: colorScheme.onSurface.withAlpha(50),
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  selectedPassportExpiry == null
+                      ? 'Select Expiry Date (Optional)'
+                      : '${selectedPassportExpiry!.toLocal()}'.split(' ')[0],
+                  style: GoogleFonts.cabin(
+                    fontSize: 15,
+                    color: selectedPassportExpiry == null
                         ? colorScheme.onSurface.withAlpha(150)
                         : colorScheme.onSurface,
                   ),

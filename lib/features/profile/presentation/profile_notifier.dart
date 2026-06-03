@@ -41,6 +41,8 @@ class ProfileNotifier extends ChangeNotifier {
     String? nationality,
     String? gender,
     DateTime? dateOfBirth,
+    String? passportNumber,
+    DateTime? passportExpiry,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -52,6 +54,8 @@ class ProfileNotifier extends ChangeNotifier {
         nationality: nationality,
         gender: gender,
         dateOfBirth: dateOfBirth,
+        passportNumber: passportNumber,
+        passportExpiry: passportExpiry,
       );
       _isLoading = false;
       notifyListeners();

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../core/auth/auth_notifier.dart';
 import '../data/auth_repository.dart';
 import 'login_controller.dart';
@@ -151,10 +153,13 @@ class LoginScreenState extends State<LoginScreen>
               ),
             ],
           ),
-          child: const Icon(
-            Icons.flight,
-            color: Colors.white,
-            size: 28,
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/logo.svg',
+              width: 28,
+              height: 28,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -222,6 +227,15 @@ class LoginScreenState extends State<LoginScreen>
   Widget buildHeader(ThemeData theme) {
     return Column(
       children: [
+        Text(
+          'Travel everywhere ease',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
         Text(
           'Welcome back',
           style: theme.textTheme.headlineMedium,

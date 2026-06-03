@@ -6,6 +6,8 @@ class Profile {
   final String? nationality;
   final String? gender;
   final DateTime? dateOfBirth;
+  final String? passportNumber;
+  final DateTime? passportExpiry;
   final String onboardingStep;
 
   const Profile({
@@ -14,6 +16,8 @@ class Profile {
     this.nationality,
     this.gender,
     this.dateOfBirth,
+    this.passportNumber,
+    this.passportExpiry,
     required this.onboardingStep,
   });
 
@@ -27,6 +31,8 @@ class Profile {
     String? nationality,
     String? gender,
     DateTime? dateOfBirth,
+    String? passportNumber,
+    DateTime? passportExpiry,
     String? onboardingStep,
   }) {
     return Profile(
@@ -35,6 +41,8 @@ class Profile {
       nationality: nationality ?? this.nationality,
       gender: gender ?? this.gender,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      passportNumber: passportNumber ?? this.passportNumber,
+      passportExpiry: passportExpiry ?? this.passportExpiry,
       onboardingStep: onboardingStep ?? this.onboardingStep,
     );
   }
@@ -48,6 +56,8 @@ class Profile {
         other.nationality == nationality &&
         other.gender == gender &&
         other.dateOfBirth == dateOfBirth &&
+        other.passportNumber == passportNumber &&
+        other.passportExpiry == passportExpiry &&
         other.onboardingStep == onboardingStep;
   }
 
@@ -58,6 +68,8 @@ class Profile {
         nationality.hashCode ^
         gender.hashCode ^
         dateOfBirth.hashCode ^
+        passportNumber.hashCode ^
+        passportExpiry.hashCode ^
         onboardingStep.hashCode;
   }
 }

@@ -73,12 +73,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: const Text('Getting Started'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => widget.authNotifier.logout(),
-          ),
-        ],
       ),
       body: isLoading && _profileNotifier.profile == null
           ? const Center(child: CircularProgressIndicator())

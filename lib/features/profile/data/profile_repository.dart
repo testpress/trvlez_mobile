@@ -16,14 +16,19 @@ class ProfileRepository {
     String? nationality,
     String? gender,
     DateTime? dateOfBirth,
+    String? passportNumber,
+    DateTime? passportExpiry,
   }) async {
     final dateOfBirthStr = dateOfBirth?.toIso8601String().split('T').first;
+    final passportExpiryStr = passportExpiry?.toIso8601String().split('T').first;
     
     final dto = await remoteDataSource.updateProfile(
       phone: phone,
       nationality: nationality,
       gender: gender,
       dateOfBirth: dateOfBirthStr,
+      passportNumber: passportNumber,
+      passportExpiry: passportExpiryStr,
     );
 
     return dto.toDomain();

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../app/colors.dart';
 import '../data/auth_repository.dart';
 import 'registration_controller.dart';
@@ -193,10 +195,13 @@ class RegistrationScreenState extends State<RegistrationScreen>
               ),
             ],
           ),
-          child: const Icon(
-            Icons.flight,
-            color: Colors.white,
-            size: 28,
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/logo.svg',
+              width: 28,
+              height: 28,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            ),
           ),
         ),
         const SizedBox(height: 12),

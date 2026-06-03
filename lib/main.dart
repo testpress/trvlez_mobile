@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/router.dart';
 import 'app/theme.dart';
@@ -50,6 +51,12 @@ void main() async {
 
   await authNotifier.checkAuthStatus();
 
+  final prefs = await SharedPreferences.getInstance();
+  final isDark = prefs.getBool('isDark');
+  if (isDark != null) {
+    TrvlEzApp.themeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
+  }
+
   runApp(TrvlEzApp(
     authNotifier: authNotifier,
     authRepository: authRepository,
@@ -62,6 +69,8 @@ class TrvlEzApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ProfileRepository profileRepository;
 
+  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
+
   const TrvlEzApp({
     super.key,
     required this.authNotifier,
@@ -71,13 +80,18 @@ class TrvlEzApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'TrvlEz',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      routerConfig: createRouter(authNotifier, authRepository, profileRepository),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, currentMode, __) {
+        return MaterialApp.router(
+          title: 'TrvlEz',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: currentMode,
+          routerConfig: createRouter(authNotifier, authRepository, profileRepository),
+        );
+      },
     );
   }
 }

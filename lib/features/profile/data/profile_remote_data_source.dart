@@ -21,12 +21,13 @@ class ProfileRemoteDataSource {
     return ProfileDto.fromJson(response);
   }
 
-  /// Updates the traveler profile with the provided information.
   Future<ProfileDto> updateProfile({
     String? phone,
     String? nationality,
     String? gender,
     String? dateOfBirth,
+    String? passportNumber,
+    String? passportExpiry,
   }) async {
     final token = await tokenStorage.getToken();
     
@@ -38,6 +39,8 @@ class ProfileRemoteDataSource {
         if (nationality != null) 'nationality': nationality,
         if (gender != null) 'gender': gender,
         if (dateOfBirth != null) 'date_of_birth': dateOfBirth,
+        if (passportNumber != null) 'passport_number': passportNumber,
+        if (passportExpiry != null) 'passport_expiry': passportExpiry,
       },
     );
 

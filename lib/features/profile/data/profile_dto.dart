@@ -6,6 +6,8 @@ class ProfileDto {
   final String? nationality;
   final String? gender;
   final String? dateOfBirth;
+  final String? passportNumber;
+  final String? passportExpiry;
   final String onboardingStep;
 
   const ProfileDto({
@@ -14,6 +16,8 @@ class ProfileDto {
     this.nationality,
     this.gender,
     this.dateOfBirth,
+    this.passportNumber,
+    this.passportExpiry,
     required this.onboardingStep,
   });
 
@@ -24,6 +28,8 @@ class ProfileDto {
       nationality: json['nationality'] as String?,
       gender: json['gender'] as String?,
       dateOfBirth: json['date_of_birth'] as String?,
+      passportNumber: json['passport_number'] as String?,
+      passportExpiry: json['passport_expiry'] as String?,
       onboardingStep: json['onboarding_step'] as String,
     );
   }
@@ -35,6 +41,8 @@ class ProfileDto {
       'nationality': nationality,
       'gender': gender,
       'date_of_birth': dateOfBirth,
+      if (passportNumber != null) 'passport_number': passportNumber,
+      if (passportExpiry != null) 'passport_expiry': passportExpiry,
       'onboarding_step': onboardingStep,
     };
   }
@@ -46,6 +54,8 @@ class ProfileDto {
       nationality: nationality,
       gender: gender,
       dateOfBirth: dateOfBirth != null ? DateTime.tryParse(dateOfBirth!) : null,
+      passportNumber: passportNumber,
+      passportExpiry: passportExpiry != null ? DateTime.tryParse(passportExpiry!) : null,
       onboardingStep: onboardingStep,
     );
   }
