@@ -1,3 +1,5 @@
+import 'traveler_verification_state.dart';
+
 class Profile {
   final String id;
   final String? phone;
@@ -14,6 +16,10 @@ class Profile {
     this.dateOfBirth,
     required this.onboardingStep,
   });
+
+  /// Typed verification state derived from the raw backend step string.
+  TravelerVerificationState get verificationState =>
+      TravelerVerificationState.fromBackendStep(onboardingStep);
 
   Profile copyWith({
     String? id,

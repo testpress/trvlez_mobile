@@ -1,0 +1,341 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../core/auth/auth_notifier.dart';
+import '../../profile/data/profile_repository.dart';
+import 'home_notifier.dart';
+import 'widgets/verification_banner.dart';
+
+/// The primary landing screen for all authenticated travelers.
+///
+/// Always shown after login regardless of onboarding state. Displays a
+/// context-aware verification banner that guides users through profile
+/// completion, document upload, or shows verification progress.
+class HomeScreen extends StatefulWidget {
+  final AuthNotifier authNotifier;
+  final ProfileRepository profileRepository;
+
+  const HomeScreen({
+    super.key,
+    required this.authNotifier,
+    required this.profileRepository,
+  });
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final HomeNotifier _notifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifier = HomeNotifier(profileRepository: widget.profileRepository);
+    _notifier.addListener(_onStateChanged);
+    _notifier.loadProfile();
+  }
+
+  @override
+  void dispose() {
+    _notifier.removeListener(_onStateChanged);
+    _notifier.dispose();
+    super.dispose();
+  }
+
+  void _onStateChanged() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _handleRefresh() async {
+    await _notifier.loadProfile();
+    await widget.authNotifier.refreshVerificationState();
+  }
+
+  void _onBannerTap() {
+    final state = _notifier.verificationState;
+
+    if (state.needsOnboarding) {
+      // Pre-submission: go to onboarding stepper to complete steps
+      context.push('/onboarding');
+    } else {
+      // Post-submission (submitted, failed): go to status screen
+      context.push('/verification/status');
+    }
+  }
+
+  void _onFeatureTap(String featureName) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$featureName — coming soon!'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'TrvlEz',
+          style: GoogleFonts.nunito(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: colorScheme.primary,
+          ),
+        ),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline_rounded),
+            tooltip: 'Profile',
+            onPressed: () {
+              // Future: navigate to profile screen
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_rounded),
+            tooltip: 'Sign out',
+            onPressed: () => widget.authNotifier.logout(),
+          ),
+        ],
+      ),
+      body: _notifier.isLoading && _notifier.profile == null
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _handleRefresh,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    // ── Verification Banner ─────────────────────────
+                    if (_notifier.shouldShowBanner)
+                      VerificationBanner(
+                        state: _notifier.verificationState,
+                        onActionTap: _onBannerTap,
+                      ),
+                    const SizedBox(height: 24),
+                    // ── Welcome Section ──────────────────────────────
+                    _WelcomeSection(
+                      isVerified: _notifier.verificationState.isVerified,
+                    ),
+                    const SizedBox(height: 32),
+                    // ── Feature Grid ────────────────────────────────
+                    _FeatureGrid(
+                      isVerified: _notifier.verificationState.isVerified,
+                      onFeatureTap: _onFeatureTap,
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+}
+
+// ─── Welcome Section ──────────────────────────────────────────────────────
+
+class _WelcomeSection extends StatelessWidget {
+  final bool isVerified;
+
+  const _WelcomeSection({required this.isVerified});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            isVerified ? 'Ready to explore!' : 'Welcome to TrvlEz!',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isVerified
+                ? 'Your identity is verified. Start planning your next adventure.'
+                : 'Your next adventure awaits. Complete your setup to unlock all features.',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface.withAlpha(160),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Feature Grid ─────────────────────────────────────────────────────────
+
+class _FeatureGrid extends StatelessWidget {
+  final bool isVerified;
+  final void Function(String featureName) onFeatureTap;
+
+  const _FeatureGrid({
+    required this.isVerified,
+    required this.onFeatureTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final features = [
+      _FeatureItem(
+        icon: Icons.explore_rounded,
+        label: 'Explore',
+        subtitle: 'Discover destinations',
+        gradientColors: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+      ),
+      _FeatureItem(
+        icon: Icons.flight_takeoff_rounded,
+        label: 'My Trips',
+        subtitle: 'View bookings',
+        gradientColors: const [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+      ),
+      _FeatureItem(
+        icon: Icons.local_offer_rounded,
+        label: 'Deals',
+        subtitle: 'Exclusive offers',
+        gradientColors: const [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+      ),
+      _FeatureItem(
+        icon: Icons.support_agent_rounded,
+        label: 'Support',
+        subtitle: 'Get help',
+        gradientColors: const [Color(0xFF10B981), Color(0xFF34D399)],
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 1.15,
+        ),
+        itemCount: features.length,
+        itemBuilder: (context, index) {
+          final feature = features[index];
+          return _FeatureCard(
+            feature: feature,
+            onTap: () => onFeatureTap(feature.label),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _FeatureItem {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final List<Color> gradientColors;
+
+  const _FeatureItem({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.gradientColors,
+  });
+}
+
+class _FeatureCard extends StatelessWidget {
+  final _FeatureItem feature;
+  final VoidCallback onTap;
+
+  const _FeatureCard({
+    required this.feature,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withAlpha(80),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: feature.gradientColors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  feature.icon,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    feature.label,
+                    style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    feature.subtitle,
+                    style: GoogleFonts.cabin(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withAlpha(130),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

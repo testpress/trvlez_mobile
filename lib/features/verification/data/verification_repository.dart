@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
+import '../domain/verification_status.dart';
 
 class VerificationRepository {
   final ApiClient _apiClient;
@@ -173,5 +174,23 @@ class VerificationRepository {
       body: {},
       authToken: token,
     );
+  }
+
+  /// Fetches the current verification session status.
+  ///
+  /// Returns [VerificationStatus] which may have null fields if no
+  /// active session exists. Used to detect the `failed` state which
+  /// only exists on [VerificationSessionStatus], not on
+  /// [TravelerOnboardingStep].
+  Future<VerificationStatus> getVerificationStatus() async {
+    final token = await _tokenStorage.getToken();
+    if (token == null) throw ApiException.unauthorized();
+
+    final response = await _apiClient.get(
+      '/traveler/verification/status',
+      authToken: token,
+    );
+
+    return VerificationStatus.fromJson(response);
   }
 }

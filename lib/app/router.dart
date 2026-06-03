@@ -4,6 +4,7 @@ import '../core/auth/auth_notifier.dart';
 import '../features/auth/data/auth_repository.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/registration_screen.dart';
+import '../features/home/presentation/home_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/profile/data/profile_repository.dart';
 import '../features/profile/presentation/profile_notifier.dart';
@@ -14,8 +15,12 @@ import '../features/verification/presentation/passport_review_screen.dart';
 import '../features/verification/presentation/selfie_capture_screen.dart';
 import '../features/verification/presentation/selfie_review_screen.dart';
 import '../features/verification/presentation/verification_notifier.dart';
+import '../features/verification/presentation/verification_status_screen.dart';
 
 /// Central router configuration for the TrvlEz app.
+///
+/// Redirect logic:
+/// - Not authenticated → `/login`
 GoRouter createRouter(
   AuthNotifier authNotifier,
   AuthRepository authRepository,
@@ -28,14 +33,27 @@ GoRouter createRouter(
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final isAuthenticated = authNotifier.isAuthenticated;
-      final isAuthRoute = state.matchedLocation == '/login' || state.matchedLocation == '/register';
+      final location = state.matchedLocation;
+      final isAuthRoute = location == '/login' || location == '/register';
 
       if (!isAuthenticated) {
-        // If not authenticated and not on an auth route, redirect to login
+        // Not authenticated → force to login (unless already there)
         if (!isAuthRoute) return '/login';
-      } else {
-        // If authenticated and on an auth route, redirect to onboarding (or home)
-        if (isAuthRoute) return '/onboarding';
+        return null;
+      }
+
+      // Authenticated — redirect away from auth routes
+      if (isAuthRoute) {
+        return '/home';
+      }
+
+      // Prevent accessing /onboarding when no longer needed
+      if (location == '/onboarding' &&
+          !authNotifier.verificationState.needsOnboarding) {
+        // Exception: allow if failed (re-submitting documents)
+        if (!authNotifier.verificationState.isFailed) {
+          return '/home';
+        }
       }
 
       return null;
@@ -55,6 +73,13 @@ GoRouter createRouter(
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => OnboardingScreen(
+          authNotifier: authNotifier,
+          profileRepository: profileRepository,
+        ),
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => HomeScreen(
           authNotifier: authNotifier,
           profileRepository: profileRepository,
         ),
@@ -87,6 +112,13 @@ GoRouter createRouter(
         path: '/verification/selfie-review',
         builder: (context, state) => SelfieReviewScreen(
           notifier: verificationNotifier,
+        ),
+      ),
+      GoRoute(
+        path: '/verification/status',
+        builder: (context, state) => VerificationStatusScreen(
+          profileRepository: profileRepository,
+          authNotifier: authNotifier,
         ),
       ),
     ],

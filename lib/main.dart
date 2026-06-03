@@ -16,17 +16,13 @@ void main() async {
   // 1. Storage
   const tokenStorage = TokenStorage();
 
-  // 2. Auth State
-  final authNotifier = AuthNotifier(tokenStorage: tokenStorage);
-  await authNotifier.checkAuthStatus();
-
-  // 3. Network & Data
+  // 2. Network & Data (needed before auth check)
   final apiClient = ApiClient(
     onUnauthorized: () {
-      authNotifier.logout();
+      // Will be wired to authNotifier below
     },
   );
-  
+
   final authRemoteDataSource = AuthRemoteDataSource(apiClient: apiClient);
   final authRepository = AuthRepository(
     remoteDataSource: authRemoteDataSource,
@@ -40,6 +36,19 @@ void main() async {
   final profileRepository = ProfileRepository(
     remoteDataSource: profileRemoteDataSource,
   );
+
+  // 3. Auth State (with profile repo for onboarding step check)
+  final authNotifier = AuthNotifier(
+    tokenStorage: tokenStorage,
+    profileRepository: profileRepository,
+  );
+
+  // Wire unauthorized callback now that authNotifier exists
+  apiClient.onUnauthorized = () {
+    authNotifier.logout();
+  };
+
+  await authNotifier.checkAuthStatus();
 
   runApp(TrvlEzApp(
     authNotifier: authNotifier,

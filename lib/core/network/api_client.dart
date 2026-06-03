@@ -13,7 +13,7 @@ import 'api_exception.dart';
 /// All methods throw [ApiException] on failure.
 class ApiClient {
   final http.Client _client;
-  final void Function()? onUnauthorized;
+  void Function()? onUnauthorized;
 
   ApiClient({
     http.Client? client,
