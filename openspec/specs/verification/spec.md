@@ -74,7 +74,64 @@ Future<void> uploadPassport();
 
 ---
 
-## 2. Approval & Sign-Off
+## 2. Selfie Video Verification Feature
+
+### 2.1 Purpose
+
+Ensure users securely verify their identity by capturing and uploading a live video of themselves after completing the passport upload.
+
+### 2.2 User Flow
+
+```
+1. User completes passport upload.
+2. User taps "Selfie Verification" on the onboarding screen.
+3. User is navigated to the Selfie Capture Screen.
+4. User records a 3 to 10-second video of themselves.
+5. App displays the Selfie Review Screen to playback the recorded video.
+6. User can choose to "Retake" or "Upload".
+7. On "Upload", the app shows upload progress while streaming the video to the backend.
+8. On success, the user is navigated back to the onboarding screen which shows the Verification as pending review.
+9. On error, the user is shown an error message and can retry the upload.
+```
+
+### 2.3 Implementation Details
+
+#### Files
+- **lib/features/verification/presentation/selfie_capture_screen.dart** - Video capture UI
+- **lib/features/verification/presentation/selfie_review_screen.dart** - Video review and upload UI
+- **lib/features/verification/presentation/verification_notifier.dart** - State management
+- **lib/features/verification/data/verification_repository.dart** - Repository handling AWS S3 video upload
+
+#### Dependencies
+- `camera`: For capturing selfie videos.
+- `video_player`: For video playback during review.
+
+### 2.4 State Management
+
+**VerificationNotifier (ChangeNotifier) Updates**
+
+**State Variables:**
+```dart
+XFile? capturedVideo;
+```
+
+**Methods:**
+```dart
+void setVideo(XFile video);
+void clearVideo();
+Future<void> uploadSelfie();
+```
+
+### 2.5 Related Documents
+
+- [Selfie Video Upload Design](../../changes/archive/2026-06-03-selfie-video-upload/design.md)
+- [Selfie Video Upload Proposal](../../changes/archive/2026-06-03-selfie-video-upload/proposal.md)
+- [Selfie Video Upload Tasks](../../changes/archive/2026-06-03-selfie-video-upload/tasks.md)
+- [Selfie Video Upload Spec](../../changes/archive/2026-06-03-selfie-video-upload/specs/spec.md)
+
+---
+
+## 3. Approval & Sign-Off
 
 **Status:** ✅ Implemented
 **Implementation Date:** June 3, 2026
