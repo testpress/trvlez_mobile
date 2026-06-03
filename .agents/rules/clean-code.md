@@ -29,7 +29,6 @@ The goal is code that is **readable, maintainable, extensible, and production-gr
 - Never: `hotelData()`, `process()`, `doStuff()`, `handle()`, `run()`
 - Functions that return booleans should read as questions: `isAvailable()`, `hasActiveSubscription()`
 - Event handlers should use `on` prefix: `onTap`, `onBookingCreated`, `onLoginPressed`
-- Private methods use underscore prefix: `_buildHeader()`, `_handleSubmit()`
 
 ### Classes
 - Use `PascalCase`: `BookingService`, `HotelResponse`, `PaymentProcessor`

@@ -57,14 +57,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     // Map backend steps to visual progress
     final bool isProfileComplete = step != 'profile_pending';
-    final bool isVerificationComplete = step == 'verified';
-    final bool isVerificationStarted = step == 'verification_started' || step == 'documents_uploaded' || step == 'submitted';
+    final bool isPassportComplete = step == 'verification_started' || step == 'documents_uploaded' || step == 'submitted' || step == 'verified';
+    final bool isSelfieComplete = step == 'documents_uploaded' || step == 'submitted' || step == 'verified';
+    final bool isFullyVerified = step == 'verified';
 
     int completedSteps = 0;
     if (isProfileComplete) completedSteps++;
-    if (isVerificationComplete) completedSteps++;
+    if (isPassportComplete) completedSteps++;
+    if (isSelfieComplete) completedSteps++;
 
-    final double progress = completedSteps / 2.0;
+    final double progress = completedSteps / 3.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -109,7 +111,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '$completedSteps of 2 Steps Completed',
+                            '$completedSteps of 3 Steps Completed',
                             style: GoogleFonts.nunito(
                               fontWeight: FontWeight.bold,
                               color: colorScheme.primary,
@@ -153,16 +155,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   },
                           ),
                           OnboardingStepItem(
-                            title: 'Verify Identity',
-                            subtitle: isVerificationStarted 
-                                ? 'Your identity verification is currently processing.'
-                                : 'Upload your passport or ID to verify your account.',
-                            state: isVerificationComplete 
+                            title: 'Upload Passport',
+                            subtitle: isPassportComplete 
+                                ? 'Passport uploaded successfully.'
+                                : 'Capture a clear photo of your passport.',
+                            state: isPassportComplete 
                                 ? OnboardingStepState.completed 
                                 : (isProfileComplete ? OnboardingStepState.active : OnboardingStepState.upcoming),
-                            onTap: (isProfileComplete && !isVerificationStarted && !isVerificationComplete) 
+                            onTap: (isProfileComplete && !isPassportComplete) 
                                 ? () async {
                                     await context.push('/verification/passport-capture');
+                                    _loadProfile(); // Refresh when returning
+                                  } 
+                                : null,
+                          ),
+                          OnboardingStepItem(
+                            title: 'Selfie Verification',
+                            subtitle: isSelfieComplete
+                                ? 'Selfie video recorded successfully.'
+                                : 'Record a short video to verify your identity.',
+                            state: isSelfieComplete 
+                                ? OnboardingStepState.completed 
+                                : (isPassportComplete ? OnboardingStepState.active : OnboardingStepState.upcoming),
+                            onTap: (isPassportComplete && !isSelfieComplete) 
+                                ? () async {
+                                    await context.push('/verification/selfie-capture');
                                     _loadProfile(); // Refresh when returning
                                   } 
                                 : null,
@@ -171,7 +188,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       
                       const SizedBox(height: 40),
-                      if (isVerificationComplete)
+                      if (isSelfieComplete && !isFullyVerified)
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: colorScheme.secondaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.hourglass_empty, color: colorScheme.onSecondaryContainer),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  'Your identity verification is currently under review.',
+                                  style: TextStyle(color: colorScheme.onSecondaryContainer),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (isFullyVerified)
                         FilledButton(
                           onPressed: () {
                             // Navigate to home
