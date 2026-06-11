@@ -4,7 +4,7 @@
 
 The Verification capability handles identity verification for the TrvlEz platform, specifically focusing on capturing and uploading passport documents securely.
 
-**Current Status:** Passport Verification feature implemented.
+**Current Status:** Passport Verification, Selfie Video Verification, and Gallery Upload options implemented.
 
 ---
 
@@ -19,25 +19,27 @@ Ensure users securely verify their identity by capturing and uploading their pas
 ```
 1. User completes onboarding screen.
 2. User is navigated to the Passport Capture Screen.
-3. User aligns their passport within the camera frame.
-4. User taps the capture button to take a photo.
-5. App displays the Passport Review Screen with the captured photo.
-6. User can choose to "Retake" or "Upload".
-7. On "Upload", the app shows upload progress via a simulated API call.
-8. On success, the user is navigated to the main application or a success state.
-9. On error, the user is shown an error message and can retry the upload.
+3. User can choose to either:
+   - Align their passport within the camera frame and tap the capture button to take a photo.
+   - Tap the gallery icon to pick a passport photo from the device's gallery.
+4. App displays the Passport Review Screen with the selected photo.
+5. User can choose to "Retake" or "Upload".
+6. On "Upload", the app shows upload progress via a simulated API call.
+7. On success, the user is navigated to the main application or a success state.
+8. On error, the user is shown an error message and can retry the upload.
 ```
 
 ### 1.3 Implementation Details
 
 #### Files
-- **lib/features/verification/presentation/passport_capture_screen.dart** - Camera capture UI
+- **lib/features/verification/presentation/passport_capture_screen.dart** - Camera capture UI and Gallery Picker integration
 - **lib/features/verification/presentation/passport_review_screen.dart** - Image review and upload UI
 - **lib/features/verification/presentation/verification_notifier.dart** - State management
 - **lib/features/verification/data/verification_repository.dart** - Repository handling simulated upload
 
 #### Dependencies
 - `camera`: For capturing passport photos.
+- `image_picker`: For selecting passport photos from the device's gallery.
 - `path_provider`: For temporary file storage.
 
 ### 1.4 State Management
@@ -71,6 +73,9 @@ Future<void> uploadPassport();
 - [Add Passport Verification Design](../../changes/archive/2026-06-03-add-passport-verification/design.md)
 - [Add Passport Verification Proposal](../../changes/archive/2026-06-03-add-passport-verification/proposal.md)
 - [Add Passport Verification Tasks](../../changes/archive/2026-06-03-add-passport-verification/tasks.md)
+- [Gallery Upload Options Design](../../changes/archive/2026-06-11-gallery-upload-verification/design.md)
+- [Gallery Upload Options Proposal](../../changes/archive/2026-06-11-gallery-upload-verification/proposal.md)
+- [Gallery Upload Options Tasks](../../changes/archive/2026-06-11-gallery-upload-verification/tasks.md)
 
 ---
 
@@ -86,8 +91,10 @@ Ensure users securely verify their identity by capturing and uploading a live vi
 1. User completes passport upload.
 2. User taps "Selfie Verification" on the onboarding screen.
 3. User is navigated to the Selfie Capture Screen.
-4. User records a 3 to 10-second video of themselves.
-5. App displays the Selfie Review Screen to playback the recorded video.
+4. User can choose to either:
+   - Record a 3 to 10-second video of themselves.
+   - Tap the gallery icon to pick a pre-recorded selfie video from the device's gallery.
+5. App displays the Selfie Review Screen to playback the selected video.
 6. User can choose to "Retake" or "Upload".
 7. On "Upload", the app shows upload progress while streaming the video to the backend.
 8. On success, the user is navigated back to the onboarding screen which shows the Verification as pending review.
@@ -97,7 +104,7 @@ Ensure users securely verify their identity by capturing and uploading a live vi
 ### 2.3 Implementation Details
 
 #### Files
-- **lib/features/verification/presentation/selfie_capture_screen.dart** - Video capture UI
+- **lib/features/verification/presentation/selfie_capture_screen.dart** - Video capture UI and Gallery Picker integration
 - **lib/features/verification/presentation/selfie_review_screen.dart** - Video review and upload UI
 - **lib/features/verification/presentation/verification_notifier.dart** - State management
 - **lib/features/verification/data/verification_repository.dart** - Repository handling AWS S3 video upload
@@ -105,6 +112,7 @@ Ensure users securely verify their identity by capturing and uploading a live vi
 #### Dependencies
 - `camera`: For capturing selfie videos.
 - `video_player`: For video playback during review.
+- `image_picker`: For selecting selfie videos from the device's gallery.
 
 ### 2.4 State Management
 
@@ -128,6 +136,9 @@ Future<void> uploadSelfie();
 - [Selfie Video Upload Proposal](../../changes/archive/2026-06-03-selfie-video-upload/proposal.md)
 - [Selfie Video Upload Tasks](../../changes/archive/2026-06-03-selfie-video-upload/tasks.md)
 - [Selfie Video Upload Spec](../../changes/archive/2026-06-03-selfie-video-upload/specs/spec.md)
+- [Gallery Upload Options Design](../../changes/archive/2026-06-11-gallery-upload-verification/design.md)
+- [Gallery Upload Options Proposal](../../changes/archive/2026-06-11-gallery-upload-verification/proposal.md)
+- [Gallery Upload Options Tasks](../../changes/archive/2026-06-11-gallery-upload-verification/tasks.md)
 
 ---
 
@@ -192,4 +203,4 @@ Future<void> loadProfile();
 ## 4. Approval & Sign-Off
 
 **Status:** ✅ Implemented
-**Implementation Date:** June 3, 2026
+**Implementation Date:** June 11, 2026
