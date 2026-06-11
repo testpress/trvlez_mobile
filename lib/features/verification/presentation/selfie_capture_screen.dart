@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'verification_notifier.dart';
 
@@ -151,6 +152,28 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
     }
   }
 
+  Future<void> _pickVideoFromGallery() async {
+    if (isRecording) return;
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
+      
+      if (video != null) {
+        widget.notifier.setVideo(File(video.path));
+        if (mounted) {
+          context.push('/verification/selfie-review');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to pick video. Please try again.')),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
     recordingTimer?.cancel();
@@ -245,11 +268,12 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
           // Controls
           Positioned(
             bottom: 48,
-            left: 0,
-            right: 0,
+            left: 32,
+            right: 32,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const SizedBox(width: 48), // Spacer to keep record button centered
                 if (!isRecording)
                   FloatingActionButton(
                     heroTag: 'record_btn',
@@ -264,6 +288,14 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
                     backgroundColor: isMinTimeMet ? Colors.red : Colors.grey,
                     child: const Icon(Icons.stop, color: Colors.white),
                   ),
+                if (!isRecording)
+                  IconButton(
+                    iconSize: 32,
+                    onPressed: _pickVideoFromGallery,
+                    icon: const Icon(Icons.video_library, color: Colors.white),
+                  )
+                else
+                  const SizedBox(width: 48), // Match the size of the gallery button when hidden
               ],
             ),
           ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'verification_notifier.dart';
 
@@ -97,6 +98,38 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
     }
   }
 
+  Future<void> _pickPassportFromGallery() async {
+    if (_isCapturing) return;
+
+    setState(() {
+      _isCapturing = true;
+    });
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      
+      if (image != null) {
+        widget.notifier.setImage(File(image.path));
+        if (mounted) {
+          context.push('/verification/passport-review');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to pick image. Please try again.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCapturing = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_isCameraInitialized || _controller == null) {
@@ -106,7 +139,6 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
     }
 
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -182,36 +214,45 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
             ),
           ),
 
-          // Capture Button
+          // Controls
           Positioned(
             bottom: 48,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: GestureDetector(
-                onTap: _capturePassport,
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 4),
-                  ),
-                  child: Center(
-                    child: Container(
-                      height: 64,
-                      width: 64,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
+            left: 32,
+            right: 32,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 48), // Empty space on left to keep center button centered
+                GestureDetector(
+                  onTap: _capturePassport,
+                  child: Container(
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 4),
+                    ),
+                    child: Center(
+                      child: Container(
+                        height: 64,
+                        width: 64,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: _isCapturing
+                            ? const CircularProgressIndicator(color: Colors.black)
+                            : null,
                       ),
-                      child: _isCapturing
-                          ? const CircularProgressIndicator(color: Colors.black)
-                          : null,
                     ),
                   ),
                 ),
-              ),
+                IconButton(
+                  iconSize: 32,
+                  onPressed: _pickPassportFromGallery,
+                  icon: const Icon(Icons.photo_library, color: Colors.white),
+                ),
+              ],
             ),
           ),
         ],
