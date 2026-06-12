@@ -125,6 +125,7 @@ GoRouter createRouter(
             profileRepository: profileRepository,
             authNotifier: authNotifier,
             verificationJobId: jobId,
+            verificationNotifier: verificationNotifier,
           );
         },
       ),

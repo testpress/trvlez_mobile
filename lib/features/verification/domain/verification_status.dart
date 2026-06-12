@@ -8,6 +8,7 @@ class VerificationStatus {
   final bool videoUploaded;
   final String? passportFileId;
   final String? videoFileId;
+  final String? verificationJobId;
 
   const VerificationStatus({
     this.sessionId,
@@ -16,6 +17,7 @@ class VerificationStatus {
     this.videoUploaded = false,
     this.passportFileId,
     this.videoFileId,
+    this.verificationJobId,
   });
 
   /// Whether the verification session has failed.
@@ -41,6 +43,8 @@ class VerificationStatus {
       videoUploaded: json['video_uploaded'] as bool? ?? false,
       passportFileId: json['passport_file_id'] as String?,
       videoFileId: json['video_file_id'] as String?,
+      verificationJobId: json['verification_job_id'] as String?,
     );
   }
 }
+

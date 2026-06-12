@@ -66,29 +66,46 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
 
     final phase = widget.notifier.phase;
 
-    if (phase == VerificationPhase.verified) {
-      // Verification completed immediately — go to status screen
-      context.go('/verification/status');
-    } else if (phase == VerificationPhase.verificationFailed) {
-      // Verification failed immediately — go to status with error
-      context.go('/verification/status');
-    } else if (phase == VerificationPhase.verifying) {
-      // Pipeline is still processing — navigate to status screen
-      // with job ID for polling
-      final jobId = widget.notifier.submitResult?.verificationJobId;
-      context.go('/verification/status', extra: {'jobId': jobId});
-    } else if (phase == VerificationPhase.error) {
+    if (phase == VerificationPhase.error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(widget.notifier.errorMessage ?? 'Upload failed'),
           backgroundColor: Colors.red,
         ),
       );
-    } else if (phase == VerificationPhase.uploadSuccess ||
-        phase == VerificationPhase.submitting) {
-      // Fallback — navigate to onboarding to refresh state
-      context.go('/onboarding');
+      return;
     }
+
+    // Upload succeeded — show confirmation summary before navigating
+    if (!mounted) return;
+    _showUploadSuccessSheet(phase);
+  }
+
+  void _showUploadSuccessSheet(VerificationPhase phase) {
+    final jobId = widget.notifier.submitResult?.verificationJobId;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return _UploadSuccessSheet(
+          phase: phase,
+          onViewStatus: () {
+            Navigator.of(sheetContext).pop();
+            if (phase == VerificationPhase.verified ||
+                phase == VerificationPhase.verificationFailed) {
+              context.go('/verification/status');
+            } else if (phase == VerificationPhase.verifying) {
+              context.go('/verification/status', extra: {'jobId': jobId});
+            } else {
+              context.go('/verification/status');
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -205,6 +222,134 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+// ─── Upload Success Confirmation Sheet ────────────────────────────────────
+
+class _UploadSuccessSheet extends StatelessWidget {
+  final VerificationPhase phase;
+  final VoidCallback onViewStatus;
+
+  const _UploadSuccessSheet({
+    required this.phase,
+    required this.onViewStatus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isAlreadyVerified = phase == VerificationPhase.verified;
+    final hasFailed = phase == VerificationPhase.verificationFailed;
+
+    final String title;
+    final String message;
+    final IconData icon;
+    final Color iconColor;
+
+    if (isAlreadyVerified) {
+      title = 'Verification Complete!';
+      message =
+          'Your identity has been verified successfully. You\'re all set to start exploring.';
+      icon = Icons.verified_rounded;
+      iconColor = const Color(0xFF27AE60);
+    } else if (hasFailed) {
+      title = 'Verification Unsuccessful';
+      message =
+          'We couldn\'t verify your identity at this time. Please review your documents and try again.';
+      icon = Icons.error_outline_rounded;
+      iconColor = const Color(0xFFE65100);
+    } else {
+      title = 'Documents Uploaded!';
+      message =
+          'Your documents have been uploaded successfully. Your verification is now in progress — you can track the status on the next screen.';
+      icon = Icons.cloud_done_rounded;
+      iconColor = const Color(0xFF0277BD);
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle bar
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 24),
+            decoration: BoxDecoration(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withAlpha(40),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Icon
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: iconColor.withAlpha(20),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 36),
+          ),
+          const SizedBox(height: 20),
+          // Title
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          // Message
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 15,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withAlpha(160),
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 28),
+          // CTA Button
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: FilledButton.icon(
+              onPressed: onViewStatus,
+              icon: Icon(
+                isAlreadyVerified
+                    ? Icons.explore_rounded
+                    : Icons.visibility_rounded,
+              ),
+              label: Text(
+                isAlreadyVerified
+                    ? 'Start Exploring'
+                    : 'View Verification Status',
+              ),
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

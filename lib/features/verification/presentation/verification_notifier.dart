@@ -47,6 +47,7 @@ class VerificationNotifier extends ChangeNotifier {
   String? _errorMessage;
   VerificationSubmitResult? _submitResult;
   VerificationJobResult? _jobResult;
+  VerificationStatus? _verificationStatus;
   Timer? _pollTimer;
 
   File? get capturedImage => _capturedImage;
@@ -56,6 +57,7 @@ class VerificationNotifier extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   VerificationSubmitResult? get submitResult => _submitResult;
   VerificationJobResult? get jobResult => _jobResult;
+  VerificationStatus? get verificationStatus => _verificationStatus;
 
   /// Backward-compatible status getter used by existing UI code.
   VerificationStatus get status => switch (_phase) {
@@ -130,16 +132,11 @@ class VerificationNotifier extends ChangeNotifier {
     }
   }
 
-  /// Uploads the selfie video and submits for verification.
+  /// Uploads the selfie video.
   ///
-  /// After a successful upload, submits the verification session which
-  /// triggers the backend ML pipeline. The submit response contains:
-  /// - `verificationJobId` — for polling the pipeline status
-  /// - `verificationScore` — present if the pipeline completed inline
-  ///
-  /// If the pipeline completes during submission, [phase] transitions
-  /// directly to [VerificationPhase.verified] or [verificationFailed].
-  /// Otherwise, it stays at [VerificationPhase.verifying] for polling.
+  /// After a successful upload, this method transitions the phase to
+  /// [VerificationPhase.uploadSuccess] so the UI can proceed without waiting.
+  /// It then asynchronously triggers the backend ML verification pipeline.
   Future<void> uploadSelfie() async {
     if (_capturedVideo == null) return;
 
@@ -148,6 +145,7 @@ class VerificationNotifier extends ChangeNotifier {
     _errorMessage = null;
     _submitResult = null;
     _jobResult = null;
+    _verificationStatus = null;
     notifyListeners();
 
     try {
@@ -158,21 +156,37 @@ class VerificationNotifier extends ChangeNotifier {
           notifyListeners();
         },
       );
-      
-      // Upload complete — now submit for verification
-      _phase = VerificationPhase.submitting;
+
+      // Upload complete. Don't block the caller (UI) for submit.
+      _phase = VerificationPhase.uploadSuccess;
       notifyListeners();
 
+      // Fire off submit in the background
+      _submitVerificationAsync();
+    } on ApiException catch (e) {
+      _phase = VerificationPhase.error;
+      _errorMessage = e.message;
+      notifyListeners();
+    } catch (e) {
+      _phase = VerificationPhase.error;
+      _errorMessage = 'Upload failed: $e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> _submitVerificationAsync() async {
+    _phase = VerificationPhase.submitting;
+    notifyListeners();
+
+    try {
       _submitResult = await _repository.submitVerification();
 
-      // Check if the pipeline already completed during submission
       if (_submitResult!.isVerified) {
         _phase = VerificationPhase.verified;
       } else if (_submitResult!.isFailed) {
         _phase = VerificationPhase.verificationFailed;
         _errorMessage = 'Identity verification was unsuccessful. Please try again.';
       } else {
-        // Pipeline is still processing — caller can use pollVerificationJob()
         _phase = VerificationPhase.verifying;
       }
 
@@ -183,7 +197,7 @@ class VerificationNotifier extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _phase = VerificationPhase.error;
-      _errorMessage = 'Upload failed: $e';
+      _errorMessage = 'Verification submit failed: $e';
       notifyListeners();
     }
   }

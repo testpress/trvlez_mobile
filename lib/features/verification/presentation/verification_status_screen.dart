@@ -10,6 +10,7 @@ import '../domain/verification_job_result.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/domain/traveler_verification_state.dart';
 import '../../profile/presentation/profile_notifier.dart';
+import 'verification_notifier.dart';
 
 /// Displays the full verification journey with step-by-step progress.
 ///
@@ -23,12 +24,14 @@ class VerificationStatusScreen extends StatefulWidget {
   final ProfileRepository profileRepository;
   final AuthNotifier authNotifier;
   final String? verificationJobId;
+  final VerificationNotifier? verificationNotifier;
 
   const VerificationStatusScreen({
     super.key,
     required this.profileRepository,
     required this.authNotifier,
     this.verificationJobId,
+    this.verificationNotifier,
   });
 
   @override
@@ -67,15 +70,18 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    // Start polling if we have a job ID
+    // Start polling if we have a job ID (legacy fallback)
     if (widget.verificationJobId != null) {
       _startPolling();
     }
+
+    widget.verificationNotifier?.addListener(_onNotifierChanged);
   }
 
   @override
   void dispose() {
     _stopPolling();
+    widget.verificationNotifier?.removeListener(_onNotifierChanged);
     _profileNotifier.removeListener(_onStateChanged);
     _profileNotifier.dispose();
     _pulseController.dispose();
@@ -83,6 +89,10 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   }
 
   void _onStateChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _onNotifierChanged() {
     if (mounted) setState(() {});
   }
 
@@ -158,7 +168,15 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   /// Derives the effective verification state, considering both the
   /// profile-level onboarding step and the real-time job result.
   TravelerVerificationState get _effectiveState {
-    // If we have a completed job result, use it for immediate feedback
+    // If the global notifier has completed its background submit, use its result
+    final submitResult = widget.verificationNotifier?.submitResult;
+    if (submitResult != null) {
+      if (submitResult.isVerified) return TravelerVerificationState.verified;
+      if (submitResult.isFailed) return TravelerVerificationState.failed;
+      if (submitResult.isProcessing) return TravelerVerificationState.submitted;
+    }
+
+    // If we have a completed job result (from polling), use it for immediate feedback
     if (_jobResult != null && _jobResult!.isComplete) {
       if (_jobResult!.isVerified) return TravelerVerificationState.verified;
       if (_jobResult!.isFailed) return TravelerVerificationState.failed;
@@ -171,6 +189,16 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
 
     return _profileNotifier.profile?.verificationState ??
         TravelerVerificationState.submitted;
+  }
+
+  double? get _activeVerificationScore {
+    return widget.verificationNotifier?.submitResult?.verificationScore ??
+        _jobResult?.verificationScore;
+  }
+
+  String? get _activeErrorMessage {
+    return widget.verificationNotifier?.errorMessage ??
+        _jobResult?.errorMessage;
   }
 
   @override
@@ -222,24 +250,23 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                       textAlign: TextAlign.center,
                     ),
                     // ── Verification Score ───────────────────────
-                    if (_jobResult?.verificationScore != null) ...[
+                    if (_activeVerificationScore != null) ...[
                       const SizedBox(height: 16),
                       _VerificationScoreIndicator(
-                        score: _jobResult!.verificationScore!,
-                        isVerified: _jobResult!.isVerified,
+                        score: _activeVerificationScore!,
+                        isVerified: state == TravelerVerificationState.verified,
                       ),
                     ],
                     const SizedBox(height: 40),
                     // ── Step Checklist ────────────────────────────
                     _StepChecklist(
                       state: state,
-                      jobResult: _jobResult,
                     ),
                     const SizedBox(height: 32),
                     // ── Info Card ─────────────────────────────────
                     _InfoCard(
                       state: state,
-                      errorMessage: _jobResult?.errorMessage,
+                      errorMessage: _activeErrorMessage,
                     ),
                     const SizedBox(height: 24),
                     // ── Actions ───────────────────────────────────
@@ -393,11 +420,9 @@ class _VerificationScoreIndicator extends StatelessWidget {
 
 class _StepChecklist extends StatelessWidget {
   final TravelerVerificationState state;
-  final VerificationJobResult? jobResult;
 
   const _StepChecklist({
     required this.state,
-    this.jobResult,
   });
 
   @override
