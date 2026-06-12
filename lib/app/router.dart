@@ -116,10 +116,17 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: '/verification/status',
-        builder: (context, state) => VerificationStatusScreen(
-          profileRepository: profileRepository,
-          authNotifier: authNotifier,
-        ),
+        builder: (context, state) {
+          // Extract optional job ID from navigation extras
+          final extras = state.extra as Map<String, dynamic>?;
+          final jobId = extras?['jobId'] as String?;
+
+          return VerificationStatusScreen(
+            profileRepository: profileRepository,
+            authNotifier: authNotifier,
+            verificationJobId: jobId,
+          );
+        },
       ),
     ],
   );

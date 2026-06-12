@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
+import '../domain/verification_job_result.dart';
 import '../domain/verification_status.dart';
+import '../domain/verification_submit_result.dart';
 
 class VerificationRepository {
   final ApiClient _apiClient;
@@ -165,15 +167,21 @@ class VerificationRepository {
     );
   }
 
-  Future<void> submitVerification() async {
+  /// Submits the verification session for ML pipeline processing.
+  ///
+  /// Returns [VerificationSubmitResult] containing the job ID for polling
+  /// and an optional verification score if the pipeline completes inline.
+  Future<VerificationSubmitResult> submitVerification() async {
     final token = await _tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
-    await _apiClient.post(
+    final response = await _apiClient.post(
       '/traveler/verification/submit',
       body: {},
       authToken: token,
     );
+
+    return VerificationSubmitResult.fromJson(response);
   }
 
   /// Fetches the current verification session status.
@@ -192,5 +200,38 @@ class VerificationRepository {
     );
 
     return VerificationStatus.fromJson(response);
+  }
+
+  /// Polls the status of a specific verification job.
+  ///
+  /// Used to track ML pipeline progress after submission.
+  /// The backend returns the full job record including score and error details.
+  Future<VerificationJobResult> getVerificationJob(String jobId) async {
+    final token = await _tokenStorage.getToken();
+    if (token == null) throw ApiException.unauthorized();
+
+    final response = await _apiClient.get(
+      '/traveler/verification/job/$jobId',
+      authToken: token,
+    );
+
+    return VerificationJobResult.fromJson(response);
+  }
+
+  /// Generates a liveness challenge session from the verification service.
+  ///
+  /// Returns the challenge data (e.g., challenge type, session ID) for
+  /// the traveler to perform during selfie capture. Reserved for future use
+  /// when liveness detection is enabled.
+  Future<Map<String, dynamic>> getVerificationChallenge() async {
+    final token = await _tokenStorage.getToken();
+    if (token == null) throw ApiException.unauthorized();
+
+    final response = await _apiClient.get(
+      '/traveler/verification/challenge',
+      authToken: token,
+    );
+
+    return response;
   }
 }

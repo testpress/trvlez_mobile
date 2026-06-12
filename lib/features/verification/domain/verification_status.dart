@@ -6,12 +6,16 @@ class VerificationStatus {
   final String? status;
   final bool passportUploaded;
   final bool videoUploaded;
+  final String? passportFileId;
+  final String? videoFileId;
 
   const VerificationStatus({
     this.sessionId,
     this.status,
     this.passportUploaded = false,
     this.videoUploaded = false,
+    this.passportFileId,
+    this.videoFileId,
   });
 
   /// Whether the verification session has failed.
@@ -23,6 +27,9 @@ class VerificationStatus {
   /// Whether the verification session has been verified.
   bool get isVerified => status == 'verified';
 
+  /// Whether both documents have been uploaded and session is ready to submit.
+  bool get isUploaded => status == 'uploaded';
+
   /// Whether there is an active session at all.
   bool get hasActiveSession => sessionId != null;
 
@@ -32,6 +39,8 @@ class VerificationStatus {
       status: json['status'] as String?,
       passportUploaded: json['passport_uploaded'] as bool? ?? false,
       videoUploaded: json['video_uploaded'] as bool? ?? false,
+      passportFileId: json['passport_file_id'] as String?,
+      videoFileId: json['video_file_id'] as String?,
     );
   }
 }

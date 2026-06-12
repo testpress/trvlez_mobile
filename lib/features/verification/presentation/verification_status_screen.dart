@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/auth/auth_notifier.dart';
+import '../data/verification_repository.dart';
+import '../domain/verification_job_result.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/domain/traveler_verification_state.dart';
 import '../../profile/presentation/profile_notifier.dart';
@@ -12,14 +16,19 @@ import '../../profile/presentation/profile_notifier.dart';
 /// Shows a large animated status icon, a descriptive title, individual
 /// step completion states, and contextual actions (re-submit for failed,
 /// contact support).
+///
+/// When [verificationJobId] is provided, polls the backend for real-time
+/// verification pipeline progress.
 class VerificationStatusScreen extends StatefulWidget {
   final ProfileRepository profileRepository;
   final AuthNotifier authNotifier;
+  final String? verificationJobId;
 
   const VerificationStatusScreen({
     super.key,
     required this.profileRepository,
     required this.authNotifier,
+    this.verificationJobId,
   });
 
   @override
@@ -32,6 +41,15 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   late final ProfileNotifier _profileNotifier;
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
+  final VerificationRepository _verificationRepository =
+      VerificationRepository();
+
+  VerificationJobResult? _jobResult;
+  Timer? _pollTimer;
+  int _pollInterval = 2;
+  int _totalElapsed = 0;
+  static const int _maxPollDuration = 300;
+  static const int _maxPollInterval = 15;
 
   @override
   void initState() {
@@ -48,10 +66,16 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     _pulseAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    // Start polling if we have a job ID
+    if (widget.verificationJobId != null) {
+      _startPolling();
+    }
   }
 
   @override
   void dispose() {
+    _stopPolling();
     _profileNotifier.removeListener(_onStateChanged);
     _profileNotifier.dispose();
     _pulseController.dispose();
@@ -65,14 +89,95 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   Future<void> _handleRefresh() async {
     await _profileNotifier.loadProfile();
     await widget.authNotifier.refreshVerificationState();
+
+    // If we have a job ID, also poll it directly
+    if (widget.verificationJobId != null) {
+      try {
+        final result = await _verificationRepository
+            .getVerificationJob(widget.verificationJobId!);
+        if (mounted) {
+          setState(() => _jobResult = result);
+        }
+      } catch (_) {
+        // Non-critical — profile state is the primary source
+      }
+    }
+  }
+
+  void _startPolling() {
+    _pollTimer?.cancel();
+    _pollInterval = 2;
+    _totalElapsed = 0;
+
+    _schedulePoll();
+  }
+
+  void _schedulePoll() {
+    if (_totalElapsed >= _maxPollDuration) {
+      _stopPolling();
+      return;
+    }
+
+    _pollTimer = Timer(Duration(seconds: _pollInterval), () async {
+      if (!mounted) return;
+
+      try {
+        final result = await _verificationRepository
+            .getVerificationJob(widget.verificationJobId!);
+
+        if (!mounted) return;
+
+        setState(() => _jobResult = result);
+
+        if (result.isComplete) {
+          _stopPolling();
+          // Refresh profile and auth state to pick up the new status
+          await _profileNotifier.loadProfile();
+          await widget.authNotifier.refreshVerificationState();
+          return;
+        }
+      } catch (_) {
+        // Non-critical — continue polling
+      }
+
+      _totalElapsed += _pollInterval;
+      // Exponential backoff
+      if (_pollInterval < _maxPollInterval) {
+        _pollInterval = (_pollInterval * 2).clamp(1, _maxPollInterval);
+      }
+
+      _schedulePoll();
+    });
+  }
+
+  void _stopPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+  }
+
+  /// Derives the effective verification state, considering both the
+  /// profile-level onboarding step and the real-time job result.
+  TravelerVerificationState get _effectiveState {
+    // If we have a completed job result, use it for immediate feedback
+    if (_jobResult != null && _jobResult!.isComplete) {
+      if (_jobResult!.isVerified) return TravelerVerificationState.verified;
+      if (_jobResult!.isFailed) return TravelerVerificationState.failed;
+    }
+
+    // If job is still processing, show submitted/processing state
+    if (_jobResult != null && !_jobResult!.isComplete) {
+      return TravelerVerificationState.submitted;
+    }
+
+    return _profileNotifier.profile?.verificationState ??
+        TravelerVerificationState.submitted;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = _profileNotifier.profile?.verificationState ??
-        TravelerVerificationState.submitted;
+    final state = _effectiveState;
     final config = _StatusConfig.from(state);
 
     return Scaffold(
@@ -116,12 +221,26 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                       ),
                       textAlign: TextAlign.center,
                     ),
+                    // ── Verification Score ───────────────────────
+                    if (_jobResult?.verificationScore != null) ...[
+                      const SizedBox(height: 16),
+                      _VerificationScoreIndicator(
+                        score: _jobResult!.verificationScore!,
+                        isVerified: _jobResult!.isVerified,
+                      ),
+                    ],
                     const SizedBox(height: 40),
                     // ── Step Checklist ────────────────────────────
-                    _StepChecklist(state: state),
+                    _StepChecklist(
+                      state: state,
+                      jobResult: _jobResult,
+                    ),
                     const SizedBox(height: 32),
                     // ── Info Card ─────────────────────────────────
-                    _InfoCard(state: state),
+                    _InfoCard(
+                      state: state,
+                      errorMessage: _jobResult?.errorMessage,
+                    ),
                     const SizedBox(height: 24),
                     // ── Actions ───────────────────────────────────
                     if (state.isFailed) ...[
@@ -157,6 +276,19 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                         },
                         icon: const Icon(Icons.support_agent_rounded),
                         label: const Text('Contact Support'),
+                      ),
+                    ],
+                    if (state.isVerified) ...[
+                      FilledButton.icon(
+                        onPressed: () => context.go('/home'),
+                        icon: const Icon(Icons.explore_rounded),
+                        label: const Text('Start Exploring'),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
                     ],
                     const SizedBox(height: 40),
@@ -211,12 +343,62 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   }
 }
 
+// ─── Verification Score Indicator ─────────────────────────────────────────
+
+class _VerificationScoreIndicator extends StatelessWidget {
+  final double score;
+  final bool isVerified;
+
+  const _VerificationScoreIndicator({
+    required this.score,
+    required this.isVerified,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isVerified ? const Color(0xFF27AE60) : const Color(0xFFD32F2F);
+    final percentage = (score * 100).toInt();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withAlpha(15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withAlpha(40)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isVerified ? Icons.verified_rounded : Icons.info_outline_rounded,
+            color: color,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Confidence Score: $percentage%',
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ─── Step Checklist ───────────────────────────────────────────────────────
 
 class _StepChecklist extends StatelessWidget {
   final TravelerVerificationState state;
+  final VerificationJobResult? jobResult;
 
-  const _StepChecklist({required this.state});
+  const _StepChecklist({
+    required this.state,
+    this.jobResult,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -364,8 +546,12 @@ class _StepRow extends StatelessWidget {
 
 class _InfoCard extends StatelessWidget {
   final TravelerVerificationState state;
+  final String? errorMessage;
 
-  const _InfoCard({required this.state});
+  const _InfoCard({
+    required this.state,
+    this.errorMessage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -375,7 +561,7 @@ class _InfoCard extends StatelessWidget {
       TravelerVerificationState.submitted => (
           Icons.info_outline_rounded,
           const Color(0xFF0277BD),
-          'Verification typically takes 1–2 business days. We\'ll notify you when it\'s complete.',
+          'Your documents are being verified automatically. This usually takes less than a minute.',
         ),
       TravelerVerificationState.verified => (
           Icons.celebration_rounded,
@@ -385,7 +571,8 @@ class _InfoCard extends StatelessWidget {
       TravelerVerificationState.failed => (
           Icons.warning_amber_rounded,
           const Color(0xFFE65100),
-          'Your verification could not be completed. This may be due to unclear document images or a mismatch. Please try again.',
+          errorMessage ??
+              'Your verification could not be completed. This may be due to unclear document images or a mismatch. Please try again.',
         ),
       _ => (
           Icons.info_outline_rounded,
@@ -444,8 +631,8 @@ class _StatusConfig {
       TravelerVerificationState.submitted => const _StatusConfig(
           icon: Icons.hourglass_top_rounded,
           iconGradient: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
-          title: 'Verification In Progress',
-          subtitle: 'Sit tight — our team is reviewing your documents.',
+          title: 'Verifying Your Identity',
+          subtitle: 'Our system is reviewing your documents. This usually takes less than a minute.',
         ),
       TravelerVerificationState.verified => const _StatusConfig(
           icon: Icons.verified_rounded,

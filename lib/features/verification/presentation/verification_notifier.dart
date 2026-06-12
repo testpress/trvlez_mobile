@@ -1,13 +1,36 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/verification_repository.dart';
+import '../domain/verification_job_result.dart';
+import '../domain/verification_submit_result.dart';
 
-enum VerificationStatus {
+/// Tracks the current phase of the verification flow in the UI.
+enum VerificationPhase {
+  /// No operation in progress.
   idle,
+
+  /// Uploading a file to S3.
   uploading,
-  success,
+
+  /// File upload succeeded (passport or selfie).
+  uploadSuccess,
+
+  /// Submitting documents for verification (triggers ML pipeline).
+  submitting,
+
+  /// ML pipeline is running — polling for results.
+  verifying,
+
+  /// Verification pipeline completed successfully.
+  verified,
+
+  /// Verification pipeline completed with failure.
+  verificationFailed,
+
+  /// An error occurred (upload, submit, or network failure).
   error,
 }
 
@@ -19,26 +42,44 @@ class VerificationNotifier extends ChangeNotifier {
 
   File? _capturedImage;
   File? _capturedVideo;
-  VerificationStatus _status = VerificationStatus.idle;
+  VerificationPhase _phase = VerificationPhase.idle;
   double _uploadProgress = 0.0;
   String? _errorMessage;
+  VerificationSubmitResult? _submitResult;
+  VerificationJobResult? _jobResult;
+  Timer? _pollTimer;
 
   File? get capturedImage => _capturedImage;
   File? get capturedVideo => _capturedVideo;
-  VerificationStatus get status => _status;
+  VerificationPhase get phase => _phase;
   double get uploadProgress => _uploadProgress;
   String? get errorMessage => _errorMessage;
+  VerificationSubmitResult? get submitResult => _submitResult;
+  VerificationJobResult? get jobResult => _jobResult;
+
+  /// Backward-compatible status getter used by existing UI code.
+  VerificationStatus get status => switch (_phase) {
+        VerificationPhase.idle => VerificationStatus.idle,
+        VerificationPhase.uploading => VerificationStatus.uploading,
+        VerificationPhase.uploadSuccess ||
+        VerificationPhase.submitting ||
+        VerificationPhase.verifying ||
+        VerificationPhase.verified ||
+        VerificationPhase.verificationFailed =>
+          VerificationStatus.success,
+        VerificationPhase.error => VerificationStatus.error,
+      };
 
   void setImage(File image) {
     _capturedImage = image;
-    _status = VerificationStatus.idle;
+    _phase = VerificationPhase.idle;
     _errorMessage = null;
     notifyListeners();
   }
 
   void clearImage() {
     _capturedImage = null;
-    _status = VerificationStatus.idle;
+    _phase = VerificationPhase.idle;
     _errorMessage = null;
     _uploadProgress = 0.0;
     notifyListeners();
@@ -46,14 +87,14 @@ class VerificationNotifier extends ChangeNotifier {
 
   void setVideo(File video) {
     _capturedVideo = video;
-    _status = VerificationStatus.idle;
+    _phase = VerificationPhase.idle;
     _errorMessage = null;
     notifyListeners();
   }
 
   void clearVideo() {
     _capturedVideo = null;
-    _status = VerificationStatus.idle;
+    _phase = VerificationPhase.idle;
     _errorMessage = null;
     _uploadProgress = 0.0;
     notifyListeners();
@@ -62,7 +103,7 @@ class VerificationNotifier extends ChangeNotifier {
   Future<void> uploadPassport() async {
     if (_capturedImage == null) return;
 
-    _status = VerificationStatus.uploading;
+    _phase = VerificationPhase.uploading;
     _uploadProgress = 0.0;
     _errorMessage = null;
     notifyListeners();
@@ -76,25 +117,37 @@ class VerificationNotifier extends ChangeNotifier {
         },
       );
       
-      _status = VerificationStatus.success;
+      _phase = VerificationPhase.uploadSuccess;
       notifyListeners();
     } on ApiException catch (e) {
-      _status = VerificationStatus.error;
+      _phase = VerificationPhase.error;
       _errorMessage = e.message;
       notifyListeners();
     } catch (e) {
-      _status = VerificationStatus.error;
+      _phase = VerificationPhase.error;
       _errorMessage = 'Upload failed: $e';
       notifyListeners();
     }
   }
 
+  /// Uploads the selfie video and submits for verification.
+  ///
+  /// After a successful upload, submits the verification session which
+  /// triggers the backend ML pipeline. The submit response contains:
+  /// - `verificationJobId` — for polling the pipeline status
+  /// - `verificationScore` — present if the pipeline completed inline
+  ///
+  /// If the pipeline completes during submission, [phase] transitions
+  /// directly to [VerificationPhase.verified] or [verificationFailed].
+  /// Otherwise, it stays at [VerificationPhase.verifying] for polling.
   Future<void> uploadSelfie() async {
     if (_capturedVideo == null) return;
 
-    _status = VerificationStatus.uploading;
+    _phase = VerificationPhase.uploading;
     _uploadProgress = 0.0;
     _errorMessage = null;
+    _submitResult = null;
+    _jobResult = null;
     notifyListeners();
 
     try {
@@ -106,18 +159,148 @@ class VerificationNotifier extends ChangeNotifier {
         },
       );
       
-      await _repository.submitVerification();
-      
-      _status = VerificationStatus.success;
+      // Upload complete — now submit for verification
+      _phase = VerificationPhase.submitting;
+      notifyListeners();
+
+      _submitResult = await _repository.submitVerification();
+
+      // Check if the pipeline already completed during submission
+      if (_submitResult!.isVerified) {
+        _phase = VerificationPhase.verified;
+      } else if (_submitResult!.isFailed) {
+        _phase = VerificationPhase.verificationFailed;
+        _errorMessage = 'Identity verification was unsuccessful. Please try again.';
+      } else {
+        // Pipeline is still processing — caller can use pollVerificationJob()
+        _phase = VerificationPhase.verifying;
+      }
+
       notifyListeners();
     } on ApiException catch (e) {
-      _status = VerificationStatus.error;
+      _phase = VerificationPhase.error;
       _errorMessage = e.message;
       notifyListeners();
     } catch (e) {
-      _status = VerificationStatus.error;
+      _phase = VerificationPhase.error;
       _errorMessage = 'Upload failed: $e';
       notifyListeners();
     }
   }
+
+  /// Polls the verification job with exponential backoff.
+  ///
+  /// Starts polling at [initialIntervalSeconds] and doubles the interval
+  /// up to [maxIntervalSeconds]. Stops after [maxDurationSeconds] or when
+  /// the job completes.
+  ///
+  /// Calls [onComplete] when the job finishes (verified or failed).
+  void startPollingVerificationJob({
+    int initialIntervalSeconds = 2,
+    int maxIntervalSeconds = 15,
+    int maxDurationSeconds = 300,
+    VoidCallback? onComplete,
+  }) {
+    final jobId = _submitResult?.verificationJobId;
+    if (jobId == null) return;
+
+    stopPolling();
+
+    int currentInterval = initialIntervalSeconds;
+    int totalElapsed = 0;
+
+    _pollTimer = Timer.periodic(Duration(seconds: currentInterval), (timer) async {
+      if (totalElapsed >= maxDurationSeconds) {
+        stopPolling();
+        return;
+      }
+
+      try {
+        _jobResult = await _repository.getVerificationJob(jobId);
+
+        if (_jobResult!.isComplete) {
+          _phase = _jobResult!.isVerified
+              ? VerificationPhase.verified
+              : VerificationPhase.verificationFailed;
+
+          if (_jobResult!.isFailed) {
+            _errorMessage = _jobResult!.errorMessage ??
+                'Identity verification was unsuccessful. Please try again.';
+          }
+
+          notifyListeners();
+          stopPolling();
+          onComplete?.call();
+          return;
+        }
+
+        notifyListeners();
+      } catch (_) {
+        // Non-critical — continue polling on next interval
+      }
+
+      totalElapsed += currentInterval;
+
+      // Exponential backoff — cancel current timer and create new one
+      if (currentInterval < maxIntervalSeconds) {
+        timer.cancel();
+        currentInterval = (currentInterval * 2).clamp(1, maxIntervalSeconds);
+        _pollTimer = Timer.periodic(
+          Duration(seconds: currentInterval),
+          (newTimer) async {
+            if (totalElapsed >= maxDurationSeconds) {
+              stopPolling();
+              return;
+            }
+
+            try {
+              _jobResult = await _repository.getVerificationJob(jobId);
+
+              if (_jobResult!.isComplete) {
+                _phase = _jobResult!.isVerified
+                    ? VerificationPhase.verified
+                    : VerificationPhase.verificationFailed;
+
+                if (_jobResult!.isFailed) {
+                  _errorMessage = _jobResult!.errorMessage ??
+                      'Identity verification was unsuccessful. Please try again.';
+                }
+
+                notifyListeners();
+                stopPolling();
+                onComplete?.call();
+                return;
+              }
+
+              notifyListeners();
+            } catch (_) {
+              // Non-critical — continue polling
+            }
+
+            totalElapsed += currentInterval;
+          },
+        );
+      }
+    });
+  }
+
+  /// Stops any active polling timer.
+  void stopPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+  }
+
+  @override
+  void dispose() {
+    stopPolling();
+    super.dispose();
+  }
+}
+
+/// Legacy status enum kept for backward compatibility with passport screens.
+enum VerificationStatus {
+  idle,
+  uploading,
+  success,
+  error,
 }

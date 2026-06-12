@@ -64,19 +64,30 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
     if (!mounted) return;
     setState(() => _isUploadingLocally = false);
 
-    if (widget.notifier.status == VerificationStatus.success) {
-      // Navigate to the main app or success screen
-      // For now, we'll just go back to onboarding or home
-      if (context.canPop()) {
-        context.go('/onboarding');
-      }
-    } else if (widget.notifier.status == VerificationStatus.error) {
+    final phase = widget.notifier.phase;
+
+    if (phase == VerificationPhase.verified) {
+      // Verification completed immediately — go to status screen
+      context.go('/verification/status');
+    } else if (phase == VerificationPhase.verificationFailed) {
+      // Verification failed immediately — go to status with error
+      context.go('/verification/status');
+    } else if (phase == VerificationPhase.verifying) {
+      // Pipeline is still processing — navigate to status screen
+      // with job ID for polling
+      final jobId = widget.notifier.submitResult?.verificationJobId;
+      context.go('/verification/status', extra: {'jobId': jobId});
+    } else if (phase == VerificationPhase.error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(widget.notifier.errorMessage ?? 'Upload failed'),
           backgroundColor: Colors.red,
         ),
       );
+    } else if (phase == VerificationPhase.uploadSuccess ||
+        phase == VerificationPhase.submitting) {
+      // Fallback — navigate to onboarding to refresh state
+      context.go('/onboarding');
     }
   }
 
@@ -93,8 +104,10 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
       body: ListenableBuilder(
         listenable: widget.notifier,
         builder: (context, _) {
-          final status = widget.notifier.status;
-          final isUploading = status == VerificationStatus.uploading;
+          final phase = widget.notifier.phase;
+          final isUploading = phase == VerificationPhase.uploading;
+          final isSubmitting = phase == VerificationPhase.submitting;
+          final isBusy = isUploading || isSubmitting;
 
           return Stack(
             fit: StackFit.expand,
@@ -112,7 +125,7 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
               else
                 const Center(child: CircularProgressIndicator()),
 
-              if (videoController != null && !isPlaying && !isUploading)
+              if (videoController != null && !isPlaying && !isBusy)
                 Center(
                   child: IconButton(
                     iconSize: 64,
@@ -121,7 +134,7 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
                   ),
                 ),
 
-              if (isUploading)
+              if (isBusy)
                 Container(
                   color: Colors.black54,
                   child: Center(
@@ -131,15 +144,27 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
                         const CircularProgressIndicator(color: Colors.white),
                         const SizedBox(height: 16),
                         Text(
-                          'Uploading... ${(widget.notifier.uploadProgress * 100).toInt()}%',
+                          isSubmitting
+                              ? 'Submitting for verification...'
+                              : 'Uploading... ${(widget.notifier.uploadProgress * 100).toInt()}%',
                           style: const TextStyle(color: Colors.white, fontSize: 18),
                         ),
+                        if (isSubmitting) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'This may take a moment',
+                            style: TextStyle(
+                              color: Colors.white.withAlpha(150),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
                 ),
 
-              if (!isUploading)
+              if (!isBusy)
                 Positioned(
                   bottom: 32,
                   left: 16,
