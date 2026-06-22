@@ -67,10 +67,11 @@ class VerificationNotifier extends ChangeNotifier {
         VerificationPhase.uploadSuccess ||
         VerificationPhase.submitting ||
         VerificationPhase.verifying ||
-        VerificationPhase.verified ||
-        VerificationPhase.verificationFailed =>
+        VerificationPhase.verified =>
           VerificationStatus.success,
-        VerificationPhase.error => VerificationStatus.error,
+        VerificationPhase.verificationFailed ||
+        VerificationPhase.error =>
+          VerificationStatus.error,
       };
 
   void setImage(File image) {
@@ -203,6 +204,7 @@ class VerificationNotifier extends ChangeNotifier {
         _errorMessage = 'Identity verification was unsuccessful. Please try again.';
       } else {
         _phase = VerificationPhase.verifying;
+        startPollingVerificationJob();
       }
 
       if (!_submitResult!.isProcessing) {
