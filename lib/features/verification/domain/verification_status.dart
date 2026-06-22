@@ -9,6 +9,9 @@ class VerificationStatus {
   final String? passportFileId;
   final String? videoFileId;
   final String? verificationJobId;
+  final String? failedStep;
+  final String? errorReason;
+  final String? uiMitigation;
 
   const VerificationStatus({
     this.sessionId,
@@ -18,6 +21,9 @@ class VerificationStatus {
     this.passportFileId,
     this.videoFileId,
     this.verificationJobId,
+    this.failedStep,
+    this.errorReason,
+    this.uiMitigation,
   });
 
   /// Whether the verification session has failed.
@@ -44,6 +50,9 @@ class VerificationStatus {
       passportFileId: json['passport_file_id'] as String?,
       videoFileId: json['video_file_id'] as String?,
       verificationJobId: json['verification_job_id'] as String?,
+      failedStep: json['failed_step'] as String?,
+      errorReason: json['error_reason'] as String?,
+      uiMitigation: json['ui_mitigation'] as String?,
     );
   }
 }

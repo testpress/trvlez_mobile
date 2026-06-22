@@ -10,6 +10,7 @@ import '../domain/verification_job_result.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/domain/traveler_verification_state.dart';
 import '../../profile/presentation/profile_notifier.dart';
+import '../domain/verification_status.dart' as domain;
 import 'verification_notifier.dart';
 
 /// Displays the full verification journey with step-by-step progress.
@@ -48,6 +49,7 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
       VerificationRepository();
 
   VerificationJobResult? _jobResult;
+  domain.VerificationStatus? _domainStatus;
   Timer? _pollTimer;
   int _pollInterval = 2;
   int _totalElapsed = 0;
@@ -75,7 +77,18 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
       _startPolling();
     }
 
+    _fetchDomainStatus();
+
     widget.verificationNotifier?.addListener(_onNotifierChanged);
+  }
+
+  Future<void> _fetchDomainStatus() async {
+    try {
+      final status = await _verificationRepository.getVerificationStatus();
+      if (mounted) {
+        setState(() => _domainStatus = status);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -99,6 +112,13 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   Future<void> _handleRefresh() async {
     await _profileNotifier.loadProfile();
     await widget.authNotifier.refreshVerificationState();
+
+    try {
+      final status = await _verificationRepository.getVerificationStatus();
+      if (mounted) {
+        setState(() => _domainStatus = status);
+      }
+    } catch (_) {}
 
     // If we have a job ID, also poll it directly
     if (widget.verificationJobId != null) {
@@ -141,6 +161,7 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
 
         if (result.isComplete) {
           _stopPolling();
+          await _fetchDomainStatus();
           // Refresh profile and auth state to pick up the new status
           await _profileNotifier.loadProfile();
           await widget.authNotifier.refreshVerificationState();
@@ -168,22 +189,46 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   /// Derives the effective verification state, considering both the
   /// profile-level onboarding step and the real-time job result.
   TravelerVerificationState get _effectiveState {
-    // If the global notifier has completed its background submit, use its result
-    final submitResult = widget.verificationNotifier?.submitResult;
+    final notifier = widget.verificationNotifier;
+
+    // 1. Check global notifier phase first (if it's polling/running)
+    if (notifier != null) {
+      if (notifier.phase == VerificationPhase.verified) {
+        return TravelerVerificationState.verified;
+      }
+      if (notifier.phase == VerificationPhase.verificationFailed ||
+          notifier.phase == VerificationPhase.error) {
+        return TravelerVerificationState.failed;
+      }
+    }
+
+    // 2. If the global notifier has a completed job result
+    final notifierJobResult = notifier?.jobResult;
+    if (notifierJobResult != null && notifierJobResult.isComplete) {
+      if (notifierJobResult.isVerified) return TravelerVerificationState.verified;
+      if (notifierJobResult.isFailed) return TravelerVerificationState.failed;
+    }
+
+    // 3. If the global notifier has completed its background submit immediately
+    final submitResult = notifier?.submitResult;
     if (submitResult != null) {
       if (submitResult.isVerified) return TravelerVerificationState.verified;
       if (submitResult.isFailed) return TravelerVerificationState.failed;
-      if (submitResult.isProcessing) return TravelerVerificationState.submitted;
+      // We do NOT return submitted here unconditionally, because we need to
+      // allow polling updates (jobResult/phase) to override it.
     }
 
-    // If we have a completed job result (from polling), use it for immediate feedback
+    // 4. Local polling job result
     if (_jobResult != null && _jobResult!.isComplete) {
       if (_jobResult!.isVerified) return TravelerVerificationState.verified;
       if (_jobResult!.isFailed) return TravelerVerificationState.failed;
     }
 
     // If job is still processing, show submitted/processing state
-    if (_jobResult != null && !_jobResult!.isComplete) {
+    if (notifier?.phase == VerificationPhase.submitting ||
+        notifier?.phase == VerificationPhase.verifying ||
+        (_jobResult != null && !_jobResult!.isComplete) ||
+        (submitResult != null && submitResult.isProcessing)) {
       return TravelerVerificationState.submitted;
     }
 
@@ -192,12 +237,15 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   }
 
   double? get _activeVerificationScore {
-    return widget.verificationNotifier?.submitResult?.verificationScore ??
+    return widget.verificationNotifier?.jobResult?.verificationScore ??
+        widget.verificationNotifier?.submitResult?.verificationScore ??
         _jobResult?.verificationScore;
   }
 
   String? get _activeErrorMessage {
-    return widget.verificationNotifier?.errorMessage ??
+    return _domainStatus?.uiMitigation ??
+        _domainStatus?.errorReason ??
+        widget.verificationNotifier?.errorMessage ??
         _jobResult?.errorMessage;
   }
 

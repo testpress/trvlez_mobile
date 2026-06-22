@@ -190,6 +190,15 @@ class VerificationNotifier extends ChangeNotifier {
         _phase = VerificationPhase.verifying;
       }
 
+      if (_submitResult!.isComplete) {
+        try {
+          _verificationStatus = await _repository.getVerificationStatus();
+          if (_submitResult!.isFailed) {
+            _errorMessage = _verificationStatus?.uiMitigation ?? _verificationStatus?.errorReason ?? _errorMessage;
+          }
+        } catch (_) {}
+      }
+
       notifyListeners();
     } on ApiException catch (e) {
       _phase = VerificationPhase.error;
@@ -242,6 +251,13 @@ class VerificationNotifier extends ChangeNotifier {
                 'Identity verification was unsuccessful. Please try again.';
           }
 
+          try {
+            _verificationStatus = await _repository.getVerificationStatus();
+            if (_jobResult!.isFailed) {
+              _errorMessage = _verificationStatus?.uiMitigation ?? _verificationStatus?.errorReason ?? _errorMessage;
+            }
+          } catch (_) {}
+
           notifyListeners();
           stopPolling();
           onComplete?.call();
@@ -279,6 +295,13 @@ class VerificationNotifier extends ChangeNotifier {
                   _errorMessage = _jobResult!.errorMessage ??
                       'Identity verification was unsuccessful. Please try again.';
                 }
+
+                try {
+                  _verificationStatus = await _repository.getVerificationStatus();
+                  if (_jobResult!.isFailed) {
+                    _errorMessage = _verificationStatus?.uiMitigation ?? _verificationStatus?.errorReason ?? _errorMessage;
+                  }
+                } catch (_) {}
 
                 notifyListeners();
                 stopPolling();
