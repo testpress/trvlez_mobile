@@ -102,6 +102,20 @@ class VerificationNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Resets the notifier state completely for a new verification session.
+  void reset() {
+    _capturedImage = null;
+    _capturedVideo = null;
+    _phase = VerificationPhase.idle;
+    _uploadProgress = 0.0;
+    _errorMessage = null;
+    _submitResult = null;
+    _jobResult = null;
+    _verificationStatus = null;
+    stopPolling();
+    notifyListeners();
+  }
+
   Future<void> uploadPassport() async {
     if (_capturedImage == null) return;
 

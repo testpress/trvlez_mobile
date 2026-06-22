@@ -321,8 +321,8 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                     if (state.isFailed) ...[
                       FilledButton.icon(
                         onPressed: () {
-                          // Navigate back to onboarding to re-upload
-                          context.go('/onboarding');
+                          widget.verificationNotifier?.reset();
+                          context.go('/verification/passport-capture');
                         },
                         icon: const Icon(Icons.refresh_rounded),
                         label: const Text('Re-submit Documents'),
