@@ -232,6 +232,12 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
       return TravelerVerificationState.submitted;
     }
 
+    // 5. Check the overall session status from the backend
+    if (_domainStatus != null) {
+      if (_domainStatus!.isVerified) return TravelerVerificationState.verified;
+      if (_domainStatus!.isFailed) return TravelerVerificationState.failed;
+    }
+
     return _profileNotifier.profile?.verificationState ??
         TravelerVerificationState.submitted;
   }
