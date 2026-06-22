@@ -44,7 +44,7 @@ class VerificationStatus {
   factory VerificationStatus.fromJson(Map<String, dynamic> json) {
     return VerificationStatus(
       sessionId: json['session_id'] as String?,
-      status: json['status'] as String?,
+      status: (json['status'] as String?)?.toLowerCase(),
       passportUploaded: json['passport_uploaded'] as bool? ?? false,
       videoUploaded: json['video_uploaded'] as bool? ?? false,
       passportFileId: json['passport_file_id'] as String?,

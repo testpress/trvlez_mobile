@@ -32,7 +32,7 @@ class VerificationSubmitResult {
   factory VerificationSubmitResult.fromJson(Map<String, dynamic> json) {
     return VerificationSubmitResult(
       sessionId: json['session_id'] as String,
-      status: json['status'] as String,
+      status: (json['status'] as String).toLowerCase(),
       submittedAt: DateTime.parse(json['submitted_at'] as String),
       verificationJobId: json['verification_job_id'] as String?,
       verificationScore: (json['verification_score'] as num?)?.toDouble(),

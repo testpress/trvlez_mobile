@@ -47,7 +47,7 @@ class VerificationJobResult {
       id: json['id'] as String,
       travelerId: json['traveler_id'] as String,
       verificationSessionId: json['verification_session_id'] as String,
-      status: json['status'] as String,
+      status: (json['status'] as String).toLowerCase(),
       verificationType: json['verification_type'] as String? ?? 'full',
       verificationScore: (json['verification_score'] as num?)?.toDouble(),
       errorMessage: json['error_message'] as String?,
