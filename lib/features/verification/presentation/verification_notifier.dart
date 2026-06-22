@@ -6,6 +6,7 @@ import '../../../core/network/api_exception.dart';
 import '../data/verification_repository.dart';
 import '../domain/verification_job_result.dart';
 import '../domain/verification_submit_result.dart';
+import '../domain/verification_status.dart' as domain;
 
 /// Tracks the current phase of the verification flow in the UI.
 enum VerificationPhase {
@@ -47,7 +48,7 @@ class VerificationNotifier extends ChangeNotifier {
   String? _errorMessage;
   VerificationSubmitResult? _submitResult;
   VerificationJobResult? _jobResult;
-  VerificationStatus? _verificationStatus;
+  domain.VerificationStatus? _verificationStatus;
   Timer? _pollTimer;
 
   File? get capturedImage => _capturedImage;
@@ -57,7 +58,7 @@ class VerificationNotifier extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   VerificationSubmitResult? get submitResult => _submitResult;
   VerificationJobResult? get jobResult => _jobResult;
-  VerificationStatus? get verificationStatus => _verificationStatus;
+  domain.VerificationStatus? get verificationStatus => _verificationStatus;
 
   /// Backward-compatible status getter used by existing UI code.
   VerificationStatus get status => switch (_phase) {
@@ -204,7 +205,7 @@ class VerificationNotifier extends ChangeNotifier {
         _phase = VerificationPhase.verifying;
       }
 
-      if (_submitResult!.isComplete) {
+      if (!_submitResult!.isProcessing) {
         try {
           _verificationStatus = await _repository.getVerificationStatus();
           if (_submitResult!.isFailed) {
