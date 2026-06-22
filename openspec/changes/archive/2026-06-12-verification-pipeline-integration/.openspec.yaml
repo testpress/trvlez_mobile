@@ -1,0 +1,10 @@
+id: verification-pipeline-integration
+title: Verification Pipeline Integration
+status: done
+artifacts:
+  - proposal
+  - design
+  - spec
+  - tasks
+applyRequires:
+  - tasks
