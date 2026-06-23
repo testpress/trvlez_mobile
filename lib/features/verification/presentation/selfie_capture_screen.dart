@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -17,7 +19,7 @@ class SelfieCaptureScreen extends StatefulWidget {
   State<SelfieCaptureScreen> createState() => _SelfieCaptureScreenState();
 }
 
-class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
+class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerProviderStateMixin {
   CameraController? cameraController;
   List<CameraDescription> cameras = [];
   bool isInitializing = true;
@@ -25,6 +27,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
   String? errorMsg;
   int recordedSeconds = 0;
   Timer? recordingTimer;
+  late AnimationController _progressController;
 
   static const int minRecordingSeconds = 3;
   static const int maxRecordingSeconds = 10;
@@ -32,6 +35,10 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
   @override
   void initState() {
     super.initState();
+    _progressController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: maxRecordingSeconds),
+    );
     initializeCamera();
   }
 
@@ -90,6 +97,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
         isRecording = true;
         recordedSeconds = 0;
       });
+      _progressController.forward(from: 0.0);
 
       recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!mounted) {
@@ -120,6 +128,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
     }
 
     recordingTimer?.cancel();
+    _progressController.stop();
     
     try {
       final video = await cameraController!.stopVideoRecording();
@@ -177,6 +186,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
   @override
   void dispose() {
     recordingTimer?.cancel();
+    _progressController.dispose();
     cameraController?.dispose();
     super.dispose();
   }
@@ -222,6 +232,18 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
         children: [
           if (cameraController != null && cameraController!.value.isInitialized)
             CameraPreview(cameraController!),
+            
+          // Face Guide Overlay
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _progressController,
+              builder: (context, child) {
+                return CustomPaint(
+                  painter: FaceGuidePainter(progress: _progressController.value),
+                );
+              },
+            ),
+          ),
           
           // Instructions Overlay
           const Positioned(
@@ -319,5 +341,63 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> {
         ],
       ),
     );
+  }
+}
+
+class FaceGuidePainter extends CustomPainter {
+  final double progress;
+
+  FaceGuidePainter({required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Draw semi-transparent background
+    final paint = Paint()..color = Colors.black54;
+    final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    
+    // Define the oval face guide area
+    final ovalWidth = size.width * 0.85;
+    final ovalHeight = ovalWidth * 1.25;
+    final ovalRect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2.4),
+      width: ovalWidth,
+      height: ovalHeight,
+    );
+    
+    // Create the cutout
+    final ovalPath = Path()..addOval(ovalRect);
+    final combinedPath = Path.combine(PathOperation.difference, path, ovalPath);
+    
+    canvas.drawPath(combinedPath, paint);
+    
+    // Draw the base oval border
+    final borderPaint = Paint()
+      ..color = Colors.white54
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0;
+    canvas.drawOval(ovalRect, borderPaint);
+
+    // Draw the progress ring
+    if (progress > 0) {
+      final progressPaint = Paint()
+        ..color = Colors.red
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..strokeCap = StrokeCap.round;
+      
+      // Sweep angle is progress * 2 * pi
+      canvas.drawArc(
+        ovalRect,
+        -math.pi / 2, // Start at top
+        progress * 2 * math.pi,
+        false,
+        progressPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(FaceGuidePainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }
