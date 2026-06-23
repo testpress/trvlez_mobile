@@ -164,8 +164,8 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
                 ),
                 Center(
                   child: Container(
-                    width: MediaQuery.sizeOf(context).width * 0.85,
-                    height: MediaQuery.sizeOf(context).width * 0.85 * 1.4, // Passport proportion ~ 1:1.4
+                    width: MediaQuery.sizeOf(context).width * 0.85 * 1.4,
+                    height: MediaQuery.sizeOf(context).width * 0.65, // Passport proportion ~ 1:1.4
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -173,6 +173,18 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
                   ),
                 ),
               ],
+            ),
+          ),
+
+          // Passport Frame Border
+          Center(
+            child: Container(
+              width: MediaQuery.sizeOf(context).width * 0.85 * 1.4,
+              height: MediaQuery.sizeOf(context).width * 0.65,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 3),
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
 
