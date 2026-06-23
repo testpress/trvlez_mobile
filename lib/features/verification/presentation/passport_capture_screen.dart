@@ -1,11 +1,51 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
 import 'verification_notifier.dart';
+
+Future<File?> processAndCropImage(Map<String, dynamic> params) async {
+  final String imagePath = params['path'] as String;
+  final double sw = params['sw'] as double;
+  final double sh = params['sh'] as double;
+  final double frameWidth = params['frameWidth'] as double;
+  final double frameHeight = params['frameHeight'] as double;
+  
+  final bytes = File(imagePath).readAsBytesSync();
+  img.Image? originalImage = img.decodeImage(bytes);
+  
+  if (originalImage != null) {
+    originalImage = img.bakeOrientation(originalImage);
+    
+    final double iw = originalImage.width.toDouble();
+    final double ih = originalImage.height.toDouble();
+    
+    final double scaleX = sw / iw;
+    final double scaleY = sh / ih;
+    
+    final double cropW = frameWidth / scaleX;
+    final double cropH = frameHeight / scaleY;
+    final double cropX = (iw - cropW) / 2;
+    final double cropY = (ih - cropH) / 2;
+    
+    final img.Image croppedImage = img.copyCrop(
+      originalImage,
+      x: cropX.toInt().clamp(0, originalImage.width - 1),
+      y: cropY.toInt().clamp(0, originalImage.height - 1),
+      width: cropW.toInt().clamp(1, originalImage.width),
+      height: cropH.toInt().clamp(1, originalImage.height),
+    );
+    
+    final croppedBytes = img.encodeJpg(croppedImage, quality: 90);
+    return File(imagePath)..writeAsBytesSync(croppedBytes);
+  }
+  return null;
+}
 
 class PassportCaptureScreen extends StatefulWidget {
   final VerificationNotifier notifier;
@@ -77,8 +117,22 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
     try {
       final XFile file = await _controller!.takePicture();
+      
+      final sw = MediaQuery.sizeOf(context).width;
+      final sh = MediaQuery.sizeOf(context).height;
+      final frameWidth = sw * 0.9;
+      final frameHeight = frameWidth / 1.43;
+
+      final croppedFile = await compute(processAndCropImage, {
+        'path': file.path,
+        'sw': sw,
+        'sh': sh,
+        'frameWidth': frameWidth,
+        'frameHeight': frameHeight,
+      });
+
       // We pass the captured file to the notifier and go to review screen
-      widget.notifier.setImage(File(file.path));
+      widget.notifier.setImage(croppedFile ?? File(file.path));
       
       if (mounted) {
         context.push('/verification/passport-review');
@@ -139,6 +193,8 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
     }
 
     final theme = Theme.of(context);
+    final frameWidth = MediaQuery.sizeOf(context).width * 0.9;
+    final frameHeight = frameWidth / 1.43;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -164,8 +220,8 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
                 ),
                 Center(
                   child: Container(
-                    width: MediaQuery.sizeOf(context).width * 0.85 * 1.4,
-                    height: MediaQuery.sizeOf(context).width * 0.65, // Passport proportion ~ 1:1.4
+                    width: frameWidth,
+                    height: frameHeight,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -179,8 +235,8 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
           // Passport Frame Border
           Center(
             child: Container(
-              width: MediaQuery.sizeOf(context).width * 0.85 * 1.4,
-              height: MediaQuery.sizeOf(context).width * 0.65,
+              width: frameWidth,
+              height: frameHeight,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.white, width: 3),
                 borderRadius: BorderRadius.circular(16),
