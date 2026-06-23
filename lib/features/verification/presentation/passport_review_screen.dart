@@ -109,9 +109,8 @@ class PassportReviewScreen extends StatelessWidget {
                         const SizedBox(height: 32),
                         FilledButton(
                           onPressed: () {
-                            // Pop back to onboarding
-                            context.pop();
-                            context.pop();
+                            // First pop the review screen
+                            context.go('/onboarding');
                           },
                           child: const Text('Continue'),
                         ),

@@ -194,7 +194,13 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
             left: 16,
             child: IconButton(
               icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => context.pop(),
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/verification/status');
+                }
+              },
             ),
           ),
 

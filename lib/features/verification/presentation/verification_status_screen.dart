@@ -236,6 +236,13 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     if (_domainStatus != null) {
       if (_domainStatus!.isVerified) return TravelerVerificationState.verified;
       if (_domainStatus!.isFailed) return TravelerVerificationState.failed;
+      
+      // If there is an active session but it is NOT processing, the user is still
+      // in the middle of uploading documents. Override stale profile state (which 
+      // might still say 'submitted' from a prior failure) to prevent misleading UI.
+      if (!_domainStatus!.isProcessing) {
+        return TravelerVerificationState.verificationStarted;
+      }
     }
 
     return _profileNotifier.profile?.verificationState ??

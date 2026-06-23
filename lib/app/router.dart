@@ -47,15 +47,6 @@ GoRouter createRouter(
         return '/home';
       }
 
-      // Prevent accessing /onboarding when no longer needed
-      if (location == '/onboarding' &&
-          !authNotifier.verificationState.needsOnboarding) {
-        // Exception: allow if failed (re-submitting documents)
-        if (!authNotifier.verificationState.isFailed) {
-          return '/home';
-        }
-      }
-
       return null;
     },
     routes: [

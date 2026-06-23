@@ -334,6 +334,8 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
                 }
                 if (context.canPop()) {
                   context.pop();
+                } else {
+                  context.go('/verification/status');
                 }
               },
             ),
