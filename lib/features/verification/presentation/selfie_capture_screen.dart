@@ -358,10 +358,10 @@ class FaceGuidePainter extends CustomPainter {
     final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     
     // Define the oval face guide area
-    final ovalWidth = size.width * 0.85;
-    final ovalHeight = ovalWidth * 1.25;
+    final ovalWidth = size.width * 0.92;
+    final ovalHeight = ovalWidth * 1.35;
     final ovalRect = Rect.fromCenter(
-      center: Offset(size.width / 2, size.height / 2.4),
+      center: Offset(size.width / 2, size.height / 2.05),
       width: ovalWidth,
       height: ovalHeight,
     );
