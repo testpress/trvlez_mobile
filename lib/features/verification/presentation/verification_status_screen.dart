@@ -255,12 +255,18 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
         _jobResult?.verificationScore;
   }
 
-  String? get _activeErrorMessage {
-    return _domainStatus?.uiMitigation ??
-        _domainStatus?.errorReason ??
+  String? get _failedStep => _domainStatus?.failedStep ?? widget.verificationNotifier?.verificationStatus?.failedStep;
+
+  String? get _errorReason {
+    final reason = _domainStatus?.errorReason ??
+        widget.verificationNotifier?.verificationStatus?.errorReason ??
         widget.verificationNotifier?.errorMessage ??
         _jobResult?.errorMessage;
+    if (reason == _uiMitigation) return null;
+    return reason;
   }
+
+  String? get _uiMitigation => _domainStatus?.uiMitigation ?? widget.verificationNotifier?.verificationStatus?.uiMitigation;
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +333,9 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                     // ── Info Card ─────────────────────────────────
                     _InfoCard(
                       state: state,
-                      errorMessage: _activeErrorMessage,
+                      failedStep: _failedStep,
+                      errorReason: _errorReason,
+                      uiMitigation: _uiMitigation,
                     ),
                     const SizedBox(height: 24),
                     // ── Actions ───────────────────────────────────
@@ -632,16 +640,112 @@ class _StepRow extends StatelessWidget {
 
 class _InfoCard extends StatelessWidget {
   final TravelerVerificationState state;
-  final String? errorMessage;
+  final String? failedStep;
+  final String? errorReason;
+  final String? uiMitigation;
 
   const _InfoCard({
     required this.state,
-    this.errorMessage,
+    this.failedStep,
+    this.errorReason,
+    this.uiMitigation,
   });
+
+  String _formatStep(String step) {
+    return step.split('_').map((word) {
+      if (word.isEmpty) return '';
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (state == TravelerVerificationState.failed) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE65100).withAlpha(15),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFE65100).withAlpha(40),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.warning_amber_rounded,
+                    color: Color(0xFFE65100), size: 22),
+                const SizedBox(width: 12),
+                Text(
+                  'Verification Unsuccessful',
+                  style: GoogleFonts.cabin(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFE65100),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (failedStep != null && failedStep!.isNotEmpty) ...[
+              Text(
+                'Failed at: ${_formatStep(failedStep!)}',
+                style: GoogleFonts.cabin(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface.withAlpha(200),
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
+            Text(
+              errorReason ??
+                  'Your verification could not be completed. This may be due to unclear document images or a mismatch. Please try again.',
+              style: GoogleFonts.cabin(
+                fontSize: 14,
+                color: theme.colorScheme.onSurface.withAlpha(180),
+                height: 1.5,
+              ),
+            ),
+            if (uiMitigation != null && uiMitigation!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                      color: const Color(0xFFE65100).withAlpha(40)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.lightbulb_outline_rounded,
+                        size: 18, color: Color(0xFFE65100)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        uiMitigation!,
+                        style: GoogleFonts.cabin(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.onSurface.withAlpha(200),
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    }
 
     final (IconData icon, Color color, String message) = switch (state) {
       TravelerVerificationState.submitted => (
@@ -653,12 +757,6 @@ class _InfoCard extends StatelessWidget {
           Icons.celebration_rounded,
           const Color(0xFF27AE60),
           'Congratulations! Your identity has been verified. You now have full access to all TrvlEz features.',
-        ),
-      TravelerVerificationState.failed => (
-          Icons.warning_amber_rounded,
-          const Color(0xFFE65100),
-          errorMessage ??
-              'Your verification could not be completed. This may be due to unclear document images or a mismatch. Please try again.',
         ),
       _ => (
           Icons.info_outline_rounded,
