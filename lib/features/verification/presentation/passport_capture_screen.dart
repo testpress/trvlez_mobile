@@ -41,8 +41,10 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
       height: cropH.toInt().clamp(1, originalImage.height),
     );
     
-    final croppedBytes = img.encodeJpg(croppedImage, quality: 90);
-    return File(imagePath)..writeAsBytesSync(croppedBytes);
+    final croppedBytes = img.encodePng(croppedImage);
+    final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '.png');
+    final pngFile = File(pngPath)..writeAsBytesSync(croppedBytes);
+    return pngFile;
   }
   return null;
 }
@@ -80,7 +82,7 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
         _controller = CameraController(
           backCamera,
-          ResolutionPreset.high,
+          ResolutionPreset.max,
           enableAudio: false,
         );
 
@@ -164,7 +166,18 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       
       if (image != null) {
-        widget.notifier.setImage(File(image.path));
+        final sw = MediaQuery.sizeOf(context).width;
+        final sh = MediaQuery.sizeOf(context).height;
+        final frameWidth = sw * 0.9;
+        final frameHeight = frameWidth / 1.43;
+        final processedFile = await compute(processAndCropImage, {
+          'path': image.path,
+          'sw': sw,
+          'sh': sh,
+          'frameWidth': frameWidth,
+          'frameHeight': frameHeight,
+        });
+        widget.notifier.setImage(processedFile ?? File(image.path));
         if (mounted) {
           context.push('/verification/passport-review');
         }
