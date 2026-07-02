@@ -18,11 +18,10 @@ class HomeNotifier extends ChangeNotifier {
   final VerificationRepository _verificationRepository;
 
   HomeNotifier({
-    required ProfileRepository profileRepository,
+    required this._profileRepository,
     VerificationRepository? verificationRepository,
-  })  : _profileRepository = profileRepository,
-        _verificationRepository =
-            verificationRepository ?? VerificationRepository();
+  }) : _verificationRepository =
+           verificationRepository ?? VerificationRepository();
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -70,8 +69,8 @@ class HomeNotifier extends ChangeNotifier {
       // documents have been submitted (to detect failed state)
       if (_profile?.verificationState == TravelerVerificationState.submitted) {
         try {
-          _verificationStatus =
-              await _verificationRepository.getVerificationStatus();
+          _verificationStatus = await _verificationRepository
+              .getVerificationStatus();
         } catch (_) {
           // Non-critical — fall back to profile-based state
         }

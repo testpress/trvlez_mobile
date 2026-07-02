@@ -14,10 +14,7 @@ class ProfileRemoteDataSource {
   /// Fetches the current traveler profile.
   Future<ProfileDto> getProfile() async {
     final token = await tokenStorage.getToken();
-    final response = await apiClient.get(
-      '/traveler/profile',
-      authToken: token,
-    );
+    final response = await apiClient.get('/traveler/profile', authToken: token);
     return ProfileDto.fromJson(response);
   }
 
@@ -30,17 +27,17 @@ class ProfileRemoteDataSource {
     String? passportExpiry,
   }) async {
     final token = await tokenStorage.getToken();
-    
+
     final response = await apiClient.patch(
       '/traveler/profile',
       authToken: token,
       body: {
-        if (phone != null) 'phone': phone,
-        if (nationality != null) 'nationality': nationality,
-        if (gender != null) 'gender': gender,
-        if (dateOfBirth != null) 'date_of_birth': dateOfBirth,
-        if (passportNumber != null) 'passport_number': passportNumber,
-        if (passportExpiry != null) 'passport_expiry': passportExpiry,
+        'phone': ?phone,
+        'nationality': ?nationality,
+        'gender': ?gender,
+        'date_of_birth': ?dateOfBirth,
+        'passport_number': ?passportNumber,
+        'passport_expiry': ?passportExpiry,
       },
     );
 

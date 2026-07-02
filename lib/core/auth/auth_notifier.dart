@@ -12,7 +12,6 @@ class AuthNotifier extends ChangeNotifier {
   final TokenStorage tokenStorage;
   final ProfileRepository? _profileRepository;
 
-
   bool isAuthenticated = false;
 
   /// Cached verification state — loaded during [checkAuthStatus].
@@ -21,10 +20,7 @@ class AuthNotifier extends ChangeNotifier {
   TravelerVerificationState verificationState =
       TravelerVerificationState.profilePending;
 
-  AuthNotifier({
-    required this.tokenStorage,
-    ProfileRepository? profileRepository,
-  }) : _profileRepository = profileRepository;
+  AuthNotifier({required this.tokenStorage, this._profileRepository});
 
   /// Checks secure storage for an existing token and updates state.
   ///

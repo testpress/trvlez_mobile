@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../app/router.dart';
 import '../../../core/auth/auth_notifier.dart';
 import '../../../main.dart';
 import '../../profile/data/profile_repository.dart';
@@ -75,9 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
       SnackBar(
         content: Text('$featureName — coming soon!'),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -104,7 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   'assets/logo.svg',
                   width: 18,
                   height: 18,
-                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -138,7 +138,9 @@ class _HomeScreenState extends State<HomeScreen> {
             onSelected: (value) async {
               if (value == 'theme') {
                 final current = TrvlEzApp.themeNotifier.value;
-                final newMode = current == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+                final newMode = current == ThemeMode.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark;
                 TrvlEzApp.themeNotifier.value = newMode;
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setBool('isDark', newMode == ThemeMode.dark);
@@ -151,7 +153,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   value: 'theme',
                   child: Row(
                     children: [
-                      Icon(isDark ? Icons.light_mode : Icons.dark_mode, size: 20),
+                      Icon(
+                        isDark ? Icons.light_mode : Icons.dark_mode,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(isDark ? 'Light Mode' : 'Dark Mode'),
                     ],
@@ -268,10 +273,7 @@ class _FeatureGrid extends StatelessWidget {
   final bool isVerified;
   final void Function(String featureName) onFeatureTap;
 
-  const _FeatureGrid({
-    required this.isVerified,
-    required this.onFeatureTap,
-  });
+  const _FeatureGrid({required this.isVerified, required this.onFeatureTap});
 
   @override
   Widget build(BuildContext context) {
@@ -344,10 +346,7 @@ class _FeatureCard extends StatelessWidget {
   final _FeatureItem feature;
   final VoidCallback onTap;
 
-  const _FeatureCard({
-    required this.feature,
-    required this.onTap,
-  });
+  const _FeatureCard({required this.feature, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -382,11 +381,7 @@ class _FeatureCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
-                  feature.icon,
-                  color: Colors.white,
-                  size: 26,
-                ),
+                child: Icon(feature.icon, color: Colors.white, size: 26),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -57,11 +57,13 @@ void main() async {
     TrvlEzApp.themeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
   }
 
-  runApp(TrvlEzApp(
-    authNotifier: authNotifier,
-    authRepository: authRepository,
-    profileRepository: profileRepository,
-  ));
+  runApp(
+    TrvlEzApp(
+      authNotifier: authNotifier,
+      authRepository: authRepository,
+      profileRepository: profileRepository,
+    ),
+  );
 }
 
 class TrvlEzApp extends StatelessWidget {
@@ -69,7 +71,9 @@ class TrvlEzApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ProfileRepository profileRepository;
 
-  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
+  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
+    ThemeMode.system,
+  );
 
   const TrvlEzApp({
     super.key,
@@ -82,14 +86,18 @@ class TrvlEzApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, currentMode, __) {
+      builder: (_, currentMode, _) {
         return MaterialApp.router(
           title: 'TrvlEz',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: currentMode,
-          routerConfig: createRouter(authNotifier, authRepository, profileRepository),
+          routerConfig: createRouter(
+            authNotifier,
+            authRepository,
+            profileRepository,
+          ),
         );
       },
     );
