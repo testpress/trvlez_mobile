@@ -59,7 +59,8 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => RegistrationScreen(authRepository: authRepository),
+        builder: (context, state) =>
+            RegistrationScreen(authRepository: authRepository),
       ),
       GoRoute(
         path: '/onboarding',
@@ -83,27 +84,23 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: '/verification/passport-capture',
-        builder: (context, state) => PassportCaptureScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) =>
+            PassportCaptureScreen(notifier: verificationNotifier),
       ),
       GoRoute(
         path: '/verification/passport-review',
-        builder: (context, state) => PassportReviewScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) =>
+            PassportReviewScreen(notifier: verificationNotifier),
       ),
       GoRoute(
         path: '/verification/selfie-capture',
-        builder: (context, state) => SelfieCaptureScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) =>
+            SelfieCaptureScreen(notifier: verificationNotifier),
       ),
       GoRoute(
         path: '/verification/selfie-review',
-        builder: (context, state) => SelfieReviewScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) =>
+            SelfieReviewScreen(notifier: verificationNotifier),
       ),
       GoRoute(
         path: '/verification/status',

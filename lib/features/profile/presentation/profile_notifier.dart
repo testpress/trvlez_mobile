@@ -8,30 +8,26 @@ class ProfileNotifier extends ChangeNotifier {
 
   ProfileNotifier({required this.repository});
 
-  bool _isLoading = false;
-  String? _errorMessage;
-  Profile? _profile;
-
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  Profile? get profile => _profile;
+  bool isLoading = false;
+  String? errorMessage;
+  Profile? profile;
 
   Future<void> loadProfile() async {
-    _isLoading = true;
-    _errorMessage = null;
+    isLoading = true;
+    errorMessage = null;
     notifyListeners();
 
     try {
-      _profile = await repository.getProfile();
-      _isLoading = false;
+      profile = await repository.getProfile();
+      isLoading = false;
       notifyListeners();
     } on ApiException catch (e) {
-      _errorMessage = e.message;
-      _isLoading = false;
+      errorMessage = e.message;
+      isLoading = false;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Failed to load profile.';
-      _isLoading = false;
+      errorMessage = 'Failed to load profile.';
+      isLoading = false;
       notifyListeners();
     }
   }
@@ -44,12 +40,12 @@ class ProfileNotifier extends ChangeNotifier {
     String? passportNumber,
     DateTime? passportExpiry,
   }) async {
-    _isLoading = true;
-    _errorMessage = null;
+    isLoading = true;
+    errorMessage = null;
     notifyListeners();
 
     try {
-      _profile = await repository.updateProfile(
+      profile = await repository.updateProfile(
         phone: phone,
         nationality: nationality,
         gender: gender,
@@ -57,17 +53,17 @@ class ProfileNotifier extends ChangeNotifier {
         passportNumber: passportNumber,
         passportExpiry: passportExpiry,
       );
-      _isLoading = false;
+      isLoading = false;
       notifyListeners();
       return true;
     } on ApiException catch (e) {
-      _errorMessage = e.message;
-      _isLoading = false;
+      errorMessage = e.message;
+      isLoading = false;
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = 'An unexpected error occurred.';
-      _isLoading = false;
+      errorMessage = 'An unexpected error occurred.';
+      isLoading = false;
       notifyListeners();
       return false;
     }

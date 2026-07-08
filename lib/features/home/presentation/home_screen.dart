@@ -27,38 +27,38 @@ class HomeScreen extends StatefulWidget {
   });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late final HomeNotifier _notifier;
+class HomeScreenState extends State<HomeScreen> {
+  late final HomeNotifier notifier;
 
   @override
   void initState() {
     super.initState();
-    _notifier = HomeNotifier(profileRepository: widget.profileRepository);
-    _notifier.addListener(_onStateChanged);
-    _notifier.loadProfile();
+    notifier = HomeNotifier(profileRepository: widget.profileRepository);
+    notifier.addListener(onStateChanged);
+    notifier.loadProfile();
   }
 
   @override
   void dispose() {
-    _notifier.removeListener(_onStateChanged);
-    _notifier.dispose();
+    notifier.removeListener(onStateChanged);
+    notifier.dispose();
     super.dispose();
   }
 
-  void _onStateChanged() {
+  void onStateChanged() {
     if (mounted) setState(() {});
   }
 
-  Future<void> _handleRefresh() async {
-    await _notifier.loadProfile();
+  Future<void> handleRefresh() async {
+    await notifier.loadProfile();
     await widget.authNotifier.refreshVerificationState();
   }
 
-  void _onBannerTap() {
-    final state = _notifier.verificationState;
+  void onBannerTap() {
+    final state = notifier.verificationState;
 
     if (state.needsOnboarding) {
       // Pre-submission: go to onboarding stepper to complete steps
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _onFeatureTap(String featureName) {
+  void onFeatureTap(String featureName) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$featureName — coming soon!'),
@@ -193,10 +193,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _notifier.isLoading && _notifier.profile == null
+      body: notifier.isLoading && notifier.profile == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: _handleRefresh,
+              onRefresh: handleRefresh,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
@@ -204,21 +204,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const SizedBox(height: 8),
                     // ── Verification Banner ─────────────────────────
-                    if (_notifier.shouldShowBanner)
+                    if (notifier.shouldShowBanner)
                       VerificationBanner(
-                        state: _notifier.verificationState,
-                        onActionTap: _onBannerTap,
+                        state: notifier.verificationState,
+                        onActionTap: onBannerTap,
                       ),
                     const SizedBox(height: 24),
                     // ── Welcome Section ──────────────────────────────
-                    _WelcomeSection(
-                      isVerified: _notifier.verificationState.isVerified,
+                    WelcomeSection(
+                      isVerified: notifier.verificationState.isVerified,
                     ),
                     const SizedBox(height: 32),
                     // ── Feature Grid ────────────────────────────────
-                    _FeatureGrid(
-                      isVerified: _notifier.verificationState.isVerified,
-                      onFeatureTap: _onFeatureTap,
+                    FeatureGrid(
+                      isVerified: notifier.verificationState.isVerified,
+                      onFeatureTap: onFeatureTap,
                     ),
                     const SizedBox(height: 40),
                   ],
@@ -231,10 +231,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // ─── Welcome Section ──────────────────────────────────────────────────────
 
-class _WelcomeSection extends StatelessWidget {
+class WelcomeSection extends StatelessWidget {
   final bool isVerified;
 
-  const _WelcomeSection({required this.isVerified});
+  const WelcomeSection({required this.isVerified});
 
   @override
   Widget build(BuildContext context) {
@@ -269,34 +269,34 @@ class _WelcomeSection extends StatelessWidget {
 
 // ─── Feature Grid ─────────────────────────────────────────────────────────
 
-class _FeatureGrid extends StatelessWidget {
+class FeatureGrid extends StatelessWidget {
   final bool isVerified;
   final void Function(String featureName) onFeatureTap;
 
-  const _FeatureGrid({required this.isVerified, required this.onFeatureTap});
+  const FeatureGrid({required this.isVerified, required this.onFeatureTap});
 
   @override
   Widget build(BuildContext context) {
     final features = [
-      _FeatureItem(
+      FeatureItem(
         icon: Icons.explore_rounded,
         label: 'Explore',
         subtitle: 'Discover destinations',
         gradientColors: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
       ),
-      _FeatureItem(
+      FeatureItem(
         icon: Icons.flight_takeoff_rounded,
         label: 'My Trips',
         subtitle: 'View bookings',
         gradientColors: const [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
       ),
-      _FeatureItem(
+      FeatureItem(
         icon: Icons.local_offer_rounded,
         label: 'Deals',
         subtitle: 'Exclusive offers',
         gradientColors: const [Color(0xFFF59E0B), Color(0xFFFBBF24)],
       ),
-      _FeatureItem(
+      FeatureItem(
         icon: Icons.support_agent_rounded,
         label: 'Support',
         subtitle: 'Get help',
@@ -318,7 +318,7 @@ class _FeatureGrid extends StatelessWidget {
         itemCount: features.length,
         itemBuilder: (context, index) {
           final feature = features[index];
-          return _FeatureCard(
+          return FeatureCard(
             feature: feature,
             onTap: () => onFeatureTap(feature.label),
           );
@@ -328,13 +328,13 @@ class _FeatureGrid extends StatelessWidget {
   }
 }
 
-class _FeatureItem {
+class FeatureItem {
   final IconData icon;
   final String label;
   final String subtitle;
   final List<Color> gradientColors;
 
-  const _FeatureItem({
+  const FeatureItem({
     required this.icon,
     required this.label,
     required this.subtitle,
@@ -342,11 +342,11 @@ class _FeatureItem {
   });
 }
 
-class _FeatureCard extends StatelessWidget {
-  final _FeatureItem feature;
+class FeatureCard extends StatelessWidget {
+  final FeatureItem feature;
   final VoidCallback onTap;
 
-  const _FeatureCard({required this.feature, required this.onTap});
+  const FeatureCard({required this.feature, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

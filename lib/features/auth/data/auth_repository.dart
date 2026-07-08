@@ -38,14 +38,8 @@ class AuthRepository {
   }
 
   /// Logs in an existing traveler and saves the access token.
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
-    final dto = await remoteDataSource.login(
-      email: email,
-      password: password,
-    );
+  Future<void> login({required String email, required String password}) async {
+    final dto = await remoteDataSource.login(email: email, password: password);
 
     await tokenStorage.saveToken(dto.accessToken);
   }

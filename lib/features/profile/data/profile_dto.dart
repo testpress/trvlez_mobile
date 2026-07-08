@@ -55,7 +55,9 @@ class ProfileDto {
       gender: gender,
       dateOfBirth: dateOfBirth != null ? DateTime.tryParse(dateOfBirth!) : null,
       passportNumber: passportNumber,
-      passportExpiry: passportExpiry != null ? DateTime.tryParse(passportExpiry!) : null,
+      passportExpiry: passportExpiry != null
+          ? DateTime.tryParse(passportExpiry!)
+          : null,
       onboardingStep: onboardingStep,
     );
   }

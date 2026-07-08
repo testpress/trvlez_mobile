@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,12 +40,7 @@ class PassportReviewScreen extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               // Captured Image
-              InteractiveViewer(
-                child: Image.file(
-                  image,
-                  fit: BoxFit.contain,
-                ),
-              ),
+              InteractiveViewer(child: Image.file(image, fit: BoxFit.contain)),
 
               // Overlay for Upload Status
               if (status == VerificationStatus.uploading)
@@ -75,14 +68,18 @@ class PassportReviewScreen extends StatelessWidget {
                               value: progress > 0 ? progress : null,
                               minHeight: 8,
                               backgroundColor: Colors.white.withAlpha(50),
-                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           '${(progress * 100).toInt()}%',
-                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white70,
+                          ),
                         ),
                       ],
                     ),
@@ -97,7 +94,11 @@ class PassportReviewScreen extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.check_circle, color: Colors.green, size: 80),
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                          size: 80,
+                        ),
                         const SizedBox(height: 24),
                         Text(
                           'Upload Complete!',
@@ -120,7 +121,8 @@ class PassportReviewScreen extends StatelessWidget {
                 ),
 
               // Bottom Actions (Hidden during upload)
-              if (status == VerificationStatus.idle || status == VerificationStatus.error)
+              if (status == VerificationStatus.idle ||
+                  status == VerificationStatus.error)
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -154,12 +156,17 @@ class PassportReviewScreen extends StatelessWidget {
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.error_outline, color: theme.colorScheme.error),
+                                Icon(
+                                  Icons.error_outline,
+                                  color: theme.colorScheme.error,
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
                                     error,
-                                    style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onErrorContainer,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -178,7 +185,9 @@ class PassportReviewScreen extends StatelessWidget {
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   side: const BorderSide(color: Colors.white),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -191,12 +200,18 @@ class PassportReviewScreen extends StatelessWidget {
                               child: FilledButton(
                                 onPressed: () => notifier.uploadPassport(),
                                 style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Text(status == VerificationStatus.error ? 'Retry Upload' : 'Upload'),
+                                child: Text(
+                                  status == VerificationStatus.error
+                                      ? 'Retry Upload'
+                                      : 'Upload',
+                                ),
                               ),
                             ),
                           ],

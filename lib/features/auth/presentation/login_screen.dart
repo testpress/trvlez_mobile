@@ -158,7 +158,10 @@ class LoginScreenState extends State<LoginScreen>
               'assets/logo.svg',
               width: 28,
               height: 28,
-              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ),
@@ -309,10 +312,7 @@ class LoginScreenState extends State<LoginScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Email',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Email', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         TextFormField(
           controller: emailController,
@@ -334,10 +334,7 @@ class LoginScreenState extends State<LoginScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Password',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Password', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         TextFormField(
           controller: passwordController,
@@ -393,14 +390,14 @@ class LoginScreenState extends State<LoginScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                     width: 20,
-                     height: 20,
-                     child: CircularProgressIndicator(
-                       strokeWidth: 2.5,
-                       valueColor: AlwaysStoppedAnimation<Color>(
-                         colorScheme.onPrimary.withAlpha(200),
-                       ),
-                     ),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        colorScheme.onPrimary.withAlpha(200),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Text(

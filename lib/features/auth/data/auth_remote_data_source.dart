@@ -23,11 +23,7 @@ class AuthRemoteDataSource {
   }) async {
     final responseJson = await apiClient.post(
       '/traveler/signup',
-      body: {
-        'full_name': fullName,
-        'email': email,
-        'password': password,
-      },
+      body: {'full_name': fullName, 'email': email, 'password': password},
     );
 
     return TravelerSignupResponseDto.fromJson(responseJson);

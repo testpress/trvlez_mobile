@@ -12,13 +12,11 @@ import 'api_exception.dart';
 /// Handles JSON serialization, common headers, and FastAPI error parsing.
 /// All methods throw [ApiException] on failure.
 class ApiClient {
-  final http.Client _client;
+  final http.Client client;
   void Function()? onUnauthorized;
 
-  ApiClient({
-    http.Client? client,
-    this.onUnauthorized,
-  }) : _client = client ?? http.Client();
+  ApiClient({http.Client? client, this.onUnauthorized})
+    : client = client ?? http.Client();
 
   // ─── Public API ───────────────────────────────────────────────────
 
@@ -31,13 +29,13 @@ class ApiClient {
     final uri = Uri.parse('${AppConfig.apiUrl}$path');
 
     try {
-      final response = await _client.post(
+      final response = await client.post(
         uri,
-        headers: _headers(authToken: authToken),
+        headers: headers(authToken: authToken),
         body: jsonEncode(body),
       );
 
-      return _handleResponse(response);
+      return handleResponse(response);
     } on SocketException {
       throw ApiException.network();
     } on http.ClientException {
@@ -54,13 +52,13 @@ class ApiClient {
     final uri = Uri.parse('${AppConfig.apiUrl}$path');
 
     try {
-      final response = await _client.patch(
+      final response = await client.patch(
         uri,
-        headers: _headers(authToken: authToken),
+        headers: headers(authToken: authToken),
         body: jsonEncode(body),
       );
 
-      return _handleResponse(response);
+      return handleResponse(response);
     } on SocketException {
       throw ApiException.network();
     } on http.ClientException {
@@ -77,16 +75,12 @@ class ApiClient {
     final uri = Uri.parse('${AppConfig.apiUrl}$path');
 
     try {
-      final headers = _headers(authToken: authToken);
-      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      final reqHeaders = headers(authToken: authToken);
+      reqHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
 
-      final response = await _client.post(
-        uri,
-        headers: headers,
-        body: body,
-      );
+      final response = await client.post(uri, headers: reqHeaders, body: body);
 
-      return _handleResponse(response);
+      return handleResponse(response);
     } on SocketException {
       throw ApiException.network();
     } on http.ClientException {
@@ -106,13 +100,13 @@ class ApiClient {
     final uri = Uri.parse('${AppConfig.apiUrl}$path');
 
     try {
-      final request = _ProgressMultipartRequest('POST', uri, (bytes, total) {
+      final request = ProgressMultipartRequest('POST', uri, (bytes, total) {
         if (onProgress != null && total > 0) {
           onProgress(bytes / total);
         }
       });
 
-      request.headers.addAll(_headers(authToken: authToken));
+      request.headers.addAll(headers(authToken: authToken));
       // Remove content-type as multipart will add its own with boundary
       request.headers.remove('Content-Type');
 
@@ -120,13 +114,16 @@ class ApiClient {
         request.fields.addAll(fields);
       }
 
-      final multipartFile = await http.MultipartFile.fromPath(fileField, file.path);
+      final multipartFile = await http.MultipartFile.fromPath(
+        fileField,
+        file.path,
+      );
       request.files.add(multipartFile);
 
-      final streamResponse = await _client.send(request);
+      final streamResponse = await client.send(request);
       final response = await http.Response.fromStream(streamResponse);
 
-      return _handleResponse(response);
+      return handleResponse(response);
     } on SocketException {
       throw ApiException.network();
     } on http.ClientException {
@@ -135,19 +132,16 @@ class ApiClient {
   }
 
   /// Sends a GET request to `{apiUrl}/{path}`.
-  Future<Map<String, dynamic>> get(
-    String path, {
-    String? authToken,
-  }) async {
+  Future<Map<String, dynamic>> get(String path, {String? authToken}) async {
     final uri = Uri.parse('${AppConfig.apiUrl}$path');
 
     try {
-      final response = await _client.get(
+      final response = await client.get(
         uri,
-        headers: _headers(authToken: authToken),
+        headers: headers(authToken: authToken),
       );
 
-      return _handleResponse(response);
+      return handleResponse(response);
     } on SocketException {
       throw ApiException.network();
     } on http.ClientException {
@@ -157,12 +151,12 @@ class ApiClient {
 
   /// Releases underlying resources.
   void dispose() {
-    _client.close();
+    client.close();
   }
 
   // ─── Private Helpers ──────────────────────────────────────────────
 
-  Map<String, String> _headers({String? authToken}) {
+  Map<String, String> headers({String? authToken}) {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -177,7 +171,7 @@ class ApiClient {
 
   /// Parses the HTTP response, extracting JSON on success or
   /// throwing [ApiException] with FastAPI's `detail` field on error.
-  Map<String, dynamic> _handleResponse(http.Response response) {
+  Map<String, dynamic> handleResponse(http.Response response) {
     final Map<String, dynamic> body;
 
     try {
@@ -218,10 +212,10 @@ class ApiClient {
   }
 }
 
-class _ProgressMultipartRequest extends http.MultipartRequest {
+class ProgressMultipartRequest extends http.MultipartRequest {
   final void Function(int bytes, int total) onProgress;
 
-  _ProgressMultipartRequest(super.method, super.url, this.onProgress);
+  ProgressMultipartRequest(super.method, super.url, this.onProgress);
 
   @override
   http.ByteStream finalize() {

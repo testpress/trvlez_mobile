@@ -12,10 +12,7 @@ class LoginController extends ChangeNotifier {
   final AuthRepository repository;
   final AuthNotifier authNotifier;
 
-  LoginController({
-    required this.repository,
-    required this.authNotifier,
-  });
+  LoginController({required this.repository, required this.authNotifier});
 
   bool isLoading = false;
   String? errorMessage;
@@ -25,20 +22,14 @@ class LoginController extends ChangeNotifier {
   ///
   /// Sets [isLoading] during the API call, [errorMessage] on failure,
   /// and [isSuccess] when the login is successful.
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     isLoading = true;
     errorMessage = null;
     isSuccess = false;
     notifyListeners();
 
     try {
-      await repository.login(
-        email: email,
-        password: password,
-      );
+      await repository.login(email: email, password: password);
 
       await authNotifier.checkAuthStatus();
       isSuccess = true;

@@ -8,21 +8,18 @@ import 'profile_notifier.dart';
 class ProfileSetupScreen extends StatefulWidget {
   final ProfileNotifier profileNotifier;
 
-  const ProfileSetupScreen({
-    super.key,
-    required this.profileNotifier,
-  });
+  const ProfileSetupScreen({super.key, required this.profileNotifier});
 
   @override
-  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
+  State<ProfileSetupScreen> createState() => ProfileSetupScreenState();
 }
 
-class _ProfileSetupScreenState extends State<ProfileSetupScreen>
+class ProfileSetupScreenState extends State<ProfileSetupScreen>
     with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
   final passportNumberController = TextEditingController();
-  
+
   String? selectedNationality;
   String? selectedGender;
   DateTime? selectedDateOfBirth;
@@ -78,7 +75,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     setState(() {});
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDateOfBirth ?? DateTime(2000),
@@ -86,9 +83,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme,
-          ),
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: Theme.of(context).colorScheme),
           child: child!,
         );
       },
@@ -100,17 +97,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     }
   }
 
-  Future<void> _selectExpiryDate(BuildContext context) async {
+  Future<void> selectExpiryDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedPassportExpiry ?? DateTime.now().add(const Duration(days: 365)),
+      initialDate:
+          selectedPassportExpiry ??
+          DateTime.now().add(const Duration(days: 365)),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme,
-          ),
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: Theme.of(context).colorScheme),
           child: child!,
         );
       },
@@ -122,9 +121,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     }
   }
 
-  Future<void> _showNationalityPicker(BuildContext context, ColorScheme colorScheme) async {
+  Future<void> showNationalityPicker(
+    BuildContext context,
+    ColorScheme colorScheme,
+  ) async {
     String searchQuery = '';
-    
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -132,9 +134,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
         return StatefulBuilder(
           builder: (context, setSheetState) {
             final filtered = kNationalities
-                .where((n) => n.toLowerCase().contains(searchQuery.toLowerCase()))
+                .where(
+                  (n) => n.toLowerCase().contains(searchQuery.toLowerCase()),
+                )
                 .toList();
-                
+
             return FractionallySizedBox(
               heightFactor: 0.8,
               child: Padding(
@@ -155,7 +159,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onChanged: (val) => setSheetState(() => searchQuery = val),
+                        onChanged: (val) =>
+                            setSheetState(() => searchQuery = val),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -192,7 +197,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
       nationality: selectedNationality,
       gender: selectedGender,
       dateOfBirth: selectedDateOfBirth,
-      passportNumber: passportNumberController.text.trim().isNotEmpty ? passportNumberController.text.trim() : null,
+      passportNumber: passportNumberController.text.trim().isNotEmpty
+          ? passportNumberController.text.trim()
+          : null,
       passportExpiry: selectedPassportExpiry,
     );
 
@@ -236,9 +243,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
               opacity: fadeAnimation,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildFormCard(theme, colorScheme),
-                ],
+                children: [buildFormCard(theme, colorScheme)],
               ),
             ),
           ),
@@ -377,10 +382,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text(label, style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -389,9 +391,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
           keyboardType: keyboardType,
           textInputAction: TextInputAction.next,
           style: GoogleFonts.cabin(fontSize: 15),
-          decoration: InputDecoration(
-            hintText: hint,
-          ),
+          decoration: InputDecoration(hintText: hint),
         ),
       ],
     );
@@ -401,20 +401,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Nationality',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Nationality', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         InkWell(
-          onTap: widget.profileNotifier.isLoading ? null : () => _showNationalityPicker(context, colorScheme),
+          onTap: widget.profileNotifier.isLoading
+              ? null
+              : () => showNationalityPicker(context, colorScheme),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: colorScheme.onSurface.withAlpha(50),
-              ),
+              border: Border.all(color: colorScheme.onSurface.withAlpha(50)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -446,21 +443,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Gender',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Gender', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: selectedGender,
-          decoration: const InputDecoration(
-            hintText: 'Select your gender',
-          ),
+          decoration: const InputDecoration(hintText: 'Select your gender'),
           items: const [
             DropdownMenuItem(value: 'male', child: Text('Male')),
             DropdownMenuItem(value: 'female', child: Text('Female')),
             DropdownMenuItem(value: 'other', child: Text('Other')),
-            DropdownMenuItem(value: 'prefer_not_to_say', child: Text('Prefer not to say')),
+            DropdownMenuItem(
+              value: 'prefer_not_to_say',
+              child: Text('Prefer not to say'),
+            ),
           ],
           onChanged: widget.profileNotifier.isLoading
               ? null
@@ -478,20 +473,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Date of Birth',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Date of Birth', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         InkWell(
-          onTap: widget.profileNotifier.isLoading ? null : () => _selectDate(context),
+          onTap: widget.profileNotifier.isLoading
+              ? null
+              : () => selectDate(context),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: colorScheme.onSurface.withAlpha(50),
-              ),
+              border: Border.all(color: colorScheme.onSurface.withAlpha(50)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -525,20 +517,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Passport Expiry',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Passport Expiry', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         InkWell(
-          onTap: widget.profileNotifier.isLoading ? null : () => _selectExpiryDate(context),
+          onTap: widget.profileNotifier.isLoading
+              ? null
+              : () => selectExpiryDate(context),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: colorScheme.onSurface.withAlpha(50),
-              ),
+              border: Border.all(color: colorScheme.onSurface.withAlpha(50)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(

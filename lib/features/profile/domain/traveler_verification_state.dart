@@ -36,13 +36,12 @@ enum TravelerVerificationState {
   /// Whether the traveler still needs to complete onboarding steps.
   /// Used by the home screen to show the appropriate banner.
   bool get needsOnboarding => switch (this) {
-        profilePending ||
-        profileComplete ||
-        verificationStarted ||
-        documentsUploaded =>
-          true,
-        _ => false,
-      };
+    profilePending ||
+    profileComplete ||
+    verificationStarted ||
+    documentsUploaded => true,
+    _ => false,
+  };
 
   /// Whether the traveler's verification is currently being reviewed.
   bool get isProcessing => this == submitted;

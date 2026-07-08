@@ -12,53 +12,60 @@ class OnboardingScreen extends StatefulWidget {
   final ProfileRepository profileRepository;
 
   const OnboardingScreen({
-    super.key, 
+    super.key,
     required this.authNotifier,
     required this.profileRepository,
   });
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  State<OnboardingScreen> createState() => OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  late final ProfileNotifier _profileNotifier;
+class OnboardingScreenState extends State<OnboardingScreen> {
+  late final ProfileNotifier profileNotifier;
 
   @override
   void initState() {
     super.initState();
-    _profileNotifier = ProfileNotifier(repository: widget.profileRepository);
-    _profileNotifier.addListener(_onProfileChanged);
-    _loadProfile();
+    profileNotifier = ProfileNotifier(repository: widget.profileRepository);
+    profileNotifier.addListener(onProfileChanged);
+    loadProfile();
   }
 
   @override
   void dispose() {
-    _profileNotifier.removeListener(_onProfileChanged);
-    _profileNotifier.dispose();
+    profileNotifier.removeListener(onProfileChanged);
+    profileNotifier.dispose();
     super.dispose();
   }
 
-  void _onProfileChanged() {
+  void onProfileChanged() {
     if (mounted) setState(() {});
   }
 
-  Future<void> _loadProfile() async {
-    await _profileNotifier.loadProfile();
+  Future<void> loadProfile() async {
+    await profileNotifier.loadProfile();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
-    final isLoading = _profileNotifier.isLoading;
-    final step = _profileNotifier.profile?.onboardingStep ?? 'profile_pending';
+
+    final isLoading = profileNotifier.isLoading;
+    final step = profileNotifier.profile?.onboardingStep ?? 'profile_pending';
 
     // Map backend steps to visual progress
     final bool isProfileComplete = step != 'profile_pending';
-    final bool isPassportComplete = step == 'verification_started' || step == 'documents_uploaded' || step == 'submitted' || step == 'verified';
-    final bool isSelfieComplete = step == 'documents_uploaded' || step == 'submitted' || step == 'verified';
+    final bool isPassportComplete =
+        step == 'verification_started' ||
+        step == 'documents_uploaded' ||
+        step == 'submitted' ||
+        step == 'verified';
+    final bool isSelfieComplete =
+        step == 'documents_uploaded' ||
+        step == 'submitted' ||
+        step == 'verified';
     final bool isFullyVerified = step == 'verified';
 
     int completedSteps = 0;
@@ -74,14 +81,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: isLoading && _profileNotifier.profile == null
+      body: isLoading && profileNotifier.profile == null
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: RefreshIndicator(
-                onRefresh: _loadProfile,
+                onRefresh: loadProfile,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -99,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      
+
                       // Progress Bar
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,7 +137,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           value: progress,
                           minHeight: 10,
                           backgroundColor: colorScheme.primary.withAlpha(30),
-                          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            colorScheme.primary,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -137,30 +149,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         steps: [
                           OnboardingStepItem(
                             title: 'Complete Profile',
-                            subtitle: 'Provide your basic information and preferences.',
-                            state: isProfileComplete 
-                                ? OnboardingStepState.completed 
+                            subtitle:
+                                'Provide your basic information and preferences.',
+                            state: isProfileComplete
+                                ? OnboardingStepState.completed
                                 : OnboardingStepState.active,
-                            onTap: isProfileComplete 
-                                ? null 
+                            onTap: isProfileComplete
+                                ? null
                                 : () async {
                                     await context.push('/profile-setup');
-                                    _loadProfile(); // Refresh when returning
+                                    loadProfile(); // Refresh when returning
                                   },
                           ),
                           OnboardingStepItem(
                             title: 'Upload Passport',
-                            subtitle: isPassportComplete 
+                            subtitle: isPassportComplete
                                 ? 'Passport uploaded successfully.'
                                 : 'Capture a clear photo of your passport.',
-                            state: isPassportComplete 
-                                ? OnboardingStepState.completed 
-                                : (isProfileComplete ? OnboardingStepState.active : OnboardingStepState.upcoming),
-                            onTap: (isProfileComplete && !isPassportComplete) 
+                            state: isPassportComplete
+                                ? OnboardingStepState.completed
+                                : (isProfileComplete
+                                      ? OnboardingStepState.active
+                                      : OnboardingStepState.upcoming),
+                            onTap: (isProfileComplete && !isPassportComplete)
                                 ? () async {
-                                    await context.push('/verification/passport-capture');
-                                    _loadProfile(); // Refresh when returning
-                                  } 
+                                    await context.push(
+                                      '/verification/passport-capture',
+                                    );
+                                    loadProfile(); // Refresh when returning
+                                  }
                                 : null,
                           ),
                           OnboardingStepItem(
@@ -168,19 +185,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             subtitle: isSelfieComplete
                                 ? 'Selfie video recorded successfully.'
                                 : 'Record a short video to verify your identity.',
-                            state: isSelfieComplete 
-                                ? OnboardingStepState.completed 
-                                : (isPassportComplete ? OnboardingStepState.active : OnboardingStepState.upcoming),
-                            onTap: (isPassportComplete && !isSelfieComplete) 
+                            state: isSelfieComplete
+                                ? OnboardingStepState.completed
+                                : (isPassportComplete
+                                      ? OnboardingStepState.active
+                                      : OnboardingStepState.upcoming),
+                            onTap: (isPassportComplete && !isSelfieComplete)
                                 ? () async {
-                                    await context.push('/verification/selfie-capture');
-                                    _loadProfile(); // Refresh when returning
-                                  } 
+                                    await context.push(
+                                      '/verification/selfie-capture',
+                                    );
+                                    loadProfile(); // Refresh when returning
+                                  }
                                 : null,
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 40),
                       if (isSelfieComplete && !isFullyVerified)
                         Container(
@@ -191,12 +212,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.hourglass_empty, color: colorScheme.onSecondaryContainer),
+                              Icon(
+                                Icons.hourglass_empty,
+                                color: colorScheme.onSecondaryContainer,
+                              ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Text(
                                   'Your identity verification is currently under review.',
-                                  style: TextStyle(color: colorScheme.onSecondaryContainer),
+                                  style: TextStyle(
+                                    color: colorScheme.onSecondaryContainer,
+                                  ),
                                 ),
                               ),
                             ],

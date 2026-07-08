@@ -3,10 +3,7 @@ class LoginResponseDto {
   final String accessToken;
   final String tokenType;
 
-  const LoginResponseDto({
-    required this.accessToken,
-    required this.tokenType,
-  });
+  const LoginResponseDto({required this.accessToken, required this.tokenType});
 
   factory LoginResponseDto.fromJson(Map<String, dynamic> json) {
     return LoginResponseDto(

@@ -16,24 +16,24 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
   final double sh = params['sh'] as double;
   final double frameWidth = params['frameWidth'] as double;
   final double frameHeight = params['frameHeight'] as double;
-  
+
   final bytes = File(imagePath).readAsBytesSync();
   img.Image? originalImage = img.decodeImage(bytes);
-  
+
   if (originalImage != null) {
     originalImage = img.bakeOrientation(originalImage);
-    
+
     final double iw = originalImage.width.toDouble();
     final double ih = originalImage.height.toDouble();
-    
+
     final double scaleX = sw / iw;
     final double scaleY = sh / ih;
-    
+
     final double cropW = frameWidth / scaleX;
     final double cropH = frameHeight / scaleY;
     final double cropX = (iw - cropW) / 2;
     final double cropY = (ih - cropH) / 2;
-    
+
     final img.Image croppedImage = img.copyCrop(
       originalImage,
       x: cropX.toInt().clamp(0, originalImage.width - 1),
@@ -41,7 +41,7 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
       width: cropW.toInt().clamp(1, originalImage.width),
       height: cropH.toInt().clamp(1, originalImage.height),
     );
-    
+
     final croppedBytes = img.encodePng(croppedImage);
     final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '.png');
     final pngFile = File(pngPath)..writeAsBytesSync(croppedBytes);
@@ -56,41 +56,41 @@ class PassportCaptureScreen extends StatefulWidget {
   const PassportCaptureScreen({super.key, required this.notifier});
 
   @override
-  State<PassportCaptureScreen> createState() => _PassportCaptureScreenState();
+  State<PassportCaptureScreen> createState() => PassportCaptureScreenState();
 }
 
-class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
-  CameraController? _controller;
-  List<CameraDescription>? _cameras;
-  bool _isCameraInitialized = false;
-  bool _isCapturing = false;
+class PassportCaptureScreenState extends State<PassportCaptureScreen> {
+  CameraController? controller;
+  List<CameraDescription>? cameras;
+  bool isCameraInitialized = false;
+  bool isCapturing = false;
 
   @override
   void initState() {
     super.initState();
-    _initCamera();
+    initCamera();
   }
 
-  Future<void> _initCamera() async {
+  Future<void> initCamera() async {
     try {
-      _cameras = await availableCameras();
-      if (_cameras != null && _cameras!.isNotEmpty) {
+      cameras = await availableCameras();
+      if (cameras != null && cameras!.isNotEmpty) {
         // Find back camera if possible
-        final backCamera = _cameras!.firstWhere(
+        final backCamera = cameras!.firstWhere(
           (camera) => camera.lensDirection == CameraLensDirection.back,
-          orElse: () => _cameras!.first,
+          orElse: () => cameras!.first,
         );
 
-        _controller = CameraController(
+        controller = CameraController(
           backCamera,
           ResolutionPreset.max,
           enableAudio: false,
         );
 
-        await _controller!.initialize();
+        await controller!.initialize();
         if (mounted) {
           setState(() {
-            _isCameraInitialized = true;
+            isCameraInitialized = true;
           });
         }
       }
@@ -105,17 +105,17 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
-  Future<void> _capturePassport() async {
-    if (_controller == null || !_controller!.value.isInitialized || _isCapturing) {
+  Future<void> capturePassport() async {
+    if (controller == null || !controller!.value.isInitialized || isCapturing) {
       return;
     }
 
     setState(() {
-      _isCapturing = true;
+      isCapturing = true;
     });
 
     try {
@@ -124,7 +124,7 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
       final frameWidth = sw * 0.9;
       final frameHeight = frameWidth / 1.43;
 
-      final XFile file = await _controller!.takePicture();
+      final XFile file = await controller!.takePicture();
 
       final croppedFile = await compute(processAndCropImage, {
         'path': file.path,
@@ -136,46 +136,49 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
       // We pass the captured file to the notifier and go to review screen
       widget.notifier.setImage(croppedFile ?? File(file.path));
-      
+
       if (mounted) {
         context.push('/verification/passport-review');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to capture image. Please try again.')),
+          const SnackBar(
+            content: Text('Failed to capture image. Please try again.'),
+          ),
         );
       }
     } finally {
       if (mounted) {
         setState(() {
-          _isCapturing = false;
+          isCapturing = false;
         });
       }
     }
   }
 
-  Future<void> _pickPassportFromGallery() async {
-    if (_isCapturing) return;
+  Future<void> pickPassportFromGallery() async {
+    if (isCapturing) return;
 
     setState(() {
-      _isCapturing = true;
+      isCapturing = true;
     });
 
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      
+
       if (image != null) {
         final CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: image.path,
           uiSettings: [
             AndroidUiSettings(
-                toolbarTitle: 'Crop Passport',
-                toolbarColor: Colors.black,
-                toolbarWidgetColor: Colors.white,
-                initAspectRatio: CropAspectRatioPreset.original,
-                lockAspectRatio: false),
+              toolbarTitle: 'Crop Passport',
+              toolbarColor: Colors.black,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false,
+            ),
             IOSUiSettings(
               title: 'Crop Passport',
               aspectRatioLockEnabled: false,
@@ -193,13 +196,15 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to pick image. Please try again.')),
+          const SnackBar(
+            content: Text('Failed to pick image. Please try again.'),
+          ),
         );
       }
     } finally {
       if (mounted) {
         setState(() {
-          _isCapturing = false;
+          isCapturing = false;
         });
       }
     }
@@ -207,10 +212,8 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isCameraInitialized || _controller == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+    if (!isCameraInitialized || controller == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final theme = Theme.of(context);
@@ -223,7 +226,7 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
         fit: StackFit.expand,
         children: [
           // Camera Preview
-          CameraPreview(_controller!),
+          CameraPreview(controller!),
 
           // Overlay Mask
           ColorFiltered(
@@ -288,7 +291,11 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
             right: 0,
             child: Column(
               children: [
-                const Icon(Icons.document_scanner, color: Colors.white, size: 32),
+                const Icon(
+                  Icons.document_scanner,
+                  color: Colors.white,
+                  size: 32,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'Position your passport\nwithin the frame',
@@ -317,9 +324,11 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(width: 48), // Empty space on left to keep center button centered
+                const SizedBox(
+                  width: 48,
+                ), // Empty space on left to keep center button centered
                 GestureDetector(
-                  onTap: _capturePassport,
+                  onTap: capturePassport,
                   child: Container(
                     height: 80,
                     width: 80,
@@ -335,8 +344,10 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: _isCapturing
-                            ? const CircularProgressIndicator(color: Colors.black)
+                        child: isCapturing
+                            ? const CircularProgressIndicator(
+                                color: Colors.black,
+                              )
                             : null,
                       ),
                     ),
@@ -344,7 +355,7 @@ class _PassportCaptureScreenState extends State<PassportCaptureScreen> {
                 ),
                 IconButton(
                   iconSize: 32,
-                  onPressed: _pickPassportFromGallery,
+                  onPressed: pickPassportFromGallery,
                   icon: const Icon(Icons.photo_library, color: Colors.white),
                 ),
               ],

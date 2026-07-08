@@ -16,10 +16,11 @@ class SelfieCaptureScreen extends StatefulWidget {
   const SelfieCaptureScreen({super.key, required this.notifier});
 
   @override
-  State<SelfieCaptureScreen> createState() => _SelfieCaptureScreenState();
+  State<SelfieCaptureScreen> createState() => SelfieCaptureScreenState();
 }
 
-class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerProviderStateMixin {
+class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
+    with TickerProviderStateMixin {
   CameraController? cameraController;
   List<CameraDescription> cameras = [];
   bool isInitializing = true;
@@ -27,7 +28,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
   String? errorMsg;
   int recordedSeconds = 0;
   Timer? recordingTimer;
-  late AnimationController _progressController;
+  late AnimationController progressController;
 
   static const int minRecordingSeconds = 3;
   static const int maxRecordingSeconds = 10;
@@ -35,7 +36,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(
+    progressController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: maxRecordingSeconds),
     );
@@ -62,11 +63,12 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
       cameraController = CameraController(
         frontCamera,
         ResolutionPreset.high,
-        enableAudio: false, // For selfie verification, audio might not be needed
+        enableAudio:
+            false, // For selfie verification, audio might not be needed
       );
 
       await cameraController?.initialize();
-      
+
       if (mounted) {
         setState(() {
           isInitializing = false;
@@ -97,14 +99,14 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
         isRecording = true;
         recordedSeconds = 0;
       });
-      _progressController.forward(from: 0.0);
+      progressController.forward(from: 0.0);
 
       recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!mounted) {
           timer.cancel();
           return;
         }
-        
+
         setState(() {
           recordedSeconds++;
         });
@@ -128,11 +130,11 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
     }
 
     recordingTimer?.cancel();
-    _progressController.stop();
-    
+    progressController.stop();
+
     try {
       final video = await cameraController!.stopVideoRecording();
-      
+
       setState(() {
         isRecording = false;
       });
@@ -145,7 +147,9 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Video must be at least 3 seconds long')),
+            const SnackBar(
+              content: Text('Video must be at least 3 seconds long'),
+            ),
           );
         }
       }
@@ -154,20 +158,20 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
         isRecording = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to stop recording: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to stop recording: $e')));
       }
     }
   }
 
-  Future<void> _pickVideoFromGallery() async {
+  Future<void> pickVideoFromGallery() async {
     if (isRecording) return;
 
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
-      
+
       if (video != null) {
         widget.notifier.setVideo(File(video.path));
         if (mounted) {
@@ -177,7 +181,9 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to pick video. Please try again.')),
+          const SnackBar(
+            content: Text('Failed to pick video. Please try again.'),
+          ),
         );
       }
     }
@@ -186,7 +192,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
   @override
   void dispose() {
     recordingTimer?.cancel();
-    _progressController.dispose();
+    progressController.dispose();
     cameraController?.dispose();
     super.dispose();
   }
@@ -194,9 +200,7 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
   @override
   Widget build(BuildContext context) {
     if (isInitializing) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (errorMsg != null) {
@@ -232,19 +236,19 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
         children: [
           if (cameraController != null && cameraController!.value.isInitialized)
             CameraPreview(cameraController!),
-            
+
           // Face Guide Overlay
           Positioned.fill(
             child: AnimatedBuilder(
-              animation: _progressController,
+              animation: progressController,
               builder: (context, child) {
                 return CustomPaint(
-                  painter: FaceGuidePainter(progress: _progressController.value),
+                  painter: FaceGuidePainter(progress: progressController.value),
                 );
               },
             ),
           ),
-          
+
           // Instructions Overlay
           const Positioned(
             top: 64,
@@ -270,7 +274,10 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
               right: 0,
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(20),
@@ -295,7 +302,9 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(width: 48), // Spacer to keep record button centered
+                const SizedBox(
+                  width: 48,
+                ), // Spacer to keep record button centered
                 if (!isRecording)
                   FloatingActionButton(
                     heroTag: 'record_btn',
@@ -313,11 +322,13 @@ class _SelfieCaptureScreenState extends State<SelfieCaptureScreen> with TickerPr
                 if (!isRecording)
                   IconButton(
                     iconSize: 32,
-                    onPressed: _pickVideoFromGallery,
+                    onPressed: pickVideoFromGallery,
                     icon: const Icon(Icons.video_library, color: Colors.white),
                   )
                 else
-                  const SizedBox(width: 48), // Match the size of the gallery button when hidden
+                  const SizedBox(
+                    width: 48,
+                  ), // Match the size of the gallery button when hidden
               ],
             ),
           ),
@@ -356,7 +367,7 @@ class FaceGuidePainter extends CustomPainter {
     // Draw semi-transparent background
     final paint = Paint()..color = Colors.black54;
     final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    
+
     // Define the oval face guide area
     final ovalWidth = size.width * 0.92;
     final ovalHeight = ovalWidth * 1.35;
@@ -365,13 +376,13 @@ class FaceGuidePainter extends CustomPainter {
       width: ovalWidth,
       height: ovalHeight,
     );
-    
+
     // Create the cutout
     final ovalPath = Path()..addOval(ovalRect);
     final combinedPath = Path.combine(PathOperation.difference, path, ovalPath);
-    
+
     canvas.drawPath(combinedPath, paint);
-    
+
     // Draw the base oval border
     final borderPaint = Paint()
       ..color = Colors.white54
@@ -386,7 +397,7 @@ class FaceGuidePainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 6.0
         ..strokeCap = StrokeCap.round;
-      
+
       // Sweep angle is progress * 2 * pi
       canvas.drawArc(
         ovalRect,

@@ -30,12 +30,12 @@ class OnboardingStepper extends StatelessWidget {
       itemCount: steps.length,
       itemBuilder: (context, index) {
         final step = steps[index];
-        return _buildStep(context, step);
+        return buildStep(context, step);
       },
     );
   }
 
-  Widget _buildStep(BuildContext context, OnboardingStepItem step) {
+  Widget buildStep(BuildContext context, OnboardingStepItem step) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -45,14 +45,14 @@ class OnboardingStepper extends StatelessWidget {
     final iconColor = isCompleted
         ? Colors.green
         : isActive
-            ? colorScheme.primary
-            : colorScheme.onSurface.withAlpha(50);
+        ? colorScheme.primary
+        : colorScheme.onSurface.withAlpha(50);
 
     final borderColor = isCompleted
         ? Colors.green
         : isActive
-            ? colorScheme.primary
-            : colorScheme.onSurface.withAlpha(50);
+        ? colorScheme.primary
+        : colorScheme.onSurface.withAlpha(50);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -70,7 +70,9 @@ class OnboardingStepper extends StatelessWidget {
                   : colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isActive ? colorScheme.primary.withAlpha(50) : theme.dividerColor.withAlpha(30),
+                color: isActive
+                    ? colorScheme.primary.withAlpha(50)
+                    : theme.dividerColor.withAlpha(30),
               ),
               boxShadow: isActive
                   ? [
@@ -78,7 +80,7 @@ class OnboardingStepper extends StatelessWidget {
                         color: colorScheme.primary.withAlpha(10),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
-                      )
+                      ),
                     ]
                   : null,
             ),
@@ -91,10 +93,16 @@ class OnboardingStepper extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: borderColor, width: 2),
-                    color: isCompleted ? Colors.green.withAlpha(20) : Colors.transparent,
+                    color: isCompleted
+                        ? Colors.green.withAlpha(20)
+                        : Colors.transparent,
                   ),
                   child: Icon(
-                    isCompleted ? Icons.check : (isActive ? Icons.play_arrow_rounded : Icons.lock_outline),
+                    isCompleted
+                        ? Icons.check
+                        : (isActive
+                              ? Icons.play_arrow_rounded
+                              : Icons.lock_outline),
                     color: iconColor,
                   ),
                 ),
@@ -118,7 +126,9 @@ class OnboardingStepper extends StatelessWidget {
                         step.subtitle,
                         style: GoogleFonts.cabin(
                           fontSize: 14,
-                          color: colorScheme.onSurface.withAlpha(isActive ? 200 : 120),
+                          color: colorScheme.onSurface.withAlpha(
+                            isActive ? 200 : 120,
+                          ),
                         ),
                       ),
                     ],

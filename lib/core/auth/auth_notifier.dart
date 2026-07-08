@@ -10,7 +10,7 @@ import '../../features/profile/domain/traveler_verification_state.dart';
 /// synchronous redirect decisions without an extra async fetch.
 class AuthNotifier extends ChangeNotifier {
   final TokenStorage tokenStorage;
-  final ProfileRepository? _profileRepository;
+  final ProfileRepository? profileRepository;
 
   bool isAuthenticated = false;
 
@@ -20,7 +20,7 @@ class AuthNotifier extends ChangeNotifier {
   TravelerVerificationState verificationState =
       TravelerVerificationState.profilePending;
 
-  AuthNotifier({required this.tokenStorage, this._profileRepository});
+  AuthNotifier({required this.tokenStorage, this.profileRepository});
 
   /// Checks secure storage for an existing token and updates state.
   ///
@@ -30,9 +30,9 @@ class AuthNotifier extends ChangeNotifier {
     final token = await tokenStorage.getToken();
     isAuthenticated = token != null;
 
-    if (isAuthenticated && _profileRepository != null) {
+    if (isAuthenticated && profileRepository != null) {
       try {
-        final profile = await _profileRepository.getProfile();
+        final profile = await profileRepository!.getProfile();
         verificationState = profile.verificationState;
       } catch (_) {
         // If profile fetch fails, keep default — router will send to onboarding
@@ -48,10 +48,10 @@ class AuthNotifier extends ChangeNotifier {
   /// Used after onboarding steps to update the router's redirect target
   /// without a full auth re-check.
   Future<void> refreshVerificationState() async {
-    if (!isAuthenticated || _profileRepository == null) return;
+    if (!isAuthenticated || profileRepository == null) return;
 
     try {
-      final profile = await _profileRepository.getProfile();
+      final profile = await profileRepository!.getProfile();
       verificationState = profile.verificationState;
       notifyListeners();
     } catch (_) {

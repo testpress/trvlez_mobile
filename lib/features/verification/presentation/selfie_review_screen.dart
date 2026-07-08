@@ -12,13 +12,13 @@ class SelfieReviewScreen extends StatefulWidget {
   const SelfieReviewScreen({super.key, required this.notifier});
 
   @override
-  State<SelfieReviewScreen> createState() => _SelfieReviewScreenState();
+  State<SelfieReviewScreen> createState() => SelfieReviewScreenState();
 }
 
-class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
+class SelfieReviewScreenState extends State<SelfieReviewScreen> {
   VideoPlayerController? videoController;
   bool isPlaying = false;
-  bool _isUploadingLocally = false;
+  bool isUploadingLocally = false;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
 
   void togglePlay() {
     if (videoController == null) return;
-    
+
     if (videoController!.value.isPlaying) {
       videoController!.pause();
       setState(() => isPlaying = false);
@@ -57,12 +57,12 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
   }
 
   Future<void> handleUpload() async {
-    if (_isUploadingLocally) return;
-    setState(() => _isUploadingLocally = true);
+    if (isUploadingLocally) return;
+    setState(() => isUploadingLocally = true);
     await widget.notifier.uploadSelfie();
 
     if (!mounted) return;
-    setState(() => _isUploadingLocally = false);
+    setState(() => isUploadingLocally = false);
 
     final phase = widget.notifier.phase;
 
@@ -78,10 +78,10 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
 
     // Upload succeeded — show confirmation summary before navigating
     if (!mounted) return;
-    _showUploadSuccessSheet(phase);
+    showUploadSuccessSheet(phase);
   }
 
-  void _showUploadSuccessSheet(VerificationPhase phase) {
+  void showUploadSuccessSheet(VerificationPhase phase) {
     final jobId = widget.notifier.submitResult?.verificationJobId;
 
     showModalBottomSheet<void>(
@@ -90,7 +90,7 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
       enableDrag: false,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        return _UploadSuccessSheet(
+        return UploadSuccessSheet(
           phase: phase,
           onViewStatus: () {
             Navigator.of(sheetContext).pop();
@@ -129,7 +129,8 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
           return Stack(
             fit: StackFit.expand,
             children: [
-              if (videoController != null && videoController!.value.isInitialized)
+              if (videoController != null &&
+                  videoController!.value.isInitialized)
                 Center(
                   child: AspectRatio(
                     aspectRatio: videoController!.value.aspectRatio,
@@ -146,7 +147,10 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
                 Center(
                   child: IconButton(
                     iconSize: 64,
-                    icon: const Icon(Icons.play_circle_fill, color: Colors.white),
+                    icon: const Icon(
+                      Icons.play_circle_fill,
+                      color: Colors.white,
+                    ),
                     onPressed: togglePlay,
                   ),
                 ),
@@ -164,7 +168,10 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
                           isSubmitting
                               ? 'Submitting for verification...'
                               : 'Uploading... ${(widget.notifier.uploadProgress * 100).toInt()}%',
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
                         ),
                         if (isSubmitting) ...[
                           const SizedBox(height: 8),
@@ -229,14 +236,11 @@ class _SelfieReviewScreenState extends State<SelfieReviewScreen> {
 
 // ─── Upload Success Confirmation Sheet ────────────────────────────────────
 
-class _UploadSuccessSheet extends StatelessWidget {
+class UploadSuccessSheet extends StatelessWidget {
   final VerificationPhase phase;
   final VoidCallback onViewStatus;
 
-  const _UploadSuccessSheet({
-    required this.phase,
-    required this.onViewStatus,
-  });
+  const UploadSuccessSheet({required this.phase, required this.onViewStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -283,10 +287,7 @@ class _UploadSuccessSheet extends StatelessWidget {
             height: 4,
             margin: const EdgeInsets.only(bottom: 24),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withAlpha(40),
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(40),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -317,10 +318,7 @@ class _UploadSuccessSheet extends StatelessWidget {
             message,
             style: TextStyle(
               fontSize: 15,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withAlpha(160),
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(160),
               height: 1.5,
             ),
             textAlign: TextAlign.center,

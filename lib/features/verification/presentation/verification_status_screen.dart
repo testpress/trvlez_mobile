@@ -37,96 +37,97 @@ class VerificationStatusScreen extends StatefulWidget {
 
   @override
   State<VerificationStatusScreen> createState() =>
-      _VerificationStatusScreenState();
+      VerificationStatusScreenState();
 }
 
-class _VerificationStatusScreenState extends State<VerificationStatusScreen>
+class VerificationStatusScreenState extends State<VerificationStatusScreen>
     with SingleTickerProviderStateMixin {
-  late final ProfileNotifier _profileNotifier;
-  late final AnimationController _pulseController;
-  late final Animation<double> _pulseAnimation;
-  final VerificationRepository _verificationRepository =
+  late final ProfileNotifier profileNotifier;
+  late final AnimationController pulseController;
+  late final Animation<double> pulseAnimation;
+  final VerificationRepository verificationRepository =
       VerificationRepository();
 
-  VerificationJobResult? _jobResult;
-  domain.VerificationStatus? _domainStatus;
-  Timer? _pollTimer;
-  int _pollInterval = 2;
-  int _totalElapsed = 0;
-  static const int _maxPollDuration = 300;
-  static const int _maxPollInterval = 15;
+  VerificationJobResult? jobResult;
+  domain.VerificationStatus? domainStatus;
+  Timer? pollTimer;
+  int pollInterval = 2;
+  int totalElapsed = 0;
+  static const int maxPollDuration = 300;
+  static const int maxPollInterval = 15;
 
   @override
   void initState() {
     super.initState();
-    _profileNotifier = ProfileNotifier(repository: widget.profileRepository);
-    _profileNotifier.addListener(_onStateChanged);
-    _profileNotifier.loadProfile();
+    profileNotifier = ProfileNotifier(repository: widget.profileRepository);
+    profileNotifier.addListener(onStateChanged);
+    profileNotifier.loadProfile();
 
-    _pulseController = AnimationController(
+    pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
 
-    _pulseAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    pulseAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
+      CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
     );
 
     // Start polling if we have a job ID (legacy fallback)
     if (widget.verificationJobId != null) {
-      _startPolling();
+      startPolling();
     }
 
-    _fetchDomainStatus();
+    fetchDomainStatus();
 
-    widget.verificationNotifier?.addListener(_onNotifierChanged);
+    widget.verificationNotifier?.addListener(onNotifierChanged);
   }
 
-  Future<void> _fetchDomainStatus() async {
+  Future<void> fetchDomainStatus() async {
     try {
-      final status = await _verificationRepository.getVerificationStatus();
+      final status = await verificationRepository.getVerificationStatus();
       if (mounted) {
-        setState(() => _domainStatus = status);
+        setState(() => domainStatus = status);
       }
     } catch (_) {}
   }
 
   @override
   void dispose() {
-    _stopPolling();
-    widget.verificationNotifier?.removeListener(_onNotifierChanged);
-    _profileNotifier.removeListener(_onStateChanged);
-    _profileNotifier.dispose();
-    _pulseController.dispose();
+    stopPolling();
+    widget.verificationNotifier?.removeListener(onNotifierChanged);
+    profileNotifier.removeListener(onStateChanged);
+    profileNotifier.dispose();
+    pulseController.dispose();
     super.dispose();
   }
 
-  void _onStateChanged() {
+  void onStateChanged() {
     if (mounted) setState(() {});
   }
 
-  void _onNotifierChanged() {
+  void onNotifierChanged() {
     if (mounted) setState(() {});
   }
 
-  Future<void> _handleRefresh() async {
-    await _profileNotifier.loadProfile();
+  Future<void> handleRefresh() async {
+    await profileNotifier.loadProfile();
     await widget.authNotifier.refreshVerificationState();
 
     try {
-      final status = await _verificationRepository.getVerificationStatus();
+      final status = await verificationRepository.getVerificationStatus();
       if (mounted) {
-        setState(() => _domainStatus = status);
+        setState(() => domainStatus = status);
       }
     } catch (_) {}
 
     // If we have a job ID, also poll it directly
     if (widget.verificationJobId != null) {
       try {
-        final result = await _verificationRepository
-            .getVerificationJob(widget.verificationJobId!);
+        final result = await verificationRepository.getVerificationJob(
+          widget.verificationJobId!,
+        );
         if (mounted) {
-          setState(() => _jobResult = result);
+          setState(() => jobResult = result);
         }
       } catch (_) {
         // Non-critical — profile state is the primary source
@@ -134,36 +135,37 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     }
   }
 
-  void _startPolling() {
-    _pollTimer?.cancel();
-    _pollInterval = 2;
-    _totalElapsed = 0;
+  void startPolling() {
+    pollTimer?.cancel();
+    pollInterval = 2;
+    totalElapsed = 0;
 
-    _schedulePoll();
+    schedulePoll();
   }
 
-  void _schedulePoll() {
-    if (_totalElapsed >= _maxPollDuration) {
-      _stopPolling();
+  void schedulePoll() {
+    if (totalElapsed >= maxPollDuration) {
+      stopPolling();
       return;
     }
 
-    _pollTimer = Timer(Duration(seconds: _pollInterval), () async {
+    pollTimer = Timer(Duration(seconds: pollInterval), () async {
       if (!mounted) return;
 
       try {
-        final result = await _verificationRepository
-            .getVerificationJob(widget.verificationJobId!);
+        final result = await verificationRepository.getVerificationJob(
+          widget.verificationJobId!,
+        );
 
         if (!mounted) return;
 
-        setState(() => _jobResult = result);
+        setState(() => jobResult = result);
 
         if (result.isComplete) {
-          _stopPolling();
-          await _fetchDomainStatus();
+          stopPolling();
+          await fetchDomainStatus();
           // Refresh profile and auth state to pick up the new status
-          await _profileNotifier.loadProfile();
+          await profileNotifier.loadProfile();
           await widget.authNotifier.refreshVerificationState();
           return;
         }
@@ -171,24 +173,24 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
         // Non-critical — continue polling
       }
 
-      _totalElapsed += _pollInterval;
+      totalElapsed += pollInterval;
       // Exponential backoff
-      if (_pollInterval < _maxPollInterval) {
-        _pollInterval = (_pollInterval * 2).clamp(1, _maxPollInterval);
+      if (pollInterval < maxPollInterval) {
+        pollInterval = (pollInterval * 2).clamp(1, maxPollInterval);
       }
 
-      _schedulePoll();
+      schedulePoll();
     });
   }
 
-  void _stopPolling() {
-    _pollTimer?.cancel();
-    _pollTimer = null;
+  void stopPolling() {
+    pollTimer?.cancel();
+    pollTimer = null;
   }
 
   /// Derives the effective verification state, considering both the
   /// profile-level onboarding step and the real-time job result.
-  TravelerVerificationState get _effectiveState {
+  TravelerVerificationState get effectiveState {
     final notifier = widget.verificationNotifier;
 
     // 1. Check global notifier phase first (if it's polling/running)
@@ -205,7 +207,8 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     // 2. If the global notifier has a completed job result
     final notifierJobResult = notifier?.jobResult;
     if (notifierJobResult != null && notifierJobResult.isComplete) {
-      if (notifierJobResult.isVerified) return TravelerVerificationState.verified;
+      if (notifierJobResult.isVerified)
+        return TravelerVerificationState.verified;
       if (notifierJobResult.isFailed) return TravelerVerificationState.failed;
     }
 
@@ -219,61 +222,66 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     }
 
     // 4. Local polling job result
-    if (_jobResult != null && _jobResult!.isComplete) {
-      if (_jobResult!.isVerified) return TravelerVerificationState.verified;
-      if (_jobResult!.isFailed) return TravelerVerificationState.failed;
+    if (jobResult != null && jobResult!.isComplete) {
+      if (jobResult!.isVerified) return TravelerVerificationState.verified;
+      if (jobResult!.isFailed) return TravelerVerificationState.failed;
     }
 
     // If job is still processing, show submitted/processing state
     if (notifier?.phase == VerificationPhase.submitting ||
         notifier?.phase == VerificationPhase.verifying ||
-        (_jobResult != null && !_jobResult!.isComplete) ||
+        (jobResult != null && !jobResult!.isComplete) ||
         (submitResult != null && submitResult.isProcessing)) {
       return TravelerVerificationState.submitted;
     }
 
     // 5. Check the overall session status from the backend
-    if (_domainStatus != null) {
-      if (_domainStatus!.isVerified) return TravelerVerificationState.verified;
-      if (_domainStatus!.isFailed) return TravelerVerificationState.failed;
-      
+    if (domainStatus != null) {
+      if (domainStatus!.isVerified) return TravelerVerificationState.verified;
+      if (domainStatus!.isFailed) return TravelerVerificationState.failed;
+
       // If there is an active session but it is NOT processing, the user is still
-      // in the middle of uploading documents. Override stale profile state (which 
+      // in the middle of uploading documents. Override stale profile state (which
       // might still say 'submitted' from a prior failure) to prevent misleading UI.
-      if (!_domainStatus!.isProcessing) {
+      if (!domainStatus!.isProcessing) {
         return TravelerVerificationState.verificationStarted;
       }
     }
 
-    return _profileNotifier.profile?.verificationState ??
+    return profileNotifier.profile?.verificationState ??
         TravelerVerificationState.submitted;
   }
 
-  double? get _activeVerificationScore {
+  double? get activeVerificationScore {
     return widget.verificationNotifier?.jobResult?.verificationScore ??
         widget.verificationNotifier?.submitResult?.verificationScore ??
-        _jobResult?.verificationScore;
+        jobResult?.verificationScore;
   }
 
-  String? get _failedStep => _domainStatus?.failedStep ?? widget.verificationNotifier?.verificationStatus?.failedStep;
+  String? get failedStep =>
+      domainStatus?.failedStep ??
+      widget.verificationNotifier?.verificationStatus?.failedStep;
 
-  String? get _errorReason {
-    final reason = _domainStatus?.errorReason ??
+  String? get errorReason {
+    final reason =
+        domainStatus?.errorReason ??
         widget.verificationNotifier?.verificationStatus?.errorReason ??
         widget.verificationNotifier?.errorMessage ??
-        _jobResult?.errorMessage;
-    if (reason == _uiMitigation) return null;
+        jobResult?.errorMessage;
+    if (reason == uiMitigation) return null;
     return reason;
   }
 
-  String? get _uiMitigation => _domainStatus?.uiMitigation ?? widget.verificationNotifier?.verificationStatus?.uiMitigation;
+  String? get uiMitigation =>
+      domainStatus?.uiMitigation ??
+      widget.verificationNotifier?.verificationStatus?.uiMitigation;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = _effectiveState;
-    final config = _StatusConfig.from(state);
+    final state = effectiveState;
+    final config = StatusConfig.from(state);
 
     return Scaffold(
       appBar: AppBar(
@@ -285,19 +293,21 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
           onPressed: () => context.pop(),
         ),
       ),
-      body: _profileNotifier.isLoading && _profileNotifier.profile == null
+      body: profileNotifier.isLoading && profileNotifier.profile == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: _handleRefresh,
+              onRefresh: handleRefresh,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Column(
                   children: [
                     const SizedBox(height: 24),
                     // ── Status Icon ────────────────────────────────
-                    _buildStatusIcon(config, state),
+                    buildStatusIcon(config, state),
                     const SizedBox(height: 24),
                     // ── Title & Subtitle ──────────────────────────
                     Text(
@@ -317,25 +327,23 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                       textAlign: TextAlign.center,
                     ),
                     // ── Verification Score ───────────────────────
-                    if (_activeVerificationScore != null) ...[
+                    if (activeVerificationScore != null) ...[
                       const SizedBox(height: 16),
-                      _VerificationScoreIndicator(
-                        score: _activeVerificationScore!,
+                      VerificationScoreIndicator(
+                        score: activeVerificationScore!,
                         isVerified: state == TravelerVerificationState.verified,
                       ),
                     ],
                     const SizedBox(height: 40),
                     // ── Step Checklist ────────────────────────────
-                    _StepChecklist(
-                      state: state,
-                    ),
+                    StepChecklist(state: state),
                     const SizedBox(height: 32),
                     // ── Info Card ─────────────────────────────────
-                    _InfoCard(
+                    InfoCard(
                       state: state,
-                      failedStep: _failedStep,
-                      errorReason: _errorReason,
-                      uiMitigation: _uiMitigation,
+                      failedStep: failedStep,
+                      errorReason: errorReason,
+                      uiMitigation: uiMitigation,
                     ),
                     const SizedBox(height: 24),
                     // ── Actions ───────────────────────────────────
@@ -360,9 +368,7 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                           // Future: open support chat/email
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text(
-                                'Support — coming soon!',
-                              ),
+                              content: const Text('Support — coming soon!'),
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -395,7 +401,7 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     );
   }
 
-  Widget _buildStatusIcon(_StatusConfig config, TravelerVerificationState state) {
+  Widget buildStatusIcon(StatusConfig config, TravelerVerificationState state) {
     final icon = Container(
       width: 96,
       height: 96,
@@ -414,22 +420,15 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
           ),
         ],
       ),
-      child: Icon(
-        config.icon,
-        color: Colors.white,
-        size: 44,
-      ),
+      child: Icon(config.icon, color: Colors.white, size: 44),
     );
 
     // Only pulse the icon when processing
     if (state.isProcessing) {
       return AnimatedBuilder(
-        animation: _pulseAnimation,
+        animation: pulseAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _pulseAnimation.value,
-            child: child,
-          );
+          return Transform.scale(scale: pulseAnimation.value, child: child);
         },
         child: icon,
       );
@@ -441,18 +440,20 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
 
 // ─── Verification Score Indicator ─────────────────────────────────────────
 
-class _VerificationScoreIndicator extends StatelessWidget {
+class VerificationScoreIndicator extends StatelessWidget {
   final double score;
   final bool isVerified;
 
-  const _VerificationScoreIndicator({
+  const VerificationScoreIndicator({
     required this.score,
     required this.isVerified,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = isVerified ? const Color(0xFF27AE60) : const Color(0xFFD32F2F);
+    final color = isVerified
+        ? const Color(0xFF27AE60)
+        : const Color(0xFFD32F2F);
     final percentage = (score * 100).toInt();
 
     return Container(
@@ -487,12 +488,10 @@ class _VerificationScoreIndicator extends StatelessWidget {
 
 // ─── Step Checklist ───────────────────────────────────────────────────────
 
-class _StepChecklist extends StatelessWidget {
+class StepChecklist extends StatelessWidget {
   final TravelerVerificationState state;
 
-  const _StepChecklist({
-    required this.state,
-  });
+  const StepChecklist({required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -501,24 +500,15 @@ class _StepChecklist extends StatelessWidget {
     // All steps before the user reaches the status screen are already done
     // (profile, passport, selfie). Only "Review" varies.
     final steps = [
-      _StepItem(
-        label: 'Complete Profile',
-        status: _StepStatus.completed,
-      ),
-      _StepItem(
-        label: 'Upload Passport',
-        status: _StepStatus.completed,
-      ),
-      _StepItem(
-        label: 'Selfie Verification',
-        status: _StepStatus.completed,
-      ),
-      _StepItem(
+      StepItem(label: 'Complete Profile', status: StepStatus.completed),
+      StepItem(label: 'Upload Passport', status: StepStatus.completed),
+      StepItem(label: 'Selfie Verification', status: StepStatus.completed),
+      StepItem(
         label: 'Identity Review',
         status: switch (state) {
-          TravelerVerificationState.verified => _StepStatus.completed,
-          TravelerVerificationState.failed => _StepStatus.failed,
-          _ => _StepStatus.processing,
+          TravelerVerificationState.verified => StepStatus.completed,
+          TravelerVerificationState.failed => StepStatus.failed,
+          _ => StepStatus.processing,
         },
       ),
     ];
@@ -549,10 +539,7 @@ class _StepChecklist extends StatelessWidget {
             final step = entry.value;
             final isLast = index == steps.length - 1;
 
-            return _StepRow(
-              step: step,
-              isLast: isLast,
-            );
+            return StepRow(step: step, isLast: isLast);
           }),
         ],
       ),
@@ -560,35 +547,41 @@ class _StepChecklist extends StatelessWidget {
   }
 }
 
-enum _StepStatus { completed, processing, failed }
+enum StepStatus { completed, processing, failed }
 
-class _StepItem {
+class StepItem {
   final String label;
-  final _StepStatus status;
+  final StepStatus status;
 
-  const _StepItem({required this.label, required this.status});
+  const StepItem({required this.label, required this.status});
 }
 
-class _StepRow extends StatelessWidget {
-  final _StepItem step;
+class StepRow extends StatelessWidget {
+  final StepItem step;
   final bool isLast;
 
-  const _StepRow({required this.step, required this.isLast});
+  const StepRow({required this.step, required this.isLast});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     final (IconData icon, Color color) = switch (step.status) {
-      _StepStatus.completed => (Icons.check_circle_rounded, const Color(0xFF27AE60)),
-      _StepStatus.processing => (Icons.hourglass_top_rounded, const Color(0xFFE65100)),
-      _StepStatus.failed => (Icons.cancel_rounded, const Color(0xFFD32F2F)),
+      StepStatus.completed => (
+        Icons.check_circle_rounded,
+        const Color(0xFF27AE60),
+      ),
+      StepStatus.processing => (
+        Icons.hourglass_top_rounded,
+        const Color(0xFFE65100),
+      ),
+      StepStatus.failed => (Icons.cancel_rounded, const Color(0xFFD32F2F)),
     };
 
     final statusLabel = switch (step.status) {
-      _StepStatus.completed => 'Completed',
-      _StepStatus.processing => 'In Progress',
-      _StepStatus.failed => 'Failed',
+      StepStatus.completed => 'Completed',
+      StepStatus.processing => 'In Progress',
+      StepStatus.failed => 'Failed',
     };
 
     return Padding(
@@ -598,11 +591,7 @@ class _StepRow extends StatelessWidget {
           // Step connector line + icon
           SizedBox(
             width: 32,
-            child: Column(
-              children: [
-                Icon(icon, color: color, size: 28),
-              ],
-            ),
+            child: Column(children: [Icon(icon, color: color, size: 28)]),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -638,24 +627,27 @@ class _StepRow extends StatelessWidget {
 
 // ─── Info Card ────────────────────────────────────────────────────────────
 
-class _InfoCard extends StatelessWidget {
+class InfoCard extends StatelessWidget {
   final TravelerVerificationState state;
   final String? failedStep;
   final String? errorReason;
   final String? uiMitigation;
 
-  const _InfoCard({
+  const InfoCard({
     required this.state,
     this.failedStep,
     this.errorReason,
     this.uiMitigation,
   });
 
-  String _formatStep(String step) {
-    return step.split('_').map((word) {
-      if (word.isEmpty) return '';
-      return word[0].toUpperCase() + word.substring(1).toLowerCase();
-    }).join(' ');
+  String formatStep(String step) {
+    return step
+        .split('_')
+        .map((word) {
+          if (word.isEmpty) return '';
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
   }
 
   @override
@@ -668,17 +660,18 @@ class _InfoCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFE65100).withAlpha(15),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFFE65100).withAlpha(40),
-          ),
+          border: Border.all(color: const Color(0xFFE65100).withAlpha(40)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.warning_amber_rounded,
-                    color: Color(0xFFE65100), size: 22),
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Color(0xFFE65100),
+                  size: 22,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'Verification Unsuccessful',
@@ -693,7 +686,7 @@ class _InfoCard extends StatelessWidget {
             const SizedBox(height: 12),
             if (failedStep != null && failedStep!.isNotEmpty) ...[
               Text(
-                'Failed at: ${_formatStep(failedStep!)}',
+                'Failed at: ${formatStep(failedStep!)}',
                 style: GoogleFonts.cabin(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -719,13 +712,17 @@ class _InfoCard extends StatelessWidget {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                      color: const Color(0xFFE65100).withAlpha(40)),
+                    color: const Color(0xFFE65100).withAlpha(40),
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.lightbulb_outline_rounded,
-                        size: 18, color: Color(0xFFE65100)),
+                    const Icon(
+                      Icons.lightbulb_outline_rounded,
+                      size: 18,
+                      color: Color(0xFFE65100),
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -749,20 +746,20 @@ class _InfoCard extends StatelessWidget {
 
     final (IconData icon, Color color, String message) = switch (state) {
       TravelerVerificationState.submitted => (
-          Icons.info_outline_rounded,
-          const Color(0xFF0277BD),
-          'Your documents are being verified automatically. This usually takes less than a minute.',
-        ),
+        Icons.info_outline_rounded,
+        const Color(0xFF0277BD),
+        'Your documents are being verified automatically. This usually takes less than a minute.',
+      ),
       TravelerVerificationState.verified => (
-          Icons.celebration_rounded,
-          const Color(0xFF27AE60),
-          'Congratulations! Your identity has been verified. You now have full access to all TrvlEz features.',
-        ),
+        Icons.celebration_rounded,
+        const Color(0xFF27AE60),
+        'Congratulations! Your identity has been verified. You now have full access to all TrvlEz features.',
+      ),
       _ => (
-          Icons.info_outline_rounded,
-          const Color(0xFF0277BD),
-          'Your verification status will be updated here.',
-        ),
+        Icons.info_outline_rounded,
+        const Color(0xFF0277BD),
+        'Your verification status will be updated here.',
+      ),
     };
 
     return Container(
@@ -770,9 +767,7 @@ class _InfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withAlpha(15),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withAlpha(40),
-        ),
+        border: Border.all(color: color.withAlpha(40)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -797,46 +792,47 @@ class _InfoCard extends StatelessWidget {
 
 // ─── Status Config ────────────────────────────────────────────────────────
 
-class _StatusConfig {
+class StatusConfig {
   final IconData icon;
   final List<Color> iconGradient;
   final String title;
   final String subtitle;
 
-  const _StatusConfig({
+  const StatusConfig({
     required this.icon,
     required this.iconGradient,
     required this.title,
     required this.subtitle,
   });
 
-  factory _StatusConfig.from(TravelerVerificationState state) {
+  factory StatusConfig.from(TravelerVerificationState state) {
     return switch (state) {
-      TravelerVerificationState.submitted => const _StatusConfig(
-          icon: Icons.hourglass_top_rounded,
-          iconGradient: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
-          title: 'Verifying Your Identity',
-          subtitle: 'Our system is reviewing your documents. This usually takes less than a minute.',
-        ),
-      TravelerVerificationState.verified => const _StatusConfig(
-          icon: Icons.verified_rounded,
-          iconGradient: [Color(0xFF10B981), Color(0xFF34D399)],
-          title: 'You\'re Verified!',
-          subtitle: 'Your identity has been successfully verified.',
-        ),
-      TravelerVerificationState.failed => const _StatusConfig(
-          icon: Icons.error_outline_rounded,
-          iconGradient: [Color(0xFFEF4444), Color(0xFFF87171)],
-          title: 'Verification Failed',
-          subtitle:
-              'Unfortunately, we were unable to verify your identity. Please review and re-submit.',
-        ),
-      _ => const _StatusConfig(
-          icon: Icons.pending_rounded,
-          iconGradient: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-          title: 'Verification Status',
-          subtitle: 'Your current verification progress.',
-        ),
+      TravelerVerificationState.submitted => const StatusConfig(
+        icon: Icons.hourglass_top_rounded,
+        iconGradient: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+        title: 'Verifying Your Identity',
+        subtitle:
+            'Our system is reviewing your documents. This usually takes less than a minute.',
+      ),
+      TravelerVerificationState.verified => const StatusConfig(
+        icon: Icons.verified_rounded,
+        iconGradient: [Color(0xFF10B981), Color(0xFF34D399)],
+        title: 'You\'re Verified!',
+        subtitle: 'Your identity has been successfully verified.',
+      ),
+      TravelerVerificationState.failed => const StatusConfig(
+        icon: Icons.error_outline_rounded,
+        iconGradient: [Color(0xFFEF4444), Color(0xFFF87171)],
+        title: 'Verification Failed',
+        subtitle:
+            'Unfortunately, we were unable to verify your identity. Please review and re-submit.',
+      ),
+      _ => const StatusConfig(
+        icon: Icons.pending_rounded,
+        iconGradient: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+        title: 'Verification Status',
+        subtitle: 'Your current verification progress.',
+      ),
     };
   }
 }

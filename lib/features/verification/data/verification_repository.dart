@@ -9,43 +9,38 @@ import '../domain/verification_status.dart';
 import '../domain/verification_submit_result.dart';
 
 class VerificationRepository {
-  final ApiClient _apiClient;
-  final TokenStorage _tokenStorage;
+  final ApiClient apiClient;
+  final TokenStorage tokenStorage;
 
-  VerificationRepository({
-    ApiClient? apiClient,
-    TokenStorage? tokenStorage,
-  })  : _apiClient = apiClient ?? ApiClient(),
-        _tokenStorage = tokenStorage ?? const TokenStorage();
+  VerificationRepository({ApiClient? apiClient, TokenStorage? tokenStorage})
+    : apiClient = apiClient ?? ApiClient(),
+      tokenStorage = tokenStorage ?? const TokenStorage();
 
   Future<void> uploadPassport(
     File imageFile, {
     required void Function(double progress) onProgress,
   }) async {
-    final token = await _tokenStorage.getToken();
+    final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
     final length = await imageFile.length();
     final ext = imageFile.path.split('.').last.toLowerCase();
-    
+
     String mimeType = 'image/jpeg';
     if (ext == 'png') mimeType = 'image/png';
     if (ext == 'webp') mimeType = 'image/webp';
 
     // 0. Ensure a verification session is started (Idempotent call on backend)
-    await _apiClient.post(
+    await apiClient.post(
       '/traveler/verification/start',
       body: {},
       authToken: token,
     );
 
     // 1. Initialize upload to get presigned URL
-    final initResponse = await _apiClient.post(
+    final initResponse = await apiClient.post(
       '/upload/passport/init',
-      body: {
-        'content_type': mimeType,
-        'file_size_bytes': length,
-      },
+      body: {'content_type': mimeType, 'file_size_bytes': length},
       authToken: token,
     );
 
@@ -60,7 +55,7 @@ class VerificationRepository {
 
     int bytes = 0;
     final stream = imageFile.openRead();
-    
+
     // Listen to the stream to update progress and add to request sink
     stream.listen(
       (chunk) {
@@ -84,11 +79,9 @@ class VerificationRepository {
     }
 
     // 3. Complete the upload
-    await _apiClient.post(
+    await apiClient.post(
       '/upload/passport/complete',
-      body: {
-        'file_id': fileId,
-      },
+      body: {'file_id': fileId},
       authToken: token,
     );
   }
@@ -97,29 +90,26 @@ class VerificationRepository {
     File videoFile, {
     required void Function(double progress) onProgress,
   }) async {
-    final token = await _tokenStorage.getToken();
+    final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
     final length = await videoFile.length();
     final ext = videoFile.path.split('.').last.toLowerCase();
-    
+
     String mimeType = 'video/mp4';
     if (ext == 'mov') mimeType = 'video/quicktime';
 
     // 0. Ensure a verification session is started (Idempotent call on backend)
-    await _apiClient.post(
+    await apiClient.post(
       '/traveler/verification/start',
       body: {},
       authToken: token,
     );
 
     // 1. Initialize upload to get presigned URL
-    final initResponse = await _apiClient.post(
+    final initResponse = await apiClient.post(
       '/upload/video/init',
-      body: {
-        'content_type': mimeType,
-        'file_size_bytes': length,
-      },
+      body: {'content_type': mimeType, 'file_size_bytes': length},
       authToken: token,
     );
 
@@ -134,7 +124,7 @@ class VerificationRepository {
 
     int bytes = 0;
     final stream = videoFile.openRead();
-    
+
     // Listen to the stream to update progress and add to request sink
     stream.listen(
       (chunk) {
@@ -158,11 +148,9 @@ class VerificationRepository {
     }
 
     // 3. Complete the upload
-    await _apiClient.post(
+    await apiClient.post(
       '/upload/video/complete',
-      body: {
-        'file_id': fileId,
-      },
+      body: {'file_id': fileId},
       authToken: token,
     );
   }
@@ -172,10 +160,10 @@ class VerificationRepository {
   /// Returns [VerificationSubmitResult] containing the job ID for polling
   /// and an optional verification score if the pipeline completes inline.
   Future<VerificationSubmitResult> submitVerification() async {
-    final token = await _tokenStorage.getToken();
+    final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
-    final response = await _apiClient.post(
+    final response = await apiClient.post(
       '/traveler/verification/submit',
       body: {},
       authToken: token,
@@ -191,10 +179,10 @@ class VerificationRepository {
   /// only exists on [VerificationSessionStatus], not on
   /// [TravelerOnboardingStep].
   Future<VerificationStatus> getVerificationStatus() async {
-    final token = await _tokenStorage.getToken();
+    final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
-    final response = await _apiClient.get(
+    final response = await apiClient.get(
       '/traveler/verification/status',
       authToken: token,
     );
@@ -207,10 +195,10 @@ class VerificationRepository {
   /// Used to track ML pipeline progress after submission.
   /// The backend returns the full job record including score and error details.
   Future<VerificationJobResult> getVerificationJob(String jobId) async {
-    final token = await _tokenStorage.getToken();
+    final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
-    final response = await _apiClient.get(
+    final response = await apiClient.get(
       '/traveler/verification/job/$jobId',
       authToken: token,
     );
@@ -224,10 +212,10 @@ class VerificationRepository {
   /// the traveler to perform during selfie capture. Reserved for future use
   /// when liveness detection is enabled.
   Future<Map<String, dynamic>> getVerificationChallenge() async {
-    final token = await _tokenStorage.getToken();
+    final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
-    final response = await _apiClient.get(
+    final response = await apiClient.get(
       '/traveler/verification/challenge',
       authToken: token,
     );

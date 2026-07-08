@@ -30,7 +30,7 @@ class AppTheme {
       surfaceContainerHighest: colors.backgroundMuted,
     );
 
-    return _buildTheme(colorScheme, colors);
+    return buildTheme(colorScheme, colors);
   }
 
   // ─── Dark Theme ────────────────────────────────────────────────────
@@ -53,15 +53,12 @@ class AppTheme {
       surfaceContainerHighest: colors.backgroundMuted,
     );
 
-    return _buildTheme(colorScheme, colors);
+    return buildTheme(colorScheme, colors);
   }
 
   // ─── Shared Theme Builder ─────────────────────────────────────────
 
-  static ThemeData _buildTheme(
-    ColorScheme colorScheme,
-    dynamic colors,
-  ) {
+  static ThemeData buildTheme(ColorScheme colorScheme, dynamic colors) {
     // Body / label text — Cabin
     final textTheme = GoogleFonts.cabinTextTheme().copyWith(
       // Headings — Nunito bold
@@ -200,10 +197,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colors.error, width: 2),
         ),
-        errorStyle: GoogleFonts.cabin(
-          fontSize: 12,
-          color: colors.error,
-        ),
+        errorStyle: GoogleFonts.cabin(fontSize: 12, color: colors.error),
       ),
 
       // ── Primary filled button (56px height, rounded-xl) ────────

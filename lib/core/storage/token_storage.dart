@@ -3,11 +3,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// Securely stores and retrieves authentication tokens.
 class TokenStorage {
   final FlutterSecureStorage storage;
-  
+
   static const String accessTokenKey = 'access_token';
 
-  const TokenStorage({FlutterSecureStorage? storage}) 
-      : storage = storage ?? const FlutterSecureStorage();
+  const TokenStorage({FlutterSecureStorage? storage})
+    : storage = storage ?? const FlutterSecureStorage();
 
   /// Saves the access token to secure storage.
   Future<void> saveToken(String token) async {

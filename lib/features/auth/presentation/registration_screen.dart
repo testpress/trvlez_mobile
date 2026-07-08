@@ -200,7 +200,10 @@ class RegistrationScreenState extends State<RegistrationScreen>
               'assets/logo.svg',
               width: 28,
               height: 28,
-              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ),
@@ -344,10 +347,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Full Name',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Full Name', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         TextFormField(
           controller: fullNameController,
@@ -356,9 +356,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
           style: GoogleFonts.cabin(fontSize: 15),
-          decoration: const InputDecoration(
-            hintText: 'Enter your full name',
-          ),
+          decoration: const InputDecoration(hintText: 'Enter your full name'),
         ),
       ],
     );
@@ -368,10 +366,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Email',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Email', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         TextFormField(
           controller: emailController,
@@ -393,10 +388,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Password',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        Text('Password', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         TextFormField(
           controller: passwordController,
