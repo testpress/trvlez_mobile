@@ -213,7 +213,9 @@ class VerificationNotifier extends ChangeNotifier {
     notifyListeners();
 
     try {
-      submitResult = await repository.submitVerification();
+      submitResult = await repository.submitVerification(
+        nfcPayload: nfcResult?.toJson(),
+      );
 
       if (submitResult!.isVerified) {
         phase = VerificationPhase.verified;

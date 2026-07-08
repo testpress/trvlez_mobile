@@ -159,13 +159,20 @@ class VerificationRepository {
   ///
   /// Returns [VerificationSubmitResult] containing the job ID for polling
   /// and an optional verification score if the pipeline completes inline.
-  Future<VerificationSubmitResult> submitVerification() async {
+  Future<VerificationSubmitResult> submitVerification({
+    Map<String, dynamic>? nfcPayload,
+  }) async {
     final token = await tokenStorage.getToken();
     if (token == null) throw ApiException.unauthorized();
 
+    final body = <String, dynamic>{};
+    if (nfcPayload != null) {
+      body['nfc_data'] = nfcPayload;
+    }
+
     final response = await apiClient.post(
       '/traveler/verification/submit',
-      body: {},
+      body: body,
       authToken: token,
     );
 
