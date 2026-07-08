@@ -336,7 +336,11 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
                     ],
                     const SizedBox(height: 40),
                     // ── Step Checklist ────────────────────────────
-                    StepChecklist(state: state),
+                    StepChecklist(
+                      state: state, 
+                      isNfcSkipped: widget.verificationNotifier?.isNfcSkipped ?? false,
+                      hasNfcResult: widget.verificationNotifier?.nfcResult != null,
+                    ),
                     const SizedBox(height: 32),
                     // ── Info Card ─────────────────────────────────
                     InfoCard(
@@ -490,8 +494,14 @@ class VerificationScoreIndicator extends StatelessWidget {
 
 class StepChecklist extends StatelessWidget {
   final TravelerVerificationState state;
+  final bool isNfcSkipped;
+  final bool hasNfcResult;
 
-  const StepChecklist({required this.state});
+  const StepChecklist({
+    required this.state,
+    this.isNfcSkipped = false,
+    this.hasNfcResult = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -503,6 +513,11 @@ class StepChecklist extends StatelessWidget {
       StepItem(label: 'Complete Profile', status: StepStatus.completed),
       StepItem(label: 'Upload Passport', status: StepStatus.completed),
       StepItem(label: 'Selfie Verification', status: StepStatus.completed),
+      if (hasNfcResult || !isNfcSkipped) // Show NFC step if it was done, or assume done if not explicitly skipped
+        StepItem(
+          label: 'NFC Passport Scan', 
+          status: hasNfcResult ? StepStatus.completed : (isNfcSkipped ? StepStatus.failed : StepStatus.completed),
+        ),
       StepItem(
         label: 'Identity Review',
         status: switch (state) {

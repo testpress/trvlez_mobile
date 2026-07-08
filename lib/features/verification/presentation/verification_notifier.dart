@@ -7,6 +7,7 @@ import '../data/verification_repository.dart';
 import '../domain/verification_job_result.dart';
 import '../domain/verification_submit_result.dart';
 import '../domain/verification_status.dart' as domain;
+import '../domain/nfc_passport_result.dart';
 
 /// Tracks the current phase of the verification flow in the UI.
 enum VerificationPhase {
@@ -50,6 +51,13 @@ class VerificationNotifier extends ChangeNotifier {
   VerificationJobResult? jobResult;
   domain.VerificationStatus? verificationStatus;
   Timer? pollTimer;
+
+  // NFC State
+  NfcPassportResult? nfcResult;
+  bool isNfcSkipped = false;
+  String? extractedDocumentNumber;
+  DateTime? extractedDateOfBirth;
+  DateTime? extractedDateOfExpiry;
 
   /// Backward-compatible status getter used by existing UI code.
   VerificationStatus get status => switch (phase) {
@@ -103,7 +111,31 @@ class VerificationNotifier extends ChangeNotifier {
     submitResult = null;
     jobResult = null;
     verificationStatus = null;
+    nfcResult = null;
+    isNfcSkipped = false;
+    extractedDocumentNumber = null;
+    extractedDateOfBirth = null;
+    extractedDateOfExpiry = null;
     stopPolling();
+    notifyListeners();
+  }
+
+  void setNfcResult(NfcPassportResult result) {
+    nfcResult = result;
+    isNfcSkipped = false;
+    notifyListeners();
+  }
+
+  void skipNfc() {
+    isNfcSkipped = true;
+    nfcResult = null;
+    notifyListeners();
+  }
+  
+  void setExtractedMrz(String docNum, DateTime dob, DateTime doe) {
+    extractedDocumentNumber = docNum;
+    extractedDateOfBirth = dob;
+    extractedDateOfExpiry = doe;
     notifyListeners();
   }
 
@@ -162,12 +194,9 @@ class VerificationNotifier extends ChangeNotifier {
         },
       );
 
-      // Upload complete. Don't block the caller (UI) for submit.
+      // Upload complete. Wait for user to proceed to NFC.
       phase = VerificationPhase.uploadSuccess;
       notifyListeners();
-
-      // Fire off submit in the background
-      submitVerificationAsync();
     } on ApiException catch (e) {
       phase = VerificationPhase.error;
       errorMessage = e.message;

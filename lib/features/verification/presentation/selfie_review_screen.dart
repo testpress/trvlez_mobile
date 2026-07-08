@@ -82,8 +82,6 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
   }
 
   void showUploadSuccessSheet(VerificationPhase phase) {
-    final jobId = widget.notifier.submitResult?.verificationJobId;
-
     showModalBottomSheet<void>(
       context: context,
       isDismissible: false,
@@ -94,14 +92,8 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
           phase: phase,
           onViewStatus: () {
             Navigator.of(sheetContext).pop();
-            if (phase == VerificationPhase.verified ||
-                phase == VerificationPhase.verificationFailed) {
-              context.go('/verification/status');
-            } else if (phase == VerificationPhase.verifying) {
-              context.go('/verification/status', extra: {'jobId': jobId});
-            } else {
-              context.go('/verification/status');
-            }
+            // Proceed to the NFC step
+            context.go('/verification/nfc-intro');
           },
         );
       },
@@ -338,7 +330,7 @@ class UploadSuccessSheet extends StatelessWidget {
               label: Text(
                 isAlreadyVerified
                     ? 'Start Exploring'
-                    : 'View Verification Status',
+                    : 'Continue to Passport Scan',
               ),
               style: FilledButton.styleFrom(
                 shape: RoundedRectangleBorder(

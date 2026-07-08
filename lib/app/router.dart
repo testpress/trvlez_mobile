@@ -17,6 +17,11 @@ import '../features/verification/presentation/selfie_review_screen.dart';
 import '../features/verification/presentation/verification_notifier.dart';
 import '../features/verification/presentation/verification_status_screen.dart';
 
+import '../features/verification/presentation/nfc_intro_screen.dart';
+import '../features/verification/presentation/nfc_scan_screen.dart';
+import '../features/verification/presentation/nfc_result_screen.dart';
+import '../features/verification/data/nfc_passport_service.dart';
+
 /// Central router configuration for the TrvlEz app.
 ///
 /// Redirect logic:
@@ -27,6 +32,7 @@ GoRouter createRouter(
   ProfileRepository profileRepository,
 ) {
   final verificationNotifier = VerificationNotifier();
+  final nfcPassportService = NfcPassportService();
 
   return GoRouter(
     initialLocation: '/login',
@@ -101,6 +107,24 @@ GoRouter createRouter(
         path: '/verification/selfie-review',
         builder: (context, state) =>
             SelfieReviewScreen(notifier: verificationNotifier),
+      ),
+      GoRoute(
+        path: '/verification/nfc-intro',
+        builder: (context, state) =>
+            NfcIntroScreen(notifier: verificationNotifier),
+      ),
+      GoRoute(
+        path: '/verification/nfc-scan',
+        builder: (context, state) =>
+            NfcScanScreen(
+              notifier: verificationNotifier, 
+              nfcService: nfcPassportService,
+            ),
+      ),
+      GoRoute(
+        path: '/verification/nfc-result',
+        builder: (context, state) =>
+            NfcResultScreen(notifier: verificationNotifier),
       ),
       GoRoute(
         path: '/verification/status',
