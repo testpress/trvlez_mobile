@@ -129,7 +129,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
 
   void _skipNfc() {
     widget.notifier.skipNfc();
-    widget.notifier.submitVerification();
+    widget.notifier.submitVerificationAsync();
     context.go('/verification/status');
   }
 

@@ -216,7 +216,7 @@ class NfcIntroScreen extends StatelessWidget {
               Navigator.pop(context); // Close dialog
               notifier.skipNfc();
               // Proceed directly to submission
-              notifier.submitVerification();
+              notifier.submitVerificationAsync();
               context.go('/verification/status');
             },
             child: const Text('Skip Anyway'),

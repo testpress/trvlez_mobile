@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:dmrtd/dmrtd.dart';
-import 'package:dmrtd/extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 

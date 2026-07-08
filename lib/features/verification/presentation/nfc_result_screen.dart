@@ -148,7 +148,7 @@ class NfcResultScreen extends StatelessWidget {
               FilledButton(
                 onPressed: () {
                   // Final submission
-                  notifier.submitVerification();
+                  notifier.submitVerificationAsync();
                   context.go('/verification/status');
                 },
                 style: FilledButton.styleFrom(
