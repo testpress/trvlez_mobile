@@ -8,6 +8,13 @@ import '../domain/nfc_error.dart';
 import '../domain/nfc_passport_result.dart';
 import '../domain/nfc_read_progress.dart';
 
+/// Status of NFC on the device
+enum NfcDeviceStatus {
+  available,
+  disabled,
+  unsupported,
+}
+
 /// Service responsible for orchestrating the NFC communication with the passport chip.
 /// 
 /// Wraps the lower-level `dmrtd` library and maps its specialized exceptions
@@ -17,16 +24,22 @@ class NfcPassportService {
   final NfcProvider _nfc = NfcProvider();
 
   /// Checks if the current device has NFC hardware and if it is enabled.
-  Future<bool> isNfcAvailable() async {
+  Future<NfcDeviceStatus> getNfcStatus() async {
     try {
       final status = await NfcProvider.nfcStatus;
-      return status == NfcStatus.enabled;
+      if (status == NfcStatus.enabled) {
+        return NfcDeviceStatus.available;
+      } else if (status == NfcStatus.disabled) {
+        return NfcDeviceStatus.disabled;
+      } else {
+        return NfcDeviceStatus.unsupported;
+      }
     } on PlatformException catch (e) {
       _log.warning('NfcProvider platform exception: $e');
-      return false;
+      return NfcDeviceStatus.unsupported;
     } catch (e) {
       _log.warning('Error checking NFC status: $e');
-      return false;
+      return NfcDeviceStatus.unsupported;
     }
   }
 

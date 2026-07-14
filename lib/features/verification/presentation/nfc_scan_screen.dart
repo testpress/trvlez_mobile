@@ -28,7 +28,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
   NfcReadProgress? _currentProgress;
   NfcError? _error;
   bool _isCheckingAvailability = true;
-  bool _isNfcAvailable = false;
+  NfcDeviceStatus _nfcStatus = NfcDeviceStatus.unsupported;
   
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -56,16 +56,16 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
   }
 
   Future<void> _checkNfcAndStart() async {
-    final available = await widget.nfcService.isNfcAvailable();
+    final status = await widget.nfcService.getNfcStatus();
     
     if (!mounted) return;
     
     setState(() {
       _isCheckingAvailability = false;
-      _isNfcAvailable = available;
+      _nfcStatus = status;
     });
 
-    if (available) {
+    if (status == NfcDeviceStatus.available) {
       _startScan();
     }
   }
@@ -165,7 +165,9 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
             children: [
               if (_isCheckingAvailability)
                 const Center(child: CircularProgressIndicator())
-              else if (!_isNfcAvailable)
+              else if (_nfcStatus == NfcDeviceStatus.disabled)
+                _buildNfcDisabledView(theme)
+              else if (_nfcStatus == NfcDeviceStatus.unsupported)
                 _buildNfcUnavailableView(theme)
               else if (_error != null)
                 _buildErrorView(theme)
@@ -320,6 +322,55 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         TextButton(
           onPressed: _skipNfc,
           child: const Text('Skip NFC Verification'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNfcDisabledView(ThemeData theme) {
+    return Column(
+      children: [
+        Icon(
+          Icons.nfc_rounded,
+          size: 80,
+          color: theme.colorScheme.onSurface.withAlpha(100),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'NFC is Disabled',
+          style: GoogleFonts.nunito(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Please enable NFC in your device settings to scan your passport. Once enabled, tap "Check Again".',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            color: theme.colorScheme.onSurface.withAlpha(180),
+            height: 1.5,
+          ),
+        ),
+        const SizedBox(height: 48),
+        FilledButton(
+          onPressed: () {
+            setState(() {
+              _isCheckingAvailability = true;
+            });
+            _checkNfcAndStart();
+          },
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(double.infinity, 56),
+          ),
+          child: const Text('Check Again'),
+        ),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: _skipNfc,
+          child: const Text('Continue Without NFC'),
         ),
       ],
     );
