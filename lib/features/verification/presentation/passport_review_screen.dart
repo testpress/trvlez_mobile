@@ -53,7 +53,9 @@ class PassportReviewScreen extends StatelessWidget {
                         const CircularProgressIndicator(color: Colors.white),
                         const SizedBox(height: 24),
                         Text(
-                          'Uploading Passport...',
+                          notifier.phase == VerificationPhase.extractingMrz
+                              ? 'Extracting Passport Data...'
+                              : 'Uploading Passport...',
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

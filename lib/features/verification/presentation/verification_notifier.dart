@@ -20,6 +20,12 @@ enum VerificationPhase {
   /// File upload succeeded (passport or selfie).
   uploadSuccess,
 
+  /// Extracting MRZ data from uploaded passport.
+  extractingMrz,
+
+  /// Extracting MRZ data failed.
+  mrzExtractionFailed,
+
   /// Submitting documents for verification (triggers ML pipeline).
   submitting,
 
@@ -67,6 +73,8 @@ class VerificationNotifier extends ChangeNotifier {
     VerificationPhase.submitting ||
     VerificationPhase.verifying ||
     VerificationPhase.verified => VerificationStatus.success,
+    VerificationPhase.extractingMrz => VerificationStatus.uploading, // Keep UI in loading state
+    VerificationPhase.mrzExtractionFailed ||
     VerificationPhase.verificationFailed ||
     VerificationPhase.error => VerificationStatus.error,
   };
@@ -156,7 +164,39 @@ class VerificationNotifier extends ChangeNotifier {
         },
       );
 
-      phase = VerificationPhase.uploadSuccess;
+      // After successful upload, immediately extract MRZ
+      phase = VerificationPhase.extractingMrz;
+      notifyListeners();
+
+      final mrzResult = await repository.extractMrz();
+      
+      if (mrzResult.success) {
+        if (mrzResult.documentNumber != null && 
+            mrzResult.dateOfBirth != null && 
+            mrzResult.dateOfExpiry != null) {
+          
+          DateTime? parseDate(String? dateStr) {
+            if (dateStr == null || dateStr.isEmpty) return null;
+            try {
+              return DateTime.parse(dateStr);
+            } catch (_) {
+              return null;
+            }
+          }
+
+          final dob = parseDate(mrzResult.dateOfBirth);
+          final doe = parseDate(mrzResult.dateOfExpiry);
+
+          if (dob != null && doe != null) {
+            setExtractedMrz(mrzResult.documentNumber!, dob, doe);
+          }
+        }
+        phase = VerificationPhase.uploadSuccess;
+      } else {
+        phase = VerificationPhase.mrzExtractionFailed;
+        errorMessage = mrzResult.errorMessage ?? 'Could not read passport MRZ data';
+      }
+      
       notifyListeners();
     } on ApiException catch (e) {
       phase = VerificationPhase.error;

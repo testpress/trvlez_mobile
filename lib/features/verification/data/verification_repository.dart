@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
+import '../domain/mrz_extraction_result.dart';
 import '../domain/verification_job_result.dart';
 import '../domain/verification_status.dart';
 import '../domain/verification_submit_result.dart';
@@ -153,6 +154,23 @@ class VerificationRepository {
       body: {'file_id': fileId},
       authToken: token,
     );
+  }
+
+  /// Extracts MRZ data from the uploaded passport image.
+  ///
+  /// This should be called immediately after [uploadPassport] completes
+  /// to fetch the document number, DOB, and expiry date needed for NFC chip authentication.
+  Future<MrzExtractionResult> extractMrz() async {
+    final token = await tokenStorage.getToken();
+    if (token == null) throw ApiException.unauthorized();
+
+    final response = await apiClient.post(
+      '/traveler/verification/extract-mrz',
+      body: {},
+      authToken: token,
+    );
+
+    return MrzExtractionResult.fromJson(response);
   }
 
   /// Submits the verification session for ML pipeline processing.
