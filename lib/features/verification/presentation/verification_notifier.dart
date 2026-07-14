@@ -171,13 +171,17 @@ class VerificationNotifier extends ChangeNotifier {
       final mrzResult = await repository.extractMrz();
       
       if (mrzResult.success) {
+        bool isValidMrz = false;
+        
         if (mrzResult.documentNumber != null && 
+            mrzResult.documentNumber!.isNotEmpty &&
             mrzResult.dateOfBirth != null && 
             mrzResult.dateOfExpiry != null) {
           
           DateTime? parseDate(String? dateStr) {
             if (dateStr == null || dateStr.isEmpty) return null;
             try {
+              // Try standard parse first (handles YYYY-MM-DD)
               return DateTime.parse(dateStr);
             } catch (_) {
               return null;
@@ -189,9 +193,16 @@ class VerificationNotifier extends ChangeNotifier {
 
           if (dob != null && doe != null) {
             setExtractedMrz(mrzResult.documentNumber!, dob, doe);
+            isValidMrz = true;
           }
         }
-        phase = VerificationPhase.uploadSuccess;
+        
+        if (isValidMrz) {
+          phase = VerificationPhase.uploadSuccess;
+        } else {
+          phase = VerificationPhase.mrzExtractionFailed;
+          errorMessage = 'Could not read all required passport data (Document Number, Date of Birth, Expiry). Please ensure the MRZ code is clearly visible and retake the photo.';
+        }
       } else {
         phase = VerificationPhase.mrzExtractionFailed;
         errorMessage = mrzResult.errorMessage ?? 'Could not read passport MRZ data';

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app_settings/app_settings.dart';
 
 import '../data/nfc_passport_service.dart';
 import '../domain/nfc_error.dart';
@@ -24,7 +25,7 @@ class NfcScanScreen extends StatefulWidget {
   State<NfcScanScreen> createState() => _NfcScanScreenState();
 }
 
-class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProviderStateMixin {
+class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   NfcReadProgress? _currentProgress;
   NfcError? _error;
   bool _isCheckingAvailability = true;
@@ -36,6 +37,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     
     _pulseController = AnimationController(
       vsync: this,
@@ -51,8 +53,19 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pulseController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _nfcStatus == NfcDeviceStatus.disabled) {
+      setState(() {
+        _isCheckingAvailability = true;
+      });
+      _checkNfcAndStart();
+    }
   }
 
   Future<void> _checkNfcAndStart() async {
@@ -346,7 +359,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         ),
         const SizedBox(height: 16),
         Text(
-          'Please enable NFC in your device settings to scan your passport. Once enabled, tap "Check Again".',
+          'Please enable NFC in your device settings to scan your passport. We will automatically resume once it is enabled.',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
@@ -357,15 +370,12 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         const SizedBox(height: 48),
         FilledButton(
           onPressed: () {
-            setState(() {
-              _isCheckingAvailability = true;
-            });
-            _checkNfcAndStart();
+            AppSettings.openAppSettings(type: AppSettingsType.nfc);
           },
           style: FilledButton.styleFrom(
             minimumSize: const Size(double.infinity, 56),
           ),
-          child: const Text('Check Again'),
+          child: const Text('Enable NFC'),
         ),
         const SizedBox(height: 12),
         TextButton(
