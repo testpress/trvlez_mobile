@@ -193,7 +193,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                             onTap: (isPassportComplete && !isSelfieComplete)
                                 ? () async {
                                     await context.push(
-                                      '/verification/selfie-capture',
+                                      '/verification/selfie-instructions',
                                     );
                                     loadProfile(); // Refresh when returning
                                   }
