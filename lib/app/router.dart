@@ -4,6 +4,7 @@ import '../core/auth/auth_notifier.dart';
 import '../features/auth/data/auth_repository.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/registration_screen.dart';
+import '../features/auth/presentation/welcome_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/profile/data/profile_repository.dart';
@@ -36,12 +37,12 @@ GoRouter createRouter(
   final nfcPassportService = NfcPassportService();
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/welcome',
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final isAuthenticated = authNotifier.isAuthenticated;
       final location = state.matchedLocation;
-      final isAuthRoute = location == '/login' || location == '/register';
+      final isAuthRoute = location == '/login' || location == '/register' || location == '/welcome';
 
       if (!isAuthenticated) {
         // Not authenticated → force to login (unless already there)
@@ -57,6 +58,10 @@ GoRouter createRouter(
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/welcome',
+        builder: (context, state) => const WelcomeScreen(),
+      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(
