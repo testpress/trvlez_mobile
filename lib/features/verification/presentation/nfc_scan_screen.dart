@@ -94,17 +94,16 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
     });
 
     try {
-      // In a real app, these values should come from the OCR extraction.
-      // Assuming VerificationNotifier holds the extracted MRZ info or we fall back.
-      // For this implementation, we simulate extraction or expect the notifier to provide it.
       final docNumber = widget.notifier.extractedDocumentNumber ?? '';
-      final dob = widget.notifier.extractedDateOfBirth ?? DateTime(1990, 1, 1);
-      final doe = widget.notifier.extractedDateOfExpiry ?? DateTime(2030, 1, 1);
-      
-      if (docNumber.isEmpty) {
+      final dob = widget.notifier.extractedDateOfBirth;
+      final doe = widget.notifier.extractedDateOfExpiry;
+
+      if (docNumber.isEmpty || dob == null || doe == null) {
         throw const NfcError(
-          type: NfcErrorType.invalidMrzData, 
-          message: 'Could not extract passport number from photo.',
+          type: NfcErrorType.invalidMrzData,
+          message: 'Passport data is incomplete. Please re-scan your passport photo.',
+          userGuidance: 'Go back and retake the passport photo, ensuring the MRZ '
+              'text lines at the bottom of the data page are clearly visible.',
           isRetryable: false,
         );
       }
