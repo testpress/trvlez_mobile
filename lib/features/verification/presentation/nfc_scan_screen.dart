@@ -309,7 +309,74 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
             height: 1.5,
           ),
         ),
-        const SizedBox(height: 48),
+        // Recovery guidance
+        if (_error!.userGuidance != null) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.secondaryContainer.withAlpha(80),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.lightbulb_outline_rounded,
+                  size: 20,
+                  color: theme.colorScheme.onSecondaryContainer,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _error!.userGuidance!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: theme.colorScheme.onSecondaryContainer,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        // Collapsible technical details for debugging
+        if (_error!.technicalDetails != null) ...[
+          const SizedBox(height: 8),
+          Theme(
+            data: theme.copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: Text(
+                'Technical Details',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface.withAlpha(100),
+                ),
+              ),
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest.withAlpha(100),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: SelectableText(
+                    _error!.technicalDetails!,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'monospace',
+                      color: theme.colorScheme.onSurface.withAlpha(120),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 32),
         if (_error!.isRetryable)
           FilledButton.icon(
             onPressed: _startScan,
@@ -319,7 +386,8 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
               minimumSize: const Size(double.infinity, 56),
             ),
           )
-        else if (_error!.type == NfcErrorType.authenticationFailed)
+        else if (_error!.type == NfcErrorType.authenticationFailed ||
+                 _error!.type == NfcErrorType.invalidMrzData)
           FilledButton.icon(
             onPressed: () {
               // Go back to OCR to re-capture MRZ

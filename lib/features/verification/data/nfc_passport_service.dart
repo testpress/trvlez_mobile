@@ -55,6 +55,9 @@ class NfcPassportService {
     required DateTime dateOfExpiry,
     required void Function(NfcReadProgress) onProgress,
   }) async {
+    // Track current step for contextual error messages
+    String currentReadStep = 'connecting';
+
     try {
       // 1. Connection
       onProgress(const NfcReadProgress(
@@ -63,9 +66,13 @@ class NfcPassportService {
         description: 'Waiting for passport...',
       ));
 
-      await _nfc.connect(
-        iosAlertMessage: 'Hold your iPhone near the biometric passport.',
-      );
+      try {
+        await _nfc.connect(
+          iosAlertMessage: 'Hold your iPhone near the biometric passport.',
+        );
+      } catch (e) {
+        throw NfcError.fromException(e, readStep: 'connecting to passport');
+      }
 
       final passport = Passport(_nfc);
 
@@ -86,6 +93,7 @@ class NfcPassportService {
       }
 
       // 3. Establish Session (PACE or BAC)
+      currentReadStep = 'authenticating';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.authenticating,
         percentage: 0.2,
@@ -101,9 +109,16 @@ class NfcPassportService {
       // BAC is the universally supported fallback. 
       // If the passport explicitly forces PACE, we could startSessionPACE here.
       // For simplicity and highest compatibility, we start standard BAC session.
-      await passport.startSession(accessKey);
+      try {
+        await passport.startSession(accessKey);
+      } catch (e) {
+        // BAC/PACE session establishment is the most common failure point.
+        // Wrong MRZ data (doc number, DOB, expiry) causes authentication to fail.
+        throw NfcError.fromException(e, readStep: 'authenticating');
+      }
 
       // 4. Read EF.COM
+      currentReadStep = 'reading configuration';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.readingCom,
         percentage: 0.3,
@@ -140,6 +155,7 @@ class NfcPassportService {
       }
 
       // 5. Read EF.DG1 (MRZ Data)
+      currentReadStep = 'reading basic details';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.readingDg1,
         percentage: 0.4,
@@ -169,6 +185,7 @@ class NfcPassportService {
       }
 
       // 6. Read EF.DG2 (Face Image)
+      currentReadStep = 'reading face image';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.readingDg2,
         percentage: 0.6,
@@ -186,6 +203,7 @@ class NfcPassportService {
       }
 
       // 7. Read EF.DG14 (Chip Authentication Public Key)
+      currentReadStep = 'reading security parameters';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.readingDg14,
         percentage: 0.7,
@@ -194,6 +212,7 @@ class NfcPassportService {
       await readAndStoreDg(EfDG14.TAG, 'DG14', () => passport.readEfDG14());
 
       // 8. Read EF.DG15 (Active Authentication Public Key) & Perform AA
+      currentReadStep = 'reading authentication keys';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.readingDg15,
         percentage: 0.75,
@@ -224,6 +243,7 @@ class NfcPassportService {
       }
 
       // 9. Read EF.SOD (Document Security Object for Passive Authentication)
+      currentReadStep = 'reading security object';
       onProgress(const NfcReadProgress(
         currentStep: NfcReadStep.readingSod,
         percentage: 0.9,
@@ -256,15 +276,19 @@ class NfcPassportService {
         availableDataGroups: availableDataGroups,
       );
     } catch (e) {
-      _log.severe('Error reading passport: $e');
+      _log.severe('Error reading passport at step "$currentReadStep": $e');
       
+      // If already an NfcError (from step-specific catch blocks), preserve it
+      final nfcError = e is NfcError
+          ? e
+          : NfcError.fromException(e, readStep: currentReadStep);
+
       // Try to disconnect cleanly on error
       try {
-        final nfcError = NfcError.fromException(e);
         await _nfc.disconnect(iosErrorMessage: nfcError.message);
       } catch (_) {}
 
-      throw NfcError.fromException(e);
+      throw nfcError;
     }
   }
 }
