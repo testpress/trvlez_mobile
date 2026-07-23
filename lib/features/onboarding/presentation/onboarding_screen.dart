@@ -55,7 +55,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
       case 'profile_complete':
         return 0; // Passport step
       case 'verification_started':
-        return 1; // Review step
+        return 0; // Session started, passport capture in progress
       case 'passport_reviewed':
         return 2; // Selfie step
       case 'documents_uploaded':

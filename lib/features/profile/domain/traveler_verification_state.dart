@@ -6,7 +6,7 @@
 /// Backend state machine:
 /// ```
 /// profile_pending → profile_complete → verification_started
-///   → documents_uploaded → submitted → verified
+///   → passport_reviewed → documents_uploaded → submitted → verified
 /// ```
 enum TravelerVerificationState {
   /// Profile has not been completed yet.
@@ -17,6 +17,9 @@ enum TravelerVerificationState {
 
   /// Verification session created, but documents not yet uploaded.
   verificationStarted,
+
+  /// MRZ data reviewed and confirmed — passport identity persisted.
+  passportReviewed,
 
   /// Both passport and video files are uploaded (session status = uploaded).
   documentsUploaded,
@@ -39,6 +42,7 @@ enum TravelerVerificationState {
     profilePending ||
     profileComplete ||
     verificationStarted ||
+    passportReviewed ||
     documentsUploaded => true,
     _ => false,
   };
@@ -69,6 +73,7 @@ enum TravelerVerificationState {
       'profile_pending' => profilePending,
       'profile_complete' => profileComplete,
       'verification_started' => verificationStarted,
+      'passport_reviewed' => passportReviewed,
       'documents_uploaded' => documentsUploaded,
       'submitted' => submitted,
       'verified' => verified,

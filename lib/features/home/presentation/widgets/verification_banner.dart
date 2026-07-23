@@ -150,10 +150,10 @@ class BannerConfig {
       TravelerVerificationState.profilePending => const BannerConfig(
         backgroundColor: Color(0xFFE3F2FD),
         foregroundColor: Color(0xFF1565C0),
-        icon: Icons.person_outline_rounded,
-        title: 'Complete Your Profile',
-        subtitle: 'Add your details to get started with TrvlEz.',
-        actionLabel: 'Continue',
+        icon: Icons.verified_user_outlined,
+        title: 'Verify Your Identity',
+        subtitle: 'Upload your passport to get started with TrvlEz.',
+        actionLabel: 'Start',
       ),
       TravelerVerificationState.profileComplete => const BannerConfig(
         backgroundColor: Color(0xFFE3F2FD),
@@ -169,6 +169,14 @@ class BannerConfig {
         icon: Icons.upload_file_rounded,
         title: 'Continue Document Upload',
         subtitle: 'You have pending document uploads to complete.',
+        actionLabel: 'Continue',
+      ),
+      TravelerVerificationState.passportReviewed => const BannerConfig(
+        backgroundColor: Color(0xFFE3F2FD),
+        foregroundColor: Color(0xFF1565C0),
+        icon: Icons.videocam_rounded,
+        title: 'Record Selfie Video',
+        subtitle: 'Your passport is verified. Now record a short selfie.',
         actionLabel: 'Continue',
       ),
       TravelerVerificationState.documentsUploaded => const BannerConfig(
