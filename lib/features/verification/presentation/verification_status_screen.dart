@@ -12,6 +12,7 @@ import '../../profile/domain/traveler_verification_state.dart';
 import '../../profile/presentation/profile_notifier.dart';
 import '../domain/verification_status.dart' as domain;
 import 'verification_notifier.dart';
+import 'widgets/verification_progress_bar.dart';
 
 /// Displays the full verification journey with step-by-step progress.
 ///
@@ -305,6 +306,8 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
                 ),
                 child: Column(
                   children: [
+                    // Step progress bar — all steps complete
+                    VerificationProgressBar.verification(currentStepIndex: 4),
                     const SizedBox(height: 24),
                     // ── Status Icon ────────────────────────────────
                     buildStatusIcon(config, state),

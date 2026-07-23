@@ -103,19 +103,26 @@ class PassportReviewScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'Upload Complete!',
+                          'Passport Uploaded!',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Review your extracted details next.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white70,
+                          ),
+                        ),
                         const SizedBox(height: 32),
                         FilledButton(
                           onPressed: () {
-                            // First pop the review screen
-                            context.go('/onboarding');
+                            // Navigate to MRZ review screen
+                            context.go('/verification/mrz-review');
                           },
-                          child: const Text('Continue'),
+                          child: const Text('Review Details'),
                         ),
                       ],
                     ),

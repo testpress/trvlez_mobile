@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/verification_repository.dart';
+import '../domain/mrz_extraction_result.dart';
 import '../domain/verification_job_result.dart';
 import '../domain/verification_submit_result.dart';
 import '../domain/verification_status.dart' as domain;
@@ -25,6 +26,12 @@ enum VerificationPhase {
 
   /// Extracting MRZ data failed.
   mrzExtractionFailed,
+
+  /// MRZ data confirmed by traveller — ready to proceed to selfie.
+  mrzReviewed,
+
+  /// Confirming MRZ data with the backend.
+  confirmingMrz,
 
   /// Submitting documents for verification (triggers ML pipeline).
   submitting,
@@ -58,6 +65,9 @@ class VerificationNotifier extends ChangeNotifier {
   domain.VerificationStatus? verificationStatus;
   Timer? pollTimer;
 
+  // MRZ State
+  MrzExtractionResult? mrzExtractionResult;
+
   // NFC State
   NfcPassportResult? nfcResult;
   bool isNfcSkipped = false;
@@ -70,6 +80,8 @@ class VerificationNotifier extends ChangeNotifier {
     VerificationPhase.idle => VerificationStatus.idle,
     VerificationPhase.uploading => VerificationStatus.uploading,
     VerificationPhase.uploadSuccess ||
+    VerificationPhase.mrzReviewed ||
+    VerificationPhase.confirmingMrz ||
     VerificationPhase.submitting ||
     VerificationPhase.verifying ||
     VerificationPhase.verified => VerificationStatus.success,
@@ -119,6 +131,7 @@ class VerificationNotifier extends ChangeNotifier {
     submitResult = null;
     jobResult = null;
     verificationStatus = null;
+    mrzExtractionResult = null;
     nfcResult = null;
     isNfcSkipped = false;
     extractedDocumentNumber = null;
@@ -199,6 +212,8 @@ class VerificationNotifier extends ChangeNotifier {
         
         if (isValidMrz) {
           phase = VerificationPhase.uploadSuccess;
+          // Store the full MRZ result for the review screen
+          mrzExtractionResult = mrzResult;
         } else {
           phase = VerificationPhase.mrzExtractionFailed;
           errorMessage = 'Could not read all required passport data (Document Number, Date of Birth, Expiry). Please ensure the MRZ code is clearly visible and retake the photo.';
@@ -216,6 +231,31 @@ class VerificationNotifier extends ChangeNotifier {
     } catch (e) {
       phase = VerificationPhase.error;
       errorMessage = 'Upload failed: $e';
+      notifyListeners();
+    }
+  }
+
+  /// Confirms MRZ-extracted data by calling the backend confirm-mrz endpoint.
+  ///
+  /// Persists the passport data to the traveller profile and advances onboarding.
+  Future<void> confirmMrz() async {
+    if (mrzExtractionResult == null) return;
+
+    phase = VerificationPhase.confirmingMrz;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      await repository.confirmMrz(mrzExtractionResult!.toConfirmPayload());
+      phase = VerificationPhase.mrzReviewed;
+      notifyListeners();
+    } on ApiException catch (e) {
+      phase = VerificationPhase.error;
+      errorMessage = e.message;
+      notifyListeners();
+    } catch (e) {
+      phase = VerificationPhase.error;
+      errorMessage = 'Failed to confirm passport data: $e';
       notifyListeners();
     }
   }

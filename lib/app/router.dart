@@ -11,6 +11,7 @@ import '../features/profile/data/profile_repository.dart';
 import '../features/profile/presentation/profile_notifier.dart';
 import '../features/profile/presentation/profile_setup_screen.dart';
 
+import '../features/verification/presentation/mrz_review_screen.dart';
 import '../features/verification/presentation/passport_capture_screen.dart';
 import '../features/verification/presentation/passport_review_screen.dart';
 import '../features/verification/presentation/selfie_capture_screen.dart';
@@ -103,6 +104,11 @@ GoRouter createRouter(
         path: '/verification/passport-review',
         builder: (context, state) =>
             PassportReviewScreen(notifier: verificationNotifier),
+      ),
+      GoRoute(
+        path: '/verification/mrz-review',
+        builder: (context, state) =>
+            MrzReviewScreen(notifier: verificationNotifier),
       ),
       GoRoute(
         path: '/verification/selfie-instructions',

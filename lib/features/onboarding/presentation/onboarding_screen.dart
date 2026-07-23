@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/auth/auth_notifier.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/presentation/profile_notifier.dart';
+import '../../verification/presentation/widgets/verification_progress_bar.dart';
 import 'widgets/onboarding_stepper.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -47,6 +48,27 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     await profileNotifier.loadProfile();
   }
 
+  /// Maps the backend onboarding step to the progress bar step index (0-4).
+  int _stepToProgressIndex(String step) {
+    switch (step) {
+      case 'profile_pending':
+      case 'profile_complete':
+        return 0; // Passport step
+      case 'verification_started':
+        return 1; // Review step
+      case 'passport_reviewed':
+        return 2; // Selfie step
+      case 'documents_uploaded':
+        return 3; // NFC step
+      case 'submitted':
+        return 4; // Done step
+      case 'verified':
+        return 5; // All complete
+      default:
+        return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -55,25 +77,23 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     final isLoading = profileNotifier.isLoading;
     final step = profileNotifier.profile?.onboardingStep ?? 'profile_pending';
 
-    // Map backend steps to visual progress
-    final bool isProfileComplete = step != 'profile_pending';
-    final bool isPassportComplete =
-        step == 'verification_started' ||
-        step == 'documents_uploaded' ||
-        step == 'submitted' ||
-        step == 'verified';
-    final bool isSelfieComplete =
-        step == 'documents_uploaded' ||
-        step == 'submitted' ||
-        step == 'verified';
+    // Map backend steps to the 5-step passport-first flow
+    final progressIndex = _stepToProgressIndex(step);
+
+    final bool isPassportUploaded = progressIndex >= 1;
+    final bool isReviewComplete = progressIndex >= 2;
+    final bool isSelfieComplete = progressIndex >= 3;
+    final bool isNfcComplete = progressIndex >= 4;
     final bool isFullyVerified = step == 'verified';
 
+    // Count completed steps out of 4 actionable steps
     int completedSteps = 0;
-    if (isProfileComplete) completedSteps++;
-    if (isPassportComplete) completedSteps++;
+    if (isPassportUploaded) completedSteps++;
+    if (isReviewComplete) completedSteps++;
     if (isSelfieComplete) completedSteps++;
+    if (isNfcComplete) completedSteps++;
 
-    final double progress = completedSteps / 3.0;
+    final double progress = completedSteps / 4.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -103,19 +123,26 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Complete these steps to unlock full access to all features.',
+                        'Verify your identity to unlock full access.',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurface.withAlpha(150),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 24),
 
-                      // Progress Bar
+                      // Progress bar
+                      VerificationProgressBar.verification(
+                        currentStepIndex: progressIndex.clamp(0, 4),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Progress text
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '$completedSteps of 3 Steps Completed',
+                            '$completedSteps of 4 Steps Completed',
                             style: GoogleFonts.nunito(
                               fontWeight: FontWeight.bold,
                               color: colorScheme.primary,
@@ -142,44 +169,50 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 32),
 
-                      // Stepper
+                      // Stepper — 5-step passport-first flow
                       OnboardingStepper(
                         steps: [
-                          OnboardingStepItem(
-                            title: 'Complete Profile',
-                            subtitle:
-                                'Provide your basic information and preferences.',
-                            state: isProfileComplete
-                                ? OnboardingStepState.completed
-                                : OnboardingStepState.active,
-                            onTap: isProfileComplete
-                                ? null
-                                : () async {
-                                    await context.push('/profile-setup');
-                                    loadProfile(); // Refresh when returning
-                                  },
-                          ),
+                          // Step 1: Upload Passport
                           OnboardingStepItem(
                             title: 'Upload Passport',
-                            subtitle: isPassportComplete
+                            subtitle: isPassportUploaded
                                 ? 'Passport uploaded successfully.'
                                 : 'Capture a clear photo of your passport.',
-                            state: isPassportComplete
+                            state: isPassportUploaded
                                 ? OnboardingStepState.completed
-                                : (isProfileComplete
-                                      ? OnboardingStepState.active
-                                      : OnboardingStepState.upcoming),
-                            onTap: (isProfileComplete && !isPassportComplete)
+                                : OnboardingStepState.active,
+                            onTap: !isPassportUploaded
                                 ? () async {
                                     await context.push(
                                       '/verification/passport-capture',
                                     );
-                                    loadProfile(); // Refresh when returning
+                                    loadProfile();
                                   }
                                 : null,
                           ),
+                          // Step 2: Review Details
+                          OnboardingStepItem(
+                            title: 'Review Details',
+                            subtitle: isReviewComplete
+                                ? 'Passport details confirmed.'
+                                : 'Verify your extracted passport information.',
+                            state: isReviewComplete
+                                ? OnboardingStepState.completed
+                                : (isPassportUploaded
+                                      ? OnboardingStepState.active
+                                      : OnboardingStepState.upcoming),
+                            onTap: (isPassportUploaded && !isReviewComplete)
+                                ? () async {
+                                    await context.push(
+                                      '/verification/mrz-review',
+                                    );
+                                    loadProfile();
+                                  }
+                                : null,
+                          ),
+                          // Step 3: Selfie Verification
                           OnboardingStepItem(
                             title: 'Selfie Verification',
                             subtitle: isSelfieComplete
@@ -187,15 +220,35 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                                 : 'Record a short video to verify your identity.',
                             state: isSelfieComplete
                                 ? OnboardingStepState.completed
-                                : (isPassportComplete
+                                : (isReviewComplete
                                       ? OnboardingStepState.active
                                       : OnboardingStepState.upcoming),
-                            onTap: (isPassportComplete && !isSelfieComplete)
+                            onTap: (isReviewComplete && !isSelfieComplete)
                                 ? () async {
                                     await context.push(
                                       '/verification/selfie-instructions',
                                     );
-                                    loadProfile(); // Refresh when returning
+                                    loadProfile();
+                                  }
+                                : null,
+                          ),
+                          // Step 4: NFC Verification
+                          OnboardingStepItem(
+                            title: 'NFC Verification',
+                            subtitle: isNfcComplete
+                                ? 'NFC scan complete.'
+                                : 'Scan your passport chip for extra security.',
+                            state: isNfcComplete
+                                ? OnboardingStepState.completed
+                                : (isSelfieComplete
+                                      ? OnboardingStepState.active
+                                      : OnboardingStepState.upcoming),
+                            onTap: (isSelfieComplete && !isNfcComplete)
+                                ? () async {
+                                    await context.push(
+                                      '/verification/nfc-intro',
+                                    );
+                                    loadProfile();
                                   }
                                 : null,
                           ),
@@ -203,7 +256,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       ),
 
                       const SizedBox(height: 40),
-                      if (isSelfieComplete && !isFullyVerified)
+                      if (isNfcComplete && !isFullyVerified)
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -231,7 +284,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       if (isFullyVerified)
                         FilledButton(
                           onPressed: () {
-                            // Navigate to home
+                            context.go('/home');
                           },
                           style: FilledButton.styleFrom(
                             minimumSize: const Size(double.infinity, 56),

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'verification_notifier.dart';
+import 'widgets/verification_progress_bar.dart';
 
 /// Screen that introduces the NFC passport reading feature to the user.
 /// Explains the benefits and requirements, offering options to proceed or skip.
@@ -42,6 +43,9 @@ class NfcIntroScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Step progress bar — NFC is step 4
+              VerificationProgressBar.verification(currentStepIndex: 3),
+              const SizedBox(height: 8),
               // Illustration / Icon
               Expanded(
                 flex: 2,

@@ -247,4 +247,21 @@ class VerificationRepository {
 
     return response;
   }
+
+  /// Confirms MRZ-extracted passport data and persists it to the traveller profile.
+  ///
+  /// Called after the traveller reviews the extracted details on the MRZ review screen.
+  /// Returns the updated profile response from the backend.
+  Future<Map<String, dynamic>> confirmMrz(Map<String, dynamic> payload) async {
+    final token = await tokenStorage.getToken();
+    if (token == null) throw ApiException.unauthorized();
+
+    final response = await apiClient.post(
+      '/traveler/verification/confirm-mrz',
+      body: payload,
+      authToken: token,
+    );
+
+    return response;
+  }
 }

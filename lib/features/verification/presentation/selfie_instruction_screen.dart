@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'verification_notifier.dart';
+import 'widgets/verification_progress_bar.dart';
 
 /// Instruction screen shown before the selfie video capture.
 ///
@@ -87,6 +88,8 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
+              // Step progress bar — Selfie is step 3
+              VerificationProgressBar.verification(currentStepIndex: 2),
               const SizedBox(height: 16),
 
               // Icon
