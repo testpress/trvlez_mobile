@@ -16,14 +16,11 @@ class ProfileNotifier extends ChangeNotifier {
 
     try {
       profile = await repository.getProfile();
-      isLoading = false;
-      notifyListeners();
     } on ApiException catch (e) {
       errorMessage = e.message;
-      isLoading = false;
-      notifyListeners();
     } catch (e) {
       errorMessage = 'Failed to load profile.';
+    } finally {
       isLoading = false;
       notifyListeners();
     }
@@ -50,19 +47,16 @@ class ProfileNotifier extends ChangeNotifier {
         passportNumber: passportNumber,
         passportExpiry: passportExpiry,
       );
-      isLoading = false;
-      notifyListeners();
       return true;
     } on ApiException catch (e) {
       errorMessage = e.message;
-      isLoading = false;
-      notifyListeners();
       return false;
     } catch (e) {
       errorMessage = 'An unexpected error occurred.';
+      return false;
+    } finally {
       isLoading = false;
       notifyListeners();
-      return false;
     }
   }
 }

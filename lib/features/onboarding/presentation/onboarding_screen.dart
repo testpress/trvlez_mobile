@@ -110,177 +110,26 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'Welcome to TrvlEz!',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Verify your identity to unlock full access.',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurface.withAlpha(150),
-                        ),
-                      ),
+                      _buildHeader(theme, colorScheme),
                       const SizedBox(height: 24),
-
-                      // Progress bar
                       VerificationProgressBar.verification(
                         currentStepIndex: progressIndex.clamp(0, 4),
                       ),
-
                       const SizedBox(height: 16),
-
-                      // Progress text
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '$completedSteps of 4 Steps Completed',
-                            style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                          Text(
-                            '${(progress * 100).toInt()}%',
-                            style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 10,
-                          backgroundColor: colorScheme.primary.withAlpha(30),
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.primary,
-                          ),
-                        ),
-                      ),
+                      _buildProgress(progress, completedSteps, colorScheme),
                       const SizedBox(height: 32),
-
-                      // Stepper — 5-step passport-first flow
-                      OnboardingStepper(
-                        steps: [
-                          // Step 1: Upload Passport
-                          OnboardingStepItem(
-                            title: 'Upload Passport',
-                            subtitle: isPassportUploaded
-                                ? 'Passport uploaded successfully.'
-                                : 'Capture a clear photo of your passport.',
-                            state: isPassportUploaded
-                                ? OnboardingStepState.completed
-                                : OnboardingStepState.active,
-                            onTap: !isPassportUploaded
-                                ? () async {
-                                    await context.push(
-                                      '/verification/passport-capture',
-                                    );
-                                    loadProfile();
-                                  }
-                                : null,
-                          ),
-                          // Step 2: Review Details
-                          OnboardingStepItem(
-                            title: 'Review Details',
-                            subtitle: isReviewComplete
-                                ? 'Passport details confirmed.'
-                                : 'Verify your extracted passport information.',
-                            state: isReviewComplete
-                                ? OnboardingStepState.completed
-                                : (isPassportUploaded
-                                      ? OnboardingStepState.active
-                                      : OnboardingStepState.upcoming),
-                            onTap: (isPassportUploaded && !isReviewComplete)
-                                ? () async {
-                                    await context.push(
-                                      '/verification/mrz-review',
-                                    );
-                                    loadProfile();
-                                  }
-                                : null,
-                          ),
-                          // Step 3: Selfie Verification
-                          OnboardingStepItem(
-                            title: 'Selfie Verification',
-                            subtitle: isSelfieComplete
-                                ? 'Selfie video recorded successfully.'
-                                : 'Record a short video to verify your identity.',
-                            state: isSelfieComplete
-                                ? OnboardingStepState.completed
-                                : (isReviewComplete
-                                      ? OnboardingStepState.active
-                                      : OnboardingStepState.upcoming),
-                            onTap: (isReviewComplete && !isSelfieComplete)
-                                ? () async {
-                                    await context.push(
-                                      '/verification/selfie-instructions',
-                                    );
-                                    loadProfile();
-                                  }
-                                : null,
-                          ),
-                          // Step 4: NFC Verification
-                          OnboardingStepItem(
-                            title: 'NFC Verification',
-                            subtitle: isNfcComplete
-                                ? 'NFC scan complete.'
-                                : 'Scan your passport chip for extra security.',
-                            state: isNfcComplete
-                                ? OnboardingStepState.completed
-                                : (isSelfieComplete
-                                      ? OnboardingStepState.active
-                                      : OnboardingStepState.upcoming),
-                            onTap: (isSelfieComplete && !isNfcComplete)
-                                ? () async {
-                                    await context.push(
-                                      '/verification/nfc-intro',
-                                    );
-                                    loadProfile();
-                                  }
-                                : null,
-                          ),
-                        ],
+                      _buildStepper(
+                        isPassportUploaded: isPassportUploaded,
+                        isReviewComplete: isReviewComplete,
+                        isSelfieComplete: isSelfieComplete,
+                        isNfcComplete: isNfcComplete,
                       ),
-
                       const SizedBox(height: 40),
                       if (isNfcComplete && !isFullyVerified)
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: colorScheme.secondaryContainer,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.hourglass_empty,
-                                color: colorScheme.onSecondaryContainer,
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  'Your identity verification is currently under review.',
-                                  style: TextStyle(
-                                    color: colorScheme.onSecondaryContainer,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        _buildReviewNotice(colorScheme),
                       if (isFullyVerified)
                         FilledButton(
-                          onPressed: () {
-                            context.go('/home');
-                          },
+                          onPressed: () => context.go('/home'),
                           style: FilledButton.styleFrom(
                             minimumSize: const Size(double.infinity, 56),
                             shape: RoundedRectangleBorder(
@@ -294,6 +143,170 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildHeader(ThemeData theme, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Welcome to TrvlEz!',
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Verify your identity to unlock full access.',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onSurface.withAlpha(150),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgress(double progress, int completedSteps, ColorScheme colorScheme) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$completedSteps of 4 Steps Completed',
+              style: GoogleFonts.nunito(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.primary,
+              ),
+            ),
+            Text(
+              '${(progress * 100).toInt()}%',
+              style: GoogleFonts.nunito(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 10,
+            backgroundColor: colorScheme.primary.withAlpha(30),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              colorScheme.primary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReviewNotice(ColorScheme colorScheme) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.hourglass_empty,
+            color: colorScheme.onSecondaryContainer,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              'Your identity verification is currently under review.',
+              style: TextStyle(
+                color: colorScheme.onSecondaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepper({
+    required bool isPassportUploaded,
+    required bool isReviewComplete,
+    required bool isSelfieComplete,
+    required bool isNfcComplete,
+  }) {
+    return OnboardingStepper(
+      steps: [
+        OnboardingStepItem(
+          title: 'Upload Passport',
+          subtitle: isPassportUploaded
+              ? 'Passport uploaded successfully.'
+              : 'Capture a clear photo of your passport.',
+          state: isPassportUploaded
+              ? OnboardingStepState.completed
+              : OnboardingStepState.active,
+          onTap: !isPassportUploaded
+              ? () async {
+                  await context.push('/verification/passport-capture');
+                  loadProfile();
+                }
+              : null,
+        ),
+        OnboardingStepItem(
+          title: 'Review Details',
+          subtitle: isReviewComplete
+              ? 'Passport details confirmed.'
+              : 'Verify your extracted passport information.',
+          state: isReviewComplete
+              ? OnboardingStepState.completed
+              : (isPassportUploaded
+                    ? OnboardingStepState.active
+                    : OnboardingStepState.upcoming),
+          onTap: (isPassportUploaded && !isReviewComplete)
+              ? () async {
+                  await context.push('/verification/mrz-review');
+                  loadProfile();
+                }
+              : null,
+        ),
+        OnboardingStepItem(
+          title: 'Selfie Verification',
+          subtitle: isSelfieComplete
+              ? 'Selfie video recorded successfully.'
+              : 'Record a short video to verify your identity.',
+          state: isSelfieComplete
+              ? OnboardingStepState.completed
+              : (isReviewComplete
+                    ? OnboardingStepState.active
+                    : OnboardingStepState.upcoming),
+          onTap: (isReviewComplete && !isSelfieComplete)
+              ? () async {
+                  await context.push('/verification/selfie-instructions');
+                  loadProfile();
+                }
+              : null,
+        ),
+        OnboardingStepItem(
+          title: 'NFC Verification',
+          subtitle: isNfcComplete
+              ? 'NFC scan complete.'
+              : 'Scan your passport chip for extra security.',
+          state: isNfcComplete
+              ? OnboardingStepState.completed
+              : (isSelfieComplete
+                    ? OnboardingStepState.active
+                    : OnboardingStepState.upcoming),
+          onTap: (isSelfieComplete && !isNfcComplete)
+              ? () async {
+                  await context.push('/verification/nfc-intro');
+                  loadProfile();
+                }
+              : null,
+        ),
+      ],
     );
   }
 }

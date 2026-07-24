@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
+import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
 /// Tracks the current phase of the verification flow in the UI.
 enum VerificationPhase {
   /// No operation in progress.
@@ -44,9 +47,12 @@ enum VerificationPhase {
 
 class VerificationNotifier extends ChangeNotifier {
   final VerificationRepository repository;
+  late final VerificationPollingService _pollingService;
 
   VerificationNotifier({VerificationRepository? repository})
-    : repository = repository ?? VerificationRepository();
+    : repository = repository ?? VerificationRepository() {
+    _pollingService = VerificationPollingService(repository: this.repository);
+  }
 
   File? capturedImage;
   File? capturedVideo;
@@ -56,7 +62,6 @@ class VerificationNotifier extends ChangeNotifier {
   VerificationSubmitResult? submitResult;
   VerificationJobResult? jobResult;
   domain.VerificationStatus? verificationStatus;
-  Timer? pollTimer;
 
   // MRZ State
   MrzExtractionResult? mrzExtractionResult;
@@ -83,6 +88,49 @@ class VerificationNotifier extends ChangeNotifier {
     VerificationPhase.verificationFailed ||
     VerificationPhase.error => VerificationStatus.error,
   };
+
+  /// Computes the effective verification state for the UI, similar to what
+  /// VerificationStatusScreen previously did manually.
+  TravelerVerificationState effectiveState(TravelerVerificationState profileState) {
+    if (phase == VerificationPhase.verified) {
+      return TravelerVerificationState.verified;
+    }
+    if (phase == VerificationPhase.verificationFailed || phase == VerificationPhase.error) {
+      return TravelerVerificationState.failed;
+    }
+    
+    if (jobResult?.isComplete == true) {
+      if (jobResult!.isVerified) return TravelerVerificationState.verified;
+      if (jobResult!.isFailed) return TravelerVerificationState.failed;
+    }
+    
+    if (submitResult?.isVerified == true) return TravelerVerificationState.verified;
+    if (submitResult?.isFailed == true) return TravelerVerificationState.failed;
+    
+    if (phase == VerificationPhase.submitting || 
+        phase == VerificationPhase.verifying || 
+        (jobResult != null && !jobResult!.isComplete) || 
+        (submitResult?.isProcessing == true)) {
+      return TravelerVerificationState.submitted;
+    }
+    
+    if (verificationStatus != null) {
+      if (verificationStatus!.isVerified) return TravelerVerificationState.verified;
+      if (verificationStatus!.isFailed) return TravelerVerificationState.failed;
+      if (!verificationStatus!.isProcessing) {
+        return TravelerVerificationState.verificationStarted;
+      }
+    }
+    
+    return profileState;
+  }
+
+  Future<void> fetchVerificationStatus() async {
+    try {
+      verificationStatus = await repository.getVerificationStatus();
+      notifyListeners();
+    } catch (_) {}
+  }
 
   void setImage(File image) {
     capturedImage = image;
@@ -179,28 +227,19 @@ class VerificationNotifier extends ChangeNotifier {
       if (mrzResult.success) {
         bool isValidMrz = false;
         
-        if (mrzResult.documentNumber != null && 
-            mrzResult.documentNumber!.isNotEmpty &&
-            mrzResult.dateOfBirth != null && 
-            mrzResult.dateOfExpiry != null) {
-          
-          DateTime? parseDate(String? dateStr) {
-            if (dateStr == null || dateStr.isEmpty) return null;
-            try {
-              // Try standard parse first (handles YYYY-MM-DD)
-              return DateTime.parse(dateStr);
-            } catch (_) {
-              return null;
-            }
-          }
-
-          final dob = parseDate(mrzResult.dateOfBirth);
-          final doe = parseDate(mrzResult.dateOfExpiry);
-
-          if (dob != null && doe != null) {
-            setExtractedMrz(mrzResult.documentNumber!, dob, doe);
-            isValidMrz = true;
-          }
+        final validatedMrz = MrzValidator.validate(
+          documentNumber: mrzResult.documentNumber,
+          dateOfBirthStr: mrzResult.dateOfBirth,
+          dateOfExpiryStr: mrzResult.dateOfExpiry,
+        );
+        
+        if (validatedMrz != null) {
+          setExtractedMrz(
+            validatedMrz.documentNumber, 
+            validatedMrz.dateOfBirth, 
+            validatedMrz.dateOfExpiry
+          );
+          isValidMrz = true;
         }
         
         if (isValidMrz) {
@@ -336,13 +375,7 @@ class VerificationNotifier extends ChangeNotifier {
     }
   }
 
-  /// Polls the verification job with exponential backoff.
-  ///
-  /// Starts polling at [initialIntervalSeconds] and doubles the interval
-  /// up to [maxIntervalSeconds]. Stops after [maxDurationSeconds] or when
-  /// the job completes.
-  ///
-  /// Calls [onComplete] when the job finishes (verified or failed).
+  /// Polls the verification job using the VerificationPollingService.
   void startPollingVerificationJob({
     int initialIntervalSeconds = 2,
     int maxIntervalSeconds = 15,
@@ -352,21 +385,16 @@ class VerificationNotifier extends ChangeNotifier {
     final jobId = submitResult?.verificationJobId;
     if (jobId == null) return;
 
-    stopPolling();
-
-    int currentInterval = initialIntervalSeconds;
-    int totalElapsed = 0;
-
-    pollTimer = Timer.periodic(Duration(seconds: currentInterval), (
-      timer,
-    ) async {
-      if (totalElapsed >= maxDurationSeconds) {
-        stopPolling();
-        return;
-      }
-
-      try {
-        jobResult = await repository.getVerificationJob(jobId);
+    _pollingService.startPolling(
+      jobId: jobId,
+      initialIntervalSeconds: initialIntervalSeconds,
+      maxIntervalSeconds: maxIntervalSeconds,
+      maxDurationSeconds: maxDurationSeconds,
+      onUpdate: (updatedJobResult, updatedStatus) {
+        jobResult = updatedJobResult;
+        if (updatedStatus != null) {
+          verificationStatus = updatedStatus;
+        }
 
         if (jobResult!.isComplete) {
           phase = jobResult!.isVerified
@@ -375,90 +403,21 @@ class VerificationNotifier extends ChangeNotifier {
 
           if (jobResult!.isFailed) {
             errorMessage =
+                verificationStatus?.uiMitigation ??
+                verificationStatus?.errorReason ??
                 jobResult!.errorMessage ??
                 'Identity verification was unsuccessful. Please try again.';
           }
-
-          try {
-            verificationStatus = await repository.getVerificationStatus();
-            if (jobResult!.isFailed) {
-              errorMessage =
-                  verificationStatus?.uiMitigation ??
-                  verificationStatus?.errorReason ??
-                  errorMessage;
-            }
-          } catch (_) {}
-
-          notifyListeners();
-          stopPolling();
           onComplete?.call();
-          return;
         }
-
         notifyListeners();
-      } catch (_) {
-        // Non-critical — continue polling on next interval
-      }
-
-      totalElapsed += currentInterval;
-
-      // Exponential backoff — cancel current timer and create new one
-      if (currentInterval < maxIntervalSeconds) {
-        timer.cancel();
-        currentInterval = (currentInterval * 2).clamp(1, maxIntervalSeconds);
-        pollTimer = Timer.periodic(Duration(seconds: currentInterval), (
-          newTimer,
-        ) async {
-          if (totalElapsed >= maxDurationSeconds) {
-            stopPolling();
-            return;
-          }
-
-          try {
-            jobResult = await repository.getVerificationJob(jobId);
-
-            if (jobResult!.isComplete) {
-              phase = jobResult!.isVerified
-                  ? VerificationPhase.verified
-                  : VerificationPhase.verificationFailed;
-
-              if (jobResult!.isFailed) {
-                errorMessage =
-                    jobResult!.errorMessage ??
-                    'Identity verification was unsuccessful. Please try again.';
-              }
-
-              try {
-                verificationStatus = await repository.getVerificationStatus();
-                if (jobResult!.isFailed) {
-                  errorMessage =
-                      verificationStatus?.uiMitigation ??
-                      verificationStatus?.errorReason ??
-                      errorMessage;
-                }
-              } catch (_) {}
-
-              notifyListeners();
-              stopPolling();
-              onComplete?.call();
-              return;
-            }
-
-            notifyListeners();
-          } catch (_) {
-            // Non-critical — continue polling
-          }
-
-          totalElapsed += currentInterval;
-        });
-      }
-    });
+      },
+    );
   }
 
   /// Stops any active polling timer.
   void stopPolling() {
-    pollTimer?.cancel();
-    pollTimer = null;
+    _pollingService.stopPolling();
   }
 
   @override

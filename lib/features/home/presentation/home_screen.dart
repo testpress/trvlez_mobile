@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:trvlez_mobile/core/constants/app_colors.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
 /// The primary landing screen for all authenticated travelers.
 ///
@@ -276,30 +277,30 @@ class FeatureGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final features = [
+    final features = const [
       FeatureItem(
         icon: Icons.explore_rounded,
         label: 'Explore',
         subtitle: 'Discover destinations',
-        gradientColors: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+        gradientColors: AppColors.exploreGradient,
       ),
       FeatureItem(
         icon: Icons.flight_takeoff_rounded,
         label: 'My Trips',
         subtitle: 'View bookings',
-        gradientColors: const [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+        gradientColors: AppColors.tripsGradient,
       ),
       FeatureItem(
         icon: Icons.local_offer_rounded,
         label: 'Deals',
         subtitle: 'Exclusive offers',
-        gradientColors: const [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+        gradientColors: AppColors.dealsGradient,
       ),
       FeatureItem(
         icon: Icons.support_agent_rounded,
         label: 'Support',
         subtitle: 'Get help',
-        gradientColors: const [Color(0xFF10B981), Color(0xFF34D399)],
+        gradientColors: AppColors.supportGradient,
       ),
     ];
 
