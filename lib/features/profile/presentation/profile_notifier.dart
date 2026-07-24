@@ -1,8 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../../core/network/api_exception.dart';
-import '../data/profile_repository.dart';
-import '../domain/profile.dart';
-
+import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/profile.dart';
 class ProfileNotifier extends ChangeNotifier {
   final ProfileRepository repository;
 

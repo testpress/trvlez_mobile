@@ -4,16 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/auth/auth_notifier.dart';
-import '../data/verification_repository.dart';
-import '../domain/verification_job_result.dart';
-import '../../profile/data/profile_repository.dart';
-import '../../profile/domain/traveler_verification_state.dart';
-import '../../profile/presentation/profile_notifier.dart';
-import '../domain/verification_status.dart' as domain;
-import 'verification_notifier.dart';
-import 'widgets/verification_progress_bar.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';
 /// Displays the full verification journey with step-by-step progress.
 ///
 /// Shows a large animated status icon, a descriptive title, individual
@@ -208,8 +199,9 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
     // 2. If the global notifier has a completed job result
     final notifierJobResult = notifier?.jobResult;
     if (notifierJobResult != null && notifierJobResult.isComplete) {
-      if (notifierJobResult.isVerified)
+      if (notifierJobResult.isVerified) {
         return TravelerVerificationState.verified;
+      }
       if (notifierJobResult.isFailed) return TravelerVerificationState.failed;
     }
 
@@ -452,6 +444,7 @@ class VerificationScoreIndicator extends StatelessWidget {
   final bool isVerified;
 
   const VerificationScoreIndicator({
+    super.key,
     required this.score,
     required this.isVerified,
   });
@@ -501,6 +494,7 @@ class StepChecklist extends StatelessWidget {
   final bool hasNfcResult;
 
   const StepChecklist({
+    super.key,
     required this.state,
     this.isNfcSkipped = false,
     this.hasNfcResult = false,
@@ -578,7 +572,7 @@ class StepRow extends StatelessWidget {
   final StepItem step;
   final bool isLast;
 
-  const StepRow({required this.step, required this.isLast});
+  const StepRow({super.key, required this.step, required this.isLast});
 
   @override
   Widget build(BuildContext context) {
@@ -652,6 +646,7 @@ class InfoCard extends StatelessWidget {
   final String? uiMitigation;
 
   const InfoCard({
+    super.key,
     required this.state,
     this.failedStep,
     this.errorReason,

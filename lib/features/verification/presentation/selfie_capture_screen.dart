@@ -8,8 +8,7 @@ import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'verification_notifier.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 class SelfieCaptureScreen extends StatefulWidget {
   final VerificationNotifier notifier;
 

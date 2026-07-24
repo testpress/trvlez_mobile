@@ -1,5 +1,4 @@
-import 'traveler_verification_state.dart';
-
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 class Profile {
   final String id;
   final String? phone;

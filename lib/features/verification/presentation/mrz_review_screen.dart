@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'verification_notifier.dart';
-import 'widgets/verification_progress_bar.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';
 /// Screen for reviewing MRZ-extracted passport details before confirmation.
 ///
 /// Displays extracted fields in a read-only card layout. The traveller can
@@ -231,7 +229,7 @@ class MrzReviewScreen extends StatelessWidget {
                               ? null
                               : () {
                                   notifier.clearImage();
-                                  context.pop();
+                                  context.go('/verification/passport-capture');
                                 },
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 56),

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/constants/nationalities.dart';
-import 'profile_notifier.dart';
-
+import 'package:trvlez_mobile/core/constants/nationalities.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 class ProfileSetupScreen extends StatefulWidget {
   final ProfileNotifier profileNotifier;
 

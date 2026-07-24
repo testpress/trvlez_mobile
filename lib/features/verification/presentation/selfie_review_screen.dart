@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
-import 'verification_notifier.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 class SelfieReviewScreen extends StatefulWidget {
   final VerificationNotifier notifier;
 
@@ -232,7 +231,11 @@ class UploadSuccessSheet extends StatelessWidget {
   final VerificationPhase phase;
   final VoidCallback onViewStatus;
 
-  const UploadSuccessSheet({required this.phase, required this.onViewStatus});
+  const UploadSuccessSheet({
+    super.key,
+    required this.phase,
+    required this.onViewStatus,
+  });
 
   @override
   Widget build(BuildContext context) {

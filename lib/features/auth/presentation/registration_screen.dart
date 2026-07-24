@@ -4,10 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../app/colors.dart';
-import '../data/auth_repository.dart';
-import 'registration_controller.dart';
-
+import 'package:trvlez_mobile/app/colors.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/auth/presentation/registration_controller.dart';
 /// Traveler registration screen.
 ///
 /// Design matches the TrvlEz Next.js signup page:

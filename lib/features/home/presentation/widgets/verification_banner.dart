@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../features/profile/domain/traveler_verification_state.dart';
-
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 /// A context-aware banner that displays the current verification status.
 ///
 /// Adapts its color, icon, message, and action based on the

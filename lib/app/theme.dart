@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'colors.dart';
-
+import 'package:trvlez_mobile/app/colors.dart';
 /// TrvlEz app theme ported from the Next.js design system.
 ///
 /// Fonts: Nunito (headings/bold), Cabin (body), Inter (brand).

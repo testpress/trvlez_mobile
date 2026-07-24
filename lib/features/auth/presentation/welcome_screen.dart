@@ -27,15 +27,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
-
-    // Dimensions from CSS
-    const double titleHeight = 131;
-    const double topTarget = 106;
-    
-    // Calculate center positions
-    final double centerTop = (screenSize.height - titleHeight) / 2;
 
     return Scaffold(
       body: Stack(

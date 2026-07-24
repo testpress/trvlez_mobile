@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'verification_notifier.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 class PassportReviewScreen extends StatelessWidget {
   final VerificationNotifier notifier;
 

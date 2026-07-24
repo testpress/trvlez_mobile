@@ -4,10 +4,7 @@ import 'package:dmrtd/dmrtd.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
-import '../domain/nfc_error.dart';
-import '../domain/nfc_passport_result.dart';
-import '../domain/nfc_read_progress.dart';
-
+import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 /// Status of NFC on the device
 enum NfcDeviceStatus {
   available,

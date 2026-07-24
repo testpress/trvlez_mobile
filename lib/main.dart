@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app/router.dart';
-import 'app/theme.dart';
-import 'core/auth/auth_notifier.dart';
-import 'core/network/api_client.dart';
-import 'core/storage/token_storage.dart';
-import 'features/auth/data/auth_remote_data_source.dart';
-import 'features/auth/data/auth_repository.dart';
-import 'features/profile/data/profile_remote_data_source.dart';
-import 'features/profile/data/profile_repository.dart';
-
+import 'package:trvlez_mobile/app/router.dart';import 'package:trvlez_mobile/app/theme.dart';import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

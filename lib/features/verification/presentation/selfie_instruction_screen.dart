@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'verification_notifier.dart';
-import 'widgets/verification_progress_bar.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';
 /// Instruction screen shown before the selfie video capture.
 ///
 /// Displays liveness check guidelines and enforces a 3-second minimum

@@ -1,30 +1,8 @@
 import 'package:go_router/go_router.dart';
 
-import '../core/auth/auth_notifier.dart';
-import '../features/auth/data/auth_repository.dart';
-import '../features/auth/presentation/login_screen.dart';
-import '../features/auth/presentation/registration_screen.dart';
-import '../features/auth/presentation/welcome_screen.dart';
-import '../features/home/presentation/home_screen.dart';
-import '../features/onboarding/presentation/onboarding_screen.dart';
-import '../features/profile/data/profile_repository.dart';
-import '../features/profile/presentation/profile_notifier.dart';
-import '../features/profile/presentation/profile_setup_screen.dart';
-
-import '../features/verification/presentation/mrz_review_screen.dart';
-import '../features/verification/presentation/passport_capture_screen.dart';
-import '../features/verification/presentation/passport_review_screen.dart';
-import '../features/verification/presentation/selfie_capture_screen.dart';
-import '../features/verification/presentation/selfie_instruction_screen.dart';
-import '../features/verification/presentation/selfie_review_screen.dart';
-import '../features/verification/presentation/verification_notifier.dart';
-import '../features/verification/presentation/verification_status_screen.dart';
-
-import '../features/verification/presentation/nfc_intro_screen.dart';
-import '../features/verification/presentation/nfc_scan_screen.dart';
-import '../features/verification/presentation/nfc_result_screen.dart';
-import '../features/verification/data/nfc_passport_service.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/auth/presentation/login_screen.dart';import 'package:trvlez_mobile/features/auth/presentation/registration_screen.dart';import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
 /// Central router configuration for the TrvlEz app.
 ///
 /// Redirect logic:

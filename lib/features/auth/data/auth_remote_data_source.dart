@@ -1,7 +1,4 @@
-import '../../../core/network/api_client.dart';
-import 'login_response_dto.dart';
-import 'traveler_signup_dto.dart';
-
+import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/features/auth/data/login_response_dto.dart';import 'package:trvlez_mobile/features/auth/data/traveler_signup_dto.dart';
 /// Remote data source for authentication API calls.
 ///
 /// Handles the raw HTTP calls and JSON ↔ DTO conversion.

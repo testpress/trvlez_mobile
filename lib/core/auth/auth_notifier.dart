@@ -1,9 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../storage/token_storage.dart';
-import '../../features/profile/data/profile_repository.dart';
-import '../../features/profile/domain/traveler_verification_state.dart';
-
+import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 /// Manages global authentication state for the application.
 ///
 /// Also caches the traveler's [verificationState] so the router can make

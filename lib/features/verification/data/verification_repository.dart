@@ -1,14 +1,7 @@
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import '../../../core/network/api_client.dart';
-import '../../../core/network/api_exception.dart';
-import '../../../core/storage/token_storage.dart';
-import '../domain/mrz_extraction_result.dart';
-import '../domain/verification_job_result.dart';
-import '../domain/verification_status.dart';
-import '../domain/verification_submit_result.dart';
-
+import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
 class VerificationRepository {
   final ApiClient apiClient;
   final TokenStorage tokenStorage;

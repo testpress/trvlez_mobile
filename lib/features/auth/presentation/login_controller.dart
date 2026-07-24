@@ -1,9 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../core/auth/auth_notifier.dart';
-import '../../../core/network/api_exception.dart';
-import '../data/auth_repository.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 /// State management for the login screen.
 ///
 /// Manages the login API call lifecycle and exposes

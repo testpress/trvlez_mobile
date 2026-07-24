@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../core/network/api_exception.dart';
-import '../data/auth_repository.dart';
-
+import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 /// State management for the registration screen.
 ///
 /// Manages the signup API call lifecycle and exposes

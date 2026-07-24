@@ -5,12 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../core/auth/auth_notifier.dart';
-import '../../../main.dart';
-import '../../profile/data/profile_repository.dart';
-import 'home_notifier.dart';
-import 'widgets/verification_banner.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
 /// The primary landing screen for all authenticated travelers.
 ///
 /// Always shown after login regardless of onboarding state. Displays a
@@ -234,7 +229,7 @@ class HomeScreenState extends State<HomeScreen> {
 class WelcomeSection extends StatelessWidget {
   final bool isVerified;
 
-  const WelcomeSection({required this.isVerified});
+  const WelcomeSection({super.key, required this.isVerified});
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +268,11 @@ class FeatureGrid extends StatelessWidget {
   final bool isVerified;
   final void Function(String featureName) onFeatureTap;
 
-  const FeatureGrid({required this.isVerified, required this.onFeatureTap});
+  const FeatureGrid({
+    super.key,
+    required this.isVerified,
+    required this.onFeatureTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +345,7 @@ class FeatureCard extends StatelessWidget {
   final FeatureItem feature;
   final VoidCallback onTap;
 
-  const FeatureCard({required this.feature, required this.onTap});
+  const FeatureCard({super.key, required this.feature, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../core/network/api_exception.dart';
-import '../../profile/data/profile_repository.dart';
-import '../../profile/domain/profile.dart';
-import '../../profile/domain/traveler_verification_state.dart';
-import '../../verification/data/verification_repository.dart';
-import '../../verification/domain/verification_status.dart';
-
+import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/profile.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 /// Manages state for the home screen.
 ///
 /// Loads the traveler's profile and verification session status to determine

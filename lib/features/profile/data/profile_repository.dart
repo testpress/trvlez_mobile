@@ -1,6 +1,4 @@
-import '../domain/profile.dart';
-import 'profile_remote_data_source.dart';
-
+import 'package:trvlez_mobile/features/profile/domain/profile.dart';import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
 class ProfileRepository {
   final ProfileRemoteDataSource remoteDataSource;
 

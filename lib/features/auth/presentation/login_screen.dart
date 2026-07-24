@@ -4,10 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../core/auth/auth_notifier.dart';
-import '../data/auth_repository.dart';
-import 'login_controller.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
 /// Traveler login screen.
 class LoginScreen extends StatefulWidget {
   final AuthRepository authRepository;

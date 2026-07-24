@@ -1,7 +1,4 @@
-import '../../../core/network/api_client.dart';
-import '../../../core/storage/token_storage.dart';
-import 'profile_dto.dart';
-
+import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/profile/data/profile_dto.dart';
 class ProfileRemoteDataSource {
   final ApiClient apiClient;
   final TokenStorage tokenStorage;

@@ -2,14 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import '../../../core/network/api_exception.dart';
-import '../data/verification_repository.dart';
-import '../domain/mrz_extraction_result.dart';
-import '../domain/verification_job_result.dart';
-import '../domain/verification_submit_result.dart';
-import '../domain/verification_status.dart' as domain;
-import '../domain/nfc_passport_result.dart';
-
+import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 /// Tracks the current phase of the verification flow in the UI.
 enum VerificationPhase {
   /// No operation in progress.

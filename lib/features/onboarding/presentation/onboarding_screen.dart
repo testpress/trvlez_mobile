@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/auth/auth_notifier.dart';
-import '../../profile/data/profile_repository.dart';
-import '../../profile/presentation/profile_notifier.dart';
-import '../../verification/presentation/widgets/verification_progress_bar.dart';
-import 'widgets/onboarding_stepper.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
 class OnboardingScreen extends StatefulWidget {
   final AuthNotifier authNotifier;
   final ProfileRepository profileRepository;

@@ -8,8 +8,7 @@ import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-import 'verification_notifier.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 Future<File?> processAndCropImage(Map<String, dynamic> params) async {
   final String imagePath = params['path'] as String;
   final double sw = params['sw'] as double;

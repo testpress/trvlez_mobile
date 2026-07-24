@@ -4,9 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import '../constants/app_config.dart';
-import 'api_exception.dart';
-
+import 'package:trvlez_mobile/core/constants/app_config.dart';import 'package:trvlez_mobile/core/network/api_exception.dart';
 /// Thin HTTP client wrapper for the TrvlEz backend API.
 ///
 /// Handles JSON serialization, common headers, and FastAPI error parsing.

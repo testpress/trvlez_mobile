@@ -1,5 +1,4 @@
-import '../domain/profile.dart';
-
+import 'package:trvlez_mobile/features/profile/domain/profile.dart';
 class ProfileDto {
   final String id;
   final String? phone;

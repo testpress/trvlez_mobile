@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'verification_notifier.dart';
-import 'widgets/verification_progress_bar.dart';
-
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';
 /// Screen that introduces the NFC passport reading feature to the user.
 /// Explains the benefits and requirements, offering options to proceed or skip.
 class NfcIntroScreen extends StatelessWidget {
