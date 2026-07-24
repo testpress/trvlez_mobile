@@ -29,8 +29,8 @@ GoRouter createRouter(
         return null;
       }
 
-      // Authenticated — redirect away from auth routes
-      if (isAuthRoute) {
+      // Authenticated — redirect away from auth routes (except welcome)
+      if (location == '/login' || location == '/register') {
         return '/home';
       }
 
@@ -39,7 +39,9 @@ GoRouter createRouter(
     routes: [
       GoRoute(
         path: '/welcome',
-        builder: (context, state) => const WelcomeScreen(),
+        builder: (context, state) => WelcomeScreen(
+          isAuthenticated: authNotifier.isAuthenticated,
+        ),
       ),
       GoRoute(
         path: '/login',

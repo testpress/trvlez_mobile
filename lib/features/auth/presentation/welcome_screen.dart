@@ -3,7 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+  final bool isAuthenticated;
+
+  const WelcomeScreen({
+    super.key,
+    this.isAuthenticated = false,
+  });
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -11,6 +16,7 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   bool _startAnimation = false;
+  bool _fadeOut = false;
 
   @override
   void initState() {
@@ -23,6 +29,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
       }
     });
+
+    if (widget.isAuthenticated) {
+      // Fade out the screen after the intro animation completes
+      Future.delayed(const Duration(milliseconds: 2200), () {
+        if (mounted) {
+          setState(() {
+            _fadeOut = true;
+          });
+        }
+      });
+
+      // Navigate to home after fade out
+      Future.delayed(const Duration(milliseconds: 2700), () {
+        if (mounted) {
+          context.go('/home');
+        }
+      });
+    }
   }
 
   @override
@@ -30,8 +54,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
+      body: AnimatedOpacity(
+        duration: const Duration(milliseconds: 500),
+        opacity: _fadeOut ? 0.0 : 1.0,
+        child: Stack(
+          fit: StackFit.expand,
         children: [
           // Background Image (Mountain)
           Image.asset(
@@ -107,57 +134,60 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 48),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () => context.go('/register'),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 56),
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                  if (!widget.isAuthenticated) ...[
+                    const SizedBox(height: 48),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: () => context.go('/register'),
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 56),
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Sign Up',
-                            style: GoogleFonts.nunito(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () => context.go('/login'),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 56),
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            'Login',
-                            style: GoogleFonts.nunito(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+                            child: Text(
+                              'Sign Up',
+                              style: GoogleFonts.nunito(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: () => context.go('/login'),
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 56),
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              'Login',
+                              style: GoogleFonts.nunito(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
         ],
+        ),
       ),
     );
   }
