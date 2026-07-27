@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+
 /// Instruction screen shown before the selfie video capture.
 ///
 /// Displays liveness check guidelines and enforces a 3-second minimum
@@ -72,214 +75,235 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Before You Record'),
-        backgroundColor: Colors.transparent,
+        title: Text(
+          'KYC',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        centerTitle: true,
         elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/verification/mrz-review');
+            }
+          },
+        ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Step progress bar — Selfie is step 3
-              VerificationProgressBar.verification(currentStepIndex: 2),
-              const SizedBox(height: 16),
-
-              // Icon
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.face_retouching_natural,
-                  size: 40,
-                  color: colorScheme.onPrimaryContainer,
-                ),
-              ),
-
+              // Horizontal Stepper Progress Indicator - Step 3 (Selfie) is active
+              const KycProgressStepper(progressIndex: 2),
               const SizedBox(height: 24),
 
-              Text(
-                'Selfie Video Instructions',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
+              // Central Card Container
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.shadow.withValues(alpha: 0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
-              ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Icon
+                    Center(
+                      child: Container(
+                        width: 72,
+                        height: 72,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.face_retouching_natural_rounded,
+                          size: 32,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-              const SizedBox(height: 8),
+                    Text(
+                      'Selfie Verification',
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'We need a quick video to confirm you match the photo on your passport.',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: colorScheme.onSurface.withValues(alpha: 0.65),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
 
-              Text(
-                'Please follow these guidelines for a successful verification.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colorScheme.onSurface.withAlpha(160),
+                    // Guidelines
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Please ensure:',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildGuidelineRow(
+                            Icons.lightbulb_outline_rounded,
+                            'You are in a well-lit room',
+                            colorScheme,
+                          ),
+                          const SizedBox(height: 8),
+                          _buildGuidelineRow(
+                            Icons.face_rounded,
+                            'Your face is clearly visible',
+                            colorScheme,
+                          ),
+                          const SizedBox(height: 8),
+                          _buildGuidelineRow(
+                            Icons.remove_red_eye_outlined,
+                            'No glasses, hats, or masks',
+                            colorScheme,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Proceed button
+                    ElevatedButton(
+                      onPressed: _canProceed ? _proceedToCapture : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.onSurface,
+                        foregroundColor: colorScheme.surface,
+                        disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
+                        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+                        minimumSize: const Size(double.infinity, 44),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: _canProceed
+                          ? FadeTransition(
+                              opacity: _fadeController,
+                              child: Text(
+                                'I\'m Ready',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              'Please read ($_remainingSeconds)',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
               ),
-
               const SizedBox(height: 32),
 
-              // Instructions list
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _InstructionTile(
-                        icon: Icons.visibility,
-                        title: 'Look at the camera',
-                        subtitle:
-                            'Face the front camera directly and keep your face centered.',
-                        colorScheme: colorScheme,
+              // Footer text
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        color: colorScheme.onSurface.withValues(alpha: 0.65),
                       ),
-                      _InstructionTile(
-                        icon: Icons.remove_red_eye_outlined,
-                        title: 'Blink naturally',
-                        subtitle:
-                            'Blink normally during the recording — do not stare without blinking.',
-                        colorScheme: colorScheme,
-                      ),
-                      _InstructionTile(
-                        icon: Icons.swap_horiz,
-                        title: 'Move your head slightly',
-                        subtitle:
-                            'Slowly turn your head a little left and right during the video.',
-                        colorScheme: colorScheme,
-                      ),
-                      _InstructionTile(
-                        icon: Icons.light_mode_outlined,
-                        title: 'Good lighting',
-                        subtitle:
-                            'Ensure your face is well-lit from the front — avoid backlighting.',
-                        colorScheme: colorScheme,
-                      ),
-                      _InstructionTile(
-                        icon: Icons.block,
-                        title: 'No obstructions',
-                        subtitle:
-                            'Remove glasses, hats, or anything covering your face.',
-                        colorScheme: colorScheme,
-                      ),
-                    ],
+                      children: [
+                        const TextSpan(
+                          text: 'If you are facing any difficulties, please get in touch with us on ',
+                        ),
+                        TextSpan(
+                          text: 'Whatsapp',
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF25D366),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Continue button with countdown
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: _canProceed
-                    ? FadeTransition(
-                        opacity: _fadeController,
-                        child: FilledButton.icon(
-                          onPressed: _proceedToCapture,
-                          icon: const Icon(Icons.videocam),
-                          label: const Text('Start Recording'),
-                          style: FilledButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                        ),
-                      )
-                    : OutlinedButton(
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: Text(
-                          'Please read the instructions ($_remainingSeconds)',
-                          style: TextStyle(
-                            color: colorScheme.onSurface.withAlpha(120),
-                          ),
-                        ),
-                      ),
-              ),
-
-              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class _InstructionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final ColorScheme colorScheme;
-
-  const _InstructionTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.colorScheme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: colorScheme.onSecondaryContainer,
+  Widget _buildGuidelineRow(IconData icon, String text, ColorScheme colorScheme) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: colorScheme.primary,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              color: colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: colorScheme.onSurface.withAlpha(140),
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final AuthNotifier authNotifier;
@@ -120,16 +121,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Horizontal Stepper Progress Indicator
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(4, (index) {
-                          return _buildStepCircle(
-                            index,
-                            progressIndex,
-                            colorScheme,
-                          );
-                        }),
-                      ),
+                      KycProgressStepper(progressIndex: progressIndex),
                       const SizedBox(height: 24),
 
                       // Central Card Container
@@ -251,91 +243,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildStepCircle(
-    int index,
-    int progressIndex,
-    ColorScheme colorScheme,
-  ) {
-    final stepLabels = ['Passport', 'Profile Review', 'Selfie', 'NFC'];
-
-    bool isActive = progressIndex == index;
-    bool isCompleted = progressIndex > index;
-
-    final circleColor = isActive || isCompleted
-        ? colorScheme.primary
-        : colorScheme.surface;
-    final textColor = isActive
-        ? colorScheme.onPrimary
-        : colorScheme.onSurface.withValues(alpha: 0.65);
-    final borderColor = isActive || isCompleted
-        ? colorScheme.primary
-        : colorScheme.outlineVariant;
-
-    return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: circleColor,
-                    border: Border.all(color: borderColor, width: 0.8),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: isCompleted
-                        ? Icon(
-                            Icons.check,
-                            color: colorScheme.onPrimary,
-                            size: 14,
-                          )
-                        : Text(
-                            '${index + 1}',
-                            style: GoogleFonts.inter(
-                              color: textColor,
-                              fontSize: 14,
-                              fontWeight: isActive
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                            ),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  stepLabels[index],
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
-                    color: isActive
-                        ? colorScheme.onSurface
-                        : colorScheme.onSurface.withValues(alpha: 0.65),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (index < 3)
-            Container(
-              width: 24,
-              height: 2.5,
-              margin: const EdgeInsets.only(bottom: 22),
-              decoration: BoxDecoration(
-                color: isCompleted
-                    ? colorScheme.primary
-                    : colorScheme.onSurface.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildProgress(
     double progressValue,

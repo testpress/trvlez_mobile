@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 /// Displays the full verification journey with step-by-step progress.
 ///
 /// Shows a large animated status icon, a descriptive title, individual
@@ -111,12 +111,21 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
     final config = StatusConfig.from(state);
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Verification Status'),
+        title: Text(
+          'KYC',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
           onPressed: () => context.pop(),
         ),
       ),
@@ -131,102 +140,174 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
                   vertical: 16,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Step progress bar — all steps complete
-                    VerificationProgressBar.verification(currentStepIndex: 4),
+                    // Horizontal Stepper Progress Indicator - Step 4 (All completed)
+                    const KycProgressStepper(progressIndex: 4),
                     const SizedBox(height: 24),
-                    // ── Status Icon ────────────────────────────────
-                    buildStatusIcon(config, state),
-                    const SizedBox(height: 24),
-                    // ── Title & Subtitle ──────────────────────────
-                    Text(
-                      config.title,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      config.subtitle,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface.withAlpha(150),
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    // ── Verification Score ───────────────────────
-                    if (activeVerificationScore != null) ...[
-                      const SizedBox(height: 16),
-                      VerificationScoreIndicator(
-                        score: activeVerificationScore!,
-                        isVerified: state == TravelerVerificationState.verified,
-                      ),
-                    ],
-                    const SizedBox(height: 40),
-                    // ── Step Checklist ────────────────────────────
-                    StepChecklist(
-                      state: state, 
-                      isNfcSkipped: widget.verificationNotifier?.isNfcSkipped ?? false,
-                      hasNfcResult: widget.verificationNotifier?.nfcResult != null,
-                    ),
-                    const SizedBox(height: 32),
-                    // ── Info Card ─────────────────────────────────
-                    InfoCard(
-                      state: state,
-                      failedStep: failedStep,
-                      errorReason: errorReason,
-                      uiMitigation: uiMitigation,
-                    ),
-                    const SizedBox(height: 24),
-                    // ── Actions ───────────────────────────────────
-                    if (state.isFailed) ...[
-                      FilledButton.icon(
-                        onPressed: () {
-                          widget.verificationNotifier?.reset();
-                          context.go('/verification/passport-capture');
-                        },
-                        icon: const Icon(Icons.refresh_rounded),
-                        label: const Text('Re-submit Documents'),
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 56),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+
+                    // Central Card Container
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surface,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.shadow.withValues(alpha: 0.08),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          // Future: open support chat/email
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Support — coming soon!'),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // ── Status Icon ────────────────────────────────
+                          Center(child: buildStatusIcon(config, state)),
+                          const SizedBox(height: 24),
+                          // ── Title & Subtitle ──────────────────────────
+                          Text(
+                            config.title,
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            config.subtitle,
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: colorScheme.onSurface.withValues(alpha: 0.65),
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          // ── Verification Score ───────────────────────
+                          if (activeVerificationScore != null) ...[
+                            const SizedBox(height: 16),
+                            VerificationScoreIndicator(
+                              score: activeVerificationScore!,
+                              isVerified: state == TravelerVerificationState.verified,
+                            ),
+                          ],
+                          const SizedBox(height: 32),
+                          // ── Step Checklist ────────────────────────────
+                          StepChecklist(
+                            state: state, 
+                            isNfcSkipped: widget.verificationNotifier?.isNfcSkipped ?? false,
+                            hasNfcResult: widget.verificationNotifier?.nfcResult != null,
+                          ),
+                          const SizedBox(height: 24),
+                          // ── Info Card ─────────────────────────────────
+                          InfoCard(
+                            state: state,
+                            failedStep: failedStep,
+                            errorReason: errorReason,
+                            uiMitigation: uiMitigation,
+                          ),
+                          const SizedBox(height: 24),
+                          // ── Actions ───────────────────────────────────
+                          if (state.isFailed) ...[
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                widget.verificationNotifier?.reset();
+                                context.go('/verification/passport-capture');
+                              },
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: Text(
+                                'Re-submit Documents',
+                                style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colorScheme.onSurface,
+                                foregroundColor: colorScheme.surface,
+                                minimumSize: const Size(double.infinity, 44),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                elevation: 0,
                               ),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.support_agent_rounded),
-                        label: const Text('Contact Support'),
+                            const SizedBox(height: 12),
+                            TextButton.icon(
+                              onPressed: () {
+                                // Future: open support chat/email
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Support — coming soon!'),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.support_agent_rounded),
+                              label: Text(
+                                'Contact Support',
+                                style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
+                              ),
+                              style: TextButton.styleFrom(
+                                foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),
+                                minimumSize: const Size(double.infinity, 44),
+                              ),
+                            ),
+                          ],
+                          if (state.isVerified) ...[
+                            ElevatedButton.icon(
+                              onPressed: () => context.go('/home'),
+                              icon: const Icon(Icons.explore_rounded),
+                              label: Text(
+                                'Start Exploring',
+                                style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colorScheme.onSurface,
+                                foregroundColor: colorScheme.surface,
+                                minimumSize: const Size(double.infinity, 44),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                elevation: 0,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
-                    ],
-                    if (state.isVerified) ...[
-                      FilledButton.icon(
-                        onPressed: () => context.go('/home'),
-                        icon: const Icon(Icons.explore_rounded),
-                        label: const Text('Start Exploring'),
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 56),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                    ),
+                    const SizedBox(height: 32),
+                    // Footer text
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              color: colorScheme.onSurface.withValues(alpha: 0.65),
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'If you are facing any difficulties, please get in touch with us on ',
+                              ),
+                              TextSpan(
+                                text: 'Whatsapp',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF25D366),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                    const SizedBox(height: 40),
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
