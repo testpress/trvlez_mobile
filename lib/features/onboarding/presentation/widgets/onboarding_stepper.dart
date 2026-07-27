@@ -28,6 +28,7 @@ class OnboardingStepper extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: steps.length,
+      padding: EdgeInsets.zero,
       itemBuilder: (context, index) {
         final step = steps[index];
         return buildStep(context, step);
@@ -43,43 +44,46 @@ class OnboardingStepper extends StatelessWidget {
     final isCompleted = step.state == OnboardingStepState.completed;
 
     final iconColor = isCompleted
-        ? Colors.green
+        ? colorScheme.onPrimary
         : isActive
+            ? colorScheme.onPrimary
+            : colorScheme.onSurface.withOpacity(0.6);
+
+    final circleColor = isCompleted
         ? colorScheme.primary
-        : colorScheme.onSurface.withAlpha(50);
+        : isActive
+            ? colorScheme.primary
+            : colorScheme.surface;
 
     final borderColor = isCompleted
-        ? Colors.green
-        : isActive
         ? colorScheme.primary
-        : colorScheme.onSurface.withAlpha(50);
+        : isActive
+            ? colorScheme.primary
+            : colorScheme.outlineVariant;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: step.onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: isActive
-                  ? colorScheme.primary.withAlpha(15)
-                  : colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
+              color: isActive ? colorScheme.surfaceContainerHighest.withOpacity(0.3) : colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isActive
-                    ? colorScheme.primary.withAlpha(50)
-                    : theme.dividerColor.withAlpha(30),
+                color: isActive ? colorScheme.primary : colorScheme.outlineVariant,
+                width: isActive ? 1.2 : 0.8,
               ),
               boxShadow: isActive
                   ? [
                       BoxShadow(
-                        color: colorScheme.primary.withAlpha(10),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: colorScheme.shadow.withOpacity(0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
                     ]
                   : null,
@@ -88,47 +92,44 @@ class OnboardingStepper extends StatelessWidget {
               children: [
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  width: 48,
-                  height: 48,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: borderColor, width: 2),
-                    color: isCompleted
-                        ? Colors.green.withAlpha(20)
-                        : Colors.transparent,
+                    border: Border.all(color: borderColor, width: 0.8),
+                    color: circleColor,
                   ),
-                  child: Icon(
-                    isCompleted
-                        ? Icons.check
-                        : (isActive
-                              ? Icons.play_arrow_rounded
-                              : Icons.lock_outline),
-                    color: iconColor,
+                  child: Center(
+                    child: isCompleted
+                        ? Icon(Icons.check_rounded, color: colorScheme.onPrimary, size: 16)
+                        : Icon(
+                            isActive ? Icons.play_arrow_rounded : Icons.lock_outline_rounded,
+                            color: iconColor,
+                            size: 16,
+                          ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         step.title,
-                        style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                           color: isActive || isCompleted
                               ? colorScheme.onSurface
-                              : colorScheme.onSurface.withAlpha(150),
+                              : colorScheme.onSurface.withOpacity(0.6),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         step.subtitle,
-                        style: GoogleFonts.cabin(
-                          fontSize: 14,
-                          color: colorScheme.onSurface.withAlpha(
-                            isActive ? 200 : 120,
-                          ),
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: colorScheme.onSurface.withOpacity(0.65),
                         ),
                       ),
                     ],
@@ -136,8 +137,8 @@ class OnboardingStepper extends StatelessWidget {
                 ),
                 if (isActive)
                   Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
                     color: colorScheme.primary,
                   ),
               ],

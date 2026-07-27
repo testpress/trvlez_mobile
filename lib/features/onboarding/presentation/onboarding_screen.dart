@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_progress_bar.dart';import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
+
 class OnboardingScreen extends StatefulWidget {
   final AuthNotifier authNotifier;
   final ProfileRepository profileRepository;
@@ -43,22 +47,21 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     await profileNotifier.loadProfile();
   }
 
-  /// Maps the backend onboarding step to the progress bar step index (0-4).
   int _stepToProgressIndex(String step) {
     switch (step) {
       case 'profile_pending':
       case 'profile_complete':
-        return 0; // Passport step
+        return 0;
       case 'verification_started':
-        return 0; // Session started, passport capture in progress
+        return 0;
       case 'passport_reviewed':
-        return 2; // Selfie step
+        return 2;
       case 'documents_uploaded':
-        return 3; // NFC step
+        return 3;
       case 'submitted':
-        return 4; // Done step
+        return 4;
       case 'verified':
-        return 5; // All complete
+        return 5;
       default:
         return 0;
     }
@@ -71,8 +74,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
     final isLoading = profileNotifier.isLoading;
     final step = profileNotifier.profile?.onboardingStep ?? 'profile_pending';
-
-    // Map backend steps to the 5-step passport-first flow
     final progressIndex = _stepToProgressIndex(step);
 
     final bool isPassportUploaded = progressIndex >= 1;
@@ -81,18 +82,26 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     final bool isNfcComplete = progressIndex >= 4;
     final bool isFullyVerified = step == 'verified';
 
-    // Count completed steps out of 4 actionable steps
     int completedSteps = 0;
     if (isPassportUploaded) completedSteps++;
     if (isReviewComplete) completedSteps++;
     if (isSelfieComplete) completedSteps++;
     if (isNfcComplete) completedSteps++;
 
-    final double progress = completedSteps / 4.0;
+    final double progressValue = completedSteps / 4.0;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Getting Started'),
+        title: Text(
+          'KYC',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -110,34 +119,130 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildHeader(theme, colorScheme),
+                      // Horizontal Stepper Progress Indicator
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: List.generate(4, (index) {
+                          return _buildStepCircle(
+                            index,
+                            progressIndex,
+                            colorScheme,
+                          );
+                        }),
+                      ),
                       const SizedBox(height: 24),
-                      VerificationProgressBar.verification(
-                        currentStepIndex: progressIndex.clamp(0, 4),
+
+                      // Central Card Container
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.shadow.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Welcome to TrvlEz!',
+                              style: GoogleFonts.inter(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Verify your identity to unlock full access.',
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onSurface.withOpacity(0.65),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            _buildProgress(
+                              progressValue,
+                              completedSteps,
+                              colorScheme,
+                            ),
+                            const SizedBox(height: 24),
+                            _buildStepper(
+                              isPassportUploaded: isPassportUploaded,
+                              isReviewComplete: isReviewComplete,
+                              isSelfieComplete: isSelfieComplete,
+                              isNfcComplete: isNfcComplete,
+                            ),
+                            if (isNfcComplete && !isFullyVerified) ...[
+                              const SizedBox(height: 12),
+                              _buildReviewNotice(colorScheme),
+                            ],
+                            if (isFullyVerified) ...[
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () => context.go('/home'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorScheme.onSurface,
+                                  foregroundColor: colorScheme.surface,
+                                  minimumSize: const Size(double.infinity, 44),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  'Explore TrvlEz',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildProgress(progress, completedSteps, colorScheme),
                       const SizedBox(height: 32),
-                      _buildStepper(
-                        isPassportUploaded: isPassportUploaded,
-                        isReviewComplete: isReviewComplete,
-                        isSelfieComplete: isSelfieComplete,
-                        isNfcComplete: isNfcComplete,
-                      ),
-                      const SizedBox(height: 40),
-                      if (isNfcComplete && !isFullyVerified)
-                        _buildReviewNotice(colorScheme),
-                      if (isFullyVerified)
-                        FilledButton(
-                          onPressed: () => context.go('/home'),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 56),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+
+                      // Footer text
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                color: colorScheme.onSurface.withOpacity(0.65),
+                              ),
+                              children: [
+                                const TextSpan(
+                                  text:
+                                      'If you are facing any difficulties, please get in touch with us on ',
+                                ),
+                                TextSpan(
+                                  text: 'Whatsapp',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF25D366),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: const Text('Explore TrvlEz'),
                         ),
+                      ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -146,59 +251,129 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildHeader(ThemeData theme, ColorScheme colorScheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Welcome to TrvlEz!',
-          style: theme.textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+  Widget _buildStepCircle(
+    int index,
+    int progressIndex,
+    ColorScheme colorScheme,
+  ) {
+    final stepLabels = ['Passport', 'Profile Review', 'Selfie', 'NFC'];
+
+    bool isActive = progressIndex == index;
+    bool isCompleted = progressIndex > index;
+
+    final circleColor = isActive || isCompleted
+        ? colorScheme.primary
+        : colorScheme.surface;
+    final textColor = isActive
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface.withOpacity(0.65);
+    final borderColor = isActive || isCompleted
+        ? colorScheme.primary
+        : colorScheme.outlineVariant;
+
+    return Expanded(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: circleColor,
+                    border: Border.all(color: borderColor, width: 0.8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: isCompleted
+                        ? Icon(
+                            Icons.check,
+                            color: colorScheme.onPrimary,
+                            size: 14,
+                          )
+                        : Text(
+                            '${index + 1}',
+                            style: GoogleFonts.inter(
+                              color: textColor,
+                              fontSize: 14,
+                              fontWeight: isActive
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  stepLabels[index],
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
+                    color: isActive
+                        ? colorScheme.onSurface
+                        : colorScheme.onSurface.withOpacity(0.65),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Verify your identity to unlock full access.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: colorScheme.onSurface.withAlpha(150),
-          ),
-        ),
-      ],
+          if (index < 3)
+            Container(
+              width: 24,
+              height: 2.5,
+              margin: const EdgeInsets.only(bottom: 22),
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildProgress(double progress, int completedSteps, ColorScheme colorScheme) {
+  Widget _buildProgress(
+    double progressValue,
+    int completedSteps,
+    ColorScheme colorScheme,
+  ) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               '$completedSteps of 4 Steps Completed',
-              style: GoogleFonts.nunito(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                color: colorScheme.onSurface,
               ),
             ),
             Text(
-              '${(progress * 100).toInt()}%',
-              style: GoogleFonts.nunito(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
+              '${(progressValue * 100).toInt()}%',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                color: colorScheme.onSurface,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 10,
-            backgroundColor: colorScheme.primary.withAlpha(30),
-            valueColor: AlwaysStoppedAnimation<Color>(
-              colorScheme.primary,
-            ),
+            value: progressValue,
+            minHeight: 6,
+            backgroundColor: colorScheme.onSurface.withOpacity(0.08),
+            valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onSurface),
           ),
         ),
       ],
@@ -207,23 +382,26 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildReviewNotice(ColorScheme colorScheme) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(12),
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: [
           Icon(
-            Icons.hourglass_empty,
-            color: colorScheme.onSecondaryContainer,
+            Icons.hourglass_empty_rounded,
+            color: colorScheme.onSurface.withOpacity(0.65),
+            size: 18,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Your identity verification is currently under review.',
-              style: TextStyle(
-                color: colorScheme.onSecondaryContainer,
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                color: colorScheme.onSurface.withOpacity(0.65),
               ),
             ),
           ),
