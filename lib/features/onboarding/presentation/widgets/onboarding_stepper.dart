@@ -47,7 +47,7 @@ class OnboardingStepper extends StatelessWidget {
         ? colorScheme.onPrimary
         : isActive
             ? colorScheme.onPrimary
-            : colorScheme.onSurface.withOpacity(0.6);
+            : colorScheme.onSurface.withValues(alpha: 0.6);
 
     final circleColor = isCompleted
         ? colorScheme.primary
@@ -72,7 +72,7 @@ class OnboardingStepper extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: isActive ? colorScheme.surfaceContainerHighest.withOpacity(0.3) : colorScheme.surface,
+              color: isActive ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3) : colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isActive ? colorScheme.primary : colorScheme.outlineVariant,
@@ -81,7 +81,7 @@ class OnboardingStepper extends StatelessWidget {
               boxShadow: isActive
                   ? [
                       BoxShadow(
-                        color: colorScheme.shadow.withOpacity(0.04),
+                        color: colorScheme.shadow.withValues(alpha: 0.04),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -121,7 +121,7 @@ class OnboardingStepper extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           color: isActive || isCompleted
                               ? colorScheme.onSurface
-                              : colorScheme.onSurface.withOpacity(0.6),
+                              : colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -129,7 +129,7 @@ class OnboardingStepper extends StatelessWidget {
                         step.subtitle,
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: colorScheme.onSurface.withOpacity(0.65),
+                          color: colorScheme.onSurface.withValues(alpha: 0.65),
                         ),
                       ),
                     ],

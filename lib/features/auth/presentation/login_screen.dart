@@ -4,7 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
+
 /// Traveler login screen.
 class LoginScreen extends StatefulWidget {
   final AuthRepository authRepository;
@@ -107,25 +110,35 @@ class LoginScreenState extends State<LoginScreen>
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: FadeTransition(
-              opacity: fadeAnimation,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildLogo(colorScheme),
-                  const SizedBox(height: 32),
-                  buildFormCard(theme, colorScheme),
-                  const SizedBox(height: 24),
-                  buildSignUpLink(theme, colorScheme),
-                ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset('assets/frame.png', fit: BoxFit.cover),
+          Container(color: Colors.black.withAlpha(90)),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
+                child: FadeTransition(
+                  opacity: fadeAnimation,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      buildLogo(colorScheme),
+                      const SizedBox(height: 24),
+                      buildFormCard(theme, colorScheme),
+                      const SizedBox(height: 24),
+                      buildSignUpLink(theme, colorScheme),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -137,24 +150,24 @@ class LoginScreenState extends State<LoginScreen>
       children: [
         // App icon — red rounded square with plane icon
         Container(
-          width: 56,
-          height: 56,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: colorScheme.primary,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: colorScheme.primary.withAlpha(80),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Center(
             child: SvgPicture.asset(
               'assets/logo.svg',
-              width: 28,
-              height: 28,
+              width: 20,
+              height: 20,
               colorFilter: const ColorFilter.mode(
                 Colors.white,
                 BlendMode.srcIn,
@@ -162,14 +175,14 @@ class LoginScreenState extends State<LoginScreen>
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         // Brand name
         RichText(
           text: TextSpan(
             style: GoogleFonts.inter(
-              fontSize: 28,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
+              color: Colors.white,
             ),
             children: [
               const TextSpan(text: 'Trvl'),
@@ -189,10 +202,10 @@ class LoginScreenState extends State<LoginScreen>
   Widget buildFormCard(ThemeData theme, ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 480),
+      constraints: const BoxConstraints(maxWidth: 320),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: theme.dividerColor.withAlpha(30)),
         boxShadow: [
           BoxShadow(
@@ -202,19 +215,19 @@ class LoginScreenState extends State<LoginScreen>
           ),
         ],
       ),
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Form(
         key: formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             buildHeader(theme),
-            const SizedBox(height: 28),
+            const SizedBox(height: 16),
             buildErrorBanner(colorScheme),
             buildEmailField(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             buildPasswordField(colorScheme),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             buildSubmitButton(colorScheme),
           ],
         ),
@@ -228,23 +241,14 @@ class LoginScreenState extends State<LoginScreen>
     return Column(
       children: [
         Text(
-          'Travel everywhere ease',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
           'Welcome back',
-          style: theme.textTheme.headlineMedium,
+          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         Text(
           'Sign in to continue your journey',
-          style: theme.textTheme.bodyLarge?.copyWith(
+          style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withAlpha(180),
           ),
           textAlign: TextAlign.center,
@@ -309,8 +313,8 @@ class LoginScreenState extends State<LoginScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Email', style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: 8),
+        Text('Email', style: Theme.of(context).textTheme.labelMedium),
+        const SizedBox(height: 4),
         TextFormField(
           controller: emailController,
           validator: validateEmail,
@@ -318,9 +322,11 @@ class LoginScreenState extends State<LoginScreen>
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           autocorrect: false,
-          style: GoogleFonts.cabin(fontSize: 15),
+          style: GoogleFonts.cabin(fontSize: 14),
           decoration: const InputDecoration(
             hintText: 'Enter your email address',
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ],
@@ -331,8 +337,8 @@ class LoginScreenState extends State<LoginScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Password', style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: 8),
+        Text('Password', style: Theme.of(context).textTheme.labelMedium),
+        const SizedBox(height: 4),
         TextFormField(
           controller: passwordController,
           validator: validatePassword,
@@ -340,16 +346,19 @@ class LoginScreenState extends State<LoginScreen>
           obscureText: !isPasswordVisible,
           textInputAction: TextInputAction.done,
           onFieldSubmitted: (_) => onSubmit(),
-          style: GoogleFonts.cabin(fontSize: 15),
+          style: GoogleFonts.cabin(fontSize: 14),
           decoration: InputDecoration(
             hintText: 'Enter your password',
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            suffixIconConstraints: const BoxConstraints(minHeight: 40, minWidth: 40),
             suffixIcon: IconButton(
               icon: Icon(
                 isPasswordVisible
                     ? Icons.visibility_off_outlined
                     : Icons.visibility_outlined,
                 color: colorScheme.onSurface.withAlpha(120),
-                size: 22,
+                size: 18,
               ),
               onPressed: () {
                 setState(() {
@@ -371,13 +380,13 @@ class LoginScreenState extends State<LoginScreen>
       child: FilledButton(
         onPressed: controller.isLoading ? null : onSubmit,
         style: FilledButton.styleFrom(
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(double.infinity, 44),
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           disabledBackgroundColor: colorScheme.primary.withAlpha(180),
           disabledForegroundColor: colorScheme.onPrimary.withAlpha(200),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
           elevation: controller.isLoading ? 0 : 2,
           shadowColor: colorScheme.primary.withAlpha(60),
@@ -387,20 +396,20 @@ class LoginScreenState extends State<LoginScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 20,
-                    height: 20,
+                    width: 16,
+                    height: 16,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
+                      strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         colorScheme.onPrimary.withAlpha(200),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Text(
                     'Signing in...',
                     style: GoogleFonts.nunito(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -409,7 +418,7 @@ class LoginScreenState extends State<LoginScreen>
             : Text(
                 'Sign In',
                 style: GoogleFonts.nunito(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -427,7 +436,7 @@ class LoginScreenState extends State<LoginScreen>
           'Don\'t have an account? ',
           style: GoogleFonts.cabin(
             fontSize: 15,
-            color: colorScheme.onSurface.withAlpha(200),
+            color: Colors.white.withAlpha(220),
           ),
         ),
         GestureDetector(

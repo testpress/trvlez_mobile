@@ -87,6 +87,8 @@ flutter:
     - assets/logo.svg
     - assets/Mobile-bg.png
     - assets/splash_icons_bg_white.png
+    - assets/frame.png
+    
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

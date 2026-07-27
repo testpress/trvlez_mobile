@@ -143,7 +143,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: colorScheme.shadow.withOpacity(0.08),
+                              color: colorScheme.shadow.withValues(alpha: 0.08),
                               blurRadius: 10,
                               offset: const Offset(0, 2),
                             ),
@@ -167,7 +167,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: colorScheme.onSurface.withOpacity(0.65),
+                                color: colorScheme.onSurface.withValues(alpha: 0.65),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -223,7 +223,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                             text: TextSpan(
                               style: GoogleFonts.inter(
                                 fontSize: 10,
-                                color: colorScheme.onSurface.withOpacity(0.65),
+                                color: colorScheme.onSurface.withValues(alpha: 0.65),
                               ),
                               children: [
                                 const TextSpan(
@@ -266,7 +266,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
         : colorScheme.surface;
     final textColor = isActive
         ? colorScheme.onPrimary
-        : colorScheme.onSurface.withOpacity(0.65);
+        : colorScheme.onSurface.withValues(alpha: 0.65);
     final borderColor = isActive || isCompleted
         ? colorScheme.primary
         : colorScheme.outlineVariant;
@@ -314,7 +314,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                     color: isActive
                         ? colorScheme.onSurface
-                        : colorScheme.onSurface.withOpacity(0.65),
+                        : colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
                 ),
               ],
@@ -328,7 +328,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
               decoration: BoxDecoration(
                 color: isCompleted
                     ? colorScheme.primary
-                    : colorScheme.onSurface.withOpacity(0.1),
+                    : colorScheme.onSurface.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
@@ -372,7 +372,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
           child: LinearProgressIndicator(
             value: progressValue,
             minHeight: 6,
-            backgroundColor: colorScheme.onSurface.withOpacity(0.08),
+            backgroundColor: colorScheme.onSurface.withValues(alpha: 0.08),
             valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onSurface),
           ),
         ),
@@ -384,7 +384,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
         borderRadius: BorderRadius.circular(10),
       ),
@@ -392,7 +392,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           Icon(
             Icons.hourglass_empty_rounded,
-            color: colorScheme.onSurface.withOpacity(0.65),
+            color: colorScheme.onSurface.withValues(alpha: 0.65),
             size: 18,
           ),
           const SizedBox(width: 12),
@@ -401,7 +401,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
               'Your identity verification is currently under review.',
               style: GoogleFonts.inter(
                 fontSize: 11,
-                color: colorScheme.onSurface.withOpacity(0.65),
+                color: colorScheme.onSurface.withValues(alpha: 0.65),
               ),
             ),
           ),
