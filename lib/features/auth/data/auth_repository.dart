@@ -15,12 +15,10 @@ class AuthRepository {
 
   /// Creates a new traveler account and returns a [SignupResult].
   Future<SignupResult> signUp({
-    required String fullName,
     required String email,
     required String password,
   }) async {
     final dto = await remoteDataSource.signUp(
-      fullName: fullName,
       email: email,
       password: password,
     );
@@ -28,7 +26,6 @@ class AuthRepository {
     return SignupResult(
       id: dto.id,
       email: dto.email,
-      fullName: dto.fullName,
       travelerProfileId: dto.travelerProfile.id,
       onboardingStep: dto.travelerProfile.onboardingStep,
     );

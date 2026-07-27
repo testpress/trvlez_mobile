@@ -19,7 +19,6 @@ class RegistrationController extends ChangeNotifier {
   /// Sets [isLoading] during the API call, [errorMessage] on failure,
   /// and [isSuccess] when the account is created.
   Future<void> signUp({
-    required String fullName,
     required String email,
     required String password,
   }) async {
@@ -30,7 +29,6 @@ class RegistrationController extends ChangeNotifier {
 
     try {
       await repository.signUp(
-        fullName: fullName,
         email: email,
         password: password,
       );

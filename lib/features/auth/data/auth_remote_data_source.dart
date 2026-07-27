@@ -14,13 +14,12 @@ class AuthRemoteDataSource {
   /// Calls `POST /traveler/signup` with the provided credentials.
   /// Returns the parsed signup response DTO.
   Future<TravelerSignupResponseDto> signUp({
-    required String fullName,
     required String email,
     required String password,
   }) async {
     final responseJson = await apiClient.post(
       '/traveler/signup',
-      body: {'full_name': fullName, 'email': email, 'password': password},
+      body: {'email': email, 'password': password},
     );
 
     return TravelerSignupResponseDto.fromJson(responseJson);

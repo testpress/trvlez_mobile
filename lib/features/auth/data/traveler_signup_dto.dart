@@ -40,13 +40,13 @@ class TravelerProfileNestedDto {
 class TravelerSignupResponseDto {
   final String id;
   final String email;
-  final String fullName;
+  final String? fullName;
   final TravelerProfileNestedDto travelerProfile;
 
   const TravelerSignupResponseDto({
     required this.id,
     required this.email,
-    required this.fullName,
+    this.fullName,
     required this.travelerProfile,
   });
 
@@ -54,7 +54,7 @@ class TravelerSignupResponseDto {
     return TravelerSignupResponseDto(
       id: json['id'] as String,
       email: json['email'] as String,
-      fullName: json['full_name'] as String,
+      fullName: json['full_name'] as String?,
       travelerProfile: TravelerProfileNestedDto.fromJson(
         json['traveler_profile'] as Map<String, dynamic>,
       ),

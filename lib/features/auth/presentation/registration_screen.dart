@@ -28,7 +28,6 @@ class RegistrationScreen extends StatefulWidget {
 class RegistrationScreenState extends State<RegistrationScreen>
     with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
-  final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -61,7 +60,6 @@ class RegistrationScreenState extends State<RegistrationScreen>
   void dispose() {
     controller.removeListener(onControllerChanged);
     controller.dispose();
-    fullNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     fadeController.dispose();
@@ -101,23 +99,12 @@ class RegistrationScreenState extends State<RegistrationScreen>
     if (!formKey.currentState!.validate()) return;
 
     controller.signUp(
-      fullName: fullNameController.text.trim(),
       email: emailController.text.trim(),
       password: passwordController.text,
     );
   }
 
   // ─── Validation ───────────────────────────────────────────────────
-
-  String? validateFullName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Full name is required';
-    }
-    if (value.trim().length > 255) {
-      return 'Name must be 255 characters or fewer';
-    }
-    return null;
-  }
 
   String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
@@ -266,8 +253,6 @@ class RegistrationScreenState extends State<RegistrationScreen>
             buildHeader(theme),
             const SizedBox(height: 16),
             buildErrorBanner(colorScheme),
-            buildFullNameField(),
-            const SizedBox(height: 12),
             buildEmailField(),
             const SizedBox(height: 12),
             buildPasswordField(colorScheme),
@@ -352,29 +337,6 @@ class RegistrationScreenState extends State<RegistrationScreen>
   }
 
   // ─── Form Fields ──────────────────────────────────────────────────
-
-  Widget buildFullNameField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Full Name', style: Theme.of(context).textTheme.labelMedium),
-        const SizedBox(height: 4),
-        TextFormField(
-          controller: fullNameController,
-          validator: validateFullName,
-          enabled: !controller.isLoading,
-          textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
-          style: GoogleFonts.cabin(fontSize: 14),
-          decoration: const InputDecoration(
-            hintText: 'Enter your full name',
-            isDense: true,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget buildEmailField() {
     return Column(
