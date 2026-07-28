@@ -120,8 +120,9 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
     try {
       final sw = MediaQuery.sizeOf(context).width;
       final sh = MediaQuery.sizeOf(context).height;
-      final frameWidth = sw * 0.9;
-      final frameHeight = frameWidth / 1.43;
+      // Make frame tall to encourage landscape capturing
+      final frameHeight = sh * 0.65;
+      final frameWidth = frameHeight / 1.43; // Standard passport aspect ratio
 
       final XFile file = await controller!.takePicture();
 
@@ -216,8 +217,16 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
     }
 
     final theme = Theme.of(context);
-    final frameWidth = MediaQuery.sizeOf(context).width * 0.9;
-    final frameHeight = frameWidth / 1.43;
+    final screenSize = MediaQuery.sizeOf(context);
+    // Vertical frame (taller than wide) to force user to hold phone sideways
+    final frameHeight = screenSize.height * 0.65;
+    final frameWidth = frameHeight / 1.43;
+    
+    final cutoutRect = Rect.fromCenter(
+      center: Offset(screenSize.width / 2, screenSize.height / 2),
+      width: frameWidth,
+      height: frameHeight,
+    );
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -227,43 +236,13 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
           // Camera Preview
           CameraPreview(controller!),
 
-          // Overlay Mask
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              Colors.black.withAlpha(150),
-              BlendMode.srcOut,
-            ),
-            child: Stack(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    backgroundBlendMode: BlendMode.dstOut,
-                  ), // This one will be transparent
-                ),
-                Center(
-                  child: Container(
-                    width: frameWidth,
-                    height: frameHeight,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Passport Frame Border
-          Center(
-            child: Container(
-              width: frameWidth,
-              height: frameHeight,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 3),
-                borderRadius: BorderRadius.circular(16),
-              ),
+          // Reliable Overlay Mask & Border using CustomPaint
+          CustomPaint(
+            size: Size.infinite,
+            painter: CameraOverlayPainter(
+              cutout: cutoutRect,
+              overlayColor: Colors.black.withAlpha(150),
+              radius: 16.0,
             ),
           ),
 
@@ -283,35 +262,41 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
             ),
           ),
 
-          // Instructions
+          // Instructions (Rotated to prompt sideways holding)
           Positioned(
-            top: MediaQuery.paddingOf(context).top + 80,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                const Icon(
-                  Icons.document_scanner,
-                  color: Colors.white,
-                  size: 32,
+            top: 0,
+            bottom: 0,
+            right: 16, // Place on the right side of the screen
+            child: Center(
+              child: RotatedBox(
+                quarterTurns: 1, // Rotates text 90 degrees clockwise
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.document_scanner,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Position your passport\nwithin the frame',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Make sure all text is clear and readable',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'Position your passport\nwithin the frame',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Make sure all text is clear and readable',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
 
@@ -363,5 +348,59 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
         ],
       ),
     );
+  }
+}
+
+class CameraOverlayPainter extends CustomPainter {
+  final Rect cutout;
+  final double radius;
+  final Color overlayColor;
+  final Color borderColor;
+  final double borderWidth;
+
+  CameraOverlayPainter({
+    required this.cutout,
+    this.radius = 16.0,
+    this.overlayColor = Colors.black54,
+    this.borderColor = Colors.white,
+    this.borderWidth = 3.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 1. Draw the darkened background with a transparent hole
+    final backgroundPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+      
+    final cutoutPath = Path()
+      ..addRRect(RRect.fromRectAndRadius(cutout, Radius.circular(radius)));
+
+    // Subtract the cutout from the background using PathOperation.difference
+    final overlayPath = Path.combine(
+      PathOperation.difference,
+      backgroundPath,
+      cutoutPath,
+    );
+
+    final paint = Paint()..color = overlayColor;
+    canvas.drawPath(overlayPath, paint);
+
+    // 2. Draw the white border around the cutout
+    final borderPaint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(cutout, Radius.circular(radius)),
+      borderPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CameraOverlayPainter oldDelegate) {
+    return oldDelegate.cutout != cutout ||
+           oldDelegate.overlayColor != overlayColor ||
+           oldDelegate.borderColor != borderColor;
   }
 }
