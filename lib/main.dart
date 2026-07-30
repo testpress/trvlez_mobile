@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:trvlez_mobile/app/router.dart';import 'package:trvlez_mobile/app/theme.dart';import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:trvlez_mobile/app/router.dart';import 'package:trvlez_mobile/app/theme.dart';import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/properties/data/properties_remote_data_source.dart';import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -29,6 +29,14 @@ void main() async {
     remoteDataSource: profileRemoteDataSource,
   );
 
+  final propertiesRemoteDataSource = PropertiesRemoteDataSource(
+    apiClient: apiClient,
+    tokenStorage: tokenStorage,
+  );
+  final propertiesRepository = PropertiesRepository(
+    remoteDataSource: propertiesRemoteDataSource,
+  );
+
   // 3. Auth State (with profile repo for onboarding step check)
   final authNotifier = AuthNotifier(
     tokenStorage: tokenStorage,
@@ -53,6 +61,7 @@ void main() async {
       authNotifier: authNotifier,
       authRepository: authRepository,
       profileRepository: profileRepository,
+      propertiesRepository: propertiesRepository,
     ),
   );
 }
@@ -61,6 +70,7 @@ class TrvlEzApp extends StatelessWidget {
   final AuthNotifier authNotifier;
   final AuthRepository authRepository;
   final ProfileRepository profileRepository;
+  final PropertiesRepository propertiesRepository;
 
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
     ThemeMode.system,
@@ -71,6 +81,7 @@ class TrvlEzApp extends StatelessWidget {
     required this.authNotifier,
     required this.authRepository,
     required this.profileRepository,
+    required this.propertiesRepository,
   });
 
   @override
@@ -88,6 +99,7 @@ class TrvlEzApp extends StatelessWidget {
             authNotifier,
             authRepository,
             profileRepository,
+            propertiesRepository,
           ),
         );
       },

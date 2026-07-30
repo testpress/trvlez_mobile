@@ -3,6 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/auth/presentation/login_screen.dart';import 'package:trvlez_mobile/features/auth/presentation/registration_screen.dart';import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/features/home/presentation/main_scaffold.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
+import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
+import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
+import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
 /// Central router configuration for the TrvlEz app.
 ///
 /// Redirect logic:
@@ -11,9 +18,11 @@ GoRouter createRouter(
   AuthNotifier authNotifier,
   AuthRepository authRepository,
   ProfileRepository profileRepository,
+  PropertiesRepository propertiesRepository,
 ) {
   final verificationNotifier = VerificationNotifier();
   final nfcPassportService = NfcPassportService();
+  final propertiesNotifier = PropertiesNotifier(repository: propertiesRepository);
 
   return GoRouter(
     initialLocation: '/welcome',
@@ -62,12 +71,44 @@ GoRouter createRouter(
           profileRepository: profileRepository,
         ),
       ),
+      ShellRoute(
+        builder: (context, state, child) {
+          return MainScaffold(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => PropertiesListingScreen(
+              notifier: propertiesNotifier,
+            ),
+          ),
+          GoRoute(
+            path: '/tickets',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Tickets Coming Soon')),
+            ),
+          ),
+          GoRoute(
+            path: '/favorites',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Favorites Coming Soon')),
+            ),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => HomeScreen(
+              authNotifier: authNotifier,
+              profileRepository: profileRepository,
+            ),
+          ),
+        ],
+      ),
       GoRoute(
-        path: '/home',
-        builder: (context, state) => HomeScreen(
-          authNotifier: authNotifier,
-          profileRepository: profileRepository,
-        ),
+        path: '/properties/:id',
+        builder: (context, state) {
+          final property = state.extra as Property;
+          return PropertyDetailScreen(property: property);
+        },
       ),
       GoRoute(
         path: '/profile-setup',
