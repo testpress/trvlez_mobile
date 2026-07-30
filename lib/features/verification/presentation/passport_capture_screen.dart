@@ -42,7 +42,11 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
       height: cropH.toInt().clamp(1, originalImage.height),
     );
 
-    final croppedBytes = img.encodePng(croppedImage);
+    // The capture screen encourages users to hold the mobile sideways.
+    // Rotate 90 degrees before saving and showing in the review screen.
+    final img.Image rotatedImage = img.copyRotate(croppedImage, angle: 90);
+
+    final croppedBytes = img.encodePng(rotatedImage);
     final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '.png');
     final pngFile = File(pngPath)..writeAsBytesSync(croppedBytes);
     return pngFile;
