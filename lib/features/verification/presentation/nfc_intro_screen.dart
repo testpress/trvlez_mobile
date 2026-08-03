@@ -293,9 +293,32 @@ class NfcIntroScreen extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      // Skipping NFC marks the flow as complete (for MVP).
-      // Submit the overall verification job if needed.
-      context.go('/verification/status');
+      // Show loading overlay
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
+      notifier.skipNfc();
+      await notifier.submitVerificationAsync();
+
+      if (context.mounted) {
+        // Pop loading overlay
+        Navigator.pop(context);
+        
+        if (notifier.phase == VerificationPhase.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(notifier.errorMessage ?? 'Submission failed'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        } else {
+          // Skipping NFC marks the flow as complete (for MVP).
+          context.go('/verification/status');
+        }
+      }
     }
   }
 }
