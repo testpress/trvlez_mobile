@@ -10,6 +10,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+
+/// Crops the passport region from the full camera capture.
+///
+/// In landscape mode the captured image already has the correct orientation,
+/// so no rotation is needed. The result is encoded as high-quality JPEG
+/// to preserve text sharpness for MRZ extraction while keeping file size
+/// reasonable (~1-3 MB vs 10-20 MB for PNG).
 Future<File?> processAndCropImage(Map<String, dynamic> params) async {
   final String imagePath = params['path'] as String;
   final double sw = params['sw'] as double;
@@ -29,9 +36,12 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
     final double scaleX = sw / iw;
     final double scaleY = sh / ih;
 
+    final double frameCenterX = (params['frameCenterX'] as double?) ?? (sw / 2);
+    final double cropCenterX = frameCenterX / scaleX;
+    
     final double cropW = frameWidth / scaleX;
     final double cropH = frameHeight / scaleY;
-    final double cropX = (iw - cropW) / 2;
+    final double cropX = cropCenterX - (cropW / 2);
     final double cropY = (ih - cropH) / 2;
 
     final img.Image croppedImage = img.copyCrop(
@@ -42,13 +52,10 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
       height: cropH.toInt().clamp(1, originalImage.height),
     );
 
-    // The capture screen encourages users to hold the mobile sideways.
-    // Rotate 90 degrees before saving and showing in the review screen.
-    final img.Image rotatedImage = img.copyRotate(croppedImage, angle: -90);
-
-    final croppedBytes = img.encodePng(rotatedImage);
-    final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '.png');
-    final pngFile = File(pngPath)..writeAsBytesSync(croppedBytes);
+    // Encode as PNG — no rotation needed in landscape mode.
+    final pngBytes = img.encodePng(croppedImage);
+    final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_cropped.png');
+    final pngFile = File(pngPath)..writeAsBytesSync(pngBytes);
     return pngFile;
   }
   return null;
@@ -68,21 +75,33 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
   List<CameraDescription>? cameras;
   bool isCameraInitialized = false;
   bool isCapturing = false;
+  FlashMode currentFlashMode = FlashMode.off;
+  String? captureStatusMessage;
+
+  /// ICAO 9303 TD3 passport data page: 125 mm × 88 mm → ratio ≈ 1.42.
+  static const double _passportAspectRatio = 125.0 / 88.0;
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-    initCamera();
+    _initOrientationAndCamera();
   }
 
-  Future<void> initCamera() async {
+  Future<void> _initOrientationAndCamera() async {
+    // Lock to landscape for natural passport framing — eliminates the need
+    // to rotate the captured image, which previously degraded MRZ text quality.
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
+    await _initCamera();
+  }
+
+  Future<void> _initCamera() async {
     try {
       cameras = await availableCameras();
       if (cameras != null && cameras!.isNotEmpty) {
-        // Find back camera if possible
         final backCamera = cameras!.firstWhere(
           (camera) => camera.lensDirection == CameraLensDirection.back,
           orElse: () => cameras!.first,
@@ -95,6 +114,10 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
         );
 
         await controller!.initialize();
+
+        // Configure autofocus and exposure for document capture
+        await _configureCameraForDocumentCapture();
+
         if (mounted) {
           setState(() {
             isCameraInitialized = true;
@@ -110,8 +133,33 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
     }
   }
 
+  /// Configures camera settings optimised for document / passport capture.
+  ///
+  /// Enables continuous autofocus and auto exposure. Calls are wrapped in
+  /// try/catch because not all devices support every focus/exposure mode.
+  Future<void> _configureCameraForDocumentCapture() async {
+    try {
+      await controller!.setFocusMode(FocusMode.auto);
+    } catch (_) {
+      // Device may not support settable focus modes
+    }
+
+    try {
+      await controller!.setExposureMode(ExposureMode.auto);
+    } catch (_) {
+      // Device may not support settable exposure modes
+    }
+
+    try {
+      await controller!.setFlashMode(FlashMode.off);
+    } catch (_) {
+      // Flash may not be available
+    }
+  }
+
   @override
   void dispose() {
+    // Restore all orientations so subsequent screens are not stuck in landscape
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -122,6 +170,49 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
     super.dispose();
   }
 
+  // ---------------------------------------------------------------------------
+  // Flash control
+  // ---------------------------------------------------------------------------
+
+  /// Cycles flash mode: off → auto → torch → off.
+  ///
+  /// Torch mode provides continuous illumination which is preferable for
+  /// document capture — the user can see the lighting effect before capturing.
+  Future<void> _toggleFlash() async {
+    if (controller == null || !controller!.value.isInitialized) return;
+
+    final nextMode = switch (currentFlashMode) {
+      FlashMode.off => FlashMode.auto,
+      FlashMode.auto => FlashMode.torch,
+      _ => FlashMode.off,
+    };
+
+    try {
+      await controller!.setFlashMode(nextMode);
+      setState(() {
+        currentFlashMode = nextMode;
+      });
+    } catch (_) {
+      // Flash mode not supported — silently ignore
+    }
+  }
+
+  IconData get _flashIcon => switch (currentFlashMode) {
+    FlashMode.off => Icons.flash_off,
+    FlashMode.auto => Icons.flash_auto,
+    FlashMode.torch || FlashMode.always => Icons.flash_on,
+  };
+
+  String get _flashLabel => switch (currentFlashMode) {
+    FlashMode.off => 'Off',
+    FlashMode.auto => 'Auto',
+    FlashMode.torch || FlashMode.always => 'On',
+  };
+
+  // ---------------------------------------------------------------------------
+  // Capture
+  // ---------------------------------------------------------------------------
+
   Future<void> capturePassport() async {
     if (controller == null || !controller!.value.isInitialized || isCapturing) {
       return;
@@ -129,16 +220,27 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
     setState(() {
       isCapturing = true;
+      captureStatusMessage = 'Capturing...';
     });
 
-    try {
-      final sw = MediaQuery.sizeOf(context).width;
-      final sh = MediaQuery.sizeOf(context).height;
-      // Make frame tall to encourage landscape capturing
-      final frameHeight = sh * 0.65;
-      final frameWidth = frameHeight / 1.43; // Standard passport aspect ratio
+    // Capture screen dimensions before any async work to avoid using
+    // BuildContext across async gaps.
+    final screenSize = MediaQuery.sizeOf(context);
+    final sw = screenSize.width;
+    final sh = screenSize.height;
+    final (frameWidth, frameHeight) = _computeFrameDimensions(screenSize);
 
+    try {
       final XFile file = await controller!.takePicture();
+
+      setState(() {
+        captureStatusMessage = 'Processing...';
+      });
+
+      // Offset frame slightly left to make room for the right-side controls
+      // This matches the calculation in the build method.
+      const double controlColumnWidth = 100.0;
+      final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
 
       final croppedFile = await compute(processAndCropImage, {
         'path': file.path,
@@ -146,13 +248,24 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
         'sh': sh,
         'frameWidth': frameWidth,
         'frameHeight': frameHeight,
+        'frameCenterX': frameCenterX,
       });
 
-      // We pass the captured file to the notifier and go to review screen
-      widget.notifier.setImage(croppedFile ?? File(file.path));
+      if (croppedFile == null) {
+        throw Exception('Failed to process captured image.');
+      }
+
+      // Hand off image and navigate to review
+      widget.notifier.setImage(croppedFile);
 
       if (mounted) {
-        context.push('/verification/passport-review');
+        // Restore portrait before leaving so the review screen renders correctly
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+        ]);
+        if (mounted) {
+          context.go('/verification/passport-review');
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -166,10 +279,15 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
       if (mounted) {
         setState(() {
           isCapturing = false;
+          captureStatusMessage = null;
         });
       }
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // Gallery picker
+  // ---------------------------------------------------------------------------
 
   Future<void> pickPassportFromGallery() async {
     if (isCapturing) return;
@@ -203,7 +321,12 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
         if (croppedFile != null) {
           widget.notifier.setImage(File(croppedFile.path));
           if (mounted) {
-            context.push('/verification/passport-review');
+            await SystemChrome.setPreferredOrientations([
+              DeviceOrientation.portraitUp,
+            ]);
+            if (mounted) {
+              context.go('/verification/passport-review');
+            }
           }
         }
       }
@@ -224,20 +347,59 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Frame dimensions
+  // ---------------------------------------------------------------------------
+
+  /// Computes the passport overlay frame dimensions for landscape mode.
+  ///
+  /// The frame is a horizontal rectangle matching the ICAO 9303 TD3 passport
+  /// aspect ratio (125 mm × 88 mm ≈ 1.42 : 1). Sized to fill most of the
+  /// screen while leaving a right-side column for the capture button.
+  (double width, double height) _computeFrameDimensions(Size screenSize) {
+    // Reserve right column for controls (capture + gallery buttons)
+    const double controlColumnWidth = 100.0;
+    final availableWidth = screenSize.width - controlColumnWidth;
+
+    // Use 85 % of screen height, then cap so width stays within bounds
+    final candidateHeight = screenSize.height * 0.85;
+    final candidateWidth = candidateHeight * _passportAspectRatio;
+
+    if (candidateWidth <= availableWidth * 0.95) {
+      return (candidateWidth, candidateHeight);
+    }
+
+    // Width-constrained — fit to available width instead
+    final constrainedWidth = availableWidth * 0.95;
+    final constrainedHeight = constrainedWidth / _passportAspectRatio;
+    return (constrainedWidth, constrainedHeight);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     if (!isCameraInitialized || controller == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
     }
 
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
-    // Vertical frame (taller than wide) to force user to hold phone sideways
-    final frameHeight = screenSize.height * 0.65;
-    final frameWidth = frameHeight / 1.43;
-    
+    final padding = MediaQuery.paddingOf(context);
+    final (frameWidth, frameHeight) = _computeFrameDimensions(screenSize);
+
+    // Offset frame slightly left to make room for the right-side controls
+    const double controlColumnWidth = 100.0;
+    final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
     final cutoutRect = Rect.fromCenter(
-      center: Offset(screenSize.width / 2, screenSize.height / 2),
+      center: Offset(frameCenterX, screenSize.height / 2),
       width: frameWidth,
       height: frameHeight,
     );
@@ -250,7 +412,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
           // Camera Preview
           CameraPreview(controller!),
 
-          // Reliable Overlay Mask & Border using CustomPaint
+          // Overlay Mask & Border
           CustomPaint(
             size: Size.infinite,
             painter: CameraOverlayPainter(
@@ -260,103 +422,142 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
             ),
           ),
 
-          // Top Bar
+          // Top Bar — Close button (left) + Flash toggle (right)
           Positioned(
-            top: MediaQuery.paddingOf(context).top + 16,
+            top: padding.top + 8,
             left: 16,
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () {
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.go('/verification/status');
-                }
-              },
+            right: 16,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/verification/status');
+                    }
+                  },
+                ),
+                GestureDetector(
+                  onTap: _toggleFlash,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(100),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_flashIcon, color: Colors.white, size: 20),
+                        const SizedBox(width: 4),
+                        Text(
+                          _flashLabel,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Instructions (Rotated to prompt sideways holding)
+          // Guidance text below the frame
           Positioned(
-            top: 0,
-            bottom: 0,
-            right: 16, // Place on the right side of the screen
-            child: Center(
-              child: RotatedBox(
-                quarterTurns: 1, // Rotates text 90 degrees clockwise
+            top: cutoutRect.bottom + 8,
+            left: cutoutRect.left,
+            right: screenSize.width - cutoutRect.right,
+            child: Text(
+              'Hold steady • ~20 cm away • Ensure MRZ zone is visible',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.white70,
+              ),
+            ),
+          ),
+
+          // Capture status overlay (Focusing / Capturing / Processing / Checking)
+          if (captureStatusMessage != null)
+            Container(
+              color: Colors.black.withAlpha(100),
+              child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.document_scanner,
-                      color: Colors.white,
-                      size: 32,
+                    const SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Position your passport\nwithin the frame',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      captureStatusMessage!,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Make sure all text is clear and readable',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white70,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
 
-          // Controls
+          // Right-side controls — Capture button (center) + Gallery (below)
           Positioned(
-            bottom: 48,
-            left: 32,
-            right: 32,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  width: 48,
-                ), // Empty space on left to keep center button centered
-                GestureDetector(
-                  onTap: capturePassport,
-                  child: Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
-                    ),
-                    child: Center(
+            right: padding.right + 16,
+            top: 0,
+            bottom: 0,
+            child: SizedBox(
+              width: 80,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: isCapturing ? null : capturePassport,
+                    child: Opacity(
+                      opacity: isCapturing ? 0.5 : 1.0,
                       child: Container(
-                        height: 64,
-                        width: 64,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        height: 72,
+                        width: 72,
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 4),
                         ),
-                        child: isCapturing
-                            ? const CircularProgressIndicator(
-                                color: Colors.black,
-                              )
-                            : null,
+                        child: Center(
+                          child: Container(
+                            height: 56,
+                            width: 56,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  iconSize: 32,
-                  onPressed: pickPassportFromGallery,
-                  icon: const Icon(Icons.photo_library, color: Colors.white),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  IconButton(
+                    iconSize: 28,
+                    onPressed: isCapturing ? null : pickPassportFromGallery,
+                    icon: Icon(
+                      Icons.photo_library,
+                      color: isCapturing ? Colors.white38 : Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -382,14 +583,13 @@ class CameraOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 1. Draw the darkened background with a transparent hole
+    // 1. Darkened background with a transparent hole
     final backgroundPath = Path()
       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-      
+
     final cutoutPath = Path()
       ..addRRect(RRect.fromRectAndRadius(cutout, Radius.circular(radius)));
 
-    // Subtract the cutout from the background using PathOperation.difference
     final overlayPath = Path.combine(
       PathOperation.difference,
       backgroundPath,
@@ -399,7 +599,7 @@ class CameraOverlayPainter extends CustomPainter {
     final paint = Paint()..color = overlayColor;
     canvas.drawPath(overlayPath, paint);
 
-    // 2. Draw the white border around the cutout
+    // 2. White border around the cutout
     final borderPaint = Paint()
       ..color = borderColor
       ..style = PaintingStyle.stroke
@@ -414,7 +614,7 @@ class CameraOverlayPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CameraOverlayPainter oldDelegate) {
     return oldDelegate.cutout != cutout ||
-           oldDelegate.overlayColor != overlayColor ||
-           oldDelegate.borderColor != borderColor;
+        oldDelegate.overlayColor != overlayColor ||
+        oldDelegate.borderColor != borderColor;
   }
 }

@@ -188,7 +188,7 @@ class PassportReviewScreen extends StatelessWidget {
                               child: OutlinedButton(
                                 onPressed: () {
                                   notifier.clearImage();
-                                  context.pop();
+                                  context.go('/verification/passport-capture');
                                 },
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,
