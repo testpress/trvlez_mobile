@@ -126,7 +126,13 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/profile');
+            }
+          },
         ),
       ),
       body: profileNotifier.isLoading && profileNotifier.profile == null
@@ -516,10 +522,10 @@ class StepRow extends StatelessWidget {
       padding: EdgeInsets.only(bottom: isLast ? 0 : 20),
       child: Row(
         children: [
-          // Step connector line + icon
+          // Step icon
           SizedBox(
             width: 32,
-            child: Column(children: [Icon(icon, color: color, size: 28)]),
+            child: Center(child: Icon(icon, color: color, size: 28)),
           ),
           const SizedBox(width: 14),
           Expanded(

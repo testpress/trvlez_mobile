@@ -436,7 +436,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
                     if (context.canPop()) {
                       context.pop();
                     } else {
-                      context.go('/verification/status');
+                      context.go('/profile');
                     }
                   },
                 ),

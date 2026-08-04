@@ -58,13 +58,7 @@ class MrzReviewScreen extends StatelessWidget {
             centerTitle: true,
             elevation: 0,
             backgroundColor: Colors.transparent,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
-              onPressed: () {
-                notifier.clearImage();
-                context.go('/verification/passport-capture');
-              },
-            ),
+            automaticallyImplyLeading: false,
           ),
           body: SafeArea(
             child: RefreshIndicator(
@@ -191,7 +185,7 @@ class MrzReviewScreen extends StatelessWidget {
                                     await notifier.confirmMrz();
                                     if (context.mounted &&
                                         notifier.phase == VerificationPhase.mrzReviewed) {
-                                      context.push('/verification/selfie-instructions');
+                                      context.go('/verification/selfie-instructions');
                                     }
                                   },
                             style: ElevatedButton.styleFrom(

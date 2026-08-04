@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trvlez_mobile/core/constants/app_colors.dart';
 
 class MainScaffold extends StatelessWidget {
   final Widget child;
@@ -20,10 +19,15 @@ class MainScaffold extends StatelessWidget {
     final location = GoRouterState.of(context).matchedLocation;
     
     int currentIndex = 0;
-    if (location.startsWith('/home')) currentIndex = 0;
-    else if (location.startsWith('/tickets')) currentIndex = 1;
-    else if (location.startsWith('/favorites')) currentIndex = 2;
-    else if (location.startsWith('/profile')) currentIndex = 3;
+    if (location.startsWith('/home')) {
+      currentIndex = 0;
+    } else if (location.startsWith('/tickets')) {
+      currentIndex = 1;
+    } else if (location.startsWith('/favorites')) {
+      currentIndex = 2;
+    } else if (location.startsWith('/profile')) {
+      currentIndex = 3;
+    }
 
     return Container(
       decoration: BoxDecoration(

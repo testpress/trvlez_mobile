@@ -34,17 +34,7 @@ class NfcIntroScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
-          onPressed: () {
-            // Usually we shouldn't pop if we're in a linear flow, but allow going back to selfie review.
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/verification/selfie-review');
-            }
-          },
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

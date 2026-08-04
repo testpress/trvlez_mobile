@@ -70,7 +70,7 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
 
   void _proceedToCapture() {
     if (!_canProceed) return;
-    context.push('/verification/selfie-capture');
+    context.go('/verification/selfie-capture');
   }
 
   @override
@@ -92,16 +92,7 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/verification/mrz-review');
-            }
-          },
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
