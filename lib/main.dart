@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:trvlez_mobile/app/router.dart';import 'package:trvlez_mobile/app/theme.dart';import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/properties/data/properties_remote_data_source.dart';import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
+import 'package:trvlez_mobile/app/router.dart';
+import 'package:trvlez_mobile/app/theme.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/network/api_client.dart';
+import 'package:trvlez_mobile/core/storage/token_storage.dart';
+import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';
+import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
+import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_remote_data_source.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
+import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data_source.dart';
+import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -37,6 +50,14 @@ void main() async {
     remoteDataSource: propertiesRemoteDataSource,
   );
 
+  final reservationRemoteDataSource = ReservationRemoteDataSource(
+    apiClient: apiClient,
+    tokenStorage: tokenStorage,
+  );
+  final reservationRepository = ReservationRepository(
+    remoteDataSource: reservationRemoteDataSource,
+  );
+
   // 3. Auth State (with profile repo for onboarding step check)
   final authNotifier = AuthNotifier(
     tokenStorage: tokenStorage,
@@ -62,6 +83,7 @@ void main() async {
       authRepository: authRepository,
       profileRepository: profileRepository,
       propertiesRepository: propertiesRepository,
+      reservationRepository: reservationRepository,
     ),
   );
 }
@@ -71,6 +93,7 @@ class TrvlEzApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ProfileRepository profileRepository;
   final PropertiesRepository propertiesRepository;
+  final ReservationRepository reservationRepository;
 
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
     ThemeMode.system,
@@ -82,6 +105,7 @@ class TrvlEzApp extends StatelessWidget {
     required this.authRepository,
     required this.profileRepository,
     required this.propertiesRepository,
+    required this.reservationRepository,
   });
 
   @override
@@ -100,9 +124,11 @@ class TrvlEzApp extends StatelessWidget {
             authRepository,
             profileRepository,
             propertiesRepository,
+            reservationRepository,
           ),
         );
       },
     );
   }
 }
+

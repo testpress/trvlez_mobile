@@ -147,6 +147,24 @@ class ApiClient {
     }
   }
 
+  /// Sends a DELETE request to `{apiUrl}/{path}`.
+  Future<Map<String, dynamic>> delete(String path, {String? authToken}) async {
+    final uri = Uri.parse('${AppConfig.apiUrl}$path');
+
+    try {
+      final response = await client.delete(
+        uri,
+        headers: headers(authToken: authToken),
+      );
+
+      return handleResponse(response);
+    } on SocketException {
+      throw ApiException.network();
+    } on http.ClientException {
+      throw ApiException.network();
+    }
+  }
+
   /// Releases underlying resources.
   void dispose() {
     client.close();

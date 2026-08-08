@@ -52,6 +52,7 @@ dependencies:
   image_picker: ^1.2.2
   image: ^4.9.1
   image_cropper: ^12.2.1
+  qr_flutter: ^4.1.0
 
   # NFC Passport Reading (ICAO 9303 ePassport)
   dmrtd:

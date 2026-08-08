@@ -224,32 +224,38 @@ class PropertyDetailScreen extends StatelessWidget {
             ),
           ],
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-          decoration: BoxDecoration(
-            color: colorScheme.primary,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: colorScheme.primary.withAlpha(76), // 0.3 * 255
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+        GestureDetector(
+          onTap: () => context.push(
+            '/reservations/create',
+            extra: property,
           ),
-          child: Row(
-            children: [
-              Text(
-                'Book Now',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onPrimary,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+            decoration: BoxDecoration(
+              color: colorScheme.primary,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withAlpha(76), // 0.3 * 255
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.arrow_forward, color: colorScheme.onPrimary, size: 20),
-            ],
+              ],
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'Book Now',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(Icons.arrow_forward, color: colorScheme.onPrimary, size: 20),
+              ],
+            ),
           ),
         ),
       ],

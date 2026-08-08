@@ -1,8 +1,27 @@
 import 'package:go_router/go_router.dart';
 
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';import 'package:trvlez_mobile/features/auth/presentation/login_screen.dart';import 'package:trvlez_mobile/features/auth/presentation/registration_screen.dart';import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:trvlez_mobile/features/auth/presentation/login_screen.dart';
+import 'package:trvlez_mobile/features/auth/presentation/registration_screen.dart';
+import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';
+import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';
+import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
+import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/features/home/presentation/main_scaffold.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
@@ -10,6 +29,14 @@ import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
+import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
+import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+
 /// Central router configuration for the TrvlEz app.
 ///
 /// Redirect logic:
@@ -19,10 +46,12 @@ GoRouter createRouter(
   AuthRepository authRepository,
   ProfileRepository profileRepository,
   PropertiesRepository propertiesRepository,
+  ReservationRepository reservationRepository,
 ) {
   final verificationNotifier = VerificationNotifier();
   final nfcPassportService = NfcPassportService();
   final propertiesNotifier = PropertiesNotifier(repository: propertiesRepository);
+  final reservationsNotifier = ReservationsNotifier(repository: reservationRepository);
 
   return GoRouter(
     initialLocation: '/welcome',
@@ -83,9 +112,9 @@ GoRouter createRouter(
             ),
           ),
           GoRoute(
-            path: '/tickets',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Tickets Coming Soon')),
+            path: '/my-trips',
+            builder: (context, state) => MyTripsScreen(
+              notifier: reservationsNotifier,
             ),
           ),
           GoRoute(
@@ -110,6 +139,40 @@ GoRouter createRouter(
           return PropertyDetailScreen(property: property);
         },
       ),
+      // ─── Reservation Routes ─────────────────────────────────────
+      GoRoute(
+        path: '/reservations/create',
+        builder: (context, state) {
+          final property = state.extra as Property;
+          return CreateReservationScreen(
+            property: property,
+            notifier: reservationsNotifier,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reservations/:id',
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>;
+          final reservation = extras['reservation'] as Reservation;
+          return ReservationDetailScreen(
+            reservation: reservation,
+            notifier: reservationsNotifier,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reservations/:id/qr',
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>;
+          final reservation = extras['reservation'] as Reservation;
+          return QrCodeScreen(
+            reservation: reservation,
+            notifier: reservationsNotifier,
+          );
+        },
+      ),
+      // ─── Profile & Verification Routes ──────────────────────────
       GoRoute(
         path: '/profile-setup',
         builder: (context, state) => ProfileSetupScreen(

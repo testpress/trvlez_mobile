@@ -21,7 +21,7 @@ class MainScaffold extends StatelessWidget {
     int currentIndex = 0;
     if (location.startsWith('/home')) {
       currentIndex = 0;
-    } else if (location.startsWith('/tickets')) {
+    } else if (location.startsWith('/my-trips')) {
       currentIndex = 1;
     } else if (location.startsWith('/favorites')) {
       currentIndex = 2;
@@ -47,7 +47,7 @@ class MainScaffold extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildNavItem(context, Icons.home_filled, Icons.home_outlined, 0, currentIndex, '/home'),
-              _buildNavItem(context, Icons.confirmation_number, Icons.confirmation_number_outlined, 1, currentIndex, '/tickets'),
+              _buildNavItem(context, Icons.luggage, Icons.luggage_outlined, 1, currentIndex, '/my-trips'),
               _buildNavItem(context, Icons.favorite, Icons.favorite_outline, 2, currentIndex, '/favorites'),
               _buildNavItem(context, Icons.person, Icons.person_outline, 3, currentIndex, '/profile'),
             ],
