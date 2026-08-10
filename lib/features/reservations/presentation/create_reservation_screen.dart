@@ -129,11 +129,31 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
   Future<void> _submitReservation() async {
     if (!_isFormValid) return;
 
-    final formatter = DateFormat('yyyy-MM-dd');
+    // Combine selected date with current UTC time
+    // so that same-day bookings pass the backend's strict past-time check.
+    final nowUtc = DateTime.now().toUtc();
+    
+    final checkInExact = DateTime.utc(
+      _checkInDate!.year,
+      _checkInDate!.month,
+      _checkInDate!.day,
+      nowUtc.hour,
+      nowUtc.minute,
+      nowUtc.second,
+    );
+    final checkOutExact = DateTime.utc(
+      _checkOutDate!.year,
+      _checkOutDate!.month,
+      _checkOutDate!.day,
+      nowUtc.hour,
+      nowUtc.minute,
+      nowUtc.second,
+    );
+
     final reservation = await widget.notifier.createReservation(
       propertyId: widget.property.id,
-      checkInDate: formatter.format(_checkInDate!),
-      checkOutDate: formatter.format(_checkOutDate!),
+      checkInDate: checkInExact.toIso8601String(),
+      checkOutDate: checkOutExact.toIso8601String(),
       guestName: _guestNameController.text.trim(),
       guestEmail: _emailController.text.trim().isNotEmpty
           ? _emailController.text.trim()
