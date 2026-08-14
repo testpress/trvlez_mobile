@@ -22,4 +22,13 @@ class PropertiesRemoteDataSource {
     );
     return PropertyListingResponseDto.fromJson(response);
   }
+
+  Future<PropertyDto> getPropertyDetail(String id) async {
+    final token = await tokenStorage.getToken();
+    final response = await apiClient.get(
+      '/properties/$id/public',
+      authToken: token,
+    );
+    return PropertyDto.fromJson(response);
+  }
 }

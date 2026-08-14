@@ -136,7 +136,10 @@ GoRouter createRouter(
         path: '/properties/:id',
         builder: (context, state) {
           final property = state.extra as Property;
-          return PropertyDetailScreen(property: property);
+          return PropertyDetailScreen(
+            property: property,
+            repository: propertiesRepository,
+          );
         },
       ),
       // ─── Reservation Routes ─────────────────────────────────────

@@ -1,3 +1,4 @@
+
 class Property {
   final String id;
   final String name;
@@ -11,6 +12,7 @@ class Property {
   final double pricePerNight;
   final double rating;
   final int reviewsCount;
+  final List<RoomType> roomTypes;
 
   const Property({
     required this.id,
@@ -23,6 +25,7 @@ class Property {
     required this.pricePerNight,
     required this.rating,
     required this.reviewsCount,
+    required this.roomTypes,
   });
 
   String get locationString {
@@ -35,4 +38,22 @@ class Property {
     }
     return '';
   }
+}
+
+class RoomType {
+  final String id;
+  final String name;
+  final int maxOccupancy;
+  final int maxAdults;
+  final int maxChildren;
+  final String description;
+
+  const RoomType({
+    required this.id,
+    required this.name,
+    required this.maxOccupancy,
+    required this.maxAdults,
+    required this.maxChildren,
+    required this.description,
+  });
 }

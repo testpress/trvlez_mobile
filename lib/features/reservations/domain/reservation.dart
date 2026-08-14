@@ -89,6 +89,19 @@ class ReservationPropertySummary {
   }
 }
 
+/// Embedded room summary within a reservation response.
+class RoomSummary {
+  final String id;
+  final String roomNumber;
+  final String roomTypeId;
+
+  const RoomSummary({
+    required this.id,
+    required this.roomNumber,
+    required this.roomTypeId,
+  });
+}
+
 /// Domain model for a traveler's reservation.
 class Reservation {
   final String id;
@@ -100,7 +113,7 @@ class Reservation {
   final String? guestEmail;
   final String? guestPhone;
   final int numberOfGuests;
-  final int numberOfRooms;
+  final List<RoomSummary> rooms;
   final String? specialRequests;
   final ReservationPropertySummary propertySummary;
   final DateTime createdAt;
@@ -118,7 +131,7 @@ class Reservation {
     this.guestEmail,
     this.guestPhone,
     required this.numberOfGuests,
-    required this.numberOfRooms,
+    required this.rooms,
     this.specialRequests,
     required this.propertySummary,
     required this.createdAt,

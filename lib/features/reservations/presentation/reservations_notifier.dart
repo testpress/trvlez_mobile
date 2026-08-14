@@ -60,7 +60,7 @@ class ReservationsNotifier extends ChangeNotifier {
     String? guestEmail,
     String? guestPhone,
     int numberOfGuests = 1,
-    int numberOfRooms = 1,
+    required List<String> roomTypeIds,
     String? specialRequests,
   }) async {
     isCreating = true;
@@ -76,7 +76,7 @@ class ReservationsNotifier extends ChangeNotifier {
         guestEmail: guestEmail,
         guestPhone: guestPhone,
         numberOfGuests: numberOfGuests,
-        numberOfRooms: numberOfRooms,
+        roomTypeIds: roomTypeIds,
         specialRequests: specialRequests,
       );
       // Prepend to local list for immediate UI update

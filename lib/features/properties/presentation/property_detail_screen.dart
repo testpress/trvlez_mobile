@@ -3,11 +3,30 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 
-class PropertyDetailScreen extends StatelessWidget {
+class PropertyDetailScreen extends StatefulWidget {
   final Property property;
+  final PropertiesRepository repository;
 
-  const PropertyDetailScreen({super.key, required this.property});
+  const PropertyDetailScreen({
+    super.key,
+    required this.property,
+    required this.repository,
+  });
+
+  @override
+  State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
+}
+
+class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
+  late Future<Property> _propertyFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _propertyFuture = widget.repository.getPropertyDetail(widget.property.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,17 +34,24 @@ class PropertyDetailScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: Stack(
-        children: [
-          _buildImagePlaceholder(context),
-          _buildTopBar(context),
-          _buildContentBottomSheet(context),
-        ],
+      body: FutureBuilder<Property>(
+        future: _propertyFuture,
+        builder: (context, snapshot) {
+          final displayProperty = snapshot.data ?? widget.property;
+
+          return Stack(
+            children: [
+              _buildImagePlaceholder(context, displayProperty),
+              _buildTopBar(context),
+              _buildContentBottomSheet(context, displayProperty, snapshot.connectionState == ConnectionState.waiting),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildImagePlaceholder(BuildContext context) {
+  Widget _buildImagePlaceholder(BuildContext context, Property property) {
     final colorScheme = Theme.of(context).colorScheme;
     return Positioned(
       top: 0,
@@ -91,7 +117,7 @@ class PropertyDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContentBottomSheet(BuildContext context) {
+  Widget _buildContentBottomSheet(BuildContext context, Property property, bool isLoading) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Positioned(
@@ -108,7 +134,7 @@ class PropertyDetailScreen extends StatelessWidget {
             topRight: Radius.circular(32),
           ),
         ),
-        child: Column(
+        child: isLoading ? const Center(child: CircularProgressIndicator()) : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -191,14 +217,14 @@ class PropertyDetailScreen extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            _buildBottomBar(context),
+            _buildBottomBar(context, property),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBottomBar(BuildContext context) {
+  Widget _buildBottomBar(BuildContext context, Property property) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Row(

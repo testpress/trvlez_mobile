@@ -166,7 +166,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
                 _InfoRow(
                   icon: Icons.bed_outlined,
                   label: 'Rooms',
-                  value: '${_reservation.numberOfRooms}',
+                  value: _reservation.rooms.map((r) => r.roomNumber).join(', '),
                 ),
                 if (_reservation.guestEmail != null)
                   _InfoRow(

@@ -15,7 +15,7 @@ class ReservationRepository {
     String? guestEmail,
     String? guestPhone,
     int numberOfGuests = 1,
-    int numberOfRooms = 1,
+    required List<String> roomTypeIds,
     String? specialRequests,
   }) async {
     final body = <String, dynamic>{
@@ -24,7 +24,7 @@ class ReservationRepository {
       'check_out_date': checkOutDate,
       'guest_name': guestName,
       'number_of_guests': numberOfGuests,
-      'number_of_rooms': numberOfRooms,
+      'room_type_ids': roomTypeIds,
     };
     if (guestEmail != null) body['guest_email'] = guestEmail;
     if (guestPhone != null) body['guest_phone'] = guestPhone;

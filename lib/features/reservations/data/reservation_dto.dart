@@ -11,7 +11,7 @@ class ReservationDto {
   final String? guestEmail;
   final String? guestPhone;
   final int numberOfGuests;
-  final int numberOfRooms;
+  final List<Map<String, dynamic>> rooms;
   final String? specialRequests;
   final Map<String, dynamic> propertySummary;
   final String createdAt;
@@ -29,7 +29,7 @@ class ReservationDto {
     this.guestEmail,
     this.guestPhone,
     required this.numberOfGuests,
-    required this.numberOfRooms,
+    required this.rooms,
     this.specialRequests,
     required this.propertySummary,
     required this.createdAt,
@@ -49,7 +49,10 @@ class ReservationDto {
       guestEmail: json['guest_email'] as String?,
       guestPhone: json['guest_phone'] as String?,
       numberOfGuests: json['number_of_guests'] as int? ?? 1,
-      numberOfRooms: json['number_of_rooms'] as int? ?? 1,
+      rooms: (json['rooms'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList() ??
+          [],
       specialRequests: json['special_requests'] as String?,
       propertySummary:
           json['property_summary'] as Map<String, dynamic>? ?? {},
@@ -71,7 +74,11 @@ class ReservationDto {
       guestEmail: guestEmail,
       guestPhone: guestPhone,
       numberOfGuests: numberOfGuests,
-      numberOfRooms: numberOfRooms,
+      rooms: rooms.map((r) => RoomSummary(
+        id: r['id'] as String? ?? '',
+        roomNumber: r['room_number'] as String? ?? '',
+        roomTypeId: r['room_type_id'] as String? ?? '',
+      )).toList(),
       specialRequests: specialRequests,
       propertySummary: ReservationPropertySummary(
         id: propertySummary['id'] as String? ?? '',

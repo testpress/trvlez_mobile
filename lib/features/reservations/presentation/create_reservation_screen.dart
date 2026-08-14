@@ -28,7 +28,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
   DateTime? _checkInDate;
   DateTime? _checkOutDate;
   int _numberOfGuests = 1;
-  int _numberOfRooms = 1;
+  final Map<String, int> _selectedRoomCounts = {};
   final _guestNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -38,6 +38,20 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
   void initState() {
     super.initState();
     widget.notifier.addListener(_onStateChanged);
+    
+    // Initialize selected counts
+    for (final rt in widget.property.roomTypes) {
+      _selectedRoomCounts.putIfAbsent(rt.id, () => 0);
+    }
+    
+    // Select 1 room of the first type by default if available
+    if (widget.property.roomTypes.isNotEmpty) {
+      _selectedRoomCounts[widget.property.roomTypes.first.id] = 1;
+    }
+  }
+
+  int get _totalSelectedRooms {
+    return _selectedRoomCounts.values.fold(0, (sum, count) => sum + count);
   }
 
   @override
@@ -57,7 +71,8 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
   bool get _isFormValid =>
       _checkInDate != null &&
       _checkOutDate != null &&
-      _guestNameController.text.trim().isNotEmpty;
+      _guestNameController.text.trim().isNotEmpty &&
+      _totalSelectedRooms > 0;
 
   Future<void> _selectDate({required bool isCheckIn}) async {
     final now = DateTime.now();
@@ -150,6 +165,15 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
       nowUtc.second,
     );
 
+    final roomTypeIds = <String>[];
+    for (final entry in _selectedRoomCounts.entries) {
+      final typeId = entry.key;
+      final count = entry.value;
+      for (int i = 0; i < count; i++) {
+        roomTypeIds.add(typeId);
+      }
+    }
+
     final reservation = await widget.notifier.createReservation(
       propertyId: widget.property.id,
       checkInDate: checkInExact.toIso8601String(),
@@ -162,7 +186,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
           ? _phoneController.text.trim()
           : null,
       numberOfGuests: _numberOfGuests,
-      numberOfRooms: _numberOfRooms,
+      roomTypeIds: roomTypeIds,
       specialRequests: _specialRequestsController.text.trim().isNotEmpty
           ? _specialRequestsController.text.trim()
           : null,
@@ -344,37 +368,52 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _CounterTile(
-                label: 'Guests',
-                icon: Icons.person_outline,
-                value: _numberOfGuests,
-                colorScheme: colorScheme,
-                onIncrement: () =>
-                    setState(() => _numberOfGuests++),
-                onDecrement: _numberOfGuests > 1
-                    ? () => setState(() => _numberOfGuests--)
-                    : null,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _CounterTile(
-                label: 'Rooms',
-                icon: Icons.bed_outlined,
-                value: _numberOfRooms,
-                colorScheme: colorScheme,
-                onIncrement: () =>
-                    setState(() => _numberOfRooms++),
-                onDecrement: _numberOfRooms > 1
-                    ? () => setState(() => _numberOfRooms--)
-                    : null,
-              ),
-            ),
-          ],
+        _CounterTile(
+          label: 'Guests',
+          icon: Icons.person_outline,
+          value: _numberOfGuests,
+          colorScheme: colorScheme,
+          onIncrement: () =>
+              setState(() => _numberOfGuests++),
+          onDecrement: _numberOfGuests > 1
+              ? () => setState(() => _numberOfGuests--)
+              : null,
         ),
+        const SizedBox(height: 16),
+        Text(
+          'Room Types',
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (widget.property.roomTypes.isEmpty)
+          Text(
+            'No rooms available for this property.',
+            style: GoogleFonts.cabin(
+              fontSize: 14,
+              color: colorScheme.error,
+            ),
+          )
+        else
+          ...widget.property.roomTypes.map((roomType) {
+            final currentSelected = _selectedRoomCounts[roomType.id] ?? 0;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: _CounterTile(
+                label: roomType.name,
+                icon: Icons.bed_outlined,
+                value: currentSelected,
+                colorScheme: colorScheme,
+                onIncrement: () => setState(() => _selectedRoomCounts[roomType.id] = currentSelected + 1),
+                onDecrement: currentSelected > 0
+                    ? () => setState(() => _selectedRoomCounts[roomType.id] = currentSelected - 1)
+                    : null,
+              ),
+            );
+          }),
       ],
     );
   }

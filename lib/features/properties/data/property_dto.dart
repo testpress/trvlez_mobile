@@ -1,5 +1,4 @@
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
-
 class PropertyDto {
   final String id;
   final String name;
@@ -11,6 +10,7 @@ class PropertyDto {
   final double? latitude;
   final double? longitude;
   final String? currencyCode;
+  final List<Map<String, dynamic>> roomTypes;
 
   const PropertyDto({
     required this.id,
@@ -23,6 +23,7 @@ class PropertyDto {
     this.latitude,
     this.longitude,
     this.currencyCode,
+    required this.roomTypes,
   });
 
   factory PropertyDto.fromJson(Map<String, dynamic> json) {
@@ -37,6 +38,10 @@ class PropertyDto {
       latitude: json['latitude'] != null ? (json['latitude'] as num).toDouble() : null,
       longitude: json['longitude'] != null ? (json['longitude'] as num).toDouble() : null,
       currencyCode: json['currency_code'] as String?,
+      roomTypes: (json['room_types'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList() ??
+          [],
     );
   }
 
@@ -52,6 +57,14 @@ class PropertyDto {
       pricePerNight: 199.0, // Hardcoded placeholder for now as per Figma
       rating: 4.5, // Hardcoded placeholder for now as per Figma
       reviewsCount: 355, // Hardcoded placeholder
+      roomTypes: roomTypes.map((r) => RoomType(
+        id: r['id'] as String? ?? '',
+        name: r['name'] as String? ?? '',
+        maxOccupancy: r['max_occupancy'] as int? ?? 2,
+        maxAdults: r['max_adults'] as int? ?? 2,
+        maxChildren: r['max_children'] as int? ?? 0,
+        description: r['description'] as String? ?? '',
+      )).toList(),
     );
   }
 }

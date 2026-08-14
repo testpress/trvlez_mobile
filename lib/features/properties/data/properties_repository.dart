@@ -10,4 +10,9 @@ class PropertiesRepository {
     final dto = await remoteDataSource.getProperties(skip: skip, limit: limit);
     return dto.items.map((e) => e.toDomain()).toList();
   }
+
+  Future<Property> getPropertyDetail(String id) async {
+    final dto = await remoteDataSource.getPropertyDetail(id);
+    return dto.toDomain();
+  }
 }
