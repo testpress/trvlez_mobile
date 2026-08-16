@@ -30,4 +30,11 @@ class PropertiesNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void reset() {
+    _properties = [];
+    _isLoading = false;
+    _error = null;
+    notifyListeners();
+  }
 }

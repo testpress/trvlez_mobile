@@ -47,11 +47,11 @@ GoRouter createRouter(
   ProfileRepository profileRepository,
   PropertiesRepository propertiesRepository,
   ReservationRepository reservationRepository,
+  VerificationNotifier verificationNotifier,
+  PropertiesNotifier propertiesNotifier,
+  ReservationsNotifier reservationsNotifier,
 ) {
-  final verificationNotifier = VerificationNotifier();
   final nfcPassportService = NfcPassportService();
-  final propertiesNotifier = PropertiesNotifier(repository: propertiesRepository);
-  final reservationsNotifier = ReservationsNotifier(repository: reservationRepository);
 
   return GoRouter(
     initialLocation: '/welcome',

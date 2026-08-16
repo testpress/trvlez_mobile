@@ -130,4 +130,16 @@ class ReservationsNotifier extends ChangeNotifier {
     tokenError = null;
     notifyListeners();
   }
+
+  void reset() {
+    reservations = [];
+    isLoading = false;
+    error = null;
+    isCreating = false;
+    createError = null;
+    isGeneratingToken = false;
+    checkInToken = null;
+    tokenError = null;
+    notifyListeners();
+  }
 }

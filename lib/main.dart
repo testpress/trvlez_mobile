@@ -14,6 +14,9 @@ import 'package:trvlez_mobile/features/properties/data/properties_remote_data_so
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data_source.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,10 +61,19 @@ void main() async {
     remoteDataSource: reservationRemoteDataSource,
   );
 
+  final verificationNotifier = VerificationNotifier();
+  final propertiesNotifier = PropertiesNotifier(repository: propertiesRepository);
+  final reservationsNotifier = ReservationsNotifier(repository: reservationRepository);
+
   // 3. Auth State (with profile repo for onboarding step check)
   final authNotifier = AuthNotifier(
     tokenStorage: tokenStorage,
     profileRepository: profileRepository,
+    onLogout: () {
+      verificationNotifier.reset();
+      propertiesNotifier.reset();
+      reservationsNotifier.reset();
+    },
   );
 
   // Wire unauthorized callback now that authNotifier exists
@@ -84,6 +96,9 @@ void main() async {
       profileRepository: profileRepository,
       propertiesRepository: propertiesRepository,
       reservationRepository: reservationRepository,
+      verificationNotifier: verificationNotifier,
+      propertiesNotifier: propertiesNotifier,
+      reservationsNotifier: reservationsNotifier,
     ),
   );
 }
@@ -94,6 +109,9 @@ class TrvlEzApp extends StatelessWidget {
   final ProfileRepository profileRepository;
   final PropertiesRepository propertiesRepository;
   final ReservationRepository reservationRepository;
+  final VerificationNotifier verificationNotifier;
+  final PropertiesNotifier propertiesNotifier;
+  final ReservationsNotifier reservationsNotifier;
 
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
     ThemeMode.system,
@@ -106,6 +124,9 @@ class TrvlEzApp extends StatelessWidget {
     required this.profileRepository,
     required this.propertiesRepository,
     required this.reservationRepository,
+    required this.verificationNotifier,
+    required this.propertiesNotifier,
+    required this.reservationsNotifier,
   });
 
   @override
@@ -125,6 +146,9 @@ class TrvlEzApp extends StatelessWidget {
             profileRepository,
             propertiesRepository,
             reservationRepository,
+            verificationNotifier,
+            propertiesNotifier,
+            reservationsNotifier,
           ),
         );
       },

@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:t
 class AuthNotifier extends ChangeNotifier {
   final TokenStorage tokenStorage;
   final ProfileRepository? profileRepository;
+  final VoidCallback? onLogout;
 
   bool isAuthenticated = false;
 
@@ -17,7 +18,11 @@ class AuthNotifier extends ChangeNotifier {
   TravelerVerificationState verificationState =
       TravelerVerificationState.profilePending;
 
-  AuthNotifier({required this.tokenStorage, this.profileRepository});
+  AuthNotifier({
+    required this.tokenStorage,
+    this.profileRepository,
+    this.onLogout,
+  });
 
   /// Checks secure storage for an existing token and updates state.
   ///
@@ -67,6 +72,7 @@ class AuthNotifier extends ChangeNotifier {
     await tokenStorage.deleteToken();
     isAuthenticated = false;
     verificationState = TravelerVerificationState.profilePending;
+    onLogout?.call();
     notifyListeners();
   }
 }
