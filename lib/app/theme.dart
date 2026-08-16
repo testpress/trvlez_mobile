@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
+import 'package:trvlez_mobile/app/typography.dart';
 /// TrvlEz app theme ported from the Next.js design system.
 ///
 /// Fonts: Nunito (headings/bold), Cabin (body), Inter (brand).
@@ -58,87 +59,8 @@ class AppTheme {
   // ─── Shared Theme Builder ─────────────────────────────────────────
 
   static ThemeData buildTheme(ColorScheme colorScheme, dynamic colors) {
-    // Body / label text — Cabin
-    final textTheme = GoogleFonts.cabinTextTheme().copyWith(
-      // Headings — Nunito bold
-      displayLarge: GoogleFonts.nunito(
-        fontSize: 50,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      displayMedium: GoogleFonts.nunito(
-        fontSize: 36,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      displaySmall: GoogleFonts.nunito(
-        fontSize: 30,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      headlineLarge: GoogleFonts.nunito(
-        fontSize: 34,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      headlineMedium: GoogleFonts.nunito(
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      headlineSmall: GoogleFonts.nunito(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      titleLarge: GoogleFonts.nunito(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      titleMedium: GoogleFonts.nunito(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: colors.foregroundStrong,
-      ),
-      titleSmall: GoogleFonts.nunito(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: colors.foregroundStrong,
-      ),
-      // Body — Cabin (inherited from cabinTextTheme)
-      bodyLarge: GoogleFonts.cabin(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: colors.foreground,
-      ),
-      bodyMedium: GoogleFonts.cabin(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: colors.foreground,
-      ),
-      bodySmall: GoogleFonts.cabin(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: colors.foreground,
-      ),
-      // Labels — Nunito bold (matches web's label styling)
-      labelLarge: GoogleFonts.nunito(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        color: colors.foregroundStrong,
-      ),
-      labelMedium: GoogleFonts.nunito(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: colors.foregroundStrong,
-      ),
-      labelSmall: GoogleFonts.nunito(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: colors.foregroundStrong,
-      ),
-    );
+    // Generate TextTheme via typography layer
+    final textTheme = AppTypography.createTextTheme(colors.foregroundStrong);
 
     return ThemeData(
       useMaterial3: true,

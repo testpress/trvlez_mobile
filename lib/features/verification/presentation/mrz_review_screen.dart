@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/colors.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
@@ -32,7 +32,7 @@ class MrzReviewScreen extends StatelessWidget {
             appBar: AppBar(
               title: Text(
                 'KYC',
-                style: GoogleFonts.poppins(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                   color: colorScheme.onSurface,
@@ -49,7 +49,7 @@ class MrzReviewScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(
               'KYC',
-              style: GoogleFonts.poppins(
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
                 color: colorScheme.onSurface,
@@ -95,7 +95,7 @@ class MrzReviewScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Confirm Your Details',
-                            style: GoogleFonts.inter(
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
                               color: colorScheme.onSurface,
@@ -104,7 +104,7 @@ class MrzReviewScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             'We extracted the following details from your passport. Please verify they are correct.',
-                            style: GoogleFonts.inter(
+                            style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: colorScheme.onSurface.withValues(alpha: 0.65),
@@ -165,7 +165,7 @@ class MrzReviewScreen extends StatelessWidget {
                                   Expanded(
                                     child: Text(
                                       error,
-                                      style: GoogleFonts.inter(
+                                      style: theme.textTheme.bodySmall?.copyWith(
                                         color: colorScheme.error,
                                         fontSize: 11,
                                       ),
@@ -208,7 +208,7 @@ class MrzReviewScreen extends StatelessWidget {
                                   )
                                 : Text(
                                     'Confirm & Continue',
-                                    style: GoogleFonts.inter(
+                                    style: theme.textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16,
                                     ),
@@ -234,7 +234,7 @@ class MrzReviewScreen extends StatelessWidget {
                             ),
                             child: Text(
                               'Re-upload Passport',
-                              style: GoogleFonts.inter(
+                              style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
                               ),
@@ -252,7 +252,7 @@ class MrzReviewScreen extends StatelessWidget {
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: GoogleFonts.inter(
+                            style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: 10,
                               color: colorScheme.onSurface.withValues(alpha: 0.65),
                             ),
@@ -262,9 +262,9 @@ class MrzReviewScreen extends StatelessWidget {
                               ),
                               TextSpan(
                                 text: 'Whatsapp',
-                                style: GoogleFonts.inter(
+                                style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF25D366),
+                                  color: AppColors.success,
                                 ),
                               ),
                             ],
@@ -322,7 +322,7 @@ class _DetailRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: GoogleFonts.inter(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: colorScheme.onSurface.withValues(alpha: 0.65),
@@ -331,7 +331,7 @@ class _DetailRow extends StatelessWidget {
               Flexible(
                 child: Text(
                   value,
-                  style: GoogleFonts.inter(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onSurface,

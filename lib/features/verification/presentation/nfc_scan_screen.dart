@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:app_settings/app_settings.dart';
 
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
@@ -224,8 +223,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         const SizedBox(height: 48),
         Text(
           description,
-          style: GoogleFonts.nunito(
-            fontSize: 22,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface,
           ),
@@ -288,8 +286,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         const SizedBox(height: 24),
         Text(
           'Scan Failed',
-          style: GoogleFonts.nunito(
-            fontSize: 24,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface,
           ),
@@ -414,8 +411,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         const SizedBox(height: 24),
         Text(
           'NFC is Disabled',
-          style: GoogleFonts.nunito(
-            fontSize: 24,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface,
           ),
@@ -460,8 +456,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
         const SizedBox(height: 24),
         Text(
           'NFC Not Available',
-          style: GoogleFonts.nunito(
-            fontSize: 24,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface,
           ),
