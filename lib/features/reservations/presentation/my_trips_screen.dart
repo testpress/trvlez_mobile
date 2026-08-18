@@ -3,22 +3,22 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 
 /// Displays the traveler's reservations organized by status tabs.
 ///
 /// Replaces the old "Tickets Coming Soon" placeholder.
-class MyTripsScreen extends StatefulWidget {
-  final ReservationsNotifier notifier;
-
-  const MyTripsScreen({super.key, required this.notifier});
+class MyTripsScreen extends ConsumerStatefulWidget {
+  const MyTripsScreen({super.key});
 
   @override
-  State<MyTripsScreen> createState() => _MyTripsScreenState();
+  ConsumerState<MyTripsScreen> createState() => _MyTripsScreenState();
 }
 
-class _MyTripsScreenState extends State<MyTripsScreen>
+class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -26,24 +26,23 @@ class _MyTripsScreenState extends State<MyTripsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    widget.notifier.fetchReservations();
-    widget.notifier.addListener(_onStateChanged);
   }
 
   @override
   void dispose() {
-    widget.notifier.removeListener(_onStateChanged);
     _tabController.dispose();
     super.dispose();
-  }
-
-  void _onStateChanged() {
-    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final reservationsState = ref.watch(reservationListProvider);
+    final reservations = reservationsState.value ?? [];
+    
+    final upcoming = reservations.where((r) => r.status.isUpcoming).toList();
+    final completed = reservations.where((r) => r.status.isCompleted).toList();
+    final cancelled = reservations.where((r) => r.status.isCancelled).toList();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -52,8 +51,8 @@ class _MyTripsScreenState extends State<MyTripsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(colorScheme),
-            _buildTabBar(colorScheme),
-            Expanded(child: _buildTabContent()),
+            _buildTabBar(colorScheme, upcoming.length, completed.length, cancelled.length),
+            Expanded(child: _buildTabContent(reservationsState, upcoming, completed, cancelled)),
           ],
         ),
       ),
@@ -74,7 +73,7 @@ class _MyTripsScreenState extends State<MyTripsScreen>
     );
   }
 
-  Widget _buildTabBar(ColorScheme colorScheme) {
+  Widget _buildTabBar(ColorScheme colorScheme, int upcomingCount, int completedCount, int cancelledCount) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: TabBar(
@@ -92,29 +91,29 @@ class _MyTripsScreenState extends State<MyTripsScreen>
           fontWeight: FontWeight.w600,
         ),
         tabs: [
-          Tab(text: 'Upcoming (${widget.notifier.upcomingReservations.length})'),
-          Tab(text: 'Completed (${widget.notifier.completedReservations.length})'),
-          Tab(text: 'Cancelled (${widget.notifier.cancelledReservations.length})'),
+          Tab(text: 'Upcoming ($upcomingCount)'),
+          Tab(text: 'Completed ($completedCount)'),
+          Tab(text: 'Cancelled ($cancelledCount)'),
         ],
       ),
     );
   }
 
-  Widget _buildTabContent() {
-    if (widget.notifier.isLoading) {
+  Widget _buildTabContent(AsyncValue<List<Reservation>> state, List<Reservation> upcoming, List<Reservation> completed, List<Reservation> cancelled) {
+    if (state.isLoading && !state.hasValue) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (widget.notifier.error != null) {
-      return _buildErrorState();
+    if (state.hasError) {
+      return _buildErrorState(state.error.toString());
     }
 
     return TabBarView(
       controller: _tabController,
       children: [
-        _buildReservationList(widget.notifier.upcomingReservations, 'upcoming'),
-        _buildReservationList(widget.notifier.completedReservations, 'completed'),
-        _buildReservationList(widget.notifier.cancelledReservations, 'cancelled'),
+        _buildReservationList(upcoming, 'upcoming'),
+        _buildReservationList(completed, 'completed'),
+        _buildReservationList(cancelled, 'cancelled'),
       ],
     );
   }
@@ -126,7 +125,7 @@ class _MyTripsScreenState extends State<MyTripsScreen>
     }
 
     return RefreshIndicator(
-      onRefresh: widget.notifier.fetchReservations,
+      onRefresh: () => ref.refresh(reservationListProvider.future),
       child: ListView.separated(
         padding: const EdgeInsets.all(24),
         itemCount: reservations.length,
@@ -137,7 +136,6 @@ class _MyTripsScreenState extends State<MyTripsScreen>
             '/reservations/${reservations[index].id}',
             extra: {
               'reservation': reservations[index],
-              'notifier': widget.notifier,
             },
           ),
         ),
@@ -196,25 +194,34 @@ class _MyTripsScreenState extends State<MyTripsScreen>
     );
   }
 
-  Widget _buildErrorState() {
-    final colorScheme = Theme.of(context).colorScheme;
+  Widget _buildErrorState(String error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 48, color: colorScheme.error),
+          Icon(
+            Icons.error_outline_rounded,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
+          ),
           const SizedBox(height: 16),
           Text(
-            'Failed to load trips',
+            'Failed to load reservations',
             style: GoogleFonts.nunito(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
-          OutlinedButton(
-            onPressed: widget.notifier.fetchReservations,
+          const SizedBox(height: 8),
+          Text(
+            error,
+            style: GoogleFonts.nunito(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () => ref.read(reservationListProvider.notifier).fetchReservations(),
             child: const Text('Retry'),
           ),
         ],

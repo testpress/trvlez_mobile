@@ -8,7 +8,10 @@ import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme.dart';
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 /// The primary landing screen for all authenticated travelers.
 ///
@@ -34,38 +37,13 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class HomeScreenState extends ConsumerState<HomeScreen> {
-  late final HomeNotifier notifier;
-
-  @override
-  void initState() {
-    super.initState();
-    notifier = HomeNotifier(
-      profileRepository: widget.profileRepository,
-      verificationRepository: widget.verificationRepository,
-    );
-    notifier.addListener(onStateChanged);
-    notifier.loadProfile();
-  }
-
-  @override
-  void dispose() {
-    notifier.removeListener(onStateChanged);
-    notifier.dispose();
-    super.dispose();
-  }
-
-  void onStateChanged() {
-    if (mounted) setState(() {});
-  }
-
   Future<void> handleRefresh() async {
-    await notifier.loadProfile();
+    ref.invalidate(currentProfileProvider);
+    ref.invalidate(verificationStatusProvider);
     await widget.authNotifier.refreshVerificationState();
   }
 
-  void onBannerTap() {
-    final state = notifier.verificationState;
-
+  void onBannerTap(TravelerVerificationState state) {
     if (state.needsOnboarding) {
       // Pre-submission: go to onboarding stepper to complete steps
       context.push(AppRoutes.onboarding);
@@ -90,6 +68,18 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    final profileAsync = ref.watch(currentProfileProvider);
+    final profile = profileAsync.value;
+    final verificationStatusAsync = ref.watch(verificationStatusProvider);
+    final verificationStatus = verificationStatusAsync.value;
+
+    TravelerVerificationState verificationState = profile?.verificationState ?? TravelerVerificationState.profilePending;
+    if (verificationState == TravelerVerificationState.submitted && verificationStatus?.isFailed == true) {
+      verificationState = TravelerVerificationState.failed;
+    }
+
+    final shouldShowBanner = verificationState.shouldShowBanner;
 
     return Scaffold(
       appBar: AppBar(
@@ -193,7 +183,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: notifier.isLoading && notifier.profile == null
+      body: profileAsync.isLoading && profile == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: handleRefresh,
@@ -204,20 +194,20 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     const SizedBox(height: 8),
                     // ── Verification Banner ─────────────────────────
-                    if (notifier.shouldShowBanner)
+                    if (shouldShowBanner)
                       VerificationBanner(
-                        state: notifier.verificationState,
-                        onActionTap: onBannerTap,
+                        state: verificationState,
+                        onActionTap: () => onBannerTap(verificationState),
                       ),
                     const SizedBox(height: 24),
                     // ── Welcome Section ──────────────────────────────
                     WelcomeSection(
-                      isVerified: notifier.verificationState.isVerified,
+                      isVerified: verificationState.isVerified,
                     ),
                     const SizedBox(height: 32),
                     // ── Feature Grid ────────────────────────────────
                     FeatureGrid(
-                      isVerified: notifier.verificationState.isVerified,
+                      isVerified: verificationState.isVerified,
                       onFeatureTap: onFeatureTap,
                     ),
                     const SizedBox(height: 40),

@@ -36,7 +36,7 @@ import 'package:trvlez_mobile/features/reservations/presentation/create_reservat
 import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+
 
 /// Central router configuration for the TrvlEz app.
 ///
@@ -49,7 +49,6 @@ GoRouter createRouter(
   PropertiesRepository propertiesRepository,
   ReservationRepository reservationRepository,
   VerificationNotifier verificationNotifier,
-  ReservationsNotifier reservationsNotifier,
   SettingsRepository settingsRepository,
 ) {
   final nfcPassportService = NfcPassportService();
@@ -108,9 +107,7 @@ GoRouter createRouter(
           ),
           GoRoute(
             path: AppRoutes.myTrips,
-            builder: (context, state) => MyTripsScreen(
-              notifier: reservationsNotifier,
-            ),
+            builder: (context, state) => const MyTripsScreen(),
           ),
           GoRoute(
             path: AppRoutes.favorites,
@@ -146,7 +143,6 @@ GoRouter createRouter(
           final property = state.extra as Property;
           return CreateReservationScreen(
             property: property,
-            notifier: reservationsNotifier,
           );
         },
       ),
@@ -157,7 +153,6 @@ GoRouter createRouter(
           final reservation = extras['reservation'] as Reservation;
           return ReservationDetailScreen(
             reservation: reservation,
-            notifier: reservationsNotifier,
           );
         },
       ),
@@ -168,7 +163,6 @@ GoRouter createRouter(
           final reservation = extras['reservation'] as Reservation;
           return QrCodeScreen(
             reservation: reservation,
-            notifier: reservationsNotifier,
           );
         },
       ),

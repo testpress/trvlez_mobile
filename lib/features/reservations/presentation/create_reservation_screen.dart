@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
@@ -12,22 +14,20 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// Screen for creating a reservation at a property.
 ///
 /// Reached from the property detail "Book Now" button.
-class CreateReservationScreen extends StatefulWidget {
+class CreateReservationScreen extends ConsumerStatefulWidget {
   final Property property;
-  final ReservationsNotifier notifier;
 
   const CreateReservationScreen({
     super.key,
     required this.property,
-    required this.notifier,
   });
 
   @override
-  State<CreateReservationScreen> createState() =>
+  ConsumerState<CreateReservationScreen> createState() =>
       _CreateReservationScreenState();
 }
 
-class _CreateReservationScreenState extends State<CreateReservationScreen> {
+class _CreateReservationScreenState extends ConsumerState<CreateReservationScreen> {
   DateTime? _checkInDate;
   DateTime? _checkOutDate;
   int _numberOfGuests = 1;
@@ -40,7 +40,6 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
   @override
   void initState() {
     super.initState();
-    widget.notifier.addListener(_onStateChanged);
     
     // Initialize selected counts
     for (final rt in widget.property.roomTypes) {
@@ -59,16 +58,11 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
 
   @override
   void dispose() {
-    widget.notifier.removeListener(_onStateChanged);
     _guestNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _specialRequestsController.dispose();
     super.dispose();
-  }
-
-  void _onStateChanged() {
-    if (mounted) setState(() {});
   }
 
   bool get _isFormValid =>
@@ -177,7 +171,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
       }
     }
 
-    final reservation = await widget.notifier.createReservation(
+    final reservation = await ref.read(createReservationProvider.notifier).createReservation(
       propertyId: widget.property.id,
       checkInDate: checkInExact.toIso8601String(),
       checkOutDate: checkOutExact.toIso8601String(),
@@ -203,6 +197,9 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final createState = ref.watch(createReservationProvider);
+    final isCreating = createState.isLoading;
+    final createError = createState.hasError ? createState.error.toString() : null;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -234,10 +231,10 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
             const SizedBox(height: 24),
             _buildSpecialRequests(colorScheme),
             const SizedBox(height: 16),
-            if (widget.notifier.createError != null)
-              _buildErrorBanner(colorScheme),
+            if (createError != null)
+              _buildErrorBanner(colorScheme, createError),
             const SizedBox(height: 24),
-            _buildSubmitButton(colorScheme),
+            _buildSubmitButton(colorScheme, isCreating),
             const SizedBox(height: 24),
           ],
         ),
@@ -489,13 +486,13 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
     );
   }
 
-  Widget _buildErrorBanner(ColorScheme colorScheme) {
+  Widget _buildErrorBanner(ColorScheme colorScheme, String errorMsg) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.error.withAlpha(26),
+        color: colorScheme.errorContainer.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.error.withAlpha(51)),
+        border: Border.all(color: colorScheme.errorContainer),
       ),
       child: Row(
         children: [
@@ -503,7 +500,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              widget.notifier.createError ?? 'Something went wrong',
+              errorMsg,
               style: GoogleFonts.cabin(
                 fontSize: 13,
                 color: colorScheme.error,
@@ -515,16 +512,16 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
     );
   }
 
-  Widget _buildSubmitButton(ColorScheme colorScheme) {
+  Widget _buildSubmitButton(ColorScheme colorScheme, bool isCreating) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: FilledButton(
         onPressed:
-            _isFormValid && !widget.notifier.isCreating
+            _isFormValid && !isCreating
                 ? _submitReservation
                 : null,
-        child: widget.notifier.isCreating
+        child: isCreating
             ? SizedBox(
                 height: 24,
                 width: 24,

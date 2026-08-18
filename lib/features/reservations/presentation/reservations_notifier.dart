@@ -1,56 +1,73 @@
-import 'package:flutter/foundation.dart';
 
+
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 
-/// Manages the state for reservation screens (list, create, cancel, QR token).
-class ReservationsNotifier extends ChangeNotifier {
-  final ReservationRepository repository;
+// ─── List State ──────────────────────────────────────────────────
 
-  ReservationsNotifier({required this.repository});
+final reservationListProvider = AsyncNotifierProvider<ReservationListNotifier, List<Reservation>>(
+  () => ReservationListNotifier(),
+);
 
-  // ─── List State ──────────────────────────────────────────────────
-
-  bool isLoading = false;
-  String? error;
-  List<Reservation> reservations = [];
-
-  List<Reservation> get upcomingReservations =>
-      reservations.where((r) => r.status.isUpcoming).toList();
-
-  List<Reservation> get completedReservations =>
-      reservations.where((r) => r.status.isCompleted).toList();
-
-  List<Reservation> get cancelledReservations =>
-      reservations.where((r) => r.status.isCancelled).toList();
-
-  // ─── Create State ────────────────────────────────────────────────
-
-  bool isCreating = false;
-  String? createError;
-
-  // ─── QR Token State ──────────────────────────────────────────────
-
-  bool isGeneratingToken = false;
-  CheckInToken? checkInToken;
-  String? tokenError;
-
-  // ─── Actions ─────────────────────────────────────────────────────
+class ReservationListNotifier extends AsyncNotifier<List<Reservation>> {
+  @override
+  FutureOr<List<Reservation>> build() async {
+    final repository = ref.read(reservationRepositoryProvider);
+    return repository.getReservations();
+  }
 
   Future<void> fetchReservations() async {
-    isLoading = true;
-    error = null;
-    notifyListeners();
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(reservationRepositoryProvider);
+      return repository.getReservations();
+    });
+  }
 
+  Future<bool> cancelReservation(String id) async {
     try {
-      reservations = await repository.getReservations();
+      final repository = ref.read(reservationRepositoryProvider);
+      final updated = await repository.cancelReservation(id);
+      
+      // Update local state if we currently have data
+      if (state.hasValue && state.value != null) {
+        final currentList = state.value!;
+        final index = currentList.indexWhere((r) => r.id == id);
+        if (index != -1) {
+          final newList = List<Reservation>.from(currentList);
+          newList[index] = updated;
+          state = AsyncData(newList);
+        }
+      }
+      return true;
     } catch (e) {
-      error = e.toString();
-    } finally {
-      isLoading = false;
-      notifyListeners();
+      return false;
     }
   }
+
+  void addReservation(Reservation reservation) {
+    if (state.hasValue && state.value != null) {
+      final newList = List<Reservation>.from(state.value!);
+      newList.insert(0, reservation);
+      state = AsyncData(newList);
+    } else {
+      state = AsyncData([reservation]);
+    }
+  }
+}
+
+// ─── Create State ────────────────────────────────────────────────
+
+final createReservationProvider = AutoDisposeAsyncNotifierProvider<CreateReservationNotifier, void>(
+  () => CreateReservationNotifier(),
+);
+
+class CreateReservationNotifier extends AutoDisposeAsyncNotifier<void> {
+  @override
+  FutureOr<void> build() {}
 
   Future<Reservation?> createReservation({
     required String propertyId,
@@ -63,11 +80,10 @@ class ReservationsNotifier extends ChangeNotifier {
     required List<String> roomTypeIds,
     String? specialRequests,
   }) async {
-    isCreating = true;
-    createError = null;
-    notifyListeners();
-
+    state = const AsyncLoading();
+    
     try {
+      final repository = ref.read(reservationRepositoryProvider);
       final reservation = await repository.createReservation(
         propertyId: propertyId,
         checkInDate: checkInDate,
@@ -79,67 +95,36 @@ class ReservationsNotifier extends ChangeNotifier {
         roomTypeIds: roomTypeIds,
         specialRequests: specialRequests,
       );
-      // Prepend to local list for immediate UI update
-      reservations.insert(0, reservation);
+      
+      // Update the list provider with the new reservation
+      ref.read(reservationListProvider.notifier).addReservation(reservation);
+      
+      state = const AsyncData(null);
       return reservation;
-    } catch (e) {
-      createError = e.toString();
+    } catch (e, st) {
+      state = AsyncError(e, st);
       return null;
-    } finally {
-      isCreating = false;
-      notifyListeners();
     }
   }
+}
 
-  Future<bool> cancelReservation(String id) async {
-    try {
-      final updated = await repository.cancelReservation(id);
-      // Replace in local list
-      final index = reservations.indexWhere((r) => r.id == id);
-      if (index != -1) {
-        reservations[index] = updated;
-      }
-      notifyListeners();
-      return true;
-    } catch (e) {
-      error = e.toString();
-      notifyListeners();
-      return false;
-    }
+// ─── QR Token State ──────────────────────────────────────────────
+
+final checkInTokenProvider = AutoDisposeAsyncNotifierProviderFamily<CheckInTokenNotifier, CheckInToken?, String>(
+  () => CheckInTokenNotifier(),
+);
+
+class CheckInTokenNotifier extends AutoDisposeFamilyAsyncNotifier<CheckInToken?, String> {
+  @override
+  FutureOr<CheckInToken?> build(String arg) {
+    return null; // Initially null until generate is called
   }
 
-  Future<void> generateCheckInToken(String reservationId) async {
-    isGeneratingToken = true;
-    tokenError = null;
-    checkInToken = null;
-    notifyListeners();
-
-    try {
-      checkInToken = await repository.generateCheckInToken(reservationId);
-    } catch (e) {
-      tokenError = e.toString();
-    } finally {
-      isGeneratingToken = false;
-      notifyListeners();
-    }
-  }
-
-  /// Clears the current token state (e.g., when leaving the QR screen).
-  void clearToken() {
-    checkInToken = null;
-    tokenError = null;
-    notifyListeners();
-  }
-
-  void reset() {
-    reservations = [];
-    isLoading = false;
-    error = null;
-    isCreating = false;
-    createError = null;
-    isGeneratingToken = false;
-    checkInToken = null;
-    tokenError = null;
-    notifyListeners();
+  Future<void> generateCheckInToken() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(reservationRepositoryProvider);
+      return repository.generateCheckInToken(arg);
+    });
   }
 }

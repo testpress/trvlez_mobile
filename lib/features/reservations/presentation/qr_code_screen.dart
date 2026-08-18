@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 
@@ -10,40 +12,31 @@ import 'package:trvlez_mobile/features/reservations/presentation/reservations_no
 ///
 /// The traveler taps "Generate QR Code" to request a token, then shows
 /// the resulting QR to the front desk scanner.
-class QrCodeScreen extends StatefulWidget {
+class QrCodeScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
-  final ReservationsNotifier notifier;
 
   const QrCodeScreen({
     super.key,
     required this.reservation,
-    required this.notifier,
   });
 
   @override
-  State<QrCodeScreen> createState() => _QrCodeScreenState();
+  ConsumerState<QrCodeScreen> createState() => _QrCodeScreenState();
 }
 
-class _QrCodeScreenState extends State<QrCodeScreen> {
+class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
   @override
   void initState() {
     super.initState();
-    widget.notifier.addListener(_onStateChanged);
   }
 
   @override
   void dispose() {
-    widget.notifier.clearToken();
-    widget.notifier.removeListener(_onStateChanged);
     super.dispose();
   }
 
-  void _onStateChanged() {
-    if (mounted) setState(() {});
-  }
-
   void _generateToken() {
-    widget.notifier.generateCheckInToken(widget.reservation.id);
+    ref.read(checkInTokenProvider(widget.reservation.id).notifier).generateCheckInToken();
   }
 
   @override
@@ -142,11 +135,12 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
   }
 
   Widget _buildQrContent(ColorScheme colorScheme) {
-    final token = widget.notifier.checkInToken;
-    final isLoading = widget.notifier.isGeneratingToken;
-    final error = widget.notifier.tokenError;
+    final tokenState = ref.watch(checkInTokenProvider(widget.reservation.id));
+    final token = tokenState.value;
+    final isLoading = tokenState.isLoading;
+    final error = tokenState.hasError ? tokenState.error.toString() : null;
 
-    if (isLoading) {
+    if (isLoading && !tokenState.hasValue) {
       return _buildLoadingState(colorScheme);
     }
 
@@ -379,16 +373,18 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
   }
 
   Widget _buildGenerateButton(ColorScheme colorScheme) {
-    final hasToken = widget.notifier.checkInToken != null;
+    final tokenState = ref.watch(checkInTokenProvider(widget.reservation.id));
+    final token = tokenState.value;
+    final hasToken = token != null;
     final isExpired = hasToken &&
-        DateTime.now().isAfter(widget.notifier.checkInToken!.expiresAt);
+        DateTime.now().isAfter(token.expiresAt);
 
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: FilledButton.icon(
         onPressed:
-            widget.notifier.isGeneratingToken ? null : _generateToken,
+            tokenState.isLoading ? null : _generateToken,
         icon: Icon(hasToken ? Icons.refresh : Icons.qr_code_2),
         label: Text(
           hasToken

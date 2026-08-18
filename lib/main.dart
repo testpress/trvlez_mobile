@@ -21,7 +21,7 @@ import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -96,7 +96,7 @@ void main() async {
   final verificationNotifier = VerificationNotifier(
     repository: VerificationRepository(dio: dio),
   );
-  final reservationsNotifier = ReservationsNotifier(repository: reservationRepository);
+
 
   // 4. Auth State (with profile repo for onboarding step check)
   authNotifier = AuthNotifier(
@@ -104,7 +104,6 @@ void main() async {
     profileRepository: profileRepository,
     onLogout: () {
       verificationNotifier.reset();
-      reservationsNotifier.reset();
     },
   );
 
@@ -122,7 +121,7 @@ void main() async {
         propertiesRepository: propertiesRepository,
         reservationRepository: reservationRepository,
         verificationNotifier: verificationNotifier,
-        reservationsNotifier: reservationsNotifier,
+
         settingsRepository: settingsRepository,
       ),
     ),
@@ -136,7 +135,7 @@ class TrvlEzApp extends ConsumerWidget {
   final PropertiesRepository propertiesRepository;
   final ReservationRepository reservationRepository;
   final VerificationNotifier verificationNotifier;
-  final ReservationsNotifier reservationsNotifier;
+
   final SettingsRepository settingsRepository;
 
   const TrvlEzApp({
@@ -147,7 +146,7 @@ class TrvlEzApp extends ConsumerWidget {
     required this.propertiesRepository,
     required this.reservationRepository,
     required this.verificationNotifier,
-    required this.reservationsNotifier,
+
     required this.settingsRepository,
   });
 
@@ -168,7 +167,6 @@ class TrvlEzApp extends ConsumerWidget {
         propertiesRepository,
         reservationRepository,
         verificationNotifier,
-        reservationsNotifier,
         settingsRepository,
       ),
     );

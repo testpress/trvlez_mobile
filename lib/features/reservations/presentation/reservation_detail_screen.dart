@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 
@@ -10,49 +12,31 @@ import 'package:trvlez_mobile/features/reservations/presentation/reservations_no
 ///
 /// Shows property summary, dates, guest info, status, and action buttons
 /// (QR generation, cancel).
-class ReservationDetailScreen extends StatefulWidget {
+class ReservationDetailScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
-  final ReservationsNotifier notifier;
 
   const ReservationDetailScreen({
     super.key,
     required this.reservation,
-    required this.notifier,
   });
 
   @override
-  State<ReservationDetailScreen> createState() =>
+  ConsumerState<ReservationDetailScreen> createState() =>
       _ReservationDetailScreenState();
 }
 
-class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
-  late Reservation _reservation;
-
+class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _reservation = widget.reservation;
-    widget.notifier.addListener(_onStateChanged);
   }
 
   @override
   void dispose() {
-    widget.notifier.removeListener(_onStateChanged);
     super.dispose();
   }
 
-  void _onStateChanged() {
-    // Sync local reservation from notifier's list in case it was updated
-    final updated = widget.notifier.reservations
-        .where((r) => r.id == _reservation.id)
-        .firstOrNull;
-    if (updated != null) {
-      _reservation = updated;
-    }
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _handleCancel() async {
+  Future<void> _handleCancel(Reservation reservation) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -66,7 +50,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
             style: GoogleFonts.nunito(fontWeight: FontWeight.w700),
           ),
           content: Text(
-            'Are you sure you want to cancel this reservation at ${_reservation.propertySummary.name}?',
+            'Are you sure you want to cancel this reservation at ${reservation.propertySummary.name}?',
             style: GoogleFonts.cabin(),
           ),
           actions: [
@@ -87,7 +71,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     );
 
     if (confirmed == true) {
-      await widget.notifier.cancelReservation(_reservation.id);
+      await ref.read(reservationListProvider.notifier).cancelReservation(reservation.id);
     }
   }
 
@@ -95,6 +79,10 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final dateFormat = DateFormat('EEE, MMM d, yyyy');
+    
+    final reservationsState = ref.watch(reservationListProvider);
+    final updated = reservationsState.value?.where((r) => r.id == widget.reservation.id).firstOrNull;
+    final reservation = updated ?? widget.reservation;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -117,11 +105,11 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Property summary
-            _buildPropertyCard(colorScheme),
+            _buildPropertyCard(colorScheme, reservation),
             const SizedBox(height: 20),
 
             // Status & Confirmation
-            _buildStatusSection(colorScheme),
+            _buildStatusSection(colorScheme, reservation),
             const SizedBox(height: 20),
 
             // Dates
@@ -132,17 +120,17 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
                 _InfoRow(
                   icon: Icons.login,
                   label: 'Check-in',
-                  value: dateFormat.format(_reservation.checkInDate),
+                  value: dateFormat.format(reservation.checkInDate),
                 ),
                 _InfoRow(
                   icon: Icons.logout,
                   label: 'Check-out',
-                  value: dateFormat.format(_reservation.checkOutDate),
+                  value: dateFormat.format(reservation.checkOutDate),
                 ),
                 _InfoRow(
                   icon: Icons.nights_stay_outlined,
                   label: 'Duration',
-                  value: '${_reservation.nights} night(s)',
+                  value: '${reservation.nights} night(s)',
                 ),
               ],
             ),
@@ -156,36 +144,36 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
                 _InfoRow(
                   icon: Icons.person_outline,
                   label: 'Guest Name',
-                  value: _reservation.guestName,
+                  value: reservation.guestName,
                 ),
                 _InfoRow(
                   icon: Icons.group_outlined,
                   label: 'Guests',
-                  value: '${_reservation.numberOfGuests}',
+                  value: '${reservation.numberOfGuests}',
                 ),
                 _InfoRow(
                   icon: Icons.bed_outlined,
                   label: 'Rooms',
-                  value: _reservation.rooms.map((r) => r.roomNumber).join(', '),
+                  value: reservation.rooms.map((r) => r.roomNumber).join(', '),
                 ),
-                if (_reservation.guestEmail != null)
+                if (reservation.guestEmail != null)
                   _InfoRow(
                     icon: Icons.email_outlined,
                     label: 'Email',
-                    value: _reservation.guestEmail!,
+                    value: reservation.guestEmail!,
                   ),
-                if (_reservation.guestPhone != null)
+                if (reservation.guestPhone != null)
                   _InfoRow(
                     icon: Icons.phone_outlined,
                     label: 'Phone',
-                    value: _reservation.guestPhone!,
+                    value: reservation.guestPhone!,
                   ),
               ],
             ),
 
             // Special requests
-            if (_reservation.specialRequests != null &&
-                _reservation.specialRequests!.isNotEmpty) ...[
+            if (reservation.specialRequests != null &&
+                reservation.specialRequests!.isNotEmpty) ...[
               const SizedBox(height: 20),
               _buildInfoCard(
                 colorScheme,
@@ -194,7 +182,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      _reservation.specialRequests!,
+                      reservation.specialRequests!,
                       style: GoogleFonts.cabin(
                         fontSize: 14,
                         color: colorScheme.onSurfaceVariant,
@@ -209,7 +197,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
             const SizedBox(height: 32),
 
             // Action buttons
-            _buildActions(colorScheme),
+            _buildActions(colorScheme, reservation),
 
             const SizedBox(height: 24),
           ],
@@ -218,8 +206,8 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     );
   }
 
-  Widget _buildPropertyCard(ColorScheme colorScheme) {
-    final property = _reservation.propertySummary;
+  Widget _buildPropertyCard(ColorScheme colorScheme, Reservation reservation) {
+    final property = reservation.propertySummary;
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -291,7 +279,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     );
   }
 
-  Widget _buildStatusSection(ColorScheme colorScheme) {
+  Widget _buildStatusSection(ColorScheme colorScheme, Reservation reservation) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -301,14 +289,14 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
       ),
       child: Row(
         children: [
-          _buildStatusIndicator(colorScheme),
+          _buildStatusIndicator(colorScheme, reservation),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _reservation.status.displayLabel,
+                  reservation.status.displayLabel,
                   style: GoogleFonts.nunito(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -317,7 +305,7 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _reservation.confirmationCode,
+                  reservation.confirmationCode,
                   style: GoogleFonts.cabin(
                     fontSize: 13,
                     color: colorScheme.onSurfaceVariant,
@@ -333,11 +321,11 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     );
   }
 
-  Widget _buildStatusIndicator(ColorScheme colorScheme) {
-    Color indicatorColor;
-    IconData icon;
+  Widget _buildStatusIndicator(ColorScheme colorScheme, Reservation reservation) {
+    Color indicatorColor = colorScheme.primary;
+    IconData icon = Icons.info;
 
-    switch (_reservation.status) {
+    switch (reservation.status) {
       case ReservationStatus.pending:
         indicatorColor = const Color(0xFFE65100);
         icon = Icons.hourglass_top;
@@ -397,20 +385,19 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     );
   }
 
-  Widget _buildActions(ColorScheme colorScheme) {
+  Widget _buildActions(ColorScheme colorScheme, Reservation reservation) {
     return Column(
       children: [
         // QR Code button — only for confirmed reservations
-        if (_reservation.status.canGenerateQr)
+        if (reservation.status.canGenerateQr)
           SizedBox(
             width: double.infinity,
             height: 56,
             child: FilledButton.icon(
               onPressed: () => context.push(
-                '/reservations/${_reservation.id}/qr',
+                '/reservations/${reservation.id}/qr',
                 extra: {
-                  'reservation': _reservation,
-                  'notifier': widget.notifier,
+                  'reservation': reservation,
                 },
               ),
               icon: const Icon(Icons.qr_code_2),
@@ -425,13 +412,13 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
           ),
 
         // Cancel button — only for upcoming reservations
-        if (_reservation.status.canCancel) ...[
+        if (reservation.status.canCancel) ...[
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             height: 50,
             child: OutlinedButton(
-              onPressed: _handleCancel,
+              onPressed: () => _handleCancel(reservation),
               style: OutlinedButton.styleFrom(
                 foregroundColor: colorScheme.error,
                 side: BorderSide(color: colorScheme.error.withAlpha(128)),
