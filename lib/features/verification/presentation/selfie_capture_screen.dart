@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 class SelfieCaptureScreen extends StatefulWidget {
   final VerificationNotifier notifier;
 
@@ -141,7 +142,7 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
       if (recordedSeconds >= minRecordingSeconds) {
         widget.notifier.setVideo(File(video.path));
         if (mounted) {
-          context.push('/verification/selfie-review');
+          context.push(AppRoutes.selfieReview);
         }
       } else {
         if (mounted) {
@@ -174,7 +175,7 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
       if (video != null) {
         widget.notifier.setVideo(File(video.path));
         if (mounted) {
-          context.push('/verification/selfie-review');
+          context.push(AppRoutes.selfieReview);
         }
       }
     } catch (e) {
@@ -345,7 +346,7 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
                 if (context.canPop()) {
                   context.pop();
                 } else {
-                  context.go('/verification/status');
+                  context.go(AppRoutes.verificationStatus);
                 }
               },
             ),

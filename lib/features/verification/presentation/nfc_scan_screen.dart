@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:app_settings/app_settings.dart';
 
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 /// Active scanning screen that handles the real-time interaction with the NFC service.
 class NfcScanScreen extends StatefulWidget {
   final VerificationNotifier notifier;
@@ -119,7 +120,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
       if (!mounted) return;
       
       widget.notifier.setNfcResult(result);
-      context.pushReplacement('/verification/nfc-result');
+      context.pushReplacement(AppRoutes.nfcResult);
       
     } catch (e) {
       if (!mounted) return;
@@ -137,7 +138,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
   void _skipNfc() {
     widget.notifier.skipNfc();
     widget.notifier.submitVerificationAsync();
-    context.go('/verification/status');
+    context.go(AppRoutes.verificationStatus);
   }
 
   @override
@@ -383,7 +384,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
           FilledButton.icon(
             onPressed: () {
               // Go back to OCR to re-capture MRZ
-              context.go('/verification/passport-capture');
+              context.go(AppRoutes.passportCapture);
             },
             icon: const Icon(Icons.document_scanner_rounded),
             label: const Text('Re-scan Passport Photo'),

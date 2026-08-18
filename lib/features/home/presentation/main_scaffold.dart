@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 class MainScaffold extends StatelessWidget {
   final Widget child;
@@ -19,13 +20,13 @@ class MainScaffold extends StatelessWidget {
     final location = GoRouterState.of(context).matchedLocation;
     
     int currentIndex = 0;
-    if (location.startsWith('/home')) {
+    if (location.startsWith(AppRoutes.home)) {
       currentIndex = 0;
-    } else if (location.startsWith('/my-trips')) {
+    } else if (location.startsWith(AppRoutes.myTrips)) {
       currentIndex = 1;
     } else if (location.startsWith('/favorites')) {
       currentIndex = 2;
-    } else if (location.startsWith('/profile')) {
+    } else if (location.startsWith(AppRoutes.profile)) {
       currentIndex = 3;
     }
 
@@ -46,10 +47,10 @@ class MainScaffold extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildNavItem(context, Icons.home_filled, Icons.home_outlined, 0, currentIndex, '/home'),
-              _buildNavItem(context, Icons.luggage, Icons.luggage_outlined, 1, currentIndex, '/my-trips'),
+              _buildNavItem(context, Icons.home_filled, Icons.home_outlined, 0, currentIndex, AppRoutes.home),
+              _buildNavItem(context, Icons.luggage, Icons.luggage_outlined, 1, currentIndex, AppRoutes.myTrips),
               _buildNavItem(context, Icons.favorite, Icons.favorite_outline, 2, currentIndex, '/favorites'),
-              _buildNavItem(context, Icons.person, Icons.person_outline, 3, currentIndex, '/profile'),
+              _buildNavItem(context, Icons.person, Icons.person_outline, 3, currentIndex, AppRoutes.profile),
             ],
           ),
         ),

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/widgets/property_card.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 class PropertiesListingScreen extends StatefulWidget {
   final PropertiesNotifier notifier;
@@ -311,7 +312,7 @@ class _PopularSection extends StatelessWidget {
                       property: property,
                       isHorizontal: true,
                       onTap: () {
-                        context.push('/properties/${property.id}', extra: property);
+                        context.push(AppRoutes.propertyDetailPath(property.id), extra: property);
                       },
                     );
                   },
@@ -360,7 +361,7 @@ class _RecommendedSection extends StatelessWidget {
                     property: property,
                     isHorizontal: false,
                     onTap: () {
-                      context.push('/properties/${property.id}', extra: property);
+                      context.push(AppRoutes.propertyDetailPath(property.id), extra: property);
                     },
                   );
                 },

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen for creating a reservation at a property.
 ///
@@ -193,7 +194,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
     );
 
     if (reservation != null && mounted) {
-      context.go('/my-trips');
+      context.go(AppRoutes.myTrips);
     }
   }
 

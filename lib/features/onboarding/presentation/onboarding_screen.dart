@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final AuthNotifier authNotifier;
@@ -182,7 +183,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                             if (isFullyVerified) ...[
                               const SizedBox(height: 16),
                               ElevatedButton(
-                                onPressed: () => context.go('/home'),
+                                onPressed: () => context.go(AppRoutes.home),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: colorScheme.onSurface,
                                   foregroundColor: colorScheme.surface,
@@ -335,7 +336,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
               : OnboardingStepState.active,
           onTap: !isPassportUploaded
               ? () async {
-                  await context.push('/verification/passport-capture');
+                  await context.push(AppRoutes.passportCapture);
                   loadProfile();
                 }
               : null,
@@ -352,7 +353,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     : OnboardingStepState.upcoming),
           onTap: (isPassportUploaded && !isReviewComplete)
               ? () async {
-                  await context.push('/verification/mrz-review');
+                  await context.push(AppRoutes.mrzReview);
                   loadProfile();
                 }
               : null,
@@ -369,7 +370,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     : OnboardingStepState.upcoming),
           onTap: (isReviewComplete && !isSelfieComplete)
               ? () async {
-                  await context.push('/verification/selfie-instructions');
+                  await context.push(AppRoutes.selfieInstructions);
                   loadProfile();
                 }
               : null,
@@ -386,7 +387,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     : OnboardingStepState.upcoming),
           onTap: (isSelfieComplete && !isNfcComplete)
               ? () async {
-                  await context.push('/verification/nfc-intro');
+                  await context.push(AppRoutes.nfcIntro);
                   loadProfile();
                 }
               : null,

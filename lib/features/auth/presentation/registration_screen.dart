@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 import 'package:trvlez_mobile/features/auth/presentation/registration_controller.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Traveler registration screen.
 ///
@@ -91,7 +92,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
 
     Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
-      context.go('/login');
+      context.go(AppRoutes.login);
     });
   }
 
@@ -470,7 +471,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
         ),
         GestureDetector(
           onTap: () {
-            context.go('/login');
+            context.go(AppRoutes.login);
           },
           child: Text(
             'Sign In',

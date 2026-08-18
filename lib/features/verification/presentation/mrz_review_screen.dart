@@ -4,6 +4,7 @@ import 'package:trvlez_mobile/app/colors.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen for reviewing MRZ-extracted passport details before confirmation.
 ///
@@ -185,7 +186,7 @@ class MrzReviewScreen extends StatelessWidget {
                                     await notifier.confirmMrz();
                                     if (context.mounted &&
                                         notifier.phase == VerificationPhase.mrzReviewed) {
-                                      context.go('/verification/selfie-instructions');
+                                      context.go(AppRoutes.selfieInstructions);
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
@@ -222,7 +223,7 @@ class MrzReviewScreen extends StatelessWidget {
                                 ? null
                                 : () {
                                     notifier.clearImage();
-                                    context.go('/verification/passport-capture');
+                                    context.go(AppRoutes.passportCapture);
                                   },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: colorScheme.primary,

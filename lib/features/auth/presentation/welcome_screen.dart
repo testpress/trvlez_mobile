@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final bool isAuthenticated;
@@ -43,7 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       // Navigate to home after fade out
       Future.delayed(const Duration(milliseconds: 2700), () {
         if (mounted) {
-          context.go('/home');
+          context.go(AppRoutes.home);
         }
       });
     }
@@ -140,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       children: [
                         Expanded(
                           child: FilledButton(
-                            onPressed: () => context.go('/register'),
+                            onPressed: () => context.go(AppRoutes.register),
                             style: FilledButton.styleFrom(
                               minimumSize: const Size(double.infinity, 56),
                               backgroundColor: colorScheme.primary,
@@ -161,7 +162,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: FilledButton(
-                            onPressed: () => context.go('/login'),
+                            onPressed: () => context.go(AppRoutes.login),
                             style: FilledButton.styleFrom(
                               minimumSize: const Size(double.infinity, 56),
                               backgroundColor: colorScheme.primary,

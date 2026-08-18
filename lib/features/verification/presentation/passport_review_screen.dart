@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 class PassportReviewScreen extends StatelessWidget {
   final VerificationNotifier notifier;
 
@@ -119,7 +120,7 @@ class PassportReviewScreen extends StatelessWidget {
                         FilledButton(
                           onPressed: () {
                             // Navigate to MRZ review screen
-                            context.go('/verification/mrz-review');
+                            context.go(AppRoutes.mrzReview);
                           },
                           child: const Text('Review Details'),
                         ),
@@ -188,7 +189,7 @@ class PassportReviewScreen extends StatelessWidget {
                               child: OutlinedButton(
                                 onPressed: () {
                                   notifier.clearImage();
-                                  context.go('/verification/passport-capture');
+                                  context.go(AppRoutes.passportCapture);
                                 },
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,

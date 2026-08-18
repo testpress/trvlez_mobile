@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Traveler login screen.
 class LoginScreen extends StatefulWidget {
@@ -441,7 +442,7 @@ class LoginScreenState extends State<LoginScreen>
         ),
         GestureDetector(
           onTap: () {
-            context.go('/register');
+            context.go(AppRoutes.register);
           },
           child: Text(
             'Sign Up',

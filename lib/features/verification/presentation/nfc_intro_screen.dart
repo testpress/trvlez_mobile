@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen that introduces the NFC passport reading feature to the user.
 /// Explains the benefits and requirements, offering options to proceed or skip.
@@ -165,7 +166,7 @@ class NfcIntroScreen extends StatelessWidget {
                     // Action Buttons
                     ElevatedButton(
                       onPressed: () {
-                        context.push('/verification/nfc-scan');
+                        context.push(AppRoutes.nfcScan);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.onSurface,
@@ -306,7 +307,7 @@ class NfcIntroScreen extends StatelessWidget {
           );
         } else {
           // Skipping NFC marks the flow as complete (for MVP).
-          context.go('/verification/status');
+          context.go(AppRoutes.verificationStatus);
         }
       }
     }

@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
@@ -54,47 +55,47 @@ GoRouter createRouter(
   final nfcPassportService = NfcPassportService();
 
   return GoRouter(
-    initialLocation: '/welcome',
+    initialLocation: AppRoutes.welcome,
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final isAuthenticated = authNotifier.isAuthenticated;
       final location = state.matchedLocation;
-      final isAuthRoute = location == '/login' || location == '/register' || location == '/welcome';
+      final isAuthRoute = location == AppRoutes.login || location == AppRoutes.register || location == AppRoutes.welcome;
 
       if (!isAuthenticated) {
         // Not authenticated → force to login (unless already there)
-        if (!isAuthRoute) return '/login';
+        if (!isAuthRoute) return AppRoutes.login;
         return null;
       }
 
       // Authenticated — redirect away from auth routes (except welcome)
-      if (location == '/login' || location == '/register') {
-        return '/home';
+      if (location == AppRoutes.login || location == AppRoutes.register) {
+        return AppRoutes.home;
       }
 
       return null;
     },
     routes: [
       GoRoute(
-        path: '/welcome',
+        path: AppRoutes.welcome,
         builder: (context, state) => WelcomeScreen(
           isAuthenticated: authNotifier.isAuthenticated,
         ),
       ),
       GoRoute(
-        path: '/login',
+        path: AppRoutes.login,
         builder: (context, state) => LoginScreen(
           authRepository: authRepository,
           authNotifier: authNotifier,
         ),
       ),
       GoRoute(
-        path: '/register',
+        path: AppRoutes.register,
         builder: (context, state) =>
             RegistrationScreen(authRepository: authRepository),
       ),
       GoRoute(
-        path: '/onboarding',
+        path: AppRoutes.onboarding,
         builder: (context, state) => OnboardingScreen(
           authNotifier: authNotifier,
           profileRepository: profileRepository,
@@ -106,25 +107,25 @@ GoRouter createRouter(
         },
         routes: [
           GoRoute(
-            path: '/home',
+            path: AppRoutes.home,
             builder: (context, state) => PropertiesListingScreen(
               notifier: propertiesNotifier,
             ),
           ),
           GoRoute(
-            path: '/my-trips',
+            path: AppRoutes.myTrips,
             builder: (context, state) => MyTripsScreen(
               notifier: reservationsNotifier,
             ),
           ),
           GoRoute(
-            path: '/favorites',
+            path: AppRoutes.favorites,
             builder: (context, state) => const Scaffold(
               body: Center(child: Text('Favorites Coming Soon')),
             ),
           ),
           GoRoute(
-            path: '/profile',
+            path: AppRoutes.profile,
             builder: (context, state) => HomeScreen(
               authNotifier: authNotifier,
               profileRepository: profileRepository,
@@ -133,7 +134,7 @@ GoRouter createRouter(
         ],
       ),
       GoRoute(
-        path: '/properties/:id',
+        path: AppRoutes.propertyDetail,
         builder: (context, state) {
           final property = state.extra as Property;
           return PropertyDetailScreen(
@@ -144,7 +145,7 @@ GoRouter createRouter(
       ),
       // ─── Reservation Routes ─────────────────────────────────────
       GoRoute(
-        path: '/reservations/create',
+        path: AppRoutes.createReservation,
         builder: (context, state) {
           final property = state.extra as Property;
           return CreateReservationScreen(
@@ -154,7 +155,7 @@ GoRouter createRouter(
         },
       ),
       GoRoute(
-        path: '/reservations/:id',
+        path: AppRoutes.reservationDetail,
         builder: (context, state) {
           final extras = state.extra as Map<String, dynamic>;
           final reservation = extras['reservation'] as Reservation;
@@ -165,7 +166,7 @@ GoRouter createRouter(
         },
       ),
       GoRoute(
-        path: '/reservations/:id/qr',
+        path: AppRoutes.reservationQr,
         builder: (context, state) {
           final extras = state.extra as Map<String, dynamic>;
           final reservation = extras['reservation'] as Reservation;
@@ -177,48 +178,48 @@ GoRouter createRouter(
       ),
       // ─── Profile & Verification Routes ──────────────────────────
       GoRoute(
-        path: '/profile-setup',
+        path: AppRoutes.profileSetup,
         builder: (context, state) => ProfileSetupScreen(
           profileNotifier: ProfileNotifier(repository: profileRepository),
         ),
       ),
       GoRoute(
-        path: '/verification/passport-capture',
+        path: AppRoutes.passportCapture,
         builder: (context, state) =>
             PassportCaptureScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/passport-review',
+        path: AppRoutes.passportReview,
         builder: (context, state) =>
             PassportReviewScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/mrz-review',
+        path: AppRoutes.mrzReview,
         builder: (context, state) =>
             MrzReviewScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/selfie-instructions',
+        path: AppRoutes.selfieInstructions,
         builder: (context, state) =>
             SelfieInstructionScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/selfie-capture',
+        path: AppRoutes.selfieCapture,
         builder: (context, state) =>
             SelfieCaptureScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/selfie-review',
+        path: AppRoutes.selfieReview,
         builder: (context, state) =>
             SelfieReviewScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/nfc-intro',
+        path: AppRoutes.nfcIntro,
         builder: (context, state) =>
             NfcIntroScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/nfc-scan',
+        path: AppRoutes.nfcScan,
         builder: (context, state) =>
             NfcScanScreen(
               notifier: verificationNotifier, 
@@ -226,12 +227,12 @@ GoRouter createRouter(
             ),
       ),
       GoRoute(
-        path: '/verification/nfc-result',
+        path: AppRoutes.nfcResult,
         builder: (context, state) =>
             NfcResultScreen(notifier: verificationNotifier),
       ),
       GoRoute(
-        path: '/verification/status',
+        path: AppRoutes.verificationStatus,
         builder: (context, state) {
           // Extract optional job ID from navigation extras
           final extras = state.extra as Map<String, dynamic>?;

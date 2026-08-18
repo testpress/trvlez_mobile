@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 class SelfieReviewScreen extends StatefulWidget {
   final VerificationNotifier notifier;
 
@@ -92,7 +93,7 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
           onViewStatus: () {
             Navigator.of(sheetContext).pop();
             // Proceed to the NFC step
-            context.go('/verification/nfc-intro');
+            context.go(AppRoutes.nfcIntro);
           },
         );
       },

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Instruction screen shown before the selfie video capture.
 ///
@@ -70,7 +71,7 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
 
   void _proceedToCapture() {
     if (!_canProceed) return;
-    context.go('/verification/selfie-capture');
+    context.go(AppRoutes.selfieCapture);
   }
 
   @override

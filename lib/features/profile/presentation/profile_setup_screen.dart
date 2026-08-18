@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/core/constants/nationalities.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 class ProfileSetupScreen extends StatefulWidget {
   final ProfileNotifier profileNotifier;
 
@@ -206,7 +207,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
       if (context.canPop()) {
         context.pop();
       } else {
-        context.go('/onboarding');
+        context.go(AppRoutes.onboarding);
       }
     }
   }

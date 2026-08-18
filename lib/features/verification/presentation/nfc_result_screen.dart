@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 /// Screen summarizing the successful read of the NFC passport chip.
 /// Allows the user to confirm the extracted data before submitting the full verification to the backend.
 class NfcResultScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class NfcResultScreen extends StatelessWidget {
     if (result == null) {
       // Safety fallback
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/verification/nfc-intro');
+        context.go(AppRoutes.nfcIntro);
       });
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -170,7 +171,7 @@ class NfcResultScreen extends StatelessWidget {
                 onPressed: () {
                   // Final submission
                   notifier.submitVerificationAsync();
-                  context.go('/verification/status');
+                  context.go(AppRoutes.verificationStatus);
                 },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),

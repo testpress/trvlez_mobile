@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Crops the passport region from the full camera capture.
 ///
@@ -264,7 +265,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
           DeviceOrientation.portraitUp,
         ]);
         if (mounted) {
-          context.go('/verification/passport-review');
+          context.go(AppRoutes.passportReview);
         }
       }
     } catch (e) {
@@ -325,7 +326,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
               DeviceOrientation.portraitUp,
             ]);
             if (mounted) {
-              context.go('/verification/passport-review');
+              context.go(AppRoutes.passportReview);
             }
           }
         }
@@ -436,7 +437,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
                     if (context.canPop()) {
                       context.pop();
                     } else {
-                      context.go('/profile');
+                      context.go(AppRoutes.profile);
                     }
                   },
                 ),

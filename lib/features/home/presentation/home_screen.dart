@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 /// The primary landing screen for all authenticated travelers.
 ///
 /// Always shown after login regardless of onboarding state. Displays a
@@ -58,10 +59,10 @@ class HomeScreenState extends State<HomeScreen> {
 
     if (state.needsOnboarding) {
       // Pre-submission: go to onboarding stepper to complete steps
-      context.push('/onboarding');
+      context.push(AppRoutes.onboarding);
     } else {
       // Post-submission (submitted, failed): go to status screen
-      context.push('/verification/status');
+      context.push(AppRoutes.verificationStatus);
     }
   }
 

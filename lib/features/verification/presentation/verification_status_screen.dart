@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 /// Displays the full verification journey with step-by-step progress.
 ///
 /// Shows a large animated status icon, a descriptive title, individual
@@ -130,7 +131,7 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
             if (context.canPop()) {
               context.pop();
             } else {
-              context.go('/profile');
+              context.go(AppRoutes.profile);
             }
           },
         ),
@@ -221,7 +222,7 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
                             ElevatedButton.icon(
                               onPressed: () {
                                 widget.verificationNotifier?.reset();
-                                context.go('/verification/passport-capture');
+                                context.go(AppRoutes.passportCapture);
                               },
                               icon: const Icon(Icons.refresh_rounded),
                               label: Text(
@@ -265,7 +266,7 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
                           ],
                           if (state.isVerified) ...[
                             ElevatedButton.icon(
-                              onPressed: () => context.go('/home'),
+                              onPressed: () => context.go(AppRoutes.home),
                               icon: const Icon(Icons.explore_rounded),
                               label: Text(
                                 'Start Exploring',
