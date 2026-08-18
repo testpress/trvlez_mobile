@@ -6,6 +6,8 @@ import 'package:video_player/video_player.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_review_scaffold.dart';
+
 class SelfieReviewScreen extends StatefulWidget {
   final VerificationNotifier notifier;
 
@@ -102,40 +104,29 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('Review Video'),
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
-      ),
-      body: ListenableBuilder(
-        listenable: widget.notifier,
-        builder: (context, _) {
-          final phase = widget.notifier.phase;
-          final isUploading = phase == VerificationPhase.uploading;
-          final isSubmitting = phase == VerificationPhase.submitting;
-          final isBusy = isUploading || isSubmitting;
+    return ListenableBuilder(
+      listenable: widget.notifier,
+      builder: (context, _) {
+        final phase = widget.notifier.phase;
+        final isUploading = phase == VerificationPhase.uploading;
+        final isSubmitting = phase == VerificationPhase.submitting;
+        final isBusy = isUploading || isSubmitting;
 
-          return Stack(
+        Widget mainChild;
+        if (videoController != null && videoController!.value.isInitialized) {
+          mainChild = Stack(
             fit: StackFit.expand,
             children: [
-              if (videoController != null &&
-                  videoController!.value.isInitialized)
-                Center(
-                  child: AspectRatio(
-                    aspectRatio: videoController!.value.aspectRatio,
-                    child: GestureDetector(
-                      onTap: togglePlay,
-                      child: VideoPlayer(videoController!),
-                    ),
+              Center(
+                child: AspectRatio(
+                  aspectRatio: videoController!.value.aspectRatio,
+                  child: GestureDetector(
+                    onTap: togglePlay,
+                    child: VideoPlayer(videoController!),
                   ),
-                )
-              else
-                const Center(child: CircularProgressIndicator()),
-
-              if (videoController != null && !isPlaying && !isBusy)
+                ),
+              ),
+              if (!isPlaying && !isBusy)
                 Center(
                   child: IconButton(
                     iconSize: 64,
@@ -146,82 +137,29 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
                     onPressed: togglePlay,
                   ),
                 ),
-
-              if (isBusy)
-                Container(
-                  color: Colors.black54,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircularProgressIndicator(color: Colors.white),
-                        const SizedBox(height: 16),
-                        Text(
-                          isSubmitting
-                              ? 'Submitting for verification...'
-                              : 'Uploading... ${(widget.notifier.uploadProgress * 100).toInt()}%',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        if (isSubmitting) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            'This may take a moment',
-                            style: TextStyle(
-                              color: Colors.white.withAlpha(150),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-
-              if (!isBusy)
-                Positioned(
-                  bottom: 32,
-                  left: 16,
-                  right: 16,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          onPressed: () {
-                            widget.notifier.clearVideo();
-                            if (context.canPop()) {
-                              context.pop();
-                            }
-                          },
-                          child: const Text('Retake'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          onPressed: handleUpload,
-                          child: const Text('Upload'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
             ],
           );
-        },
-      ),
+        } else {
+          mainChild = const Center(child: CircularProgressIndicator());
+        }
+
+        return SharedReviewScaffold(
+          title: 'Review Video',
+          isBusy: isBusy,
+          busyText: isSubmitting
+              ? 'Submitting for verification...'
+              : 'Uploading...',
+          progress: isSubmitting ? null : widget.notifier.uploadProgress,
+          onRetake: () {
+            widget.notifier.clearVideo();
+            if (context.canPop()) {
+              context.pop();
+            }
+          },
+          onUpload: handleUpload,
+          child: mainChild,
+        );
+      },
     );
   }
 }

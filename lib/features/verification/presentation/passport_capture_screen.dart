@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/camera_overlay_painter.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
@@ -405,10 +406,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Camera Preview
           CameraPreview(controller!),
-
-          // Overlay Mask & Border
           CustomPaint(
             size: Size.infinite,
             painter: CameraOverlayPainter(
@@ -417,139 +415,53 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
               radius: 16.0,
             ),
           ),
+          _buildTopBar(theme, padding),
+          _buildGuidanceText(theme, cutoutRect, screenSize),
+          if (captureStatusMessage != null) _buildStatusOverlay(theme),
+          _buildControls(padding),
+        ],
+      ),
+    );
+  }
 
-          // Top Bar — Close button (left) + Flash toggle (right)
-          Positioned(
-            top: padding.top + 8,
-            left: 16,
-            right: 16,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.go(AppRoutes.profile);
-                    }
-                  },
-                ),
-                GestureDetector(
-                  onTap: _toggleFlash,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(100),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(_flashIcon, color: Colors.white, size: 20),
-                        const SizedBox(width: 4),
-                        Text(
-                          _flashLabel,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+  Widget _buildTopBar(ThemeData theme, EdgeInsets padding) {
+    return Positioned(
+      top: padding.top + 8,
+      left: 16,
+      right: 16,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.white),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(AppRoutes.profile);
+              }
+            },
           ),
-
-          // Guidance text below the frame
-          Positioned(
-            top: cutoutRect.bottom + 8,
-            left: cutoutRect.left,
-            right: screenSize.width - cutoutRect.right,
-            child: Text(
-              'Hold steady • ~20 cm away • Ensure MRZ zone is visible',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.white70,
+          GestureDetector(
+            onTap: _toggleFlash,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
               ),
-            ),
-          ),
-
-          // Capture status overlay (Focusing / Capturing / Processing / Checking)
-          if (captureStatusMessage != null)
-            Container(
-              color: Colors.black.withAlpha(100),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      captureStatusMessage!,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(100),
+                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-
-          // Right-side controls — Capture button (center) + Gallery (below)
-          Positioned(
-            right: padding.right + 16,
-            top: 0,
-            bottom: 0,
-            child: SizedBox(
-              width: 80,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  GestureDetector(
-                    onTap: isCapturing ? null : capturePassport,
-                    child: Opacity(
-                      opacity: isCapturing ? 0.5 : 1.0,
-                      child: Container(
-                        height: 72,
-                        width: 72,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 4),
-                        ),
-                        child: Center(
-                          child: Container(
-                            height: 56,
-                            width: 56,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  IconButton(
-                    iconSize: 28,
-                    onPressed: isCapturing ? null : pickPassportFromGallery,
-                    icon: Icon(
-                      Icons.photo_library,
-                      color: isCapturing ? Colors.white38 : Colors.white,
+                  Icon(_flashIcon, color: Colors.white, size: 20),
+                  const SizedBox(width: 4),
+                  Text(
+                    _flashLabel,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -560,57 +472,97 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
       ),
     );
   }
-}
 
-class CameraOverlayPainter extends CustomPainter {
-  final Rect cutout;
-  final double radius;
-  final Color overlayColor;
-  final Color borderColor;
-  final double borderWidth;
-
-  CameraOverlayPainter({
-    required this.cutout,
-    this.radius = 16.0,
-    this.overlayColor = Colors.black54,
-    this.borderColor = Colors.white,
-    this.borderWidth = 3.0,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // 1. Darkened background with a transparent hole
-    final backgroundPath = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    final cutoutPath = Path()
-      ..addRRect(RRect.fromRectAndRadius(cutout, Radius.circular(radius)));
-
-    final overlayPath = Path.combine(
-      PathOperation.difference,
-      backgroundPath,
-      cutoutPath,
-    );
-
-    final paint = Paint()..color = overlayColor;
-    canvas.drawPath(overlayPath, paint);
-
-    // 2. White border around the cutout
-    final borderPaint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth;
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(cutout, Radius.circular(radius)),
-      borderPaint,
+  Widget _buildGuidanceText(ThemeData theme, Rect cutoutRect, Size screenSize) {
+    return Positioned(
+      top: cutoutRect.bottom + 8,
+      left: cutoutRect.left,
+      right: screenSize.width - cutoutRect.right,
+      child: Text(
+        'Hold steady • ~20 cm away • Ensure MRZ zone is visible',
+        textAlign: TextAlign.center,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: Colors.white70,
+        ),
+      ),
     );
   }
 
-  @override
-  bool shouldRepaint(covariant CameraOverlayPainter oldDelegate) {
-    return oldDelegate.cutout != cutout ||
-        oldDelegate.overlayColor != overlayColor ||
-        oldDelegate.borderColor != borderColor;
+  Widget _buildStatusOverlay(ThemeData theme) {
+    return Container(
+      color: Colors.black.withAlpha(100),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 3,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              captureStatusMessage!,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControls(EdgeInsets padding) {
+    return Positioned(
+      right: padding.right + 16,
+      top: 0,
+      bottom: 0,
+      child: SizedBox(
+        width: 80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: isCapturing ? null : capturePassport,
+              child: Opacity(
+                opacity: isCapturing ? 0.5 : 1.0,
+                child: Container(
+                  height: 72,
+                  width: 72,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 4),
+                  ),
+                  child: Center(
+                    child: Container(
+                      height: 56,
+                      width: 56,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            IconButton(
+              iconSize: 28,
+              onPressed: isCapturing ? null : pickPassportFromGallery,
+              icon: Icon(
+                Icons.photo_library,
+                color: isCapturing ? Colors.white38 : Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

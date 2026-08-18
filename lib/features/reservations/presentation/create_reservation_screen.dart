@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/widgets/date_picker_tile.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen for creating a reservation at a property.
@@ -317,7 +319,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
         Row(
           children: [
             Expanded(
-              child: _DatePickerTile(
+              child: DatePickerTile(
                 label: 'Check-in',
                 value: _checkInDate != null
                     ? dateFormat.format(_checkInDate!)
@@ -329,7 +331,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _DatePickerTile(
+              child: DatePickerTile(
                 label: 'Check-out',
                 value: _checkOutDate != null
                     ? dateFormat.format(_checkOutDate!)
@@ -369,7 +371,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        _CounterTile(
+        CounterTile(
           label: 'Guests',
           icon: Icons.person_outline,
           value: _numberOfGuests,
@@ -403,7 +405,7 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
             final currentSelected = _selectedRoomCounts[roomType.id] ?? 0;
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: _CounterTile(
+              child: CounterTile(
                 label: roomType.name,
                 icon: Icons.bed_outlined,
                 value: currentSelected,
@@ -538,174 +540,6 @@ class _CreateReservationScreenState extends State<CreateReservationScreen> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-      ),
-    );
-  }
-}
-
-// ─── Reusable Widgets ──────────────────────────────────────────────
-
-class _DatePickerTile extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final ColorScheme colorScheme;
-  final VoidCallback onTap;
-
-  const _DatePickerTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.colorScheme,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: GoogleFonts.nunito(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                Icon(icon, size: 16, color: colorScheme.primary),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    value,
-                    style: GoogleFonts.cabin(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CounterTile extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final int value;
-  final ColorScheme colorScheme;
-  final VoidCallback onIncrement;
-  final VoidCallback? onDecrement;
-
-  const _CounterTile({
-    required this.label,
-    required this.icon,
-    required this.value,
-    required this.colorScheme,
-    required this.onIncrement,
-    this.onDecrement,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 16, color: colorScheme.primary),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: GoogleFonts.nunito(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildCounterButton(
-                Icons.remove,
-                onDecrement,
-                colorScheme,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  '$value',
-                  style: GoogleFonts.nunito(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              _buildCounterButton(
-                Icons.add,
-                onIncrement,
-                colorScheme,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCounterButton(
-    IconData icon,
-    VoidCallback? onTap,
-    ColorScheme colorScheme,
-  ) {
-    final isEnabled = onTap != null;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: isEnabled
-              ? colorScheme.primary.withAlpha(26)
-              : colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: isEnabled
-              ? colorScheme.primary
-              : colorScheme.onSurfaceVariant.withAlpha(100),
-        ),
       ),
     );
   }
