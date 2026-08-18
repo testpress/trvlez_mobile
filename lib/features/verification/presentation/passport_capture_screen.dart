@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
-import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:trvlez_mobile/core/device/camera_service.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
@@ -64,8 +64,13 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
 
 class PassportCaptureScreen extends StatefulWidget {
   final VerificationNotifier notifier;
+  final CameraService cameraService;
 
-  const PassportCaptureScreen({super.key, required this.notifier});
+  const PassportCaptureScreen({
+    super.key, 
+    required this.notifier,
+    required this.cameraService,
+  });
 
   @override
   State<PassportCaptureScreen> createState() => PassportCaptureScreenState();
@@ -73,7 +78,6 @@ class PassportCaptureScreen extends StatefulWidget {
 
 class PassportCaptureScreenState extends State<PassportCaptureScreen> {
   CameraController? controller;
-  List<CameraDescription>? cameras;
   bool isCameraInitialized = false;
   bool isCapturing = false;
   FlashMode currentFlashMode = FlashMode.off;
@@ -101,21 +105,13 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
 
   Future<void> _initCamera() async {
     try {
-      cameras = await availableCameras();
-      if (cameras != null && cameras!.isNotEmpty) {
-        final backCamera = cameras!.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.back,
-          orElse: () => cameras!.first,
-        );
+      controller = await widget.cameraService.initCamera(
+        lensDirection: CameraLensDirection.back,
+        resolution: ResolutionPreset.max,
+        enableAudio: false,
+      );
 
-        controller = CameraController(
-          backCamera,
-          ResolutionPreset.max,
-          enableAudio: false,
-        );
-
-        await controller!.initialize();
-
+      if (controller != null) {
         // Configure autofocus and exposure for document capture
         await _configureCameraForDocumentCapture();
 
@@ -298,8 +294,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
     });
 
     try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      final File? image = await widget.cameraService.pickImageFromGallery();
 
       if (image != null) {
         final CroppedFile? croppedFile = await ImageCropper().cropImage(

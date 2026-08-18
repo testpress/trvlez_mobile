@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'package:trvlez_mobile/app/router.dart';
 import 'package:trvlez_mobile/app/theme.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/network/api_client.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
+import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
@@ -23,6 +24,7 @@ void main() async {
 
   // 1. Storage
   const tokenStorage = TokenStorage();
+  final settingsRepository = await SettingsRepository.init();
 
   // 2. Network & Data (needed before auth check)
   final apiClient = ApiClient(
@@ -83,11 +85,8 @@ void main() async {
 
   await authNotifier.checkAuthStatus();
 
-  final prefs = await SharedPreferences.getInstance();
-  final isDark = prefs.getBool('isDark');
-  if (isDark != null) {
-    TrvlEzApp.themeNotifier.value = isDark ? ThemeMode.dark : ThemeMode.light;
-  }
+  final themeMode = settingsRepository.getThemeMode();
+  TrvlEzApp.themeNotifier.value = themeMode;
 
   runApp(
     TrvlEzApp(
@@ -99,6 +98,7 @@ void main() async {
       verificationNotifier: verificationNotifier,
       propertiesNotifier: propertiesNotifier,
       reservationsNotifier: reservationsNotifier,
+      settingsRepository: settingsRepository,
     ),
   );
 }
@@ -112,6 +112,7 @@ class TrvlEzApp extends StatelessWidget {
   final VerificationNotifier verificationNotifier;
   final PropertiesNotifier propertiesNotifier;
   final ReservationsNotifier reservationsNotifier;
+  final SettingsRepository settingsRepository;
 
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
     ThemeMode.system,
@@ -127,6 +128,7 @@ class TrvlEzApp extends StatelessWidget {
     required this.verificationNotifier,
     required this.propertiesNotifier,
     required this.reservationsNotifier,
+    required this.settingsRepository,
   });
 
   @override
@@ -149,6 +151,7 @@ class TrvlEzApp extends StatelessWidget {
             verificationNotifier,
             propertiesNotifier,
             reservationsNotifier,
+            settingsRepository,
           ),
         );
       },

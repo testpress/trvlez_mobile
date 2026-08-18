@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
@@ -16,11 +16,13 @@ import 'package:trvlez_mobile/app/routes.dart';
 class HomeScreen extends StatefulWidget {
   final AuthNotifier authNotifier;
   final ProfileRepository profileRepository;
+  final SettingsRepository settingsRepository;
 
   const HomeScreen({
     super.key,
     required this.authNotifier,
     required this.profileRepository,
+    required this.settingsRepository,
   });
 
   @override
@@ -139,8 +141,7 @@ class HomeScreenState extends State<HomeScreen> {
                     ? ThemeMode.light
                     : ThemeMode.dark;
                 TrvlEzApp.themeNotifier.value = newMode;
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('isDark', newMode == ThemeMode.dark);
+                await widget.settingsRepository.setThemeMode(newMode);
               }
             },
             itemBuilder: (context) {

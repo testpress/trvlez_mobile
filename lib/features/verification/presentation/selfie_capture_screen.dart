@@ -6,14 +6,19 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:trvlez_mobile/core/device/camera_service.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 class SelfieCaptureScreen extends StatefulWidget {
   final VerificationNotifier notifier;
+  final CameraService cameraService;
 
-  const SelfieCaptureScreen({super.key, required this.notifier});
+  const SelfieCaptureScreen({
+    super.key, 
+    required this.notifier,
+    required this.cameraService,
+  });
 
   @override
   State<SelfieCaptureScreen> createState() => SelfieCaptureScreenState();
@@ -22,7 +27,6 @@ class SelfieCaptureScreen extends StatefulWidget {
 class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
     with TickerProviderStateMixin {
   CameraController? cameraController;
-  List<CameraDescription> cameras = [];
   bool isInitializing = true;
   bool isRecording = false;
   String? errorMsg;
@@ -45,29 +49,21 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
 
   Future<void> initializeCamera() async {
     try {
-      cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        setState(() {
-          errorMsg = 'No cameras available';
-          isInitializing = false;
-        });
+      cameraController = await widget.cameraService.initCamera(
+        lensDirection: CameraLensDirection.front,
+        resolution: ResolutionPreset.high,
+        enableAudio: false,
+      );
+
+      if (cameraController == null) {
+        if (mounted) {
+          setState(() {
+            errorMsg = 'No cameras available';
+            isInitializing = false;
+          });
+        }
         return;
       }
-
-      // Try to find the front camera, fallback to first available
-      final frontCamera = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.front,
-        orElse: () => cameras.first,
-      );
-
-      cameraController = CameraController(
-        frontCamera,
-        ResolutionPreset.high,
-        enableAudio:
-            false, // For selfie verification, audio might not be needed
-      );
-
-      await cameraController?.initialize();
 
       if (mounted) {
         setState(() {
@@ -169,11 +165,10 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
     if (isRecording) return;
 
     try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
+      final File? video = await widget.cameraService.pickVideoFromGallery();
 
       if (video != null) {
-        widget.notifier.setVideo(File(video.path));
+        widget.notifier.setVideo(video);
         if (mounted) {
           context.push(AppRoutes.selfieReview);
         }

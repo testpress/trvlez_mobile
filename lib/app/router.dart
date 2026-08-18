@@ -10,6 +10,7 @@ import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';
@@ -23,6 +24,7 @@ import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_scree
 import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/features/home/presentation/main_scaffold.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
@@ -51,8 +53,10 @@ GoRouter createRouter(
   VerificationNotifier verificationNotifier,
   PropertiesNotifier propertiesNotifier,
   ReservationsNotifier reservationsNotifier,
+  SettingsRepository settingsRepository,
 ) {
   final nfcPassportService = NfcPassportService();
+  final cameraService = CameraService();
 
   return GoRouter(
     initialLocation: AppRoutes.welcome,
@@ -129,6 +133,7 @@ GoRouter createRouter(
             builder: (context, state) => HomeScreen(
               authNotifier: authNotifier,
               profileRepository: profileRepository,
+              settingsRepository: settingsRepository,
             ),
           ),
         ],
@@ -186,7 +191,10 @@ GoRouter createRouter(
       GoRoute(
         path: AppRoutes.passportCapture,
         builder: (context, state) =>
-            PassportCaptureScreen(notifier: verificationNotifier),
+            PassportCaptureScreen(
+              notifier: verificationNotifier,
+              cameraService: cameraService,
+            ),
       ),
       GoRoute(
         path: AppRoutes.passportReview,
@@ -206,7 +214,10 @@ GoRouter createRouter(
       GoRoute(
         path: AppRoutes.selfieCapture,
         builder: (context, state) =>
-            SelfieCaptureScreen(notifier: verificationNotifier),
+            SelfieCaptureScreen(
+              notifier: verificationNotifier,
+              cameraService: cameraService,
+            ),
       ),
       GoRoute(
         path: AppRoutes.selfieReview,
