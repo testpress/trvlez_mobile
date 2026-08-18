@@ -4,6 +4,7 @@ import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/domain/signup_result.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';
+
 ///
 /// Currently delegates to the remote data source directly.
 /// Can be extended to add caching, offline support, or
@@ -22,10 +23,7 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final dto = await remoteDataSource.signUp(
-      email: email,
-      password: password,
-    );
+    final dto = await remoteDataSource.signUp(email: email, password: password);
 
     return SignupResult(
       id: dto.id,

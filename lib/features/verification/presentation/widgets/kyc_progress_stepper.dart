@@ -8,10 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 class KycProgressStepper extends StatelessWidget {
   final int progressIndex;
 
-  const KycProgressStepper({
-    super.key,
-    required this.progressIndex,
-  });
+  const KycProgressStepper({super.key, required this.progressIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +48,9 @@ class KycProgressStepper extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: progressIndex >= index
                                   ? colorScheme.primary
-                                  : colorScheme.onSurface.withValues(alpha: 0.1),
+                                  : colorScheme.onSurface.withValues(
+                                      alpha: 0.1,
+                                    ),
                               borderRadius: BorderRadius.circular(1),
                             ),
                           ),
@@ -93,7 +92,9 @@ class KycProgressStepper extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: progressIndex > index
                                   ? colorScheme.primary
-                                  : colorScheme.onSurface.withValues(alpha: 0.1),
+                                  : colorScheme.onSurface.withValues(
+                                      alpha: 0.1,
+                                    ),
                               borderRadius: BorderRadius.circular(1),
                             ),
                           ),

@@ -39,7 +39,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     final colorScheme = Theme.of(context).colorScheme;
     final reservationsState = ref.watch(reservationListProvider);
     final reservations = reservationsState.value ?? [];
-    
+
     final upcoming = reservations.where((r) => r.status.isUpcoming).toList();
     final completed = reservations.where((r) => r.status.isCompleted).toList();
     final cancelled = reservations.where((r) => r.status.isCancelled).toList();
@@ -51,8 +51,20 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(colorScheme),
-            _buildTabBar(colorScheme, upcoming.length, completed.length, cancelled.length),
-            Expanded(child: _buildTabContent(reservationsState, upcoming, completed, cancelled)),
+            _buildTabBar(
+              colorScheme,
+              upcoming.length,
+              completed.length,
+              cancelled.length,
+            ),
+            Expanded(
+              child: _buildTabContent(
+                reservationsState,
+                upcoming,
+                completed,
+                cancelled,
+              ),
+            ),
           ],
         ),
       ),
@@ -73,7 +85,12 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     );
   }
 
-  Widget _buildTabBar(ColorScheme colorScheme, int upcomingCount, int completedCount, int cancelledCount) {
+  Widget _buildTabBar(
+    ColorScheme colorScheme,
+    int upcomingCount,
+    int completedCount,
+    int cancelledCount,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: TabBar(
@@ -99,7 +116,12 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     );
   }
 
-  Widget _buildTabContent(AsyncValue<List<Reservation>> state, List<Reservation> upcoming, List<Reservation> completed, List<Reservation> cancelled) {
+  Widget _buildTabContent(
+    AsyncValue<List<Reservation>> state,
+    List<Reservation> upcoming,
+    List<Reservation> completed,
+    List<Reservation> cancelled,
+  ) {
     if (state.isLoading && !state.hasValue) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -119,7 +141,9 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   }
 
   Widget _buildReservationList(
-      List<Reservation> reservations, String emptyType) {
+    List<Reservation> reservations,
+    String emptyType,
+  ) {
     if (reservations.isEmpty) {
       return _buildEmptyState(emptyType);
     }
@@ -134,9 +158,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
           reservation: reservations[index],
           onTap: () => context.push(
             '/reservations/${reservations[index].id}',
-            extra: {
-              'reservation': reservations[index],
-            },
+            extra: {'reservation': reservations[index]},
           ),
         ),
       ),
@@ -146,9 +168,15 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   Widget _buildEmptyState(String type) {
     final colorScheme = Theme.of(context).colorScheme;
     final messages = {
-      'upcoming': ('No upcoming trips', 'Browse properties and book your next adventure!'),
+      'upcoming': (
+        'No upcoming trips',
+        'Browse properties and book your next adventure!',
+      ),
       'completed': ('No completed trips', 'Your past stays will appear here.'),
-      'cancelled': ('No cancelled trips', 'You haven\'t cancelled any reservations.'),
+      'cancelled': (
+        'No cancelled trips',
+        'You haven\'t cancelled any reservations.',
+      ),
     };
     final (title, subtitle) = messages[type] ?? ('No trips', '');
 
@@ -221,7 +249,8 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
           ),
           const SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () => ref.read(reservationListProvider.notifier).fetchReservations(),
+            onPressed: () =>
+                ref.read(reservationListProvider.notifier).fetchReservations(),
             child: const Text('Retry'),
           ),
         ],
@@ -263,8 +292,9 @@ class _ReservationCard extends StatelessWidget {
           children: [
             // Hero image
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
               child: _buildImage(colorScheme),
             ),
             Padding(
@@ -293,8 +323,11 @@ class _ReservationCard extends StatelessWidget {
                   if (reservation.propertySummary.locationString.isNotEmpty)
                     Row(
                       children: [
-                        Icon(Icons.location_on_outlined,
-                            size: 14, color: colorScheme.onSurfaceVariant),
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 14,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           reservation.propertySummary.locationString,
@@ -310,8 +343,11 @@ class _ReservationCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today_outlined,
-                          size: 14, color: colorScheme.primary),
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        size: 14,
+                        color: colorScheme.primary,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         '${dateFormat.format(reservation.checkInDate)} – ${dateFormat.format(reservation.checkOutDate)}',
@@ -334,8 +370,11 @@ class _ReservationCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(Icons.confirmation_number_outlined,
-                          size: 14, color: colorScheme.primary),
+                      Icon(
+                        Icons.confirmation_number_outlined,
+                        size: 14,
+                        color: colorScheme.primary,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         reservation.confirmationCode,
@@ -364,7 +403,8 @@ class _ReservationCard extends StatelessWidget {
         height: 140,
         width: double.infinity,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(colorScheme),
+        errorBuilder: (context, error, stackTrace) =>
+            _buildPlaceholder(colorScheme),
       );
     }
     return _buildPlaceholder(colorScheme);
@@ -412,31 +452,16 @@ class _StatusBadge extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     switch (status) {
       case ReservationStatus.pending:
-        return (
-          const Color(0xFFFFF3E0),
-          const Color(0xFFE65100),
-        );
+        return (const Color(0xFFFFF3E0), const Color(0xFFE65100));
       case ReservationStatus.confirmed:
-        return (
-          const Color(0xFFE8F5E9),
-          const Color(0xFF2E7D32),
-        );
+        return (const Color(0xFFE8F5E9), const Color(0xFF2E7D32));
       case ReservationStatus.checkedIn:
-        return (
-          colorScheme.primary.withAlpha(26),
-          colorScheme.primary,
-        );
+        return (colorScheme.primary.withAlpha(26), colorScheme.primary);
       case ReservationStatus.checkedOut:
-        return (
-          const Color(0xFFE3F2FD),
-          const Color(0xFF1565C0),
-        );
+        return (const Color(0xFFE3F2FD), const Color(0xFF1565C0));
       case ReservationStatus.cancelled:
       case ReservationStatus.noShow:
-        return (
-          const Color(0xFFFFEBEE),
-          const Color(0xFFC62828),
-        );
+        return (const Color(0xFFFFEBEE), const Color(0xFFC62828));
     }
   }
 }

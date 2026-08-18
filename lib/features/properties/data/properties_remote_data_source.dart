@@ -34,6 +34,8 @@ class PropertiesRemoteDataSource {
 }
 
 /// Provider for the [PropertiesRemoteDataSource].
-final propertiesRemoteDataSourceProvider = Provider<PropertiesRemoteDataSource>((ref) {
-  return PropertiesRemoteDataSource(dio: ref.watch(dioProvider));
-});
+final propertiesRemoteDataSourceProvider = Provider<PropertiesRemoteDataSource>(
+  (ref) {
+    return PropertiesRemoteDataSource(dio: ref.watch(dioProvider));
+  },
+);

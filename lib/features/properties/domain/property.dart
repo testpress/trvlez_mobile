@@ -1,4 +1,3 @@
-
 class Property {
   final String id;
   final String name;
@@ -7,7 +6,7 @@ class Property {
   final String shortDescription;
   final String longDescription;
   final String heroImageUrl;
-  
+
   // Hardcoded for now as per Figma if backend doesn't provide them yet
   final double pricePerNight;
   final double rating;

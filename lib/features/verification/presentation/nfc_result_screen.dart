@@ -6,12 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+
 /// Screen summarizing the successful read of the NFC passport chip.
 /// Allows the user to confirm the extracted data before submitting the full verification to the backend.
 class NfcResultScreen extends ConsumerWidget {
-  const NfcResultScreen({
-    super.key,
-  });
+  const NfcResultScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -108,7 +107,8 @@ class NfcResultScreen extends ConsumerWidget {
                 child: SingleChildScrollView(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest.withAlpha(100),
+                      color: theme.colorScheme.surfaceContainerHighest
+                          .withAlpha(100),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: theme.colorScheme.outlineVariant.withAlpha(80),
@@ -119,41 +119,67 @@ class NfcResultScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (mrz != null) ...[
-                          _buildDataRow(context, 'Document No.', mrz.documentNumber),
+                          _buildDataRow(
+                            context,
+                            'Document No.',
+                            mrz.documentNumber,
+                          ),
                           const Divider(),
-                          _buildDataRow(context, 'Name', '${mrz.firstName} ${mrz.lastName}'),
+                          _buildDataRow(
+                            context,
+                            'Name',
+                            '${mrz.firstName} ${mrz.lastName}',
+                          ),
                           const Divider(),
-                          _buildDataRow(context, 'Nationality', mrz.nationality),
+                          _buildDataRow(
+                            context,
+                            'Nationality',
+                            mrz.nationality,
+                          ),
                           const Divider(),
-                          _buildDataRow(context, 'Date of Birth', DateFormat.yMMMd().format(mrz.dateOfBirth)),
+                          _buildDataRow(
+                            context,
+                            'Date of Birth',
+                            DateFormat.yMMMd().format(mrz.dateOfBirth),
+                          ),
                           const Divider(),
-                          _buildDataRow(context, 'Expiry', DateFormat.yMMMd().format(mrz.dateOfExpiry)),
+                          _buildDataRow(
+                            context,
+                            'Expiry',
+                            DateFormat.yMMMd().format(mrz.dateOfExpiry),
+                          ),
                         ] else ...[
                           const Text('Data successfully read from chip.'),
                         ],
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Technical info (security indicators)
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer.withAlpha(100),
+                            color: theme.colorScheme.primaryContainer.withAlpha(
+                              100,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildSecurityRow(
-                                context, 
-                                'Data Groups', 
-                                result.availableDataGroups.map((s) => s.toUpperCase()).join(', '),
+                                context,
+                                'Data Groups',
+                                result.availableDataGroups
+                                    .map((s) => s.toUpperCase())
+                                    .join(', '),
                               ),
                               const SizedBox(height: 8),
                               _buildSecurityRow(
                                 context,
                                 'Active Auth',
-                                result.activeAuthSignatureBase64 != null ? 'Verified' : 'Not Supported',
+                                result.activeAuthSignatureBase64 != null
+                                    ? 'Verified'
+                                    : 'Not Supported',
                               ),
                             ],
                           ),
@@ -168,7 +194,9 @@ class NfcResultScreen extends ConsumerWidget {
               FilledButton(
                 onPressed: () {
                   // Final submission
-                  ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
+                  ref
+                      .read(verificationNotifierProvider.notifier)
+                      .submitVerificationAsync();
                   context.go(AppRoutes.verificationStatus);
                 },
                 style: FilledButton.styleFrom(
@@ -214,7 +242,7 @@ class NfcResultScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildSecurityRow(BuildContext context, String label, String value) {
     final theme = Theme.of(context);
     return Row(

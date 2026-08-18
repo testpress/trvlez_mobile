@@ -31,10 +31,7 @@ class ReservationRemoteDataSource {
     int skip = 0,
     int limit = 50,
   }) async {
-    final queryParameters = <String, dynamic>{
-      'skip': skip,
-      'limit': limit,
-    };
+    final queryParameters = <String, dynamic>{'skip': skip, 'limit': limit};
     if (status != null) {
       queryParameters['status'] = status;
     }
@@ -73,6 +70,7 @@ class ReservationRemoteDataSource {
 }
 
 /// Provider for the [ReservationRemoteDataSource].
-final reservationRemoteDataSourceProvider = Provider<ReservationRemoteDataSource>((ref) {
-  return ReservationRemoteDataSource(dio: ref.watch(dioProvider));
-});
+final reservationRemoteDataSourceProvider =
+    Provider<ReservationRemoteDataSource>((ref) {
+      return ReservationRemoteDataSource(dio: ref.watch(dioProvider));
+    });

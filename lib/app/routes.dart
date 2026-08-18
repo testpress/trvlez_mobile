@@ -15,7 +15,7 @@ class AppRoutes {
 
   // Properties
   static const String propertyDetail = '/properties/:id';
-  
+
   static String propertyDetailPath(String id) => '/properties/$id';
 
   // Reservations

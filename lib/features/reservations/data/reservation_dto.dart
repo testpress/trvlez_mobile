@@ -49,13 +49,13 @@ class ReservationDto {
       guestEmail: json['guest_email'] as String?,
       guestPhone: json['guest_phone'] as String?,
       numberOfGuests: json['number_of_guests'] as int? ?? 1,
-      rooms: (json['rooms'] as List<dynamic>?)
+      rooms:
+          (json['rooms'] as List<dynamic>?)
               ?.map((e) => e as Map<String, dynamic>)
               .toList() ??
           [],
       specialRequests: json['special_requests'] as String?,
-      propertySummary:
-          json['property_summary'] as Map<String, dynamic>? ?? {},
+      propertySummary: json['property_summary'] as Map<String, dynamic>? ?? {},
       createdAt: json['created_at'] as String,
       cancelledAt: json['cancelled_at'] as String?,
       checkedInAt: json['checked_in_at'] as String?,
@@ -74,11 +74,15 @@ class ReservationDto {
       guestEmail: guestEmail,
       guestPhone: guestPhone,
       numberOfGuests: numberOfGuests,
-      rooms: rooms.map((r) => RoomSummary(
-        id: r['id'] as String? ?? '',
-        roomNumber: r['room_number'] as String? ?? '',
-        roomTypeId: r['room_type_id'] as String? ?? '',
-      )).toList(),
+      rooms: rooms
+          .map(
+            (r) => RoomSummary(
+              id: r['id'] as String? ?? '',
+              roomNumber: r['room_number'] as String? ?? '',
+              roomTypeId: r['room_type_id'] as String? ?? '',
+            ),
+          )
+          .toList(),
       specialRequests: specialRequests,
       propertySummary: ReservationPropertySummary(
         id: propertySummary['id'] as String? ?? '',
@@ -88,12 +92,9 @@ class ReservationDto {
         heroImageUrl: propertySummary['hero_image_url'] as String?,
       ),
       createdAt: DateTime.parse(createdAt),
-      cancelledAt:
-          cancelledAt != null ? DateTime.parse(cancelledAt!) : null,
-      checkedInAt:
-          checkedInAt != null ? DateTime.parse(checkedInAt!) : null,
-      checkedOutAt:
-          checkedOutAt != null ? DateTime.parse(checkedOutAt!) : null,
+      cancelledAt: cancelledAt != null ? DateTime.parse(cancelledAt!) : null,
+      checkedInAt: checkedInAt != null ? DateTime.parse(checkedInAt!) : null,
+      checkedOutAt: checkedOutAt != null ? DateTime.parse(checkedOutAt!) : null,
     );
   }
 }
@@ -107,9 +108,9 @@ class ReservationListResponseDto {
 
   factory ReservationListResponseDto.fromJson(Map<String, dynamic> json) {
     return ReservationListResponseDto(
-      items: (json['data'] as List<dynamic>?)
-              ?.map(
-                  (e) => ReservationDto.fromJson(e as Map<String, dynamic>))
+      items:
+          (json['data'] as List<dynamic>?)
+              ?.map((e) => ReservationDto.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       total: json['count'] as int? ?? 0,

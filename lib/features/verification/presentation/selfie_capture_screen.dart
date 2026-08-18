@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
-
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/face_guide_painter.dart';
@@ -12,16 +11,15 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/face_gu
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+
 class SelfieCaptureScreen extends ConsumerStatefulWidget {
   final CameraService cameraService;
 
-  const SelfieCaptureScreen({
-    super.key, 
-    required this.cameraService,
-  });
+  const SelfieCaptureScreen({super.key, required this.cameraService});
 
   @override
-  ConsumerState<SelfieCaptureScreen> createState() => SelfieCaptureScreenState();
+  ConsumerState<SelfieCaptureScreen> createState() =>
+      SelfieCaptureScreenState();
 }
 
 class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
@@ -136,7 +134,9 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
       });
 
       if (recordedSeconds >= minRecordingSeconds) {
-        ref.read(verificationNotifierProvider.notifier).setVideo(File(video.path));
+        ref
+            .read(verificationNotifierProvider.notifier)
+            .setVideo(File(video.path));
         if (mounted) {
           context.push(AppRoutes.selfieReview);
         }
@@ -326,7 +326,9 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
               icon: const Icon(Icons.video_library, color: Colors.white),
             )
           else
-            const SizedBox(width: 48), // Match the size of the gallery button when hidden
+            const SizedBox(
+              width: 48,
+            ), // Match the size of the gallery button when hidden
         ],
       ),
     );

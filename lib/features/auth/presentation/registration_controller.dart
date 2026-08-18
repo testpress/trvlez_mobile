@@ -6,8 +6,8 @@ import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 /// Provider for the [RegistrationController].
 final registrationControllerProvider =
     AutoDisposeAsyncNotifierProvider<RegistrationController, void>(
-  () => RegistrationController(),
-);
+      () => RegistrationController(),
+    );
 
 /// State management for the registration screen.
 ///
@@ -18,18 +18,12 @@ class RegistrationController extends AutoDisposeAsyncNotifier<void> {
   FutureOr<void> build() {}
 
   /// Attempts to create a new traveler account.
-  Future<void> signUp({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signUp({required String email, required String password}) async {
     state = const AsyncValue.loading();
 
     state = await AsyncValue.guard(() async {
       final repository = ref.read(authRepositoryProvider);
-      await repository.signUp(
-        email: email,
-        password: password,
-      );
+      await repository.signUp(email: email, password: password);
     });
   }
 

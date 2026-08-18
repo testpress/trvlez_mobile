@@ -110,10 +110,7 @@ class SharedReviewScaffold extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    colors: [
-                      Colors.black.withAlpha(200),
-                      Colors.transparent,
-                    ],
+                    colors: [Colors.black.withAlpha(200), Colors.transparent],
                   ),
                 ),
                 child: Column(
@@ -154,9 +151,7 @@ class SharedReviewScaffold extends StatelessWidget {
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,
                               side: const BorderSide(color: Colors.white),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -169,9 +164,7 @@ class SharedReviewScaffold extends StatelessWidget {
                           child: FilledButton(
                             onPressed: onUpload,
                             style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),

@@ -101,8 +101,8 @@ class _StepIndicator extends StatelessWidget {
     final circleColor = isCompleted
         ? Colors.green
         : isActive
-            ? colorScheme.primary
-            : colorScheme.onSurface.withAlpha(40);
+        ? colorScheme.primary
+        : colorScheme.onSurface.withAlpha(40);
 
     final circleSize = isActive ? 28.0 : 24.0;
 
@@ -115,19 +115,14 @@ class _StepIndicator extends StatelessWidget {
           height: circleSize,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isCompleted || isActive
-                ? circleColor
-                : Colors.transparent,
-            border: Border.all(
-              color: circleColor,
-              width: isActive ? 2.5 : 2,
-            ),
+            color: isCompleted || isActive ? circleColor : Colors.transparent,
+            border: Border.all(color: circleColor, width: isActive ? 2.5 : 2),
           ),
           child: isCompleted
               ? const Icon(Icons.check, color: Colors.white, size: 14)
               : isActive
-                  ? Icon(Icons.circle, color: Colors.white, size: 8)
-                  : null,
+              ? Icon(Icons.circle, color: Colors.white, size: 8)
+              : null,
         ),
         const SizedBox(height: 6),
         Text(
@@ -138,8 +133,8 @@ class _StepIndicator extends StatelessWidget {
             color: isCompleted
                 ? Colors.green
                 : isActive
-                    ? colorScheme.primary
-                    : colorScheme.onSurface.withAlpha(100),
+                ? colorScheme.primary
+                : colorScheme.onSurface.withAlpha(100),
           ),
         ),
       ],

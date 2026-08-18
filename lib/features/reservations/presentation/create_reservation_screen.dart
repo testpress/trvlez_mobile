@@ -17,17 +17,15 @@ import 'package:trvlez_mobile/app/routes.dart';
 class CreateReservationScreen extends ConsumerStatefulWidget {
   final Property property;
 
-  const CreateReservationScreen({
-    super.key,
-    required this.property,
-  });
+  const CreateReservationScreen({super.key, required this.property});
 
   @override
   ConsumerState<CreateReservationScreen> createState() =>
       _CreateReservationScreenState();
 }
 
-class _CreateReservationScreenState extends ConsumerState<CreateReservationScreen> {
+class _CreateReservationScreenState
+    extends ConsumerState<CreateReservationScreen> {
   DateTime? _checkInDate;
   DateTime? _checkOutDate;
   int _numberOfGuests = 1;
@@ -40,12 +38,12 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize selected counts
     for (final rt in widget.property.roomTypes) {
       _selectedRoomCounts.putIfAbsent(rt.id, () => 0);
     }
-    
+
     // Select 1 room of the first type by default if available
     if (widget.property.roomTypes.isNotEmpty) {
       _selectedRoomCounts[widget.property.roomTypes.first.id] = 1;
@@ -82,7 +80,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
       initialDate: isCheckIn
           ? (_checkInDate ?? now.add(const Duration(days: 1)))
           : (_checkOutDate ??
-              (_checkInDate ?? now).add(const Duration(days: 1))),
+                (_checkInDate ?? now).add(const Duration(days: 1))),
       firstDate: firstDate,
       lastDate: now.add(const Duration(days: 365)),
       builder: (context, child) {
@@ -127,8 +125,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
         if (isCheckIn) {
           _checkInDate = picked;
           // Reset checkout if it's before or same as new checkin
-          if (_checkOutDate != null &&
-              !_checkOutDate!.isAfter(_checkInDate!)) {
+          if (_checkOutDate != null && !_checkOutDate!.isAfter(_checkInDate!)) {
             _checkOutDate = null;
           }
         } else {
@@ -144,7 +141,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
     // Combine selected date with current UTC time
     // so that same-day bookings pass the backend's strict past-time check.
     final nowUtc = DateTime.now().toUtc();
-    
+
     final checkInExact = DateTime.utc(
       _checkInDate!.year,
       _checkInDate!.month,
@@ -171,23 +168,25 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
       }
     }
 
-    final reservation = await ref.read(createReservationProvider.notifier).createReservation(
-      propertyId: widget.property.id,
-      checkInDate: checkInExact.toIso8601String(),
-      checkOutDate: checkOutExact.toIso8601String(),
-      guestName: _guestNameController.text.trim(),
-      guestEmail: _emailController.text.trim().isNotEmpty
-          ? _emailController.text.trim()
-          : null,
-      guestPhone: _phoneController.text.trim().isNotEmpty
-          ? _phoneController.text.trim()
-          : null,
-      numberOfGuests: _numberOfGuests,
-      roomTypeIds: roomTypeIds,
-      specialRequests: _specialRequestsController.text.trim().isNotEmpty
-          ? _specialRequestsController.text.trim()
-          : null,
-    );
+    final reservation = await ref
+        .read(createReservationProvider.notifier)
+        .createReservation(
+          propertyId: widget.property.id,
+          checkInDate: checkInExact.toIso8601String(),
+          checkOutDate: checkOutExact.toIso8601String(),
+          guestName: _guestNameController.text.trim(),
+          guestEmail: _emailController.text.trim().isNotEmpty
+              ? _emailController.text.trim()
+              : null,
+          guestPhone: _phoneController.text.trim().isNotEmpty
+              ? _phoneController.text.trim()
+              : null,
+          numberOfGuests: _numberOfGuests,
+          roomTypeIds: roomTypeIds,
+          specialRequests: _specialRequestsController.text.trim().isNotEmpty
+              ? _specialRequestsController.text.trim()
+              : null,
+        );
 
     if (reservation != null && mounted) {
       context.go(AppRoutes.myTrips);
@@ -199,7 +198,9 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
     final colorScheme = Theme.of(context).colorScheme;
     final createState = ref.watch(createReservationProvider);
     final isCreating = createState.isLoading;
-    final createError = createState.hasError ? createState.error.toString() : null;
+    final createError = createState.hasError
+        ? createState.error.toString()
+        : null;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -210,10 +211,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
         ),
         title: Text(
           'Book Your Stay',
-          style: GoogleFonts.nunito(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+          style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
         ),
       ),
       body: SingleChildScrollView(
@@ -265,8 +263,10 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                     width: 64,
                     height: 64,
                     color: colorScheme.surfaceContainerHighest,
-                    child: Icon(Icons.hotel,
-                        color: colorScheme.onSurfaceVariant),
+                    child: Icon(
+                      Icons.hotel,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
           ),
           const SizedBox(width: 16),
@@ -373,8 +373,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
           icon: Icons.person_outline,
           value: _numberOfGuests,
           colorScheme: colorScheme,
-          onIncrement: () =>
-              setState(() => _numberOfGuests++),
+          onIncrement: () => setState(() => _numberOfGuests++),
           onDecrement: _numberOfGuests > 1
               ? () => setState(() => _numberOfGuests--)
               : null,
@@ -392,10 +391,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
         if (widget.property.roomTypes.isEmpty)
           Text(
             'No rooms available for this property.',
-            style: GoogleFonts.cabin(
-              fontSize: 14,
-              color: colorScheme.error,
-            ),
+            style: GoogleFonts.cabin(fontSize: 14, color: colorScheme.error),
           )
         else
           ...widget.property.roomTypes.map((roomType) {
@@ -407,9 +403,14 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
                 icon: Icons.bed_outlined,
                 value: currentSelected,
                 colorScheme: colorScheme,
-                onIncrement: () => setState(() => _selectedRoomCounts[roomType.id] = currentSelected + 1),
+                onIncrement: () => setState(
+                  () => _selectedRoomCounts[roomType.id] = currentSelected + 1,
+                ),
                 onDecrement: currentSelected > 0
-                    ? () => setState(() => _selectedRoomCounts[roomType.id] = currentSelected - 1)
+                    ? () => setState(
+                        () => _selectedRoomCounts[roomType.id] =
+                            currentSelected - 1,
+                      )
                     : null,
               ),
             );
@@ -501,10 +502,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
           Expanded(
             child: Text(
               errorMsg,
-              style: GoogleFonts.cabin(
-                fontSize: 13,
-                color: colorScheme.error,
-              ),
+              style: GoogleFonts.cabin(fontSize: 13, color: colorScheme.error),
             ),
           ),
         ],
@@ -517,10 +515,7 @@ class _CreateReservationScreenState extends ConsumerState<CreateReservationScree
       width: double.infinity,
       height: 56,
       child: FilledButton(
-        onPressed:
-            _isFormValid && !isCreating
-                ? _submitReservation
-                : null,
+        onPressed: _isFormValid && !isCreating ? _submitReservation : null,
         child: isCreating
             ? SizedBox(
                 height: 24,

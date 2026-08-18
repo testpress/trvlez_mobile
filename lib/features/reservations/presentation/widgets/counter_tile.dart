@@ -49,11 +49,7 @@ class CounterTile extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildCounterButton(
-                Icons.remove,
-                onDecrement,
-                colorScheme,
-              ),
+              _buildCounterButton(Icons.remove, onDecrement, colorScheme),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -65,11 +61,7 @@ class CounterTile extends StatelessWidget {
                   ),
                 ),
               ),
-              _buildCounterButton(
-                Icons.add,
-                onIncrement,
-                colorScheme,
-              ),
+              _buildCounterButton(Icons.add, onIncrement, colorScheme),
             ],
           ),
         ],

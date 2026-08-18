@@ -18,7 +18,7 @@ class MainScaffold extends StatelessWidget {
   Widget _buildBottomNavigation(BuildContext context) {
     final theme = Theme.of(context);
     final location = GoRouterState.of(context).matchedLocation;
-    
+
     int currentIndex = 0;
     if (location.startsWith(AppRoutes.home)) {
       currentIndex = 0;
@@ -47,10 +47,38 @@ class MainScaffold extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildNavItem(context, Icons.home_filled, Icons.home_outlined, 0, currentIndex, AppRoutes.home),
-              _buildNavItem(context, Icons.luggage, Icons.luggage_outlined, 1, currentIndex, AppRoutes.myTrips),
-              _buildNavItem(context, Icons.favorite, Icons.favorite_outline, 2, currentIndex, '/favorites'),
-              _buildNavItem(context, Icons.person, Icons.person_outline, 3, currentIndex, AppRoutes.profile),
+              _buildNavItem(
+                context,
+                Icons.home_filled,
+                Icons.home_outlined,
+                0,
+                currentIndex,
+                AppRoutes.home,
+              ),
+              _buildNavItem(
+                context,
+                Icons.luggage,
+                Icons.luggage_outlined,
+                1,
+                currentIndex,
+                AppRoutes.myTrips,
+              ),
+              _buildNavItem(
+                context,
+                Icons.favorite,
+                Icons.favorite_outline,
+                2,
+                currentIndex,
+                '/favorites',
+              ),
+              _buildNavItem(
+                context,
+                Icons.person,
+                Icons.person_outline,
+                3,
+                currentIndex,
+                AppRoutes.profile,
+              ),
             ],
           ),
         ),
@@ -58,7 +86,14 @@ class MainScaffold extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, IconData activeIcon, IconData inactiveIcon, int index, int currentIndex, String route) {
+  Widget _buildNavItem(
+    BuildContext context,
+    IconData activeIcon,
+    IconData inactiveIcon,
+    int index,
+    int currentIndex,
+    String route,
+  ) {
     final theme = Theme.of(context);
     final isActive = index == currentIndex;
 
@@ -71,12 +106,16 @@ class MainScaffold extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary.withAlpha(26) : Colors.transparent, // 0.1 * 255
+          color: isActive
+              ? theme.colorScheme.primary.withAlpha(26)
+              : Colors.transparent, // 0.1 * 255
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(
           isActive ? activeIcon : inactiveIcon,
-          color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+          color: isActive
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurfaceVariant,
           size: 26,
         ),
       ),

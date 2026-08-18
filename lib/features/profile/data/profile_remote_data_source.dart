@@ -45,6 +45,8 @@ class ProfileRemoteDataSource {
 }
 
 /// Provider for the [ProfileRemoteDataSource].
-final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((ref) {
+final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((
+  ref,
+) {
   return ProfileRemoteDataSource(dio: ref.watch(dioProvider));
 });

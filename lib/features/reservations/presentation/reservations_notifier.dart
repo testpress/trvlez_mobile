@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,9 +6,10 @@ import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 
 // ─── List State ──────────────────────────────────────────────────
 
-final reservationListProvider = AsyncNotifierProvider<ReservationListNotifier, List<Reservation>>(
-  () => ReservationListNotifier(),
-);
+final reservationListProvider =
+    AsyncNotifierProvider<ReservationListNotifier, List<Reservation>>(
+      () => ReservationListNotifier(),
+    );
 
 class ReservationListNotifier extends AsyncNotifier<List<Reservation>> {
   @override
@@ -31,7 +30,7 @@ class ReservationListNotifier extends AsyncNotifier<List<Reservation>> {
     try {
       final repository = ref.read(reservationRepositoryProvider);
       final updated = await repository.cancelReservation(id);
-      
+
       // Update local state if we currently have data
       if (state.hasValue && state.value != null) {
         final currentList = state.value!;
@@ -61,9 +60,10 @@ class ReservationListNotifier extends AsyncNotifier<List<Reservation>> {
 
 // ─── Create State ────────────────────────────────────────────────
 
-final createReservationProvider = AutoDisposeAsyncNotifierProvider<CreateReservationNotifier, void>(
-  () => CreateReservationNotifier(),
-);
+final createReservationProvider =
+    AutoDisposeAsyncNotifierProvider<CreateReservationNotifier, void>(
+      () => CreateReservationNotifier(),
+    );
 
 class CreateReservationNotifier extends AutoDisposeAsyncNotifier<void> {
   @override
@@ -81,7 +81,7 @@ class CreateReservationNotifier extends AutoDisposeAsyncNotifier<void> {
     String? specialRequests,
   }) async {
     state = const AsyncLoading();
-    
+
     try {
       final repository = ref.read(reservationRepositoryProvider);
       final reservation = await repository.createReservation(
@@ -95,10 +95,10 @@ class CreateReservationNotifier extends AutoDisposeAsyncNotifier<void> {
         roomTypeIds: roomTypeIds,
         specialRequests: specialRequests,
       );
-      
+
       // Update the list provider with the new reservation
       ref.read(reservationListProvider.notifier).addReservation(reservation);
-      
+
       state = const AsyncData(null);
       return reservation;
     } catch (e, st) {
@@ -110,11 +110,15 @@ class CreateReservationNotifier extends AutoDisposeAsyncNotifier<void> {
 
 // ─── QR Token State ──────────────────────────────────────────────
 
-final checkInTokenProvider = AutoDisposeAsyncNotifierProviderFamily<CheckInTokenNotifier, CheckInToken?, String>(
-  () => CheckInTokenNotifier(),
-);
+final checkInTokenProvider =
+    AutoDisposeAsyncNotifierProviderFamily<
+      CheckInTokenNotifier,
+      CheckInToken?,
+      String
+    >(() => CheckInTokenNotifier());
 
-class CheckInTokenNotifier extends AutoDisposeFamilyAsyncNotifier<CheckInToken?, String> {
+class CheckInTokenNotifier
+    extends AutoDisposeFamilyAsyncNotifier<CheckInToken?, String> {
   @override
   FutureOr<CheckInToken?> build(String arg) {
     return null; // Initially null until generate is called

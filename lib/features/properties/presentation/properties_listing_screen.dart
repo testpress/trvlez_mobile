@@ -14,10 +14,12 @@ class PropertiesListingScreen extends ConsumerStatefulWidget {
   const PropertiesListingScreen({super.key});
 
   @override
-  ConsumerState<PropertiesListingScreen> createState() => _PropertiesListingScreenState();
+  ConsumerState<PropertiesListingScreen> createState() =>
+      _PropertiesListingScreenState();
 }
 
-class _PropertiesListingScreenState extends ConsumerState<PropertiesListingScreen> {
+class _PropertiesListingScreenState
+    extends ConsumerState<PropertiesListingScreen> {
   int _selectedCategoryIndex = 0;
 
   final List<String> categories = ['Location', 'Hotels', 'Food', 'Adventure'];
@@ -54,21 +56,26 @@ class _PropertiesListingScreenState extends ConsumerState<PropertiesListingScree
         child: isLoading && properties.isEmpty
             ? const Center(child: CircularProgressIndicator())
             : error != null && properties.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Error: $error', style: TextStyle(color: theme.colorScheme.error)),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => ref.read(propertiesProvider.notifier).fetchProperties(),
-                          child: const Text('Retry'),
-                        ),
-                      ],
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Error: $error',
+                      style: TextStyle(color: theme.colorScheme.error),
                     ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: () => ref.refresh(propertiesProvider.future),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => ref
+                          .read(propertiesProvider.notifier)
+                          .fetchProperties(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: () => ref.refresh(propertiesProvider.future),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Padding(
@@ -160,7 +167,7 @@ class _PropertiesHeader extends StatelessWidget {
                 color: colorScheme.shadow.withAlpha(13), // 0.05 * 255 ≈ 13
                 blurRadius: 10,
                 offset: const Offset(0, 2),
-              )
+              ),
             ],
           ),
           child: Row(
@@ -175,10 +182,14 @@ class _PropertiesHeader extends StatelessWidget {
                   color: colorScheme.onSurface,
                 ),
               ),
-              Icon(Icons.keyboard_arrow_down, size: 16, color: colorScheme.onSurfaceVariant),
+              Icon(
+                Icons.keyboard_arrow_down,
+                size: 16,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -244,7 +255,9 @@ class _CategorySelector extends StatelessWidget {
               child: Text(
                 categories[index],
                 style: GoogleFonts.inter(
-                  color: isSelected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+                  color: isSelected
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurfaceVariant,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -308,7 +321,10 @@ class _PopularSection extends StatelessWidget {
                       property: property,
                       isHorizontal: true,
                       onTap: () {
-                        context.push(AppRoutes.propertyDetailPath(property.id), extra: property);
+                        context.push(
+                          AppRoutes.propertyDetailPath(property.id),
+                          extra: property,
+                        );
                       },
                     );
                   },
@@ -357,7 +373,10 @@ class _RecommendedSection extends StatelessWidget {
                     property: property,
                     isHorizontal: false,
                     onTap: () {
-                      context.push(AppRoutes.propertyDetailPath(property.id), extra: property);
+                      context.push(
+                        AppRoutes.propertyDetailPath(property.id),
+                        extra: property,
+                      );
                     },
                   );
                 },

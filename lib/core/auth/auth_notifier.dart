@@ -39,7 +39,8 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     final token = await tokenStorage.getToken();
     final isAuthenticated = token != null;
 
-    TravelerVerificationState verificationState = TravelerVerificationState.profilePending;
+    TravelerVerificationState verificationState =
+        TravelerVerificationState.profilePending;
 
     if (isAuthenticated) {
       try {
@@ -65,9 +66,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     try {
       final profileRepository = ref.read(profileRepositoryProvider);
       final profile = await profileRepository.getProfile();
-      state = AsyncData(currentState.copyWith(
-        verificationState: profile.verificationState,
-      ));
+      state = AsyncData(
+        currentState.copyWith(verificationState: profile.verificationState),
+      );
     } catch (_) {
       // Silently fail — existing state remains valid
     }
@@ -77,11 +78,13 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> logout() async {
     final tokenStorage = ref.read(tokenStorageProvider);
     await tokenStorage.deleteToken();
-    
-    state = const AsyncData(AuthState(
-      isAuthenticated: false,
-      verificationState: TravelerVerificationState.profilePending,
-    ));
+
+    state = const AsyncData(
+      AuthState(
+        isAuthenticated: false,
+        verificationState: TravelerVerificationState.profilePending,
+      ),
+    );
 
     // Invalidate feature providers to clear sensitive data
     ref.invalidate(propertiesProvider);

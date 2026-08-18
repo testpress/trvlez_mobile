@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
 import 'package:trvlez_mobile/app/routes.dart';
@@ -55,10 +54,12 @@ class LoginScreenState extends ConsumerState<LoginScreen>
   void onSubmit() {
     if (!formKey.currentState!.validate()) return;
 
-    ref.read(loginControllerProvider.notifier).login(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
+    ref
+        .read(loginControllerProvider.notifier)
+        .login(
+          email: emailController.text.trim(),
+          password: passwordController.text,
+        );
   }
 
   // ─── Validation ───────────────────────────────────────────────────
@@ -222,7 +223,9 @@ class LoginScreenState extends ConsumerState<LoginScreen>
       children: [
         Text(
           'Welcome back',
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
@@ -241,7 +244,8 @@ class LoginScreenState extends ConsumerState<LoginScreen>
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
     final error = ref.watch(loginControllerProvider).error;
-    final errorMessageText = (error as ApiException?)?.message ?? error?.toString();
+    final errorMessageText =
+        (error as ApiException?)?.message ?? error?.toString();
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
@@ -274,7 +278,8 @@ class LoginScreenState extends ConsumerState<LoginScreen>
                 ),
               ),
               GestureDetector(
-                onTap: () => ref.read(loginControllerProvider.notifier).clearError(),
+                onTap: () =>
+                    ref.read(loginControllerProvider.notifier).clearError(),
                 child: Icon(
                   Icons.close_rounded,
                   color: colorScheme.error.withAlpha(150),
@@ -331,8 +336,14 @@ class LoginScreenState extends ConsumerState<LoginScreen>
           decoration: InputDecoration(
             hintText: 'Enter your password',
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            suffixIconConstraints: const BoxConstraints(minHeight: 40, minWidth: 40),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            suffixIconConstraints: const BoxConstraints(
+              minHeight: 40,
+              minWidth: 40,
+            ),
             suffixIcon: IconButton(
               icon: Icon(
                 isPasswordVisible
@@ -359,7 +370,9 @@ class LoginScreenState extends ConsumerState<LoginScreen>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: FilledButton(
-        onPressed: ref.watch(loginControllerProvider).isLoading ? null : onSubmit,
+        onPressed: ref.watch(loginControllerProvider).isLoading
+            ? null
+            : onSubmit,
         style: FilledButton.styleFrom(
           minimumSize: const Size(double.infinity, 44),
           backgroundColor: colorScheme.primary,

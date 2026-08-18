@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
@@ -106,7 +105,10 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
 
               // Central Card Container
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
@@ -164,9 +166,14 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.3,
+                        ),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant,
+                          width: 0.8,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,8 +215,10 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.onSurface,
                         foregroundColor: colorScheme.surface,
-                        disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
-                        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+                        disabledBackgroundColor: colorScheme.onSurface
+                            .withValues(alpha: 0.12),
+                        disabledForegroundColor: colorScheme.onSurface
+                            .withValues(alpha: 0.38),
                         minimumSize: const Size(double.infinity, 44),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(22),
@@ -253,7 +262,8 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
                       ),
                       children: [
                         const TextSpan(
-                          text: 'If you are facing any difficulties, please get in touch with us on ',
+                          text:
+                              'If you are facing any difficulties, please get in touch with us on ',
                         ),
                         TextSpan(
                           text: 'Whatsapp',
@@ -275,14 +285,14 @@ class _SelfieInstructionScreenState extends State<SelfieInstructionScreen>
     );
   }
 
-  Widget _buildGuidelineRow(IconData icon, String text, ColorScheme colorScheme) {
+  Widget _buildGuidelineRow(
+    IconData icon,
+    String text,
+    ColorScheme colorScheme,
+  ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 18,
-          color: colorScheme.primary,
-        ),
+        Icon(icon, size: 18, color: colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
           child: Text(

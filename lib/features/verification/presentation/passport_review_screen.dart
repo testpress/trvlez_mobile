@@ -36,11 +36,7 @@ class PassportReviewScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 80,
-              ),
+              const Icon(Icons.check_circle, color: Colors.green, size: 80),
               const SizedBox(height: 24),
               Text(
                 'Passport Uploaded!',
@@ -83,7 +79,9 @@ class PassportReviewScreen extends ConsumerWidget {
         context.go(AppRoutes.passportCapture);
       },
       onUpload: () => notifier.uploadPassport(),
-      uploadText: status == VerificationActionStatus.error ? 'Retry Upload' : 'Upload',
+      uploadText: status == VerificationActionStatus.error
+          ? 'Retry Upload'
+          : 'Upload',
       child: InteractiveViewer(child: Image.file(image, fit: BoxFit.contain)),
     );
   }

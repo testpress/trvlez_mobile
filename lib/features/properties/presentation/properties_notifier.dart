@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 
-final propertiesProvider = AsyncNotifierProvider<PropertiesNotifier, List<Property>>(
-  () => PropertiesNotifier(),
-);
+final propertiesProvider =
+    AsyncNotifierProvider<PropertiesNotifier, List<Property>>(
+      () => PropertiesNotifier(),
+    );
 
 class PropertiesNotifier extends AsyncNotifier<List<Property>> {
   @override

@@ -46,9 +46,7 @@ class AuthRemoteDataSource {
         'username': email, // OAuth2 specification requires 'username'
         'password': password,
       },
-      options: Options(
-        contentType: Headers.formUrlEncodedContentType,
-      ),
+      options: Options(contentType: Headers.formUrlEncodedContentType),
     );
 
     return LoginResponseDto.fromJson(response.data!);

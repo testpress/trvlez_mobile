@@ -172,16 +172,18 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
   Future<void> onSubmit() async {
     if (!formKey.currentState!.validate()) return;
 
-    final success = await ref.read(currentProfileProvider.notifier).updateProfile(
-      phone: phoneController.text.trim(),
-      nationality: selectedNationality,
-      gender: selectedGender,
-      dateOfBirth: selectedDateOfBirth,
-      passportNumber: passportNumberController.text.trim().isNotEmpty
-          ? passportNumberController.text.trim()
-          : null,
-      passportExpiry: selectedPassportExpiry,
-    );
+    final success = await ref
+        .read(currentProfileProvider.notifier)
+        .updateProfile(
+          phone: phoneController.text.trim(),
+          nationality: selectedNationality,
+          gender: selectedGender,
+          dateOfBirth: selectedDateOfBirth,
+          passportNumber: passportNumberController.text.trim().isNotEmpty
+              ? passportNumberController.text.trim()
+              : null,
+          passportExpiry: selectedPassportExpiry,
+        );
 
     if (success && mounted) {
       // Proceed back to the onboarding journey
@@ -328,7 +330,8 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
     final error = ref.watch(currentProfileProvider).error;
-    final errorMessageText = (error as ApiException?)?.message ?? error?.toString();
+    final errorMessageText =
+        (error as ApiException?)?.message ?? error?.toString();
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(

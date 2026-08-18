@@ -16,6 +16,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_score_indicator.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_status_config.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+
 /// Displays the full verification journey with step-by-step progress.
 ///
 /// Shows a large animated status icon, a descriptive title, individual
@@ -27,17 +28,15 @@ import 'package:trvlez_mobile/app/routes.dart';
 class VerificationStatusScreen extends ConsumerStatefulWidget {
   final String? verificationJobId;
 
-  const VerificationStatusScreen({
-    super.key,
-    this.verificationJobId,
-  });
+  const VerificationStatusScreen({super.key, this.verificationJobId});
 
   @override
   ConsumerState<VerificationStatusScreen> createState() =>
       VerificationStatusScreenState();
 }
 
-class VerificationStatusScreenState extends ConsumerState<VerificationStatusScreen>
+class VerificationStatusScreenState
+    extends ConsumerState<VerificationStatusScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController pulseController;
   late final Animation<double> pulseAnimation;
@@ -69,14 +68,19 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
   Future<void> handleRefresh() async {
     final _ = await ref.refresh(currentProfileProvider.future);
     await ref.read(authNotifierProvider.notifier).refreshVerificationState();
-    await ref.read(verificationNotifierProvider.notifier).fetchVerificationStatus();
+    await ref
+        .read(verificationNotifierProvider.notifier)
+        .fetchVerificationStatus();
   }
 
   /// Derives the effective verification state.
   TravelerVerificationState get effectiveState {
     final profile = ref.read(currentProfileProvider).value;
-    final profileState = profile?.verificationState ?? TravelerVerificationState.submitted;
-    return ref.read(verificationNotifierProvider.notifier).effectiveState(profileState);
+    final profileState =
+        profile?.verificationState ?? TravelerVerificationState.submitted;
+    return ref
+        .read(verificationNotifierProvider.notifier)
+        .effectiveState(profileState);
   }
 
   double? get activeVerificationScore {
@@ -85,17 +89,18 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
         state.submitResult?.verificationScore;
   }
 
-  String? get failedStep => ref.read(verificationNotifierProvider).verificationStatus?.failedStep;
+  String? get failedStep =>
+      ref.read(verificationNotifierProvider).verificationStatus?.failedStep;
 
   String? get errorReason {
     final state = ref.read(verificationNotifierProvider);
-    final reason = state.verificationStatus?.errorReason ??
-        state.errorMessage;
+    final reason = state.verificationStatus?.errorReason ?? state.errorMessage;
     if (reason == uiMitigation) return null;
     return reason;
   }
 
-  String? get uiMitigation => ref.read(verificationNotifierProvider).verificationStatus?.uiMitigation;
+  String? get uiMitigation =>
+      ref.read(verificationNotifierProvider).verificationStatus?.uiMitigation;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +125,11 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: colorScheme.onSurface, size: 18),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: colorScheme.onSurface,
+            size: 18,
+          ),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -149,7 +158,10 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
 
                     // Central Card Container
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 24,
+                      ),
                       decoration: BoxDecoration(
                         color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(10),
@@ -182,7 +194,9 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                             config.subtitle,
                             style: GoogleFonts.inter(
                               fontSize: 13,
-                              color: colorScheme.onSurface.withValues(alpha: 0.65),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.65,
+                              ),
                               height: 1.5,
                             ),
                             textAlign: TextAlign.center,
@@ -192,15 +206,22 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                             const SizedBox(height: 16),
                             VerificationScoreIndicator(
                               score: activeVerificationScore!,
-                              isVerified: state == TravelerVerificationState.verified,
+                              isVerified:
+                                  state == TravelerVerificationState.verified,
                             ),
                           ],
                           const SizedBox(height: 32),
                           // ── Step Checklist ────────────────────────────
                           StepChecklist(
-                            state: state, 
-                            isNfcSkipped: ref.read(verificationNotifierProvider).isNfcSkipped,
-                            hasNfcResult: ref.read(verificationNotifierProvider).nfcResult != null,
+                            state: state,
+                            isNfcSkipped: ref
+                                .read(verificationNotifierProvider)
+                                .isNfcSkipped,
+                            hasNfcResult:
+                                ref
+                                    .read(verificationNotifierProvider)
+                                    .nfcResult !=
+                                null,
                           ),
                           const SizedBox(height: 24),
                           // ── Info Card ─────────────────────────────────
@@ -215,13 +236,18 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                           if (state.isFailed) ...[
                             ElevatedButton.icon(
                               onPressed: () {
-                                ref.read(verificationNotifierProvider.notifier).reset();
+                                ref
+                                    .read(verificationNotifierProvider.notifier)
+                                    .reset();
                                 context.go(AppRoutes.passportCapture);
                               },
                               icon: const Icon(Icons.refresh_rounded),
                               label: Text(
                                 'Re-submit Documents',
-                                style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: colorScheme.onSurface,
@@ -239,7 +265,9 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                                 // Future: open support chat/email
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: const Text('Support — coming soon!'),
+                                    content: const Text(
+                                      'Support — coming soon!',
+                                    ),
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
@@ -250,10 +278,14 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                               icon: const Icon(Icons.support_agent_rounded),
                               label: Text(
                                 'Contact Support',
-                                style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
                               ),
                               style: TextButton.styleFrom(
-                                foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),
+                                foregroundColor: colorScheme.onSurface
+                                    .withValues(alpha: 0.7),
                                 minimumSize: const Size(double.infinity, 44),
                               ),
                             ),
@@ -264,7 +296,10 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                               icon: const Icon(Icons.explore_rounded),
                               label: Text(
                                 'Start Exploring',
-                                style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: colorScheme.onSurface,
@@ -290,11 +325,14 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                           text: TextSpan(
                             style: GoogleFonts.inter(
                               fontSize: 10,
-                              color: colorScheme.onSurface.withValues(alpha: 0.65),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.65,
+                              ),
                             ),
                             children: [
                               const TextSpan(
-                                text: 'If you are facing any difficulties, please get in touch with us on ',
+                                text:
+                                    'If you are facing any difficulties, please get in touch with us on ',
                               ),
                               TextSpan(
                                 text: 'Whatsapp',

@@ -26,7 +26,7 @@ class PropertyCard extends StatelessWidget {
   Widget _buildPopularCard(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -62,7 +62,7 @@ class PropertyCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.transparent, 
+                      Colors.transparent,
                       colorScheme.scrim.withAlpha(180), // 0.7 * 255 ≈ 180
                     ],
                     begin: Alignment.topCenter,
@@ -97,7 +97,10 @@ class PropertyCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(12),
@@ -115,7 +118,7 @@ class PropertyCard extends StatelessWidget {
                   Text(
                     property.name,
                     style: GoogleFonts.inter(
-                      color: colorScheme.surface, 
+                      color: colorScheme.surface,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -125,7 +128,7 @@ class PropertyCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.star, color: colorScheme.primary, size: 16), 
+                      Icon(Icons.star, color: colorScheme.primary, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         property.rating.toString(),
@@ -136,7 +139,11 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Icon(Icons.location_on, color: colorScheme.surface.withAlpha(180), size: 16),
+                      Icon(
+                        Icons.location_on,
+                        color: colorScheme.surface.withAlpha(180),
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -163,7 +170,7 @@ class PropertyCard extends StatelessWidget {
   Widget _buildRecommendedCard(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -207,7 +214,10 @@ class PropertyCard extends StatelessWidget {
                   ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 8,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +237,9 @@ class PropertyCard extends StatelessWidget {
                       property.locationString,
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: colorScheme.onSurface.withAlpha(153), // 0.6 * 255
+                        color: colorScheme.onSurface.withAlpha(
+                          153,
+                        ), // 0.6 * 255
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

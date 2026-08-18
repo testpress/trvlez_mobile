@@ -15,10 +15,7 @@ import 'package:trvlez_mobile/features/reservations/presentation/reservations_no
 class QrCodeScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
 
-  const QrCodeScreen({
-    super.key,
-    required this.reservation,
-  });
+  const QrCodeScreen({super.key, required this.reservation});
 
   @override
   ConsumerState<QrCodeScreen> createState() => _QrCodeScreenState();
@@ -36,7 +33,9 @@ class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
   }
 
   void _generateToken() {
-    ref.read(checkInTokenProvider(widget.reservation.id).notifier).generateCheckInToken();
+    ref
+        .read(checkInTokenProvider(widget.reservation.id).notifier)
+        .generateCheckInToken();
   }
 
   @override
@@ -52,10 +51,7 @@ class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
         ),
         title: Text(
           'Check-in QR Code',
-          style: GoogleFonts.nunito(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+          style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
         ),
       ),
       body: SafeArea(
@@ -68,9 +64,7 @@ class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
               const SizedBox(height: 32),
 
               // QR content area
-              Expanded(
-                child: _buildQrContent(colorScheme),
-              ),
+              Expanded(child: _buildQrContent(colorScheme)),
 
               const SizedBox(height: 24),
 
@@ -236,7 +230,11 @@ class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
               color: colorScheme.error.withAlpha(20),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.error_outline, size: 48, color: colorScheme.error),
+            child: Icon(
+              Icons.error_outline,
+              size: 48,
+              color: colorScheme.error,
+            ),
           ),
           const SizedBox(height: 24),
           Text(
@@ -333,8 +331,11 @@ class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.timer_outlined,
-                      size: 16, color: Color(0xFF2E7D32)),
+                  const Icon(
+                    Icons.timer_outlined,
+                    size: 16,
+                    color: Color(0xFF2E7D32),
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Valid for ${remaining.inMinutes} min ${remaining.inSeconds % 60} sec',
@@ -376,24 +377,19 @@ class _QrCodeScreenState extends ConsumerState<QrCodeScreen> {
     final tokenState = ref.watch(checkInTokenProvider(widget.reservation.id));
     final token = tokenState.value;
     final hasToken = token != null;
-    final isExpired = hasToken &&
-        DateTime.now().isAfter(token.expiresAt);
+    final isExpired = hasToken && DateTime.now().isAfter(token.expiresAt);
 
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: FilledButton.icon(
-        onPressed:
-            tokenState.isLoading ? null : _generateToken,
+        onPressed: tokenState.isLoading ? null : _generateToken,
         icon: Icon(hasToken ? Icons.refresh : Icons.qr_code_2),
         label: Text(
           hasToken
               ? (isExpired ? 'Regenerate QR Code' : 'Generate New QR Code')
               : 'Generate QR Code',
-          style: GoogleFonts.nunito(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
+          style: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
     );

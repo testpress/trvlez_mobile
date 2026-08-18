@@ -34,10 +34,13 @@ class StepChecklist extends StatelessWidget {
       StepItem(label: 'Complete Profile', status: StepStatus.completed),
       StepItem(label: 'Upload Passport', status: StepStatus.completed),
       StepItem(label: 'Selfie Verification', status: StepStatus.completed),
-      if (hasNfcResult || !isNfcSkipped) // Show NFC step if it was done, or assume done if not explicitly skipped
+      if (hasNfcResult ||
+          !isNfcSkipped) // Show NFC step if it was done, or assume done if not explicitly skipped
         StepItem(
-          label: 'NFC Passport Scan', 
-          status: hasNfcResult ? StepStatus.completed : (isNfcSkipped ? StepStatus.failed : StepStatus.completed),
+          label: 'NFC Passport Scan',
+          status: hasNfcResult
+              ? StepStatus.completed
+              : (isNfcSkipped ? StepStatus.failed : StepStatus.completed),
         ),
       StepItem(
         label: 'Identity Review',

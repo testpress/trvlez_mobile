@@ -8,8 +8,8 @@ import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
 /// Provider for the [LoginController].
 final loginControllerProvider =
     AutoDisposeAsyncNotifierProvider<LoginController, void>(
-  () => LoginController(),
-);
+      () => LoginController(),
+    );
 
 /// State management for the login screen.
 ///
@@ -20,10 +20,7 @@ class LoginController extends AutoDisposeAsyncNotifier<void> {
   FutureOr<void> build() {}
 
   /// Attempts to log in an existing traveler.
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = const AsyncValue.loading();
 
     state = await AsyncValue.guard(() async {

@@ -138,7 +138,9 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: colorScheme.onSurface.withValues(alpha: 0.65),
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.65,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -194,7 +196,9 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             text: TextSpan(
                               style: GoogleFonts.inter(
                                 fontSize: 10,
-                                color: colorScheme.onSurface.withValues(alpha: 0.65),
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.65,
+                                ),
                               ),
                               children: [
                                 const TextSpan(
@@ -221,7 +225,6 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
     );
   }
-
 
   Widget _buildProgress(
     double progressValue,

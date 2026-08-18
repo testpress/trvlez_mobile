@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsRepository {
   static const _themeKey = 'isDark';
-  
+
   final SharedPreferences _prefs;
 
   SettingsRepository(this._prefs);

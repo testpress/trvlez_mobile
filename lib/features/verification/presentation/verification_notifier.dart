@@ -8,7 +8,8 @@ import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;
+import 'package:trvlez_mobile/features/verification/domain/verification_status.dart'
+    as domain;
 import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
@@ -30,12 +31,7 @@ enum VerificationPhase {
 }
 
 /// Backward-compatible status enum used by existing UI code.
-enum VerificationActionStatus {
-  idle,
-  uploading,
-  success,
-  error,
-}
+enum VerificationActionStatus { idle, uploading, success, error }
 
 class VerificationState {
   final File? capturedImage;
@@ -106,9 +102,11 @@ class VerificationState {
       mrzExtractionResult: mrzExtractionResult ?? this.mrzExtractionResult,
       nfcResult: clearNfcResult ? null : (nfcResult ?? this.nfcResult),
       isNfcSkipped: isNfcSkipped ?? this.isNfcSkipped,
-      extractedDocumentNumber: extractedDocumentNumber ?? this.extractedDocumentNumber,
+      extractedDocumentNumber:
+          extractedDocumentNumber ?? this.extractedDocumentNumber,
       extractedDateOfBirth: extractedDateOfBirth ?? this.extractedDateOfBirth,
-      extractedDateOfExpiry: extractedDateOfExpiry ?? this.extractedDateOfExpiry,
+      extractedDateOfExpiry:
+          extractedDateOfExpiry ?? this.extractedDateOfExpiry,
     );
   }
 }
@@ -133,7 +131,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
     VerificationPhase.submitting ||
     VerificationPhase.verifying ||
     VerificationPhase.verified => VerificationActionStatus.success,
-    VerificationPhase.extractingMrz => VerificationActionStatus.uploading, // Keep UI in loading state
+    VerificationPhase.extractingMrz =>
+      VerificationActionStatus.uploading, // Keep UI in loading state
     VerificationPhase.mrzExtractionFailed ||
     VerificationPhase.verificationFailed ||
     VerificationPhase.error => VerificationActionStatus.error,
@@ -141,37 +140,52 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
   /// Computes the effective verification state for the UI, similar to what
   /// VerificationStatusScreen previously did manually.
-  TravelerVerificationState effectiveState(TravelerVerificationState profileState) {
+  TravelerVerificationState effectiveState(
+    TravelerVerificationState profileState,
+  ) {
     if (state.phase == VerificationPhase.verified) {
       return TravelerVerificationState.verified;
     }
-    if (state.phase == VerificationPhase.verificationFailed || state.phase == VerificationPhase.error) {
+    if (state.phase == VerificationPhase.verificationFailed ||
+        state.phase == VerificationPhase.error) {
       return TravelerVerificationState.failed;
     }
-    
+
     if (state.jobResult?.isComplete == true) {
-      if (state.jobResult!.isVerified) return TravelerVerificationState.verified;
-      if (state.jobResult!.isFailed) return TravelerVerificationState.failed;
+      if (state.jobResult!.isVerified) {
+        return TravelerVerificationState.verified;
+      }
+      if (state.jobResult!.isFailed) {
+        return TravelerVerificationState.failed;
+      }
     }
-    
-    if (state.submitResult?.isVerified == true) return TravelerVerificationState.verified;
-    if (state.submitResult?.isFailed == true) return TravelerVerificationState.failed;
-    
-    if (state.phase == VerificationPhase.submitting || 
-        state.phase == VerificationPhase.verifying || 
-        (state.jobResult != null && !state.jobResult!.isComplete) || 
+
+    if (state.submitResult?.isVerified == true) {
+      return TravelerVerificationState.verified;
+    }
+    if (state.submitResult?.isFailed == true) {
+      return TravelerVerificationState.failed;
+    }
+
+    if (state.phase == VerificationPhase.submitting ||
+        state.phase == VerificationPhase.verifying ||
+        (state.jobResult != null && !state.jobResult!.isComplete) ||
         (state.submitResult?.isProcessing == true)) {
       return TravelerVerificationState.submitted;
     }
-    
+
     if (state.verificationStatus != null) {
-      if (state.verificationStatus!.isVerified) return TravelerVerificationState.verified;
-      if (state.verificationStatus!.isFailed) return TravelerVerificationState.failed;
+      if (state.verificationStatus!.isVerified) {
+        return TravelerVerificationState.verified;
+      }
+      if (state.verificationStatus!.isFailed) {
+        return TravelerVerificationState.failed;
+      }
       if (!state.verificationStatus!.isProcessing) {
         return TravelerVerificationState.verificationStarted;
       }
     }
-    
+
     return profileState;
   }
 
@@ -224,19 +238,13 @@ class VerificationNotifier extends Notifier<VerificationState> {
   }
 
   void setNfcResult(NfcPassportResult result) {
-    state = state.copyWith(
-      nfcResult: result,
-      isNfcSkipped: false,
-    );
+    state = state.copyWith(nfcResult: result, isNfcSkipped: false);
   }
 
   void skipNfc() {
-    state = state.copyWith(
-      isNfcSkipped: true,
-      clearNfcResult: true,
-    );
+    state = state.copyWith(isNfcSkipped: true, clearNfcResult: true);
   }
-  
+
   void setExtractedMrz(String docNum, DateTime dob, DateTime doe) {
     state = state.copyWith(
       extractedDocumentNumber: docNum,
@@ -267,25 +275,25 @@ class VerificationNotifier extends Notifier<VerificationState> {
       state = state.copyWith(phase: VerificationPhase.extractingMrz);
 
       final mrzResult = await repository.extractMrz();
-      
+
       if (mrzResult.success) {
         bool isValidMrz = false;
-        
+
         final validatedMrz = MrzValidator.validate(
           documentNumber: mrzResult.documentNumber,
           dateOfBirthStr: mrzResult.dateOfBirth,
           dateOfExpiryStr: mrzResult.dateOfExpiry,
         );
-        
+
         if (validatedMrz != null) {
           setExtractedMrz(
-            validatedMrz.documentNumber, 
-            validatedMrz.dateOfBirth, 
-            validatedMrz.dateOfExpiry
+            validatedMrz.documentNumber,
+            validatedMrz.dateOfBirth,
+            validatedMrz.dateOfExpiry,
           );
           isValidMrz = true;
         }
-        
+
         if (isValidMrz) {
           state = state.copyWith(
             phase: VerificationPhase.uploadSuccess,
@@ -294,16 +302,17 @@ class VerificationNotifier extends Notifier<VerificationState> {
         } else {
           state = state.copyWith(
             phase: VerificationPhase.mrzExtractionFailed,
-            errorMessage: 'Could not read all required passport data (Document Number, Date of Birth, Expiry). Please ensure the MRZ code is clearly visible and retake the photo.',
+            errorMessage:
+                'Could not read all required passport data (Document Number, Date of Birth, Expiry). Please ensure the MRZ code is clearly visible and retake the photo.',
           );
         }
       } else {
         state = state.copyWith(
           phase: VerificationPhase.mrzExtractionFailed,
-          errorMessage: mrzResult.errorMessage ?? 'Could not read passport MRZ data',
+          errorMessage:
+              mrzResult.errorMessage ?? 'Could not read passport MRZ data',
         );
       }
-      
     } on ApiException catch (e) {
       state = state.copyWith(
         phase: VerificationPhase.error,
@@ -328,7 +337,9 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
     try {
       final repository = ref.read(verificationRepositoryProvider);
-      await repository.confirmMrz(state.mrzExtractionResult!.toConfirmPayload());
+      await repository.confirmMrz(
+        state.mrzExtractionResult!.toConfirmPayload(),
+      );
       state = state.copyWith(phase: VerificationPhase.mrzReviewed);
     } on ApiException catch (e) {
       state = state.copyWith(
@@ -351,7 +362,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       phase: VerificationPhase.uploading,
       uploadProgress: 0.0,
       clearError: true,
-      // Clearing submitResult and jobResult implicitly here would require 
+      // Clearing submitResult and jobResult implicitly here would require
       // adding more clear flags, let's just create a completely fresh state or use clear flags
       // We'll keep the current submitResult/jobResult as is until submit Verification
     );
@@ -388,7 +399,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       final submitResult = await repository.submitVerification(
         nfcPayload: state.nfcResult?.toJson(),
       );
-      
+
       state = state.copyWith(submitResult: submitResult);
 
       if (submitResult.isVerified) {
@@ -396,7 +407,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
       } else if (submitResult.isFailed) {
         state = state.copyWith(
           phase: VerificationPhase.verificationFailed,
-          errorMessage: 'Identity verification was unsuccessful. Please try again.',
+          errorMessage:
+              'Identity verification was unsuccessful. Please try again.',
         );
       } else {
         state = state.copyWith(phase: VerificationPhase.verifying);
@@ -407,8 +419,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
               phase: pollingResult.isVerified
                   ? VerificationPhase.verified
                   : (pollingResult.isFailed
-                      ? VerificationPhase.verificationFailed
-                      : VerificationPhase.verifying),
+                        ? VerificationPhase.verificationFailed
+                        : VerificationPhase.verifying),
               jobResult: pollingResult,
             );
           },
@@ -435,8 +447,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
           phase: pollingResult.isVerified
               ? VerificationPhase.verified
               : (pollingResult.isFailed
-                  ? VerificationPhase.verificationFailed
-                  : VerificationPhase.verifying),
+                    ? VerificationPhase.verificationFailed
+                    : VerificationPhase.verifying),
           jobResult: pollingResult,
         );
       },

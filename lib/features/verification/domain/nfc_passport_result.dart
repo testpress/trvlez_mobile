@@ -52,28 +52,28 @@ class NfcMrzData {
 class NfcPassportResult {
   /// Base64 encoded raw bytes of Data Groups (e.g. 'dg1', 'dg2').
   final Map<String, String> rawDgBytesBase64;
-  
+
   /// Base64 encoded EF.SOD (Document Security Object) for Passive Authentication.
   final String? sodBytesBase64;
-  
+
   /// Base64 encoded EF.COM.
   final String? comBytesBase64;
-  
+
   /// Base64 encoded EF.CardAccess (PACE parameters).
   final String? cardAccessBytesBase64;
-  
+
   /// Parsed MRZ data from DG1.
   final NfcMrzData? parsedMrz;
-  
+
   /// Extracted face image bytes from DG2 (usually JPEG or JP2000).
   final Uint8List? faceImageBytes;
-  
+
   /// Base64 encoded Active Authentication signature (if DG15 was present).
   final String? activeAuthSignatureBase64;
-  
+
   /// The authentication method used (BAC or PACE).
   final NfcAuthMethod authMethod;
-  
+
   /// List of Data Group tags found in EF.COM (e.g., ['dg1', 'dg2', 'dg15']).
   final List<String> availableDataGroups;
 
@@ -100,7 +100,8 @@ class NfcPassportResult {
         ...rawDgBytesBase64,
       },
       if (parsedMrz != null) 'parsed_mrz': parsedMrz!.toJson(),
-      if (activeAuthSignatureBase64 != null) 'active_auth_signature': activeAuthSignatureBase64,
+      if (activeAuthSignatureBase64 != null)
+        'active_auth_signature': activeAuthSignatureBase64,
       'available_data_groups': availableDataGroups,
       'read_timestamp': DateTime.now().toUtc().toIso8601String(),
     };

@@ -1,4 +1,5 @@
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
+
 class PropertyDto {
   final String id;
   final String name;
@@ -35,10 +36,15 @@ class PropertyDto {
       shortDescription: json['short_description'] as String?,
       longDescription: json['long_description'] as String?,
       heroImageUrl: json['hero_image_url'] as String?,
-      latitude: json['latitude'] != null ? (json['latitude'] as num).toDouble() : null,
-      longitude: json['longitude'] != null ? (json['longitude'] as num).toDouble() : null,
+      latitude: json['latitude'] != null
+          ? (json['latitude'] as num).toDouble()
+          : null,
+      longitude: json['longitude'] != null
+          ? (json['longitude'] as num).toDouble()
+          : null,
       currencyCode: json['currency_code'] as String?,
-      roomTypes: (json['room_types'] as List<dynamic>?)
+      roomTypes:
+          (json['room_types'] as List<dynamic>?)
               ?.map((e) => e as Map<String, dynamic>)
               .toList() ??
           [],
@@ -57,14 +63,18 @@ class PropertyDto {
       pricePerNight: 199.0, // Hardcoded placeholder for now as per Figma
       rating: 4.5, // Hardcoded placeholder for now as per Figma
       reviewsCount: 355, // Hardcoded placeholder
-      roomTypes: roomTypes.map((r) => RoomType(
-        id: r['id'] as String? ?? '',
-        name: r['name'] as String? ?? '',
-        maxOccupancy: r['max_occupancy'] as int? ?? 2,
-        maxAdults: r['max_adults'] as int? ?? 2,
-        maxChildren: r['max_children'] as int? ?? 0,
-        description: r['description'] as String? ?? '',
-      )).toList(),
+      roomTypes: roomTypes
+          .map(
+            (r) => RoomType(
+              id: r['id'] as String? ?? '',
+              name: r['name'] as String? ?? '',
+              maxOccupancy: r['max_occupancy'] as int? ?? 2,
+              maxAdults: r['max_adults'] as int? ?? 2,
+              maxChildren: r['max_children'] as int? ?? 0,
+              description: r['description'] as String? ?? '',
+            ),
+          )
+          .toList(),
     );
   }
 }
@@ -84,7 +94,8 @@ class PropertyListingResponseDto {
 
   factory PropertyListingResponseDto.fromJson(Map<String, dynamic> json) {
     return PropertyListingResponseDto(
-      items: (json['data'] as List<dynamic>?)
+      items:
+          (json['data'] as List<dynamic>?)
               ?.map((e) => PropertyDto.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],

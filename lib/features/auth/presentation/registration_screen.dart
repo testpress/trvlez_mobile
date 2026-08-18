@@ -83,10 +83,12 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
   void onSubmit() {
     if (!formKey.currentState!.validate()) return;
 
-    ref.read(registrationControllerProvider.notifier).signUp(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
+    ref
+        .read(registrationControllerProvider.notifier)
+        .signUp(
+          email: emailController.text.trim(),
+          password: passwordController.text,
+        );
   }
 
   // ─── Validation ───────────────────────────────────────────────────
@@ -120,14 +122,14 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<void>>(
-      registrationControllerProvider,
-      (previous, next) {
-        if (!next.isLoading && !next.hasError && previous?.isLoading == true) {
-          showSuccessAndNavigate();
-        }
-      },
-    );
+    ref.listen<AsyncValue<void>>(registrationControllerProvider, (
+      previous,
+      next,
+    ) {
+      if (!next.isLoading && !next.hasError && previous?.isLoading == true) {
+        showSuccessAndNavigate();
+      }
+    });
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -265,7 +267,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
       children: [
         Text(
           'Create your account',
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
@@ -284,7 +288,8 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
     final error = ref.watch(registrationControllerProvider).error;
-    final errorMessageText = (error as ApiException?)?.message ?? error?.toString();
+    final errorMessageText =
+        (error as ApiException?)?.message ?? error?.toString();
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
@@ -317,7 +322,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
                 ),
               ),
               GestureDetector(
-                onTap: () => ref.read(registrationControllerProvider.notifier).clearError(),
+                onTap: () => ref
+                    .read(registrationControllerProvider.notifier)
+                    .clearError(),
                 child: Icon(
                   Icons.close_rounded,
                   color: colorScheme.error.withAlpha(150),
@@ -374,8 +381,14 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
           decoration: InputDecoration(
             hintText: 'Create a password (min 8 chars)',
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            suffixIconConstraints: const BoxConstraints(minHeight: 40, minWidth: 40),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            suffixIconConstraints: const BoxConstraints(
+              minHeight: 40,
+              minWidth: 40,
+            ),
             suffixIcon: IconButton(
               icon: Icon(
                 isPasswordVisible
@@ -402,7 +415,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: FilledButton(
-        onPressed: ref.watch(registrationControllerProvider).isLoading ? null : onSubmit,
+        onPressed: ref.watch(registrationControllerProvider).isLoading
+            ? null
+            : onSubmit,
         style: FilledButton.styleFrom(
           minimumSize: const Size(double.infinity, 44),
           backgroundColor: colorScheme.primary,
@@ -412,7 +427,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          elevation: ref.watch(registrationControllerProvider).isLoading ? 0 : 2,
+          elevation: ref.watch(registrationControllerProvider).isLoading
+              ? 0
+              : 2,
           shadowColor: colorScheme.primary.withAlpha(60),
         ),
         child: ref.watch(registrationControllerProvider).isLoading

@@ -10,25 +10,24 @@ import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+
 /// Active scanning screen that handles the real-time interaction with the NFC service.
 class NfcScanScreen extends ConsumerStatefulWidget {
   final NfcPassportService nfcService;
 
-  const NfcScanScreen({
-    super.key,
-    required this.nfcService,
-  });
+  const NfcScanScreen({super.key, required this.nfcService});
 
   @override
   ConsumerState<NfcScanScreen> createState() => _NfcScanScreenState();
 }
 
-class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   NfcReadProgress? _currentProgress;
   NfcError? _error;
   bool _isCheckingAvailability = true;
   NfcDeviceStatus _nfcStatus = NfcDeviceStatus.unsupported;
-  
+
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -36,12 +35,12 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -58,7 +57,8 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _nfcStatus == NfcDeviceStatus.disabled) {
+    if (state == AppLifecycleState.resumed &&
+        _nfcStatus == NfcDeviceStatus.disabled) {
       setState(() {
         _isCheckingAvailability = true;
       });
@@ -68,9 +68,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
 
   Future<void> _checkNfcAndStart() async {
     final status = await widget.nfcService.getNfcStatus();
-    
+
     if (!mounted) return;
-    
+
     setState(() {
       _isCheckingAvailability = false;
       _nfcStatus = status;
@@ -100,8 +100,10 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
       if (docNumber.isEmpty || dob == null || doe == null) {
         throw const NfcError(
           type: NfcErrorType.invalidMrzData,
-          message: 'Passport data is incomplete. Please re-scan your passport photo.',
-          userGuidance: 'Go back and retake the passport photo, ensuring the MRZ '
+          message:
+              'Passport data is incomplete. Please re-scan your passport photo.',
+          userGuidance:
+              'Go back and retake the passport photo, ensuring the MRZ '
               'text lines at the bottom of the data page are clearly visible.',
           isRetryable: false,
         );
@@ -121,13 +123,12 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
       );
 
       if (!mounted) return;
-      
+
       ref.read(verificationNotifierProvider.notifier).setNfcResult(result);
       context.pushReplacement(AppRoutes.nfcResult);
-      
     } catch (e) {
       if (!mounted) return;
-      
+
       setState(() {
         if (e is NfcError) {
           _error = e;
@@ -147,14 +148,15 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: const Text('Scanning Passport'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false, // Prevent backing out during active scan easily
+        automaticallyImplyLeading:
+            false, // Prevent backing out during active scan easily
         actions: [
           IconButton(
             icon: const Icon(Icons.close_rounded),
@@ -242,9 +244,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
         const SizedBox(height: 16),
         Text(
           'Keep your phone steady against the passport',
-          style: TextStyle(
-            color: theme.colorScheme.onSurface.withAlpha(150),
-          ),
+          style: TextStyle(color: theme.colorScheme.onSurface.withAlpha(150)),
         ),
         // Platform specific guide
         const SizedBox(height: 32),
@@ -257,15 +257,17 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
           child: Row(
             children: [
               Icon(
-                Platform.isIOS ? Icons.phone_iphone_rounded : Icons.android_rounded,
+                Platform.isIOS
+                    ? Icons.phone_iphone_rounded
+                    : Icons.android_rounded,
                 color: theme.colorScheme.onSecondaryContainer,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  Platform.isIOS 
-                    ? 'Rest the top edge of your iPhone on the inside back cover of the passport.'
-                    : 'Place the middle/top of your phone flat against the passport data page.',
+                  Platform.isIOS
+                      ? 'Rest the top edge of your iPhone on the inside back cover of the passport.'
+                      : 'Place the middle/top of your phone flat against the passport data page.',
                   style: TextStyle(
                     color: theme.colorScheme.onSecondaryContainer,
                     fontSize: 14,
@@ -356,7 +358,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
                   width: double.infinity,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withAlpha(100),
+                    color: theme.colorScheme.surfaceContainerHighest.withAlpha(
+                      100,
+                    ),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: SelectableText(
@@ -383,7 +387,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTicker
             ),
           )
         else if (_error!.type == NfcErrorType.authenticationFailed ||
-                 _error!.type == NfcErrorType.invalidMrzData)
+            _error!.type == NfcErrorType.invalidMrzData)
           FilledButton.icon(
             onPressed: () {
               // Go back to OCR to re-capture MRZ

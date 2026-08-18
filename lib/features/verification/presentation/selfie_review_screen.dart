@@ -73,7 +73,10 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
     if (phase == VerificationPhase.error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(ref.read(verificationNotifierProvider).errorMessage ?? 'Upload failed'),
+          content: Text(
+            ref.read(verificationNotifierProvider).errorMessage ??
+                'Upload failed',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -108,58 +111,55 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.watch(verificationNotifierProvider.notifier);
-    
+
     final phase = state.phase;
     final isUploading = phase == VerificationPhase.uploading;
     final isSubmitting = phase == VerificationPhase.submitting;
     final isBusy = isUploading || isSubmitting;
 
-        Widget mainChild;
-        if (videoController != null && videoController!.value.isInitialized) {
-          mainChild = Stack(
-            fit: StackFit.expand,
-            children: [
-              Center(
-                child: AspectRatio(
-                  aspectRatio: videoController!.value.aspectRatio,
-                  child: GestureDetector(
-                    onTap: togglePlay,
-                    child: VideoPlayer(videoController!),
-                  ),
-                ),
+    Widget mainChild;
+    if (videoController != null && videoController!.value.isInitialized) {
+      mainChild = Stack(
+        fit: StackFit.expand,
+        children: [
+          Center(
+            child: AspectRatio(
+              aspectRatio: videoController!.value.aspectRatio,
+              child: GestureDetector(
+                onTap: togglePlay,
+                child: VideoPlayer(videoController!),
               ),
-              if (!isPlaying && !isBusy)
-                Center(
-                  child: IconButton(
-                    iconSize: 64,
-                    icon: const Icon(
-                      Icons.play_circle_fill,
-                      color: Colors.white,
-                    ),
-                    onPressed: togglePlay,
-                  ),
-                ),
-            ],
-          );
-        } else {
-          mainChild = const Center(child: CircularProgressIndicator());
-        }
+            ),
+          ),
+          if (!isPlaying && !isBusy)
+            Center(
+              child: IconButton(
+                iconSize: 64,
+                icon: const Icon(Icons.play_circle_fill, color: Colors.white),
+                onPressed: togglePlay,
+              ),
+            ),
+        ],
+      );
+    } else {
+      mainChild = const Center(child: CircularProgressIndicator());
+    }
 
-        return SharedReviewScaffold(
-          title: 'Review Video',
-          isBusy: isBusy,
-          busyText: isSubmitting
-              ? 'Submitting for verification...'
-              : 'Uploading Video...',
-          progress: state.uploadProgress,
-          onRetake: () {
-            notifier.clearVideo();
-            context.go(AppRoutes.selfieCapture);
-          },
-          onUpload: handleUpload,
-          uploadText: 'Upload',
-          child: mainChild,
-        );
+    return SharedReviewScaffold(
+      title: 'Review Video',
+      isBusy: isBusy,
+      busyText: isSubmitting
+          ? 'Submitting for verification...'
+          : 'Uploading Video...',
+      progress: state.uploadProgress,
+      onRetake: () {
+        notifier.clearVideo();
+        context.go(AppRoutes.selfieCapture);
+      },
+      onUpload: handleUpload,
+      uploadText: 'Upload',
+      child: mainChild,
+    );
   }
 }
 

@@ -110,8 +110,7 @@ class NfcError implements Exception {
         errorString.contains('paceresponsecheckerror')) {
       return NfcError(
         type: NfcErrorType.authenticationFailed,
-        message:
-            'Could not authenticate with the passport chip$stepContext.',
+        message: 'Could not authenticate with the passport chip$stepContext.',
         userGuidance:
             'The scanned passport data may be incorrect. '
             'Please go back and retake the passport photo, ensuring the '
@@ -142,7 +141,8 @@ class NfcError implements Exception {
     if (errorString.contains('timeout') || errorString.contains('timed out')) {
       return NfcError(
         type: NfcErrorType.readTimeout,
-        message: 'Connection timed out$stepContext. Please keep the passport still.',
+        message:
+            'Connection timed out$stepContext. Please keep the passport still.',
         userGuidance:
             'Hold your phone steady against the passport and try again. '
             'The face image read can take up to 30 seconds.',
@@ -209,8 +209,7 @@ class NfcError implements Exception {
         errorString.contains('referenced data')) {
       return NfcError(
         type: NfcErrorType.tagLost,
-        message:
-            'The passport chip rejected the command$stepContext.',
+        message: 'The passport chip rejected the command$stepContext.',
         userGuidance:
             'Try repositioning your phone on the passport and scanning again.',
         technicalDetails: error.toString(),
@@ -245,8 +244,7 @@ class NfcError implements Exception {
     final exceptionTypeName = error.runtimeType.toString();
     return NfcError(
       type: fallbackType ?? NfcErrorType.unknownError,
-      message:
-          'Something went wrong while reading the passport$stepContext.',
+      message: 'Something went wrong while reading the passport$stepContext.',
       userGuidance:
           'Please try again. If the problem persists, you can skip NFC '
           'verification and continue.',
@@ -267,8 +265,7 @@ class NfcError implements Exception {
       if (code.sw1 == 0x69 && code.sw2 == 0x82) {
         return NfcError(
           type: NfcErrorType.authenticationFailed,
-          message:
-              'Could not authenticate with the passport chip$stepContext.',
+          message: 'Could not authenticate with the passport chip$stepContext.',
           userGuidance:
               'The scanned passport data may be incorrect. '
               'Please go back and retake the passport photo.',
@@ -295,8 +292,7 @@ class NfcError implements Exception {
       if (code.sw1 == 0x69 && (code.sw2 == 0x87 || code.sw2 == 0x88)) {
         return NfcError(
           type: NfcErrorType.secureMessagingError,
-          message:
-              'The secure connection was interrupted$stepContext.',
+          message: 'The secure connection was interrupted$stepContext.',
           userGuidance:
               'Keep your phone pressed firmly against the passport '
               'without moving until the scan completes.',
@@ -322,10 +318,8 @@ class NfcError implements Exception {
       if (code.sw1 == 0x69 && code.sw2 == 0x85) {
         return NfcError(
           type: NfcErrorType.tagLost,
-          message:
-              'The passport chip rejected the command$stepContext.',
-          userGuidance:
-              'Reposition your phone on the passport and try again.',
+          message: 'The passport chip rejected the command$stepContext.',
+          userGuidance: 'Reposition your phone on the passport and try again.',
           technicalDetails: error.toString(),
         );
       }
@@ -335,8 +329,7 @@ class NfcError implements Exception {
         return NfcError(
           type: NfcErrorType.tagLost,
           message: 'Communication error with the passport$stepContext.',
-          userGuidance:
-              'Reposition your phone and try again.',
+          userGuidance: 'Reposition your phone and try again.',
           technicalDetails: error.toString(),
         );
       }
@@ -347,8 +340,7 @@ class NfcError implements Exception {
           (code.sw1 == 0x6E && code.sw2 == 0x00)) {
         return NfcError(
           type: NfcErrorType.unsupportedPassport,
-          message:
-              'This passport uses an unsupported chip format$stepContext.',
+          message: 'This passport uses an unsupported chip format$stepContext.',
           userGuidance:
               'Your passport chip may not be compatible. '
               'You can skip NFC verification.',
@@ -363,8 +355,7 @@ class NfcError implements Exception {
         message.contains('authentication')) {
       return NfcError(
         type: NfcErrorType.authenticationFailed,
-        message:
-            'Could not authenticate with the passport chip$stepContext.',
+        message: 'Could not authenticate with the passport chip$stepContext.',
         userGuidance:
             'The scanned passport data may be incorrect. '
             'Please retake the passport photo.',
@@ -414,7 +405,8 @@ class NfcError implements Exception {
       return NfcError(
         type: NfcErrorType.readTimeout,
         message: 'NFC connection timed out$stepContext.',
-        userGuidance: 'Hold your phone steady against the passport and try again.',
+        userGuidance:
+            'Hold your phone steady against the passport and try again.',
         technicalDetails: error.toString(),
       );
     }

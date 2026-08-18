@@ -46,20 +46,20 @@ class OnboardingStepper extends StatelessWidget {
     final iconColor = isCompleted
         ? colorScheme.onPrimary
         : isActive
-            ? colorScheme.onPrimary
-            : colorScheme.onSurface.withValues(alpha: 0.6);
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface.withValues(alpha: 0.6);
 
     final circleColor = isCompleted
         ? colorScheme.primary
         : isActive
-            ? colorScheme.primary
-            : colorScheme.surface;
+        ? colorScheme.primary
+        : colorScheme.surface;
 
     final borderColor = isCompleted
         ? colorScheme.primary
         : isActive
-            ? colorScheme.primary
-            : colorScheme.outlineVariant;
+        ? colorScheme.primary
+        : colorScheme.outlineVariant;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -72,10 +72,14 @@ class OnboardingStepper extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: isActive ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3) : colorScheme.surface,
+              color: isActive
+                  ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
+                  : colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isActive ? colorScheme.primary : colorScheme.outlineVariant,
+                color: isActive
+                    ? colorScheme.primary
+                    : colorScheme.outlineVariant,
                 width: isActive ? 1.2 : 0.8,
               ),
               boxShadow: isActive
@@ -101,9 +105,15 @@ class OnboardingStepper extends StatelessWidget {
                   ),
                   child: Center(
                     child: isCompleted
-                        ? Icon(Icons.check_rounded, color: colorScheme.onPrimary, size: 16)
+                        ? Icon(
+                            Icons.check_rounded,
+                            color: colorScheme.onPrimary,
+                            size: 16,
+                          )
                         : Icon(
-                            isActive ? Icons.play_arrow_rounded : Icons.lock_outline_rounded,
+                            isActive
+                                ? Icons.play_arrow_rounded
+                                : Icons.lock_outline_rounded,
                             color: iconColor,
                             size: 16,
                           ),

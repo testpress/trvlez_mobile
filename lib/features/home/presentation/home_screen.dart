@@ -12,15 +12,14 @@ import 'package:trvlez_mobile/features/profile/domain/traveler_verification_stat
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+
 /// The primary landing screen for all authenticated travelers.
 ///
 /// Always shown after login regardless of onboarding state. Displays a
 /// context-aware verification banner that guides users through profile
 /// completion, document upload, or shows verification progress.
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({
-    super.key,
-  });
+  const HomeScreen({super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => HomeScreenState();
@@ -64,8 +63,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     final verificationStatusAsync = ref.watch(verificationStatusProvider);
     final verificationStatus = verificationStatusAsync.value;
 
-    TravelerVerificationState verificationState = profile?.verificationState ?? TravelerVerificationState.profilePending;
-    if (verificationState == TravelerVerificationState.submitted && verificationStatus?.isFailed == true) {
+    TravelerVerificationState verificationState =
+        profile?.verificationState ?? TravelerVerificationState.profilePending;
+    if (verificationState == TravelerVerificationState.submitted &&
+        verificationStatus?.isFailed == true) {
       verificationState = TravelerVerificationState.failed;
     }
 
@@ -191,9 +192,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     const SizedBox(height: 24),
                     // ── Welcome Section ──────────────────────────────
-                    WelcomeSection(
-                      isVerified: verificationState.isVerified,
-                    ),
+                    WelcomeSection(isVerified: verificationState.isVerified),
                     const SizedBox(height: 32),
                     // ── Feature Grid ────────────────────────────────
                     FeatureGrid(

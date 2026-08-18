@@ -41,7 +41,7 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
 
     final double frameCenterX = (params['frameCenterX'] as double?) ?? (sw / 2);
     final double cropCenterX = frameCenterX / scaleX;
-    
+
     final double cropW = frameWidth / scaleX;
     final double cropH = frameHeight / scaleY;
     final double cropX = cropCenterX - (cropW / 2);
@@ -67,13 +67,11 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
 class PassportCaptureScreen extends ConsumerStatefulWidget {
   final CameraService cameraService;
 
-  const PassportCaptureScreen({
-    super.key, 
-    required this.cameraService,
-  });
+  const PassportCaptureScreen({super.key, required this.cameraService});
 
   @override
-  ConsumerState<PassportCaptureScreen> createState() => PassportCaptureScreenState();
+  ConsumerState<PassportCaptureScreen> createState() =>
+      PassportCaptureScreenState();
 }
 
 class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
@@ -315,7 +313,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         );
 
         if (croppedFile != null) {
-          ref.read(verificationNotifierProvider.notifier).setImage(File(croppedFile.path));
+          ref
+              .read(verificationNotifierProvider.notifier)
+              .setImage(File(croppedFile.path));
           if (mounted) {
             await SystemChrome.setPreferredOrientations([
               DeviceOrientation.portraitUp,
@@ -380,9 +380,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     if (!isCameraInitialized || controller == null) {
       return const Scaffold(
         backgroundColor: Colors.black,
-        body: Center(
-          child: CircularProgressIndicator(color: Colors.white),
-        ),
+        body: Center(child: CircularProgressIndicator(color: Colors.white)),
       );
     }
 
@@ -444,10 +442,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           GestureDetector(
             onTap: _toggleFlash,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.black.withAlpha(100),
                 borderRadius: BorderRadius.circular(20),
@@ -480,9 +475,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       child: Text(
         'Hold steady • ~20 cm away • Ensure MRZ zone is visible',
         textAlign: TextAlign.center,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: Colors.white70,
-        ),
+        style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
       ),
     );
   }

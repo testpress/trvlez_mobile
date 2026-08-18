@@ -11,15 +11,13 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// Screen that introduces the NFC passport reading feature to the user.
 /// Explains the benefits and requirements, offering options to proceed or skip.
 class NfcIntroScreen extends ConsumerWidget {
-  const NfcIntroScreen({
-    super.key,
-  });
+  const NfcIntroScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -46,10 +44,13 @@ class NfcIntroScreen extends ConsumerWidget {
               // Horizontal Stepper Progress Indicator - Step 4 (NFC) is active
               const KycProgressStepper(progressIndex: 3),
               const SizedBox(height: 24),
-              
+
               // Central Card Container
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
@@ -103,7 +104,7 @@ class NfcIntroScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Text Content
                     Text(
                       'Verify with NFC',
@@ -125,14 +126,19 @@ class NfcIntroScreen extends ConsumerWidget {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Requirements List
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.3,
+                        ),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant,
+                          width: 0.8,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +167,7 @@ class NfcIntroScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Action Buttons
                     ElevatedButton(
                       onPressed: () {
@@ -188,7 +194,9 @@ class NfcIntroScreen extends ConsumerWidget {
                     TextButton(
                       onPressed: () => _showSkipDialog(context, ref),
                       style: TextButton.styleFrom(
-                        foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),
+                        foregroundColor: colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
                         minimumSize: const Size(double.infinity, 44),
                       ),
                       child: Text(
@@ -203,7 +211,7 @@ class NfcIntroScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Footer text
               Center(
                 child: Padding(
@@ -217,7 +225,8 @@ class NfcIntroScreen extends ConsumerWidget {
                       ),
                       children: [
                         const TextSpan(
-                          text: 'If you are facing any difficulties, please get in touch with us on ',
+                          text:
+                              'If you are facing any difficulties, please get in touch with us on ',
                         ),
                         TextSpan(
                           text: 'Whatsapp',
@@ -239,14 +248,14 @@ class NfcIntroScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRequirementRow(IconData icon, String text, ColorScheme colorScheme) {
+  Widget _buildRequirementRow(
+    IconData icon,
+    String text,
+    ColorScheme colorScheme,
+  ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 18,
-          color: colorScheme.primary,
-        ),
+        Icon(icon, size: 18, color: colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
@@ -291,12 +300,14 @@ class NfcIntroScreen extends ConsumerWidget {
       );
 
       ref.read(verificationNotifierProvider.notifier).skipNfc();
-      await ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
+      await ref
+          .read(verificationNotifierProvider.notifier)
+          .submitVerificationAsync();
 
       if (context.mounted) {
         // Pop loading overlay
         Navigator.pop(context);
-        
+
         final state = ref.read(verificationNotifierProvider);
         if (state.phase == VerificationPhase.error) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -55,10 +55,7 @@ class VerificationRepository {
     );
 
     // 3. Complete the upload
-    await dio.post(
-      '/upload/passport/complete',
-      data: {'file_id': fileId},
-    );
+    await dio.post('/upload/passport/complete', data: {'file_id': fileId});
   }
 
   Future<void> uploadSelfie(
@@ -94,10 +91,7 @@ class VerificationRepository {
     );
 
     // 3. Complete the upload
-    await dio.post(
-      '/upload/video/complete',
-      data: {'file_id': fileId},
-    );
+    await dio.post('/upload/video/complete', data: {'file_id': fileId});
   }
 
   /// Extracts MRZ data from the uploaded passport image.
@@ -207,10 +201,7 @@ class VerificationRepository {
         uploadUrl,
         data: fileStream,
         options: Options(
-          headers: {
-            'Content-Type': mimeType,
-            'Content-Length': fileLength,
-          },
+          headers: {'Content-Type': mimeType, 'Content-Length': fileLength},
         ),
         onSendProgress: (sent, total) {
           if (total > 0) {

@@ -6,6 +6,7 @@ import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/app/typography.dart';
+
 /// TrvlEz app theme ported from the Next.js design system.
 ///
 /// Fonts: Nunito (headings/bold), Cabin (body), Inter (brand).

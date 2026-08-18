@@ -11,7 +11,8 @@ class MrzValidator {
 
   /// Validates extracted MRZ data and returns parsed dates.
   /// Returns null if any required data is missing or invalid.
-  static ({String documentNumber, DateTime dateOfBirth, DateTime dateOfExpiry})? validate({
+  static ({String documentNumber, DateTime dateOfBirth, DateTime dateOfExpiry})?
+  validate({
     required String? documentNumber,
     required String? dateOfBirthStr,
     required String? dateOfExpiryStr,
@@ -28,7 +29,7 @@ class MrzValidator {
         dateOfExpiry: doe,
       );
     }
-    
+
     return null;
   }
 }

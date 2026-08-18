@@ -15,17 +15,15 @@ import 'package:trvlez_mobile/features/reservations/presentation/reservations_no
 class ReservationDetailScreen extends ConsumerStatefulWidget {
   final Reservation reservation;
 
-  const ReservationDetailScreen({
-    super.key,
-    required this.reservation,
-  });
+  const ReservationDetailScreen({super.key, required this.reservation});
 
   @override
   ConsumerState<ReservationDetailScreen> createState() =>
       _ReservationDetailScreenState();
 }
 
-class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScreen> {
+class _ReservationDetailScreenState
+    extends ConsumerState<ReservationDetailScreen> {
   @override
   void initState() {
     super.initState();
@@ -60,9 +58,7 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style: FilledButton.styleFrom(
-                backgroundColor: colorScheme.error,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
               child: const Text('Cancel Reservation'),
             ),
           ],
@@ -71,7 +67,9 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
     );
 
     if (confirmed == true) {
-      await ref.read(reservationListProvider.notifier).cancelReservation(reservation.id);
+      await ref
+          .read(reservationListProvider.notifier)
+          .cancelReservation(reservation.id);
     }
   }
 
@@ -79,9 +77,11 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final dateFormat = DateFormat('EEE, MMM d, yyyy');
-    
+
     final reservationsState = ref.watch(reservationListProvider);
-    final updated = reservationsState.value?.where((r) => r.id == widget.reservation.id).firstOrNull;
+    final updated = reservationsState.value
+        ?.where((r) => r.id == widget.reservation.id)
+        .firstOrNull;
     final reservation = updated ?? widget.reservation;
 
     return Scaffold(
@@ -93,10 +93,7 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
         ),
         title: Text(
           'Reservation Details',
-          style: GoogleFonts.nunito(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+          style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
         ),
       ),
       body: SingleChildScrollView(
@@ -217,8 +214,7 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
       child: Column(
         children: [
           ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: (property.heroImageUrl ?? '').isNotEmpty
                 ? Image.network(
                     property.heroImageUrl!,
@@ -230,8 +226,11 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
                     height: 160,
                     width: double.infinity,
                     color: colorScheme.surfaceContainerHighest,
-                    child: Icon(Icons.hotel,
-                        size: 48, color: colorScheme.onSurfaceVariant),
+                    child: Icon(
+                      Icons.hotel,
+                      size: 48,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
           ),
           Padding(
@@ -254,9 +253,11 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.location_on_outlined,
-                                size: 14,
-                                color: colorScheme.onSurfaceVariant),
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 14,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               property.locationString,
@@ -321,7 +322,10 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
     );
   }
 
-  Widget _buildStatusIndicator(ColorScheme colorScheme, Reservation reservation) {
+  Widget _buildStatusIndicator(
+    ColorScheme colorScheme,
+    Reservation reservation,
+  ) {
     Color indicatorColor = colorScheme.primary;
     IconData icon = Icons.info;
 
@@ -396,9 +400,7 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
             child: FilledButton.icon(
               onPressed: () => context.push(
                 '/reservations/${reservation.id}/qr',
-                extra: {
-                  'reservation': reservation,
-                },
+                extra: {'reservation': reservation},
               ),
               icon: const Icon(Icons.qr_code_2),
               label: Text(

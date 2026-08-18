@@ -6,26 +6,28 @@ import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dar
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
-final verificationNotifierProvider = NotifierProvider<VerificationNotifier, VerificationState>(() {
-  return VerificationNotifier();
-});
+final verificationNotifierProvider =
+    NotifierProvider<VerificationNotifier, VerificationState>(() {
+      return VerificationNotifier();
+    });
 
 final verificationRepositoryProvider = Provider<VerificationRepository>((ref) {
   final dio = ref.watch(dioProvider);
   return VerificationRepository(dio: dio);
 });
 
-final verificationStatusProvider = FutureProvider.autoDispose<VerificationStatus?>((ref) async {
-  final profileState = ref.watch(currentProfileProvider);
-  final profile = profileState.value;
+final verificationStatusProvider =
+    FutureProvider.autoDispose<VerificationStatus?>((ref) async {
+      final profileState = ref.watch(currentProfileProvider);
+      final profile = profileState.value;
 
-  if (profile?.verificationState == TravelerVerificationState.submitted) {
-    try {
-      final repository = ref.read(verificationRepositoryProvider);
-      return await repository.getVerificationStatus();
-    } catch (_) {
+      if (profile?.verificationState == TravelerVerificationState.submitted) {
+        try {
+          final repository = ref.read(verificationRepositoryProvider);
+          return await repository.getVerificationStatus();
+        } catch (_) {
+          return null;
+        }
+      }
       return null;
-    }
-  }
-  return null;
-});
+    });

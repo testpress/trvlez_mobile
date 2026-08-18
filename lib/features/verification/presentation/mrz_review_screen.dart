@@ -24,261 +24,269 @@ class MrzReviewScreen extends ConsumerWidget {
     final mrz = state.mrzExtractionResult;
     final phase = state.phase;
     final error = state.errorMessage;
-        final isConfirming = phase == VerificationPhase.confirmingMrz;
+    final isConfirming = phase == VerificationPhase.confirmingMrz;
 
-        if (mrz == null) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'KYC',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              centerTitle: true,
+    if (mrz == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'KYC',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+              color: colorScheme.onSurface,
             ),
-            body: const Center(child: Text('No passport data available')),
-          );
-        }
-
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          appBar: AppBar(
-            title: Text(
-              'KYC',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            centerTitle: true,
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            automaticallyImplyLeading: false,
           ),
-          body: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await notifier.fetchVerificationStatus();
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Horizontal Stepper Progress Indicator - Step 2 (Review) is active
-                    const KycProgressStepper(progressIndex: 1),
-                    const SizedBox(height: 24),
+          centerTitle: true,
+        ),
+        body: const Center(child: Text('No passport data available')),
+      );
+    }
 
-                    // Central Card Container
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surface,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.shadow.withValues(alpha: 0.08),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          'KYC',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+      ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await notifier.fetchVerificationStatus();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Horizontal Stepper Progress Indicator - Step 2 (Review) is active
+                const KycProgressStepper(progressIndex: 1),
+                const SizedBox(height: 24),
+
+                // Central Card Container
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.shadow.withValues(alpha: 0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Confirm Your Details',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'We extracted the following details from your passport. Please verify they are correct.',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: colorScheme.onSurface.withValues(alpha: 0.65),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Passport information fields
-                          _DetailRow(
-                            label: 'First Name',
-                            value: mrz.firstName ?? '—',
-                          ),
-                          _DetailRow(
-                            label: 'Last Name',
-                            value: mrz.lastName ?? '—',
-                          ),
-                          _DetailRow(
-                            label: 'Passport Number',
-                            value: mrz.documentNumber ?? '—',
-                          ),
-                          _DetailRow(
-                            label: 'Nationality',
-                            value: mrz.nationality ?? '—',
-                          ),
-                          _DetailRow(
-                            label: 'Date of Birth',
-                            value: mrz.dateOfBirth ?? '—',
-                          ),
-                          _DetailRow(
-                            label: 'Passport Expiry',
-                            value: mrz.dateOfExpiry ?? '—',
-                          ),
-                          _DetailRow(
-                            label: 'Gender',
-                            value: _formatSex(mrz.sex),
-                            showDivider: false,
-                          ),
-                          const SizedBox(height: 20),
-
-                          if (error != null) ...[
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: colorScheme.error.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: colorScheme.error.withValues(alpha: 0.2),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.error_outline_rounded,
-                                    color: colorScheme.error,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      error,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.error,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-
-                          // Continue button
-                          ElevatedButton(
-                            onPressed: isConfirming
-                                ? null
-                                : () async {
-                                    await notifier.confirmMrz();
-                                    if (context.mounted &&
-                                        ref.read(verificationNotifierProvider).phase == VerificationPhase.mrzReviewed) {
-                                      context.go(AppRoutes.selfieInstructions);
-                                    }
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: colorScheme.onSurface,
-                              foregroundColor: colorScheme.surface,
-                              minimumSize: const Size(double.infinity, 44),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: isConfirming
-                                ? SizedBox(
-                                    height: 18,
-                                    width: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: colorScheme.surface,
-                                    ),
-                                  )
-                                : Text(
-                                    'Confirm & Continue',
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                          ),
-                          const SizedBox(height: 12),
-
-                          // Re-upload button
-                          OutlinedButton(
-                            onPressed: isConfirming
-                                ? null
-                                : () {
-                                    notifier.clearImage();
-                                    context.go(AppRoutes.passportCapture);
-                                  },
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: colorScheme.primary,
-                              side: BorderSide(color: colorScheme.primary),
-                              minimumSize: const Size(double.infinity, 44),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                            ),
-                            child: Text(
-                              'Re-upload Passport',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Confirm Your Details',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 8),
+                      Text(
+                        'We extracted the following details from your passport. Please verify they are correct.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface.withValues(alpha: 0.65),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
 
-                    // Footer text
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 10,
-                              color: colorScheme.onSurface.withValues(alpha: 0.65),
+                      // Passport information fields
+                      _DetailRow(
+                        label: 'First Name',
+                        value: mrz.firstName ?? '—',
+                      ),
+                      _DetailRow(
+                        label: 'Last Name',
+                        value: mrz.lastName ?? '—',
+                      ),
+                      _DetailRow(
+                        label: 'Passport Number',
+                        value: mrz.documentNumber ?? '—',
+                      ),
+                      _DetailRow(
+                        label: 'Nationality',
+                        value: mrz.nationality ?? '—',
+                      ),
+                      _DetailRow(
+                        label: 'Date of Birth',
+                        value: mrz.dateOfBirth ?? '—',
+                      ),
+                      _DetailRow(
+                        label: 'Passport Expiry',
+                        value: mrz.dateOfExpiry ?? '—',
+                      ),
+                      _DetailRow(
+                        label: 'Gender',
+                        value: _formatSex(mrz.sex),
+                        showDivider: false,
+                      ),
+                      const SizedBox(height: 20),
+
+                      if (error != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: colorScheme.error.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: colorScheme.error.withValues(alpha: 0.2),
                             ),
+                          ),
+                          child: Row(
                             children: [
-                              const TextSpan(
-                                text: 'If you are facing any difficulties, please get in touch with us on ',
+                              Icon(
+                                Icons.error_outline_rounded,
+                                color: colorScheme.error,
+                                size: 18,
                               ),
-                              TextSpan(
-                                text: 'Whatsapp',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.success,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  error,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.error,
+                                    fontSize: 11,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // Continue button
+                      ElevatedButton(
+                        onPressed: isConfirming
+                            ? null
+                            : () async {
+                                await notifier.confirmMrz();
+                                if (context.mounted &&
+                                    ref
+                                            .read(verificationNotifierProvider)
+                                            .phase ==
+                                        VerificationPhase.mrzReviewed) {
+                                  context.go(AppRoutes.selfieInstructions);
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.onSurface,
+                          foregroundColor: colorScheme.surface,
+                          minimumSize: const Size(double.infinity, 44),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: isConfirming
+                            ? SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: colorScheme.surface,
+                                ),
+                              )
+                            : Text(
+                                'Confirm & Continue',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Re-upload button
+                      OutlinedButton(
+                        onPressed: isConfirming
+                            ? null
+                            : () {
+                                notifier.clearImage();
+                                context.go(AppRoutes.passportCapture);
+                              },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: colorScheme.primary,
+                          side: BorderSide(color: colorScheme.primary),
+                          minimumSize: const Size(double.infinity, 44),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                        ),
+                        child: Text(
+                          'Re-upload Passport',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Footer text
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 10,
+                          color: colorScheme.onSurface.withValues(alpha: 0.65),
+                        ),
+                        children: [
+                          const TextSpan(
+                            text:
+                                'If you are facing any difficulties, please get in touch with us on ',
+                          ),
+                          TextSpan(
+                            text: 'Whatsapp',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.success,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16),
+              ],
             ),
           ),
-        );
+        ),
+      ),
+    );
   }
+
   String _formatSex(String? sex) {
     if (sex == null || sex.isEmpty) return '—';
     switch (sex.toUpperCase()) {
