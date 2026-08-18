@@ -1,74 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/registration_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';
-import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';
-import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
-import 'package:trvlez_mobile/core/storage/settings_repository.dart';
-import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
-import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
-import 'package:trvlez_mobile/core/device/camera_service.dart';
-import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/features/home/presentation/main_scaffold.dart';
-import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
+import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
-import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
+import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
 
+/// Adapter to trigger GoRouter refresh when AuthState changes
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+  RouterNotifier(this._ref) {
+    _ref.listen(authNotifierProvider, (_, __) => notifyListeners());
+  }
+}
 
 /// Central router configuration for the TrvlEz app.
 ///
 /// Redirect logic:
 /// - Not authenticated → `/login`
-GoRouter createRouter(
-  AuthNotifier authNotifier,
-  AuthRepository authRepository,
-  ProfileRepository profileRepository,
-  PropertiesRepository propertiesRepository,
-  ReservationRepository reservationRepository,
-  VerificationNotifier verificationNotifier,
-  SettingsRepository settingsRepository,
-) {
-  final nfcPassportService = NfcPassportService();
-  final cameraService = CameraService();
+final routerProvider = Provider<GoRouter>((ref) {
+  final routerNotifier = RouterNotifier(ref);
+
+  // We read the legacy verificationNotifier here until it is fully migrated in Phase 7.
+  final verificationNotifier = ref.read(legacyVerificationNotifierProvider);
+  final cameraService = ref.read(cameraServiceProvider);
+  final nfcPassportService = ref.read(nfcPassportServiceProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.welcome,
-    refreshListenable: authNotifier,
+    refreshListenable: routerNotifier,
     redirect: (context, state) {
-      final isAuthenticated = authNotifier.isAuthenticated;
+      final authState = ref.read(authNotifierProvider).valueOrNull;
+      final isAuthenticated = authState?.isAuthenticated ?? false;
+      
       final location = state.matchedLocation;
       final isAuthRoute = location == AppRoutes.login || location == AppRoutes.register || location == AppRoutes.welcome;
 
       if (!isAuthenticated) {
-        // Not authenticated → force to login (unless already there)
         if (!isAuthRoute) return AppRoutes.login;
         return null;
       }
 
-      // Authenticated — redirect away from auth routes (except welcome)
       if (location == AppRoutes.login || location == AppRoutes.register) {
         return AppRoutes.home;
       }
@@ -78,15 +78,16 @@ GoRouter createRouter(
     routes: [
       GoRoute(
         path: AppRoutes.welcome,
-        builder: (context, state) => WelcomeScreen(
-          isAuthenticated: authNotifier.isAuthenticated,
-        ),
+        builder: (context, state) {
+          final authState = ref.read(authNotifierProvider).valueOrNull;
+          return WelcomeScreen(
+            isAuthenticated: authState?.isAuthenticated ?? false,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) => LoginScreen(
-          authNotifier: authNotifier,
-        ),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.register,
@@ -117,12 +118,7 @@ GoRouter createRouter(
           ),
           GoRoute(
             path: AppRoutes.profile,
-            builder: (context, state) => HomeScreen(
-              authNotifier: authNotifier,
-              profileRepository: profileRepository,
-              verificationRepository: verificationNotifier.repository,
-              settingsRepository: settingsRepository,
-            ),
+            builder: (context, state) => const HomeScreen(),
           ),
         ],
       ),
@@ -132,7 +128,7 @@ GoRouter createRouter(
           final property = state.extra as Property;
           return PropertyDetailScreen(
             property: property,
-            repository: propertiesRepository,
+            repository: ref.read(propertiesRepositoryProvider),
           );
         },
       ),
@@ -173,67 +169,67 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: AppRoutes.passportCapture,
-        builder: (context, state) =>
-            PassportCaptureScreen(
-              notifier: verificationNotifier,
-              cameraService: cameraService,
-            ),
+        builder: (context, state) => PassportCaptureScreen(
+          notifier: verificationNotifier,
+          cameraService: cameraService,
+        ),
       ),
       GoRoute(
         path: AppRoutes.passportReview,
-        builder: (context, state) =>
-            PassportReviewScreen(notifier: verificationNotifier),
+        builder: (context, state) => PassportReviewScreen(
+          notifier: verificationNotifier,
+        ),
       ),
       GoRoute(
         path: AppRoutes.mrzReview,
-        builder: (context, state) =>
-            MrzReviewScreen(notifier: verificationNotifier),
+        builder: (context, state) => MrzReviewScreen(
+          notifier: verificationNotifier,
+        ),
       ),
       GoRoute(
         path: AppRoutes.selfieInstructions,
-        builder: (context, state) =>
-            SelfieInstructionScreen(notifier: verificationNotifier),
+        builder: (context, state) => SelfieInstructionScreen(
+          notifier: verificationNotifier,
+        ),
       ),
       GoRoute(
         path: AppRoutes.selfieCapture,
-        builder: (context, state) =>
-            SelfieCaptureScreen(
-              notifier: verificationNotifier,
-              cameraService: cameraService,
-            ),
+        builder: (context, state) => SelfieCaptureScreen(
+          notifier: verificationNotifier,
+          cameraService: cameraService,
+        ),
       ),
       GoRoute(
         path: AppRoutes.selfieReview,
-        builder: (context, state) =>
-            SelfieReviewScreen(notifier: verificationNotifier),
+        builder: (context, state) => SelfieReviewScreen(
+          notifier: verificationNotifier,
+        ),
       ),
       GoRoute(
         path: AppRoutes.nfcIntro,
-        builder: (context, state) =>
-            NfcIntroScreen(notifier: verificationNotifier),
+        builder: (context, state) => NfcIntroScreen(
+          notifier: verificationNotifier,
+        ),
       ),
       GoRoute(
         path: AppRoutes.nfcScan,
-        builder: (context, state) =>
-            NfcScanScreen(
-              notifier: verificationNotifier, 
-              nfcService: nfcPassportService,
-            ),
+        builder: (context, state) => NfcScanScreen(
+          notifier: verificationNotifier,
+          nfcService: nfcPassportService,
+        ),
       ),
       GoRoute(
         path: AppRoutes.nfcResult,
-        builder: (context, state) =>
-            NfcResultScreen(notifier: verificationNotifier),
+        builder: (context, state) => NfcResultScreen(
+          notifier: verificationNotifier,
+        ),
       ),
       GoRoute(
         path: AppRoutes.verificationStatus,
         builder: (context, state) {
-          // Extract optional job ID from navigation extras
           final extras = state.extra as Map<String, dynamic>?;
           final jobId = extras?['jobId'] as String?;
-
           return VerificationStatusScreen(
-            authNotifier: authNotifier,
             verificationJobId: jobId,
             verificationNotifier: verificationNotifier,
           );
@@ -241,4 +237,4 @@ GoRouter createRouter(
       ),
     ],
   );
-}
+});

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trvlez_mobile/core/constants/app_config.dart';
 import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/network/error_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 
@@ -43,11 +44,7 @@ final dioProvider = Provider<Dio>((ref) {
     AuthInterceptor(tokenStorage: tokenStorage),
     ErrorInterceptor(
       onUnauthorized: () {
-        // This will be wired to AuthNotifier in Phase 6.
-        // For now during Phase 2, we preserve the existing behavior:
-        // the onUnauthorized callback is set on main.dart's authNotifier.
-        // The ErrorInterceptor throws ApiException.unauthorized() which
-        // the existing notifiers already catch.
+        ref.read(authNotifierProvider.notifier).logout();
       },
     ),
     if (kDebugMode)

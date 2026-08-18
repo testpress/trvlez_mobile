@@ -1,78 +1,93 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
-/// Manages global authentication state for the application.
-///
-/// Also caches the traveler's [verificationState] so the router can make
-/// synchronous redirect decisions without an extra async fetch.
-class AuthNotifier extends ChangeNotifier {
-  final TokenStorage tokenStorage;
-  final ProfileRepository? profileRepository;
-  final VoidCallback? onLogout;
+import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
-  bool isAuthenticated = false;
+class AuthState {
+  final bool isAuthenticated;
+  final TravelerVerificationState verificationState;
 
-  /// Cached verification state — loaded during [checkAuthStatus].
-  /// Defaults to [TravelerVerificationState.profilePending] until the
-  /// profile is successfully fetched.
-  TravelerVerificationState verificationState =
-      TravelerVerificationState.profilePending;
-
-  AuthNotifier({
-    required this.tokenStorage,
-    this.profileRepository,
-    this.onLogout,
+  const AuthState({
+    required this.isAuthenticated,
+    required this.verificationState,
   });
 
-  /// Checks secure storage for an existing token and updates state.
-  ///
-  /// If a token exists and a [ProfileRepository] is available, also fetches
-  /// the profile to cache the current [verificationState].
-  Future<void> checkAuthStatus() async {
-    final token = await tokenStorage.getToken();
-    isAuthenticated = token != null;
+  AuthState copyWith({
+    bool? isAuthenticated,
+    TravelerVerificationState? verificationState,
+  }) {
+    return AuthState(
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      verificationState: verificationState ?? this.verificationState,
+    );
+  }
+}
 
-    if (isAuthenticated && profileRepository != null) {
+final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, AuthState>(
+  () => AuthNotifier(),
+);
+
+class AuthNotifier extends AsyncNotifier<AuthState> {
+  @override
+  Future<AuthState> build() async {
+    final tokenStorage = ref.read(tokenStorageProvider);
+    final token = await tokenStorage.getToken();
+    final isAuthenticated = token != null;
+
+    TravelerVerificationState verificationState = TravelerVerificationState.profilePending;
+
+    if (isAuthenticated) {
       try {
-        final profile = await profileRepository!.getProfile();
+        final profileRepository = ref.read(profileRepositoryProvider);
+        final profile = await profileRepository.getProfile();
         verificationState = profile.verificationState;
       } catch (_) {
         // If profile fetch fails, keep default — router will send to onboarding
-        // which will attempt its own profile load.
       }
     }
 
-    notifyListeners();
+    return AuthState(
+      isAuthenticated: isAuthenticated,
+      verificationState: verificationState,
+    );
   }
 
   /// Refreshes just the verification state from the backend.
-  ///
-  /// Used after onboarding steps to update the router's redirect target
-  /// without a full auth re-check.
   Future<void> refreshVerificationState() async {
-    if (!isAuthenticated || profileRepository == null) return;
+    final currentState = state.valueOrNull;
+    if (currentState == null || !currentState.isAuthenticated) return;
 
     try {
-      final profile = await profileRepository!.getProfile();
-      verificationState = profile.verificationState;
-      notifyListeners();
+      final profileRepository = ref.read(profileRepositoryProvider);
+      final profile = await profileRepository.getProfile();
+      state = AsyncData(currentState.copyWith(
+        verificationState: profile.verificationState,
+      ));
     } catch (_) {
       // Silently fail — existing state remains valid
     }
   }
 
-  /// Marks the user as logged in. Should be called after successful login.
-  void setAuthenticated() {
-    isAuthenticated = true;
-    notifyListeners();
-  }
-
-  /// Logs the user out by deleting the token and updating state.
+  /// Logs the user out by deleting the token and invalidating state.
   Future<void> logout() async {
+    final tokenStorage = ref.read(tokenStorageProvider);
     await tokenStorage.deleteToken();
-    isAuthenticated = false;
-    verificationState = TravelerVerificationState.profilePending;
-    onLogout?.call();
-    notifyListeners();
+    
+    state = const AsyncData(AuthState(
+      isAuthenticated: false,
+      verificationState: TravelerVerificationState.profilePending,
+    ));
+
+    // Invalidate feature providers to clear sensitive data
+    ref.invalidate(propertiesProvider);
+    ref.invalidate(reservationListProvider);
+    ref.invalidate(currentProfileProvider);
+    ref.invalidate(verificationStatusProvider);
+    // Note: We don't have verificationNotifierProvider yet.
   }
 }

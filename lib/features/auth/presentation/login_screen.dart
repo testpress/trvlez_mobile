@@ -6,19 +6,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
 /// Traveler login screen.
 class LoginScreen extends ConsumerStatefulWidget {
-  final AuthNotifier authNotifier;
-
-  const LoginScreen({
-    super.key,
-    required this.authNotifier,
-  });
+  const LoginScreen({super.key});
 
   @override
   ConsumerState<LoginScreen> createState() => LoginScreenState();
@@ -63,7 +58,6 @@ class LoginScreenState extends ConsumerState<LoginScreen>
     ref.read(loginControllerProvider.notifier).login(
       email: emailController.text.trim(),
       password: passwordController.text,
-      authNotifier: widget.authNotifier,
     );
   }
 

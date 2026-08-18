@@ -3,12 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trvlez_mobile/core/storage/settings_repository.dart';
-
-import 'package:trvlez_mobile/app/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/app/theme.dart';
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
@@ -19,17 +18,8 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// context-aware verification banner that guides users through profile
 /// completion, document upload, or shows verification progress.
 class HomeScreen extends ConsumerStatefulWidget {
-  final AuthNotifier authNotifier;
-  final ProfileRepository profileRepository;
-  final VerificationRepository verificationRepository;
-  final SettingsRepository settingsRepository;
-
   const HomeScreen({
     super.key,
-    required this.authNotifier,
-    required this.profileRepository,
-    required this.verificationRepository,
-    required this.settingsRepository,
   });
 
   @override
@@ -40,7 +30,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> handleRefresh() async {
     ref.invalidate(currentProfileProvider);
     ref.invalidate(verificationStatusProvider);
-    await widget.authNotifier.refreshVerificationState();
+    await ref.read(authNotifierProvider.notifier).refreshVerificationState();
   }
 
   void onBannerTap(TravelerVerificationState state) {
@@ -177,7 +167,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               );
               if (confirm == true) {
-                widget.authNotifier.logout();
+                ref.read(authNotifierProvider.notifier).logout();
               }
             },
           ),

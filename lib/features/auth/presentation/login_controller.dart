@@ -23,14 +23,13 @@ class LoginController extends AutoDisposeAsyncNotifier<void> {
   Future<void> login({
     required String email,
     required String password,
-    required AuthNotifier authNotifier,
   }) async {
     state = const AsyncValue.loading();
 
     state = await AsyncValue.guard(() async {
       final repository = ref.read(authRepositoryProvider);
       await repository.login(email: email, password: password);
-      await authNotifier.checkAuthStatus();
+      ref.invalidate(authNotifierProvider);
     });
   }
 

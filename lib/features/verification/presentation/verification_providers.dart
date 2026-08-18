@@ -4,6 +4,11 @@ import 'package:trvlez_mobile/features/verification/data/verification_repository
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart' hide VerificationStatus;
+
+final legacyVerificationNotifierProvider = Provider<VerificationNotifier>((ref) {
+  throw UnimplementedError('Initialize this provider in main');
+});
 
 final verificationRepositoryProvider = Provider<VerificationRepository>((ref) {
   // Assuming dioProvider is available or we can inject it

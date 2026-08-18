@@ -5,20 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trvlez_mobile/app/router.dart';
 import 'package:trvlez_mobile/app/theme.dart';
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+
 import 'package:trvlez_mobile/core/constants/app_config.dart';
 import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
 import 'package:trvlez_mobile/core/network/error_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
-import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';
-import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
-import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
-import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
-import 'package:trvlez_mobile/features/properties/data/properties_remote_data_source.dart';
-import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
-import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data_source.dart';
-import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
@@ -50,12 +43,10 @@ void main() async {
   );
 
   // Error interceptor — maps DioException to ApiException.
-  // The onUnauthorized callback will be wired to authNotifier below.
-  late final AuthNotifier authNotifier;
   dio.interceptors.add(
     ErrorInterceptor(
       onUnauthorized: () {
-        authNotifier.logout();
+        // Handle logout globally
       },
     ),
   );
@@ -72,83 +63,27 @@ void main() async {
   }
 
   // 3. Data Sources & Repositories
-  final authRemoteDataSource = AuthRemoteDataSource(dio: dio);
-  final authRepository = AuthRepository(
-    remoteDataSource: authRemoteDataSource,
-    tokenStorage: tokenStorage,
-  );
-
-  final profileRemoteDataSource = ProfileRemoteDataSource(dio: dio);
-  final profileRepository = ProfileRepository(
-    remoteDataSource: profileRemoteDataSource,
-  );
-
-  final propertiesRemoteDataSource = PropertiesRemoteDataSource(dio: dio);
-  final propertiesRepository = PropertiesRepository(
-    remoteDataSource: propertiesRemoteDataSource,
-  );
-
-  final reservationRemoteDataSource = ReservationRemoteDataSource(dio: dio);
-  final reservationRepository = ReservationRepository(
-    remoteDataSource: reservationRemoteDataSource,
-  );
-
   final verificationNotifier = VerificationNotifier(
     repository: VerificationRepository(dio: dio),
   );
 
 
-  // 4. Auth State (with profile repo for onboarding step check)
-  authNotifier = AuthNotifier(
-    tokenStorage: tokenStorage,
-    profileRepository: profileRepository,
-    onLogout: () {
-      verificationNotifier.reset();
-    },
-  );
 
-  await authNotifier.checkAuthStatus();
 
   runApp(
     ProviderScope(
       overrides: [
         settingsRepositoryProvider.overrideWithValue(settingsRepository),
+        legacyVerificationNotifierProvider.overrideWithValue(verificationNotifier),
       ],
-      child: TrvlEzApp(
-        authNotifier: authNotifier,
-        authRepository: authRepository,
-        profileRepository: profileRepository,
-        propertiesRepository: propertiesRepository,
-        reservationRepository: reservationRepository,
-        verificationNotifier: verificationNotifier,
+      child: const TrvlEzApp(),
 
-        settingsRepository: settingsRepository,
-      ),
     ),
   );
 }
 
 class TrvlEzApp extends ConsumerWidget {
-  final AuthNotifier authNotifier;
-  final AuthRepository authRepository;
-  final ProfileRepository profileRepository;
-  final PropertiesRepository propertiesRepository;
-  final ReservationRepository reservationRepository;
-  final VerificationNotifier verificationNotifier;
-
-  final SettingsRepository settingsRepository;
-
-  const TrvlEzApp({
-    super.key,
-    required this.authNotifier,
-    required this.authRepository,
-    required this.profileRepository,
-    required this.propertiesRepository,
-    required this.reservationRepository,
-    required this.verificationNotifier,
-
-    required this.settingsRepository,
-  });
+  const TrvlEzApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -160,15 +95,7 @@ class TrvlEzApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: currentMode,
-      routerConfig: createRouter(
-        authNotifier,
-        authRepository,
-        profileRepository,
-        propertiesRepository,
-        reservationRepository,
-        verificationNotifier,
-        settingsRepository,
-      ),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }

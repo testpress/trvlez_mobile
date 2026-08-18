@@ -25,13 +25,11 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// When [verificationJobId] is provided, polls the backend for real-time
 /// verification pipeline progress.
 class VerificationStatusScreen extends ConsumerStatefulWidget {
-  final AuthNotifier authNotifier;
   final String? verificationJobId;
   final VerificationNotifier? verificationNotifier;
 
   const VerificationStatusScreen({
     super.key,
-    required this.authNotifier,
     this.verificationJobId,
     this.verificationNotifier,
   });
@@ -76,7 +74,7 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
 
   Future<void> handleRefresh() async {
     final _ = await ref.refresh(currentProfileProvider.future);
-    await widget.authNotifier.refreshVerificationState();
+    await ref.read(authNotifierProvider.notifier).refreshVerificationState();
     await widget.verificationNotifier?.fetchVerificationStatus();
   }
 
