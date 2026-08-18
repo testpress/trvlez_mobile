@@ -10,7 +10,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/camera_overlay_painter.dart';
 
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
 /// Crops the passport region from the full camera capture.
@@ -63,21 +64,19 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
   return null;
 }
 
-class PassportCaptureScreen extends StatefulWidget {
-  final VerificationNotifier notifier;
+class PassportCaptureScreen extends ConsumerStatefulWidget {
   final CameraService cameraService;
 
   const PassportCaptureScreen({
     super.key, 
-    required this.notifier,
     required this.cameraService,
   });
 
   @override
-  State<PassportCaptureScreen> createState() => PassportCaptureScreenState();
+  ConsumerState<PassportCaptureScreen> createState() => PassportCaptureScreenState();
 }
 
-class PassportCaptureScreenState extends State<PassportCaptureScreen> {
+class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   CameraController? controller;
   bool isCameraInitialized = false;
   bool isCapturing = false;
@@ -254,7 +253,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
       }
 
       // Hand off image and navigate to review
-      widget.notifier.setImage(croppedFile);
+      ref.read(verificationNotifierProvider.notifier).setImage(croppedFile);
 
       if (mounted) {
         // Restore portrait before leaving so the review screen renders correctly
@@ -316,7 +315,7 @@ class PassportCaptureScreenState extends State<PassportCaptureScreen> {
         );
 
         if (croppedFile != null) {
-          widget.notifier.setImage(File(croppedFile.path));
+          ref.read(verificationNotifierProvider.notifier).setImage(File(croppedFile.path));
           if (mounted) {
             await SystemChrome.setPreferredOrientations([
               DeviceOrientation.portraitUp,

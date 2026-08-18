@@ -3,22 +3,20 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 /// Screen summarizing the successful read of the NFC passport chip.
 /// Allows the user to confirm the extracted data before submitting the full verification to the backend.
-class NfcResultScreen extends StatelessWidget {
-  final VerificationNotifier notifier;
-
+class NfcResultScreen extends ConsumerWidget {
   const NfcResultScreen({
     super.key,
-    required this.notifier,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final result = notifier.nfcResult;
+    final result = ref.watch(verificationNotifierProvider).nfcResult;
 
     if (result == null) {
       // Safety fallback
@@ -170,7 +168,7 @@ class NfcResultScreen extends StatelessWidget {
               FilledButton(
                 onPressed: () {
                   // Final submission
-                  notifier.submitVerificationAsync();
+                  ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
                   context.go(AppRoutes.verificationStatus);
                 },
                 style: FilledButton.styleFrom(

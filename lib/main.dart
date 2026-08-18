@@ -11,9 +11,6 @@ import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
 import 'package:trvlez_mobile/core/network/error_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
 
 void main() async {
@@ -63,9 +60,6 @@ void main() async {
   }
 
   // 3. Data Sources & Repositories
-  final verificationNotifier = VerificationNotifier(
-    repository: VerificationRepository(dio: dio),
-  );
 
 
 
@@ -74,7 +68,6 @@ void main() async {
     ProviderScope(
       overrides: [
         settingsRepositoryProvider.overrideWithValue(settingsRepository),
-        legacyVerificationNotifierProvider.overrideWithValue(verificationNotifier),
       ],
       child: const TrvlEzApp(),
 

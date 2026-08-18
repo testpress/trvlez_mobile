@@ -9,23 +9,22 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/face_guide_painter.dart';
 
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
-class SelfieCaptureScreen extends StatefulWidget {
-  final VerificationNotifier notifier;
+class SelfieCaptureScreen extends ConsumerStatefulWidget {
   final CameraService cameraService;
 
   const SelfieCaptureScreen({
     super.key, 
-    required this.notifier,
     required this.cameraService,
   });
 
   @override
-  State<SelfieCaptureScreen> createState() => SelfieCaptureScreenState();
+  ConsumerState<SelfieCaptureScreen> createState() => SelfieCaptureScreenState();
 }
 
-class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
+class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
     with TickerProviderStateMixin {
   CameraController? cameraController;
   bool isInitializing = true;
@@ -137,7 +136,7 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
       });
 
       if (recordedSeconds >= minRecordingSeconds) {
-        widget.notifier.setVideo(File(video.path));
+        ref.read(verificationNotifierProvider.notifier).setVideo(File(video.path));
         if (mounted) {
           context.push(AppRoutes.selfieReview);
         }
@@ -169,7 +168,7 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
       final File? video = await widget.cameraService.pickVideoFromGallery();
 
       if (video != null) {
-        widget.notifier.setVideo(video);
+        ref.read(verificationNotifierProvider.notifier).setVideo(video);
         if (mounted) {
           context.push(AppRoutes.selfieReview);
         }

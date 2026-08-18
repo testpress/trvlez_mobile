@@ -1,122 +1,173 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_status.dart' as domain;
 import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+
 /// Tracks the current phase of the verification flow in the UI.
 enum VerificationPhase {
-  /// No operation in progress.
   idle,
-
-  /// Uploading a file to S3.
   uploading,
-
-  /// File upload succeeded (passport or selfie).
   uploadSuccess,
-
-  /// Extracting MRZ data from uploaded passport.
   extractingMrz,
-
-  /// Extracting MRZ data failed.
   mrzExtractionFailed,
-
-  /// MRZ data confirmed by traveller — ready to proceed to selfie.
   mrzReviewed,
-
-  /// Confirming MRZ data with the backend.
   confirmingMrz,
-
-  /// Submitting documents for verification (triggers ML pipeline).
   submitting,
-
-  /// ML pipeline is running — polling for results.
   verifying,
-
-  /// Verification pipeline completed successfully.
   verified,
-
-  /// Verification pipeline completed with failure.
   verificationFailed,
-
-  /// An error occurred (upload, submit, or network failure).
   error,
 }
 
-class VerificationNotifier extends ChangeNotifier {
-  final VerificationRepository repository;
-  late final VerificationPollingService _pollingService;
+/// Backward-compatible status enum used by existing UI code.
+enum VerificationActionStatus {
+  idle,
+  uploading,
+  success,
+  error,
+}
 
-  VerificationNotifier({required this.repository}) {
-    _pollingService = VerificationPollingService(repository: repository);
-  }
-
-  File? capturedImage;
-  File? capturedVideo;
-  VerificationPhase phase = VerificationPhase.idle;
-  double uploadProgress = 0.0;
-  String? errorMessage;
-  VerificationSubmitResult? submitResult;
-  VerificationJobResult? jobResult;
-  domain.VerificationStatus? verificationStatus;
+class VerificationState {
+  final File? capturedImage;
+  final File? capturedVideo;
+  final VerificationPhase phase;
+  final double uploadProgress;
+  final String? errorMessage;
+  final VerificationSubmitResult? submitResult;
+  final VerificationJobResult? jobResult;
+  final domain.VerificationStatus? verificationStatus;
 
   // MRZ State
-  MrzExtractionResult? mrzExtractionResult;
+  final MrzExtractionResult? mrzExtractionResult;
 
   // NFC State
-  NfcPassportResult? nfcResult;
-  bool isNfcSkipped = false;
-  String? extractedDocumentNumber;
-  DateTime? extractedDateOfBirth;
-  DateTime? extractedDateOfExpiry;
+  final NfcPassportResult? nfcResult;
+  final bool isNfcSkipped;
+  final String? extractedDocumentNumber;
+  final DateTime? extractedDateOfBirth;
+  final DateTime? extractedDateOfExpiry;
+
+  const VerificationState({
+    this.capturedImage,
+    this.capturedVideo,
+    this.phase = VerificationPhase.idle,
+    this.uploadProgress = 0.0,
+    this.errorMessage,
+    this.submitResult,
+    this.jobResult,
+    this.verificationStatus,
+    this.mrzExtractionResult,
+    this.nfcResult,
+    this.isNfcSkipped = false,
+    this.extractedDocumentNumber,
+    this.extractedDateOfBirth,
+    this.extractedDateOfExpiry,
+  });
+
+  VerificationState copyWith({
+    File? capturedImage,
+    bool clearImage = false,
+    File? capturedVideo,
+    bool clearVideo = false,
+    VerificationPhase? phase,
+    double? uploadProgress,
+    String? errorMessage,
+    bool clearError = false,
+    VerificationSubmitResult? submitResult,
+    VerificationJobResult? jobResult,
+    domain.VerificationStatus? verificationStatus,
+    MrzExtractionResult? mrzExtractionResult,
+    NfcPassportResult? nfcResult,
+    bool clearNfcResult = false,
+    bool? isNfcSkipped,
+    String? extractedDocumentNumber,
+    DateTime? extractedDateOfBirth,
+    DateTime? extractedDateOfExpiry,
+  }) {
+    return VerificationState(
+      capturedImage: clearImage ? null : (capturedImage ?? this.capturedImage),
+      capturedVideo: clearVideo ? null : (capturedVideo ?? this.capturedVideo),
+      phase: phase ?? this.phase,
+      uploadProgress: uploadProgress ?? this.uploadProgress,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      submitResult: submitResult ?? this.submitResult,
+      jobResult: jobResult ?? this.jobResult,
+      verificationStatus: verificationStatus ?? this.verificationStatus,
+      mrzExtractionResult: mrzExtractionResult ?? this.mrzExtractionResult,
+      nfcResult: clearNfcResult ? null : (nfcResult ?? this.nfcResult),
+      isNfcSkipped: isNfcSkipped ?? this.isNfcSkipped,
+      extractedDocumentNumber: extractedDocumentNumber ?? this.extractedDocumentNumber,
+      extractedDateOfBirth: extractedDateOfBirth ?? this.extractedDateOfBirth,
+      extractedDateOfExpiry: extractedDateOfExpiry ?? this.extractedDateOfExpiry,
+    );
+  }
+}
+
+class VerificationNotifier extends Notifier<VerificationState> {
+  late final VerificationPollingService _pollingService;
+
+  @override
+  VerificationState build() {
+    final repository = ref.read(verificationRepositoryProvider);
+    _pollingService = VerificationPollingService(repository: repository);
+    return const VerificationState();
+  }
 
   /// Backward-compatible status getter used by existing UI code.
-  VerificationStatus get status => switch (phase) {
-    VerificationPhase.idle => VerificationStatus.idle,
-    VerificationPhase.uploading => VerificationStatus.uploading,
+  VerificationActionStatus get status => switch (state.phase) {
+    VerificationPhase.idle => VerificationActionStatus.idle,
+    VerificationPhase.uploading => VerificationActionStatus.uploading,
     VerificationPhase.uploadSuccess ||
     VerificationPhase.mrzReviewed ||
     VerificationPhase.confirmingMrz ||
     VerificationPhase.submitting ||
     VerificationPhase.verifying ||
-    VerificationPhase.verified => VerificationStatus.success,
-    VerificationPhase.extractingMrz => VerificationStatus.uploading, // Keep UI in loading state
+    VerificationPhase.verified => VerificationActionStatus.success,
+    VerificationPhase.extractingMrz => VerificationActionStatus.uploading, // Keep UI in loading state
     VerificationPhase.mrzExtractionFailed ||
     VerificationPhase.verificationFailed ||
-    VerificationPhase.error => VerificationStatus.error,
+    VerificationPhase.error => VerificationActionStatus.error,
   };
 
   /// Computes the effective verification state for the UI, similar to what
   /// VerificationStatusScreen previously did manually.
   TravelerVerificationState effectiveState(TravelerVerificationState profileState) {
-    if (phase == VerificationPhase.verified) {
+    if (state.phase == VerificationPhase.verified) {
       return TravelerVerificationState.verified;
     }
-    if (phase == VerificationPhase.verificationFailed || phase == VerificationPhase.error) {
+    if (state.phase == VerificationPhase.verificationFailed || state.phase == VerificationPhase.error) {
       return TravelerVerificationState.failed;
     }
     
-    if (jobResult?.isComplete == true) {
-      if (jobResult!.isVerified) return TravelerVerificationState.verified;
-      if (jobResult!.isFailed) return TravelerVerificationState.failed;
+    if (state.jobResult?.isComplete == true) {
+      if (state.jobResult!.isVerified) return TravelerVerificationState.verified;
+      if (state.jobResult!.isFailed) return TravelerVerificationState.failed;
     }
     
-    if (submitResult?.isVerified == true) return TravelerVerificationState.verified;
-    if (submitResult?.isFailed == true) return TravelerVerificationState.failed;
+    if (state.submitResult?.isVerified == true) return TravelerVerificationState.verified;
+    if (state.submitResult?.isFailed == true) return TravelerVerificationState.failed;
     
-    if (phase == VerificationPhase.submitting || 
-        phase == VerificationPhase.verifying || 
-        (jobResult != null && !jobResult!.isComplete) || 
-        (submitResult?.isProcessing == true)) {
+    if (state.phase == VerificationPhase.submitting || 
+        state.phase == VerificationPhase.verifying || 
+        (state.jobResult != null && !state.jobResult!.isComplete) || 
+        (state.submitResult?.isProcessing == true)) {
       return TravelerVerificationState.submitted;
     }
     
-    if (verificationStatus != null) {
-      if (verificationStatus!.isVerified) return TravelerVerificationState.verified;
-      if (verificationStatus!.isFailed) return TravelerVerificationState.failed;
-      if (!verificationStatus!.isProcessing) {
+    if (state.verificationStatus != null) {
+      if (state.verificationStatus!.isVerified) return TravelerVerificationState.verified;
+      if (state.verificationStatus!.isFailed) return TravelerVerificationState.failed;
+      if (!state.verificationStatus!.isProcessing) {
         return TravelerVerificationState.verificationStarted;
       }
     }
@@ -126,100 +177,94 @@ class VerificationNotifier extends ChangeNotifier {
 
   Future<void> fetchVerificationStatus() async {
     try {
-      verificationStatus = await repository.getVerificationStatus();
-      notifyListeners();
+      final repository = ref.read(verificationRepositoryProvider);
+      final verificationStatus = await repository.getVerificationStatus();
+      state = state.copyWith(verificationStatus: verificationStatus);
     } catch (_) {}
   }
 
   void setImage(File image) {
-    capturedImage = image;
-    phase = VerificationPhase.idle;
-    errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(
+      capturedImage: image,
+      phase: VerificationPhase.idle,
+      clearError: true,
+    );
   }
 
   void clearImage() {
-    capturedImage = null;
-    phase = VerificationPhase.idle;
-    errorMessage = null;
-    uploadProgress = 0.0;
-    notifyListeners();
+    state = state.copyWith(
+      clearImage: true,
+      phase: VerificationPhase.idle,
+      clearError: true,
+      uploadProgress: 0.0,
+    );
   }
 
   void setVideo(File video) {
-    capturedVideo = video;
-    phase = VerificationPhase.idle;
-    errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(
+      capturedVideo: video,
+      phase: VerificationPhase.idle,
+      clearError: true,
+    );
   }
 
   void clearVideo() {
-    capturedVideo = null;
-    phase = VerificationPhase.idle;
-    errorMessage = null;
-    uploadProgress = 0.0;
-    notifyListeners();
+    state = state.copyWith(
+      clearVideo: true,
+      phase: VerificationPhase.idle,
+      clearError: true,
+      uploadProgress: 0.0,
+    );
   }
 
   /// Resets the notifier state completely for a new verification session.
   void reset() {
-    capturedImage = null;
-    capturedVideo = null;
-    phase = VerificationPhase.idle;
-    uploadProgress = 0.0;
-    errorMessage = null;
-    submitResult = null;
-    jobResult = null;
-    verificationStatus = null;
-    mrzExtractionResult = null;
-    nfcResult = null;
-    isNfcSkipped = false;
-    extractedDocumentNumber = null;
-    extractedDateOfBirth = null;
-    extractedDateOfExpiry = null;
     stopPolling();
-    notifyListeners();
+    state = const VerificationState();
   }
 
   void setNfcResult(NfcPassportResult result) {
-    nfcResult = result;
-    isNfcSkipped = false;
-    notifyListeners();
+    state = state.copyWith(
+      nfcResult: result,
+      isNfcSkipped: false,
+    );
   }
 
   void skipNfc() {
-    isNfcSkipped = true;
-    nfcResult = null;
-    notifyListeners();
+    state = state.copyWith(
+      isNfcSkipped: true,
+      clearNfcResult: true,
+    );
   }
   
   void setExtractedMrz(String docNum, DateTime dob, DateTime doe) {
-    extractedDocumentNumber = docNum;
-    extractedDateOfBirth = dob;
-    extractedDateOfExpiry = doe;
-    notifyListeners();
+    state = state.copyWith(
+      extractedDocumentNumber: docNum,
+      extractedDateOfBirth: dob,
+      extractedDateOfExpiry: doe,
+    );
   }
 
   Future<void> uploadPassport() async {
-    if (capturedImage == null) return;
+    if (state.capturedImage == null) return;
 
-    phase = VerificationPhase.uploading;
-    uploadProgress = 0.0;
-    errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(
+      phase: VerificationPhase.uploading,
+      uploadProgress: 0.0,
+      clearError: true,
+    );
 
     try {
+      final repository = ref.read(verificationRepositoryProvider);
       await repository.uploadPassport(
-        capturedImage!,
+        state.capturedImage!,
         onProgress: (progress) {
-          uploadProgress = progress;
-          notifyListeners();
+          state = state.copyWith(uploadProgress: progress);
         },
       );
 
       // After successful upload, immediately extract MRZ
-      phase = VerificationPhase.extractingMrz;
-      notifyListeners();
+      state = state.copyWith(phase: VerificationPhase.extractingMrz);
 
       final mrzResult = await repository.extractMrz();
       
@@ -242,189 +287,163 @@ class VerificationNotifier extends ChangeNotifier {
         }
         
         if (isValidMrz) {
-          phase = VerificationPhase.uploadSuccess;
-          // Store the full MRZ result for the review screen
-          mrzExtractionResult = mrzResult;
+          state = state.copyWith(
+            phase: VerificationPhase.uploadSuccess,
+            mrzExtractionResult: mrzResult,
+          );
         } else {
-          phase = VerificationPhase.mrzExtractionFailed;
-          errorMessage = 'Could not read all required passport data (Document Number, Date of Birth, Expiry). Please ensure the MRZ code is clearly visible and retake the photo.';
+          state = state.copyWith(
+            phase: VerificationPhase.mrzExtractionFailed,
+            errorMessage: 'Could not read all required passport data (Document Number, Date of Birth, Expiry). Please ensure the MRZ code is clearly visible and retake the photo.',
+          );
         }
       } else {
-        phase = VerificationPhase.mrzExtractionFailed;
-        errorMessage = mrzResult.errorMessage ?? 'Could not read passport MRZ data';
+        state = state.copyWith(
+          phase: VerificationPhase.mrzExtractionFailed,
+          errorMessage: mrzResult.errorMessage ?? 'Could not read passport MRZ data',
+        );
       }
       
-      notifyListeners();
     } on ApiException catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = e.message;
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: e.message,
+      );
     } catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = 'Upload failed: $e';
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: 'Upload failed: $e',
+      );
     }
   }
 
   /// Confirms MRZ-extracted data by calling the backend confirm-mrz endpoint.
-  ///
-  /// Persists the passport data to the traveller profile and advances onboarding.
   Future<void> confirmMrz() async {
-    if (mrzExtractionResult == null) return;
+    if (state.mrzExtractionResult == null) return;
 
-    phase = VerificationPhase.confirmingMrz;
-    errorMessage = null;
-    notifyListeners();
+    state = state.copyWith(
+      phase: VerificationPhase.confirmingMrz,
+      clearError: true,
+    );
 
     try {
-      await repository.confirmMrz(mrzExtractionResult!.toConfirmPayload());
-      phase = VerificationPhase.mrzReviewed;
-      notifyListeners();
+      final repository = ref.read(verificationRepositoryProvider);
+      await repository.confirmMrz(state.mrzExtractionResult!.toConfirmPayload());
+      state = state.copyWith(phase: VerificationPhase.mrzReviewed);
     } on ApiException catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = e.message;
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: e.message,
+      );
     } catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = 'Failed to confirm passport data: $e';
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: 'Failed to confirm passport data: $e',
+      );
     }
   }
 
   /// Uploads the selfie video.
-  ///
-  /// After a successful upload, this method transitions the phase to
-  /// [VerificationPhase.uploadSuccess] so the UI can proceed without waiting.
-  /// It then asynchronously triggers the backend ML verification pipeline.
   Future<void> uploadSelfie() async {
-    if (capturedVideo == null) return;
+    if (state.capturedVideo == null) return;
 
-    phase = VerificationPhase.uploading;
-    uploadProgress = 0.0;
-    errorMessage = null;
-    submitResult = null;
-    jobResult = null;
-    verificationStatus = null;
-    notifyListeners();
+    state = state.copyWith(
+      phase: VerificationPhase.uploading,
+      uploadProgress: 0.0,
+      clearError: true,
+      // Clearing submitResult and jobResult implicitly here would require 
+      // adding more clear flags, let's just create a completely fresh state or use clear flags
+      // We'll keep the current submitResult/jobResult as is until submit Verification
+    );
 
     try {
+      final repository = ref.read(verificationRepositoryProvider);
       await repository.uploadSelfie(
-        capturedVideo!,
+        state.capturedVideo!,
         onProgress: (progress) {
-          uploadProgress = progress;
-          notifyListeners();
+          state = state.copyWith(uploadProgress: progress);
         },
       );
 
       // Upload complete. Wait for user to proceed to NFC.
-      phase = VerificationPhase.uploadSuccess;
-      notifyListeners();
+      state = state.copyWith(phase: VerificationPhase.uploadSuccess);
     } on ApiException catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = e.message;
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: e.message,
+      );
     } catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = 'Upload failed: $e';
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: 'Upload failed: $e',
+      );
     }
   }
 
   Future<void> submitVerificationAsync() async {
-    phase = VerificationPhase.submitting;
-    notifyListeners();
+    state = state.copyWith(phase: VerificationPhase.submitting);
 
     try {
-      submitResult = await repository.submitVerification(
-        nfcPayload: nfcResult?.toJson(),
+      final repository = ref.read(verificationRepositoryProvider);
+      final submitResult = await repository.submitVerification(
+        nfcPayload: state.nfcResult?.toJson(),
       );
+      
+      state = state.copyWith(submitResult: submitResult);
 
-      if (submitResult!.isVerified) {
-        phase = VerificationPhase.verified;
-      } else if (submitResult!.isFailed) {
-        phase = VerificationPhase.verificationFailed;
-        errorMessage =
-            'Identity verification was unsuccessful. Please try again.';
+      if (submitResult.isVerified) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+      } else if (submitResult.isFailed) {
+        state = state.copyWith(
+          phase: VerificationPhase.verificationFailed,
+          errorMessage: 'Identity verification was unsuccessful. Please try again.',
+        );
       } else {
-        phase = VerificationPhase.verifying;
-        startPollingVerificationJob();
+        state = state.copyWith(phase: VerificationPhase.verifying);
+        _pollingService.startPolling(
+          jobId: submitResult.verificationJobId!,
+          onUpdate: (pollingResult, domainStatus) {
+            state = state.copyWith(
+              phase: pollingResult.isVerified
+                  ? VerificationPhase.verified
+                  : (pollingResult.isFailed
+                      ? VerificationPhase.verificationFailed
+                      : VerificationPhase.verifying),
+              jobResult: pollingResult,
+            );
+          },
+        );
       }
-
-      if (!submitResult!.isProcessing) {
-        try {
-          verificationStatus = await repository.getVerificationStatus();
-          if (submitResult!.isFailed) {
-            errorMessage =
-                verificationStatus?.uiMitigation ??
-                verificationStatus?.errorReason ??
-                errorMessage;
-          }
-        } catch (_) {}
-      }
-
-      notifyListeners();
     } on ApiException catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = e.message;
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: e.message,
+      );
     } catch (e) {
-      phase = VerificationPhase.error;
-      errorMessage = 'Verification submit failed: $e';
-      notifyListeners();
+      state = state.copyWith(
+        phase: VerificationPhase.error,
+        errorMessage: 'Submission failed: $e',
+      );
     }
   }
 
-  /// Polls the verification job using the VerificationPollingService.
-  void startPollingVerificationJob({
-    int initialIntervalSeconds = 2,
-    int maxIntervalSeconds = 15,
-    int maxDurationSeconds = 300,
-    VoidCallback? onComplete,
-  }) {
-    final jobId = submitResult?.verificationJobId;
-    if (jobId == null) return;
-
+  void startPollingVerificationJob(String jobId) {
     _pollingService.startPolling(
       jobId: jobId,
-      initialIntervalSeconds: initialIntervalSeconds,
-      maxIntervalSeconds: maxIntervalSeconds,
-      maxDurationSeconds: maxDurationSeconds,
-      onUpdate: (updatedJobResult, updatedStatus) {
-        jobResult = updatedJobResult;
-        if (updatedStatus != null) {
-          verificationStatus = updatedStatus;
-        }
-
-        if (jobResult!.isComplete) {
-          phase = jobResult!.isVerified
+      onUpdate: (pollingResult, domainStatus) {
+        state = state.copyWith(
+          phase: pollingResult.isVerified
               ? VerificationPhase.verified
-              : VerificationPhase.verificationFailed;
-
-          if (jobResult!.isFailed) {
-            errorMessage =
-                verificationStatus?.uiMitigation ??
-                verificationStatus?.errorReason ??
-                jobResult!.errorMessage ??
-                'Identity verification was unsuccessful. Please try again.';
-          }
-          onComplete?.call();
-        }
-        notifyListeners();
+              : (pollingResult.isFailed
+                  ? VerificationPhase.verificationFailed
+                  : VerificationPhase.verifying),
+          jobResult: pollingResult,
+        );
       },
     );
   }
 
-  /// Stops any active polling timer.
   void stopPolling() {
     _pollingService.stopPolling();
   }
-
-  @override
-  void dispose() {
-    stopPolling();
-    super.dispose();
-  }
 }
-
-/// Legacy status enum kept for backward compatibility with passport screens.
-enum VerificationStatus { idle, uploading, success, error }

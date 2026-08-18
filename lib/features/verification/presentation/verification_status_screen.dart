@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/step_checklist.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_info_card.dart';
@@ -26,12 +26,10 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// verification pipeline progress.
 class VerificationStatusScreen extends ConsumerStatefulWidget {
   final String? verificationJobId;
-  final VerificationNotifier? verificationNotifier;
 
   const VerificationStatusScreen({
     super.key,
     this.verificationJobId,
-    this.verificationNotifier,
   });
 
   @override
@@ -57,49 +55,47 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
       CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
     );
 
-    widget.verificationNotifier?.fetchVerificationStatus();
-    widget.verificationNotifier?.addListener(onNotifierChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(verificationNotifierProvider.notifier).fetchVerificationStatus();
+    });
   }
 
   @override
   void dispose() {
-    widget.verificationNotifier?.removeListener(onNotifierChanged);
     pulseController.dispose();
     super.dispose();
-  }
-
-  void onNotifierChanged() {
-    if (mounted) setState(() {});
   }
 
   Future<void> handleRefresh() async {
     final _ = await ref.refresh(currentProfileProvider.future);
     await ref.read(authNotifierProvider.notifier).refreshVerificationState();
-    await widget.verificationNotifier?.fetchVerificationStatus();
+    await ref.read(verificationNotifierProvider.notifier).fetchVerificationStatus();
   }
 
   /// Derives the effective verification state.
   TravelerVerificationState get effectiveState {
     final profile = ref.read(currentProfileProvider).value;
     final profileState = profile?.verificationState ?? TravelerVerificationState.submitted;
-    return widget.verificationNotifier?.effectiveState(profileState) ?? profileState;
+    return ref.read(verificationNotifierProvider.notifier).effectiveState(profileState);
   }
 
   double? get activeVerificationScore {
-    return widget.verificationNotifier?.jobResult?.verificationScore ??
-        widget.verificationNotifier?.submitResult?.verificationScore;
+    final state = ref.read(verificationNotifierProvider);
+    return state.jobResult?.verificationScore ??
+        state.submitResult?.verificationScore;
   }
 
-  String? get failedStep => widget.verificationNotifier?.verificationStatus?.failedStep;
+  String? get failedStep => ref.read(verificationNotifierProvider).verificationStatus?.failedStep;
 
   String? get errorReason {
-    final reason = widget.verificationNotifier?.verificationStatus?.errorReason ??
-        widget.verificationNotifier?.errorMessage;
+    final state = ref.read(verificationNotifierProvider);
+    final reason = state.verificationStatus?.errorReason ??
+        state.errorMessage;
     if (reason == uiMitigation) return null;
     return reason;
   }
 
-  String? get uiMitigation => widget.verificationNotifier?.verificationStatus?.uiMitigation;
+  String? get uiMitigation => ref.read(verificationNotifierProvider).verificationStatus?.uiMitigation;
 
   @override
   Widget build(BuildContext context) {
@@ -203,8 +199,8 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                           // ── Step Checklist ────────────────────────────
                           StepChecklist(
                             state: state, 
-                            isNfcSkipped: widget.verificationNotifier?.isNfcSkipped ?? false,
-                            hasNfcResult: widget.verificationNotifier?.nfcResult != null,
+                            isNfcSkipped: ref.read(verificationNotifierProvider).isNfcSkipped,
+                            hasNfcResult: ref.read(verificationNotifierProvider).nfcResult != null,
                           ),
                           const SizedBox(height: 24),
                           // ── Info Card ─────────────────────────────────
@@ -219,7 +215,7 @@ class VerificationStatusScreenState extends ConsumerState<VerificationStatusScre
                           if (state.isFailed) ...[
                             ElevatedButton.icon(
                               onPressed: () {
-                                widget.verificationNotifier?.reset();
+                                ref.read(verificationNotifierProvider.notifier).reset();
                                 context.go(AppRoutes.passportCapture);
                               },
                               icon: const Icon(Icons.refresh_rounded),

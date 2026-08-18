@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_review_scaffold.dart';
 
-class SelfieReviewScreen extends StatefulWidget {
-  final VerificationNotifier notifier;
-
-  const SelfieReviewScreen({super.key, required this.notifier});
+class SelfieReviewScreen extends ConsumerStatefulWidget {
+  const SelfieReviewScreen({super.key});
 
   @override
-  State<SelfieReviewScreen> createState() => SelfieReviewScreenState();
+  ConsumerState<SelfieReviewScreen> createState() => SelfieReviewScreenState();
 }
 
-class SelfieReviewScreenState extends State<SelfieReviewScreen> {
+class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   VideoPlayerController? videoController;
   bool isPlaying = false;
   bool isUploadingLocally = false;
@@ -25,10 +25,12 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
   @override
   void initState() {
     super.initState();
-    final videoFile = widget.notifier.capturedVideo;
-    if (videoFile != null) {
-      initializeVideo(videoFile);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final videoFile = ref.read(verificationNotifierProvider).capturedVideo;
+      if (videoFile != null) {
+        initializeVideo(videoFile);
+      }
+    });
   }
 
   Future<void> initializeVideo(File videoFile) async {
@@ -61,17 +63,17 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
   Future<void> handleUpload() async {
     if (isUploadingLocally) return;
     setState(() => isUploadingLocally = true);
-    await widget.notifier.uploadSelfie();
+    await ref.read(verificationNotifierProvider.notifier).uploadSelfie();
 
     if (!mounted) return;
     setState(() => isUploadingLocally = false);
 
-    final phase = widget.notifier.phase;
+    final phase = ref.read(verificationNotifierProvider).phase;
 
     if (phase == VerificationPhase.error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.notifier.errorMessage ?? 'Upload failed'),
+          content: Text(ref.read(verificationNotifierProvider).errorMessage ?? 'Upload failed'),
           backgroundColor: Colors.red,
         ),
       );
@@ -104,13 +106,13 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: widget.notifier,
-      builder: (context, _) {
-        final phase = widget.notifier.phase;
-        final isUploading = phase == VerificationPhase.uploading;
-        final isSubmitting = phase == VerificationPhase.submitting;
-        final isBusy = isUploading || isSubmitting;
+    final state = ref.watch(verificationNotifierProvider);
+    final notifier = ref.watch(verificationNotifierProvider.notifier);
+    
+    final phase = state.phase;
+    final isUploading = phase == VerificationPhase.uploading;
+    final isSubmitting = phase == VerificationPhase.submitting;
+    final isBusy = isUploading || isSubmitting;
 
         Widget mainChild;
         if (videoController != null && videoController!.value.isInitialized) {
@@ -148,19 +150,16 @@ class SelfieReviewScreenState extends State<SelfieReviewScreen> {
           isBusy: isBusy,
           busyText: isSubmitting
               ? 'Submitting for verification...'
-              : 'Uploading...',
-          progress: isSubmitting ? null : widget.notifier.uploadProgress,
+              : 'Uploading Video...',
+          progress: state.uploadProgress,
           onRetake: () {
-            widget.notifier.clearVideo();
-            if (context.canPop()) {
-              context.pop();
-            }
+            notifier.clearVideo();
+            context.go(AppRoutes.selfieCapture);
           },
           onUpload: handleUpload,
+          uploadText: 'Upload',
           child: mainChild,
         );
-      },
-    );
   }
 }
 

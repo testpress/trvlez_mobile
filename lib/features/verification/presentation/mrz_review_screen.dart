@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/colors.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
@@ -10,22 +12,18 @@ import 'package:trvlez_mobile/app/routes.dart';
 ///
 /// Displays extracted fields in a read-only card layout. The traveller can
 /// confirm the data (persists to profile) or re-upload their passport.
-class MrzReviewScreen extends StatelessWidget {
-  final VerificationNotifier notifier;
-
-  const MrzReviewScreen({super.key, required this.notifier});
+class MrzReviewScreen extends ConsumerWidget {
+  const MrzReviewScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    return ListenableBuilder(
-      listenable: notifier,
-      builder: (context, _) {
-        final mrz = notifier.mrzExtractionResult;
-        final phase = notifier.phase;
-        final error = notifier.errorMessage;
+    final notifier = ref.watch(verificationNotifierProvider.notifier);
+    final state = ref.watch(verificationNotifierProvider);
+    final mrz = state.mrzExtractionResult;
+    final phase = state.phase;
+    final error = state.errorMessage;
         final isConfirming = phase == VerificationPhase.confirmingMrz;
 
         if (mrz == null) {
@@ -185,7 +183,7 @@ class MrzReviewScreen extends StatelessWidget {
                                 : () async {
                                     await notifier.confirmMrz();
                                     if (context.mounted &&
-                                        notifier.phase == VerificationPhase.mrzReviewed) {
+                                        ref.read(verificationNotifierProvider).phase == VerificationPhase.mrzReviewed) {
                                       context.go(AppRoutes.selfieInstructions);
                                     }
                                   },
@@ -280,11 +278,7 @@ class MrzReviewScreen extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
-
-
   String _formatSex(String? sex) {
     if (sex == null || sex.isEmpty) return '—';
     switch (sex.toUpperCase()) {

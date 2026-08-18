@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
@@ -13,9 +13,7 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// Displays liveness check guidelines and enforces a 3-second minimum
 /// reading time before the user can proceed to the camera.
 class SelfieInstructionScreen extends StatefulWidget {
-  final VerificationNotifier notifier;
-
-  const SelfieInstructionScreen({super.key, required this.notifier});
+  const SelfieInstructionScreen({super.key});
 
   @override
   State<SelfieInstructionScreen> createState() =>

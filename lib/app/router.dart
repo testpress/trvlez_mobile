@@ -31,14 +31,13 @@ import 'package:trvlez_mobile/features/verification/presentation/passport_review
 import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
 
 /// Adapter to trigger GoRouter refresh when AuthState changes
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
   RouterNotifier(this._ref) {
-    _ref.listen(authNotifierProvider, (_, __) => notifyListeners());
+    _ref.listen(authNotifierProvider, (_, _) => notifyListeners());
   }
 }
 
@@ -49,8 +48,6 @@ class RouterNotifier extends ChangeNotifier {
 final routerProvider = Provider<GoRouter>((ref) {
   final routerNotifier = RouterNotifier(ref);
 
-  // We read the legacy verificationNotifier here until it is fully migrated in Phase 7.
-  final verificationNotifier = ref.read(legacyVerificationNotifierProvider);
   final cameraService = ref.read(cameraServiceProvider);
   final nfcPassportService = ref.read(nfcPassportServiceProvider);
 
@@ -60,9 +57,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authNotifierProvider).valueOrNull;
       final isAuthenticated = authState?.isAuthenticated ?? false;
-      
+
       final location = state.matchedLocation;
-      final isAuthRoute = location == AppRoutes.login || location == AppRoutes.register || location == AppRoutes.welcome;
+      final isAuthRoute =
+          location == AppRoutes.login ||
+          location == AppRoutes.register ||
+          location == AppRoutes.welcome;
 
       if (!isAuthenticated) {
         if (!isAuthRoute) return AppRoutes.login;
@@ -137,9 +137,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.createReservation,
         builder: (context, state) {
           final property = state.extra as Property;
-          return CreateReservationScreen(
-            property: property,
-          );
+          return CreateReservationScreen(property: property);
         },
       ),
       GoRoute(
@@ -147,9 +145,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final extras = state.extra as Map<String, dynamic>;
           final reservation = extras['reservation'] as Reservation;
-          return ReservationDetailScreen(
-            reservation: reservation,
-          );
+          return ReservationDetailScreen(reservation: reservation);
         },
       ),
       GoRoute(
@@ -157,9 +153,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final extras = state.extra as Map<String, dynamic>;
           final reservation = extras['reservation'] as Reservation;
-          return QrCodeScreen(
-            reservation: reservation,
-          );
+          return QrCodeScreen(reservation: reservation);
         },
       ),
       // ─── Profile & Verification Routes ──────────────────────────
@@ -169,70 +163,49 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.passportCapture,
-        builder: (context, state) => PassportCaptureScreen(
-          notifier: verificationNotifier,
-          cameraService: cameraService,
-        ),
+        builder: (context, state) =>
+            PassportCaptureScreen(cameraService: cameraService),
       ),
       GoRoute(
         path: AppRoutes.passportReview,
-        builder: (context, state) => PassportReviewScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) => const PassportReviewScreen(),
       ),
       GoRoute(
         path: AppRoutes.mrzReview,
-        builder: (context, state) => MrzReviewScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) => const MrzReviewScreen(),
       ),
       GoRoute(
         path: AppRoutes.selfieInstructions,
-        builder: (context, state) => SelfieInstructionScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) => const SelfieInstructionScreen(),
       ),
       GoRoute(
         path: AppRoutes.selfieCapture,
-        builder: (context, state) => SelfieCaptureScreen(
-          notifier: verificationNotifier,
-          cameraService: cameraService,
-        ),
+        builder: (context, state) =>
+            SelfieCaptureScreen(cameraService: cameraService),
       ),
       GoRoute(
         path: AppRoutes.selfieReview,
-        builder: (context, state) => SelfieReviewScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) => const SelfieReviewScreen(),
       ),
       GoRoute(
         path: AppRoutes.nfcIntro,
-        builder: (context, state) => NfcIntroScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) => const NfcIntroScreen(),
       ),
       GoRoute(
         path: AppRoutes.nfcScan,
-        builder: (context, state) => NfcScanScreen(
-          notifier: verificationNotifier,
-          nfcService: nfcPassportService,
-        ),
+        builder: (context, state) =>
+            NfcScanScreen(nfcService: nfcPassportService),
       ),
       GoRoute(
         path: AppRoutes.nfcResult,
-        builder: (context, state) => NfcResultScreen(
-          notifier: verificationNotifier,
-        ),
+        builder: (context, state) => const NfcResultScreen(),
       ),
       GoRoute(
         path: AppRoutes.verificationStatus,
         builder: (context, state) {
           final extras = state.extra as Map<String, dynamic>?;
           final jobId = extras?['jobId'] as String?;
-          return VerificationStatusScreen(
-            verificationJobId: jobId,
-            verificationNotifier: verificationNotifier,
-          );
+          return VerificationStatusScreen(verificationJobId: jobId);
         },
       ),
     ],

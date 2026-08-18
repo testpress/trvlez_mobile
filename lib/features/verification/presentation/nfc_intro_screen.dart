@@ -2,22 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen that introduces the NFC passport reading feature to the user.
 /// Explains the benefits and requirements, offering options to proceed or skip.
-class NfcIntroScreen extends StatelessWidget {
-  final VerificationNotifier notifier;
-
+class NfcIntroScreen extends ConsumerWidget {
   const NfcIntroScreen({
     super.key,
-    required this.notifier,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     
@@ -187,7 +186,7 @@ class NfcIntroScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     TextButton(
-                      onPressed: () => _showSkipDialog(context),
+                      onPressed: () => _showSkipDialog(context, ref),
                       style: TextButton.styleFrom(
                         foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),
                         minimumSize: const Size(double.infinity, 44),
@@ -262,7 +261,7 @@ class NfcIntroScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _showSkipDialog(BuildContext context) async {
+  Future<void> _showSkipDialog(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -291,17 +290,18 @@ class NfcIntroScreen extends StatelessWidget {
         builder: (_) => const Center(child: CircularProgressIndicator()),
       );
 
-      notifier.skipNfc();
-      await notifier.submitVerificationAsync();
+      ref.read(verificationNotifierProvider.notifier).skipNfc();
+      await ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
 
       if (context.mounted) {
         // Pop loading overlay
         Navigator.pop(context);
         
-        if (notifier.phase == VerificationPhase.error) {
+        final state = ref.read(verificationNotifierProvider);
+        if (state.phase == VerificationPhase.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(notifier.errorMessage ?? 'Submission failed'),
+              content: Text(state.errorMessage ?? 'Submission failed'),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );

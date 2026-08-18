@@ -4,24 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_settings/app_settings.dart';
 
-import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
+import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 /// Active scanning screen that handles the real-time interaction with the NFC service.
-class NfcScanScreen extends StatefulWidget {
-  final VerificationNotifier notifier;
+class NfcScanScreen extends ConsumerStatefulWidget {
   final NfcPassportService nfcService;
 
   const NfcScanScreen({
     super.key,
-    required this.notifier,
     required this.nfcService,
   });
 
   @override
-  State<NfcScanScreen> createState() => _NfcScanScreenState();
+  ConsumerState<NfcScanScreen> createState() => _NfcScanScreenState();
 }
 
-class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+class _NfcScanScreenState extends ConsumerState<NfcScanScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   NfcReadProgress? _currentProgress;
   NfcError? _error;
   bool _isCheckingAvailability = true;
@@ -90,9 +92,10 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
     });
 
     try {
-      final docNumber = widget.notifier.extractedDocumentNumber ?? '';
-      final dob = widget.notifier.extractedDateOfBirth;
-      final doe = widget.notifier.extractedDateOfExpiry;
+      final state = ref.read(verificationNotifierProvider);
+      final docNumber = state.extractedDocumentNumber ?? '';
+      final dob = state.extractedDateOfBirth;
+      final doe = state.extractedDateOfExpiry;
 
       if (docNumber.isEmpty || dob == null || doe == null) {
         throw const NfcError(
@@ -119,7 +122,7 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
 
       if (!mounted) return;
       
-      widget.notifier.setNfcResult(result);
+      ref.read(verificationNotifierProvider.notifier).setNfcResult(result);
       context.pushReplacement(AppRoutes.nfcResult);
       
     } catch (e) {
@@ -136,8 +139,8 @@ class _NfcScanScreenState extends State<NfcScanScreen> with SingleTickerProvider
   }
 
   void _skipNfc() {
-    widget.notifier.skipNfc();
-    widget.notifier.submitVerificationAsync();
+    ref.read(verificationNotifierProvider.notifier).skipNfc();
+    ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
     context.go(AppRoutes.verificationStatus);
   }
 

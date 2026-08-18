@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart' hide VerificationStatus;
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
-final legacyVerificationNotifierProvider = Provider<VerificationNotifier>((ref) {
-  throw UnimplementedError('Initialize this provider in main');
+final verificationNotifierProvider = NotifierProvider<VerificationNotifier, VerificationState>(() {
+  return VerificationNotifier();
 });
 
 final verificationRepositoryProvider = Provider<VerificationRepository>((ref) {
-  // Assuming dioProvider is available or we can inject it
-  throw UnimplementedError('Initialize this provider in main');
+  final dio = ref.watch(dioProvider);
+  return VerificationRepository(dio: dio);
 });
 
 final verificationStatusProvider = FutureProvider.autoDispose<VerificationStatus?>((ref) async {
