@@ -1,13 +1,17 @@
-import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/features/auth/data/login_response_dto.dart';import 'package:trvlez_mobile/features/auth/data/traveler_signup_dto.dart';
+import 'package:dio/dio.dart';
+
+import 'package:trvlez_mobile/features/auth/data/login_response_dto.dart';
+import 'package:trvlez_mobile/features/auth/data/traveler_signup_dto.dart';
+
 /// Remote data source for authentication API calls.
 ///
-/// Handles the raw HTTP calls and JSON ↔ DTO conversion.
-/// Throws [ApiException] on any failure.
+/// Handles the raw HTTP calls and JSON → DTO conversion.
+/// Auth token injection is handled by the Dio [AuthInterceptor].
+/// Errors are mapped to [ApiException] by the Dio [ErrorInterceptor].
 class AuthRemoteDataSource {
-  final ApiClient apiClient;
+  final Dio dio;
 
-  // ignore: prefer_initializing_formals
-  const AuthRemoteDataSource({required this.apiClient});
+  const AuthRemoteDataSource({required this.dio});
 
   /// Creates a new traveler account.
   ///
@@ -17,12 +21,12 @@ class AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    final responseJson = await apiClient.post(
+    final response = await dio.post<Map<String, dynamic>>(
       '/traveler/signup',
-      body: {'email': email, 'password': password},
+      data: {'email': email, 'password': password},
     );
 
-    return TravelerSignupResponseDto.fromJson(responseJson);
+    return TravelerSignupResponseDto.fromJson(response.data!);
   }
 
   /// Logs in an existing traveler.
@@ -33,14 +37,17 @@ class AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    final responseJson = await apiClient.postForm(
+    final response = await dio.post<Map<String, dynamic>>(
       '/login/access-token',
-      body: {
+      data: {
         'username': email, // OAuth2 specification requires 'username'
         'password': password,
       },
+      options: Options(
+        contentType: Headers.formUrlEncodedContentType,
+      ),
     );
 
-    return LoginResponseDto.fromJson(responseJson);
+    return LoginResponseDto.fromJson(response.data!);
   }
 }

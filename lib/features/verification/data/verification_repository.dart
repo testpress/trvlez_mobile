@@ -1,22 +1,27 @@
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
-import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
-class VerificationRepository {
-  final ApiClient apiClient;
-  final TokenStorage tokenStorage;
+import 'package:dio/dio.dart';
 
-  VerificationRepository({ApiClient? apiClient, TokenStorage? tokenStorage})
-    : apiClient = apiClient ?? ApiClient(),
-      tokenStorage = tokenStorage ?? const TokenStorage();
+import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
+
+/// Repository for all verification-related operations.
+///
+/// Uses the shared [Dio] instance (with auth interceptor) for backend API calls.
+/// S3 presigned URL uploads use a separate plain [Dio] instance without
+/// interceptors to avoid injecting auth headers into S3 requests.
+class VerificationRepository {
+  final Dio dio;
+
+  const VerificationRepository({required this.dio});
 
   Future<void> uploadPassport(
     File imageFile, {
     required void Function(double progress) onProgress,
   }) async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
     final length = await imageFile.length();
     final ext = imageFile.path.split('.').last.toLowerCase();
 
@@ -25,58 +30,31 @@ class VerificationRepository {
     if (ext == 'webp') mimeType = 'image/webp';
 
     // 0. Ensure a verification session is started (Idempotent call on backend)
-    await apiClient.post(
-      '/traveler/verification/start',
-      body: {},
-      authToken: token,
-    );
+    await dio.post('/traveler/verification/start', data: {});
 
     // 1. Initialize upload to get presigned URL
-    final initResponse = await apiClient.post(
+    final initResponse = await dio.post<Map<String, dynamic>>(
       '/upload/passport/init',
-      body: {'content_type': mimeType, 'file_size_bytes': length},
-      authToken: token,
+      data: {'content_type': mimeType, 'file_size_bytes': length},
     );
 
-    final uploadUrl = initResponse['upload_url'] as String;
-    final fileId = initResponse['file_id'] as String;
+    final uploadUrl = initResponse.data!['upload_url'] as String;
+    final fileId = initResponse.data!['file_id'] as String;
 
-    // 2. Upload file directly to S3 using the presigned URL
-    final uri = Uri.parse(uploadUrl);
-    final request = http.StreamedRequest('PUT', uri);
-    request.headers['Content-Type'] = mimeType;
-    request.contentLength = length;
-
-    int bytes = 0;
-    final stream = imageFile.openRead();
-
-    // Listen to the stream to update progress and add to request sink
-    stream.listen(
-      (chunk) {
-        bytes += chunk.length;
-        if (length > 0) {
-          onProgress(bytes / length);
-        }
-        request.sink.add(chunk);
-      },
-      onDone: () => request.sink.close(),
-      onError: (e) => request.sink.addError(e),
+    // 2. Upload file directly to S3 using the presigned URL.
+    //    Uses a separate plain Dio instance — no auth interceptor, no base URL.
+    await _uploadToS3(
+      uploadUrl: uploadUrl,
+      file: imageFile,
+      mimeType: mimeType,
+      fileLength: length,
+      onProgress: onProgress,
     );
-
-    final response = await request.send();
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      final responseBody = await response.stream.bytesToString();
-      throw ApiException.fromStatusCode(
-        response.statusCode,
-        'Storage upload failed: $responseBody',
-      );
-    }
 
     // 3. Complete the upload
-    await apiClient.post(
+    await dio.post(
       '/upload/passport/complete',
-      body: {'file_id': fileId},
-      authToken: token,
+      data: {'file_id': fileId},
     );
   }
 
@@ -84,9 +62,6 @@ class VerificationRepository {
     File videoFile, {
     required void Function(double progress) onProgress,
   }) async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
     final length = await videoFile.length();
     final ext = videoFile.path.split('.').last.toLowerCase();
 
@@ -94,58 +69,31 @@ class VerificationRepository {
     if (ext == 'mov') mimeType = 'video/quicktime';
 
     // 0. Ensure a verification session is started (Idempotent call on backend)
-    await apiClient.post(
-      '/traveler/verification/start',
-      body: {},
-      authToken: token,
-    );
+    await dio.post('/traveler/verification/start', data: {});
 
     // 1. Initialize upload to get presigned URL
-    final initResponse = await apiClient.post(
+    final initResponse = await dio.post<Map<String, dynamic>>(
       '/upload/video/init',
-      body: {'content_type': mimeType, 'file_size_bytes': length},
-      authToken: token,
+      data: {'content_type': mimeType, 'file_size_bytes': length},
     );
 
-    final uploadUrl = initResponse['upload_url'] as String;
-    final fileId = initResponse['file_id'] as String;
+    final uploadUrl = initResponse.data!['upload_url'] as String;
+    final fileId = initResponse.data!['file_id'] as String;
 
-    // 2. Upload file directly to S3 using the presigned URL
-    final uri = Uri.parse(uploadUrl);
-    final request = http.StreamedRequest('PUT', uri);
-    request.headers['Content-Type'] = mimeType;
-    request.contentLength = length;
-
-    int bytes = 0;
-    final stream = videoFile.openRead();
-
-    // Listen to the stream to update progress and add to request sink
-    stream.listen(
-      (chunk) {
-        bytes += chunk.length;
-        if (length > 0) {
-          onProgress(bytes / length);
-        }
-        request.sink.add(chunk);
-      },
-      onDone: () => request.sink.close(),
-      onError: (e) => request.sink.addError(e),
+    // 2. Upload file directly to S3 using the presigned URL.
+    //    Uses a separate plain Dio instance — no auth interceptor, no base URL.
+    await _uploadToS3(
+      uploadUrl: uploadUrl,
+      file: videoFile,
+      mimeType: mimeType,
+      fileLength: length,
+      onProgress: onProgress,
     );
-
-    final response = await request.send();
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      final responseBody = await response.stream.bytesToString();
-      throw ApiException.fromStatusCode(
-        response.statusCode,
-        'Storage upload failed: $responseBody',
-      );
-    }
 
     // 3. Complete the upload
-    await apiClient.post(
+    await dio.post(
       '/upload/video/complete',
-      body: {'file_id': fileId},
-      authToken: token,
+      data: {'file_id': fileId},
     );
   }
 
@@ -154,16 +102,12 @@ class VerificationRepository {
   /// This should be called immediately after [uploadPassport] completes
   /// to fetch the document number, DOB, and expiry date needed for NFC chip authentication.
   Future<MrzExtractionResult> extractMrz() async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
-    final response = await apiClient.post(
+    final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/extract-mrz',
-      body: {},
-      authToken: token,
+      data: {},
     );
 
-    return MrzExtractionResult.fromJson(response);
+    return MrzExtractionResult.fromJson(response.data!);
   }
 
   /// Submits the verification session for ML pipeline processing.
@@ -173,21 +117,17 @@ class VerificationRepository {
   Future<VerificationSubmitResult> submitVerification({
     Map<String, dynamic>? nfcPayload,
   }) async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
     final body = <String, dynamic>{};
     if (nfcPayload != null) {
       body['nfc_data'] = nfcPayload;
     }
 
-    final response = await apiClient.post(
+    final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/submit',
-      body: body,
-      authToken: token,
+      data: body,
     );
 
-    return VerificationSubmitResult.fromJson(response);
+    return VerificationSubmitResult.fromJson(response.data!);
   }
 
   /// Fetches the current verification session status.
@@ -197,15 +137,11 @@ class VerificationRepository {
   /// only exists on [VerificationSessionStatus], not on
   /// [TravelerOnboardingStep].
   Future<VerificationStatus> getVerificationStatus() async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
-    final response = await apiClient.get(
+    final response = await dio.get<Map<String, dynamic>>(
       '/traveler/verification/status',
-      authToken: token,
     );
 
-    return VerificationStatus.fromJson(response);
+    return VerificationStatus.fromJson(response.data!);
   }
 
   /// Polls the status of a specific verification job.
@@ -213,15 +149,11 @@ class VerificationRepository {
   /// Used to track ML pipeline progress after submission.
   /// The backend returns the full job record including score and error details.
   Future<VerificationJobResult> getVerificationJob(String jobId) async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
-    final response = await apiClient.get(
+    final response = await dio.get<Map<String, dynamic>>(
       '/traveler/verification/job/$jobId',
-      authToken: token,
     );
 
-    return VerificationJobResult.fromJson(response);
+    return VerificationJobResult.fromJson(response.data!);
   }
 
   /// Generates a liveness challenge session from the verification service.
@@ -230,15 +162,11 @@ class VerificationRepository {
   /// the traveler to perform during selfie capture. Reserved for future use
   /// when liveness detection is enabled.
   Future<Map<String, dynamic>> getVerificationChallenge() async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
-    final response = await apiClient.get(
+    final response = await dio.get<Map<String, dynamic>>(
       '/traveler/verification/challenge',
-      authToken: token,
     );
 
-    return response;
+    return response.data!;
   }
 
   /// Confirms MRZ-extracted passport data and persists it to the traveller profile.
@@ -246,15 +174,62 @@ class VerificationRepository {
   /// Called after the traveller reviews the extracted details on the MRZ review screen.
   /// Returns the updated profile response from the backend.
   Future<Map<String, dynamic>> confirmMrz(Map<String, dynamic> payload) async {
-    final token = await tokenStorage.getToken();
-    if (token == null) throw ApiException.unauthorized();
-
-    final response = await apiClient.post(
+    final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/confirm-mrz',
-      body: payload,
-      authToken: token,
+      data: payload,
     );
 
-    return response;
+    return response.data!;
+  }
+
+  // ─── Private Helpers ──────────────────────────────────────────────
+
+  /// Uploads a file to S3 via a presigned PUT URL with progress tracking.
+  ///
+  /// Uses a separate plain [Dio] instance without interceptors to avoid
+  /// injecting auth headers or applying error mapping meant for the backend.
+  Future<void> _uploadToS3({
+    required String uploadUrl,
+    required File file,
+    required String mimeType,
+    required int fileLength,
+    required void Function(double progress) onProgress,
+  }) async {
+    final s3Dio = Dio();
+
+    try {
+      final fileStream = file.openRead();
+
+      final response = await s3Dio.put<void>(
+        uploadUrl,
+        data: fileStream,
+        options: Options(
+          headers: {
+            'Content-Type': mimeType,
+            'Content-Length': fileLength,
+          },
+        ),
+        onSendProgress: (sent, total) {
+          if (total > 0) {
+            onProgress(sent / total);
+          }
+        },
+      );
+
+      final statusCode = response.statusCode ?? 0;
+      if (statusCode < 200 || statusCode >= 300) {
+        throw ApiException.fromStatusCode(
+          statusCode,
+          'Storage upload failed with status $statusCode',
+        );
+      }
+    } on DioException catch (e) {
+      throw ApiException.fromStatusCode(
+        e.response?.statusCode ?? 0,
+        'Storage upload failed: ${e.message}',
+      );
+    } finally {
+      s3Dio.close();
+    }
   }
 }

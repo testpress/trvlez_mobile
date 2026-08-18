@@ -13,9 +13,8 @@ class HomeNotifier extends ChangeNotifier {
 
   HomeNotifier({
     required this.profileRepository,
-    VerificationRepository? verificationRepository,
-  }) : verificationRepository =
-           verificationRepository ?? VerificationRepository();
+    required this.verificationRepository,
+  });
 
   bool isLoading = false;
   String? errorMessage;

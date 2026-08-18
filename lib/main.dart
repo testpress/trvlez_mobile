@@ -1,10 +1,13 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 
 import 'package:trvlez_mobile/app/router.dart';
 import 'package:trvlez_mobile/app/theme.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/core/network/api_client.dart';
+import 'package:trvlez_mobile/core/constants/app_config.dart';
+import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
+import 'package:trvlez_mobile/core/network/error_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/features/auth/data/auth_remote_data_source.dart';
@@ -15,6 +18,7 @@ import 'package:trvlez_mobile/features/properties/data/properties_remote_data_so
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data_source.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
+import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
@@ -26,49 +30,77 @@ void main() async {
   const tokenStorage = TokenStorage();
   final settingsRepository = await SettingsRepository.init();
 
-  // 2. Network & Data (needed before auth check)
-  final apiClient = ApiClient(
-    onUnauthorized: () {
-      // Will be wired to authNotifier below
-    },
+  // 2. Network — Dio with interceptors (replaces ApiClient)
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: AppConfig.apiUrl,
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 30),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    ),
   );
 
-  final authRemoteDataSource = AuthRemoteDataSource(apiClient: apiClient);
+  // Auth interceptor — automatically injects Bearer token
+  dio.interceptors.add(
+    AuthInterceptor(tokenStorage: tokenStorage),
+  );
+
+  // Error interceptor — maps DioException to ApiException.
+  // The onUnauthorized callback will be wired to authNotifier below.
+  late final AuthNotifier authNotifier;
+  dio.interceptors.add(
+    ErrorInterceptor(
+      onUnauthorized: () {
+        authNotifier.logout();
+      },
+    ),
+  );
+
+  // Debug logging in debug mode
+  if (kDebugMode) {
+    dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (o) => debugPrint(o.toString()),
+      ),
+    );
+  }
+
+  // 3. Data Sources & Repositories
+  final authRemoteDataSource = AuthRemoteDataSource(dio: dio);
   final authRepository = AuthRepository(
     remoteDataSource: authRemoteDataSource,
     tokenStorage: tokenStorage,
   );
 
-  final profileRemoteDataSource = ProfileRemoteDataSource(
-    apiClient: apiClient,
-    tokenStorage: tokenStorage,
-  );
+  final profileRemoteDataSource = ProfileRemoteDataSource(dio: dio);
   final profileRepository = ProfileRepository(
     remoteDataSource: profileRemoteDataSource,
   );
 
-  final propertiesRemoteDataSource = PropertiesRemoteDataSource(
-    apiClient: apiClient,
-    tokenStorage: tokenStorage,
-  );
+  final propertiesRemoteDataSource = PropertiesRemoteDataSource(dio: dio);
   final propertiesRepository = PropertiesRepository(
     remoteDataSource: propertiesRemoteDataSource,
   );
 
-  final reservationRemoteDataSource = ReservationRemoteDataSource(
-    apiClient: apiClient,
-    tokenStorage: tokenStorage,
-  );
+  final reservationRemoteDataSource = ReservationRemoteDataSource(dio: dio);
   final reservationRepository = ReservationRepository(
     remoteDataSource: reservationRemoteDataSource,
   );
 
-  final verificationNotifier = VerificationNotifier();
+  final verificationNotifier = VerificationNotifier(
+    repository: VerificationRepository(dio: dio),
+  );
   final propertiesNotifier = PropertiesNotifier(repository: propertiesRepository);
   final reservationsNotifier = ReservationsNotifier(repository: reservationRepository);
 
-  // 3. Auth State (with profile repo for onboarding step check)
-  final authNotifier = AuthNotifier(
+  // 4. Auth State (with profile repo for onboarding step check)
+  authNotifier = AuthNotifier(
     tokenStorage: tokenStorage,
     profileRepository: profileRepository,
     onLogout: () {
@@ -77,11 +109,6 @@ void main() async {
       reservationsNotifier.reset();
     },
   );
-
-  // Wire unauthorized callback now that authNotifier exists
-  apiClient.onUnauthorized = () {
-    authNotifier.logout();
-  };
 
   await authNotifier.checkAuthStatus();
 
@@ -158,4 +185,3 @@ class TrvlEzApp extends StatelessWidget {
     );
   }
 }
-

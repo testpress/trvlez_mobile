@@ -1,28 +1,25 @@
-import 'package:trvlez_mobile/core/network/api_client.dart';
-import 'package:trvlez_mobile/core/storage/token_storage.dart';
+import 'package:dio/dio.dart';
+
 import 'package:trvlez_mobile/features/reservations/data/reservation_dto.dart';
 
 /// Handles all reservation-related API calls for the traveler.
+///
+/// Auth token injection is handled by the Dio [AuthInterceptor].
+/// Errors are mapped to [ApiException] by the Dio [ErrorInterceptor].
 class ReservationRemoteDataSource {
-  final ApiClient apiClient;
-  final TokenStorage tokenStorage;
+  final Dio dio;
 
-  const ReservationRemoteDataSource({
-    required this.apiClient,
-    required this.tokenStorage,
-  });
+  const ReservationRemoteDataSource({required this.dio});
 
   /// POST /traveler/reservations
   Future<ReservationDto> createReservation({
     required Map<String, dynamic> body,
   }) async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.post(
+    final response = await dio.post<Map<String, dynamic>>(
       '/traveler/reservations',
-      body: body,
-      authToken: token,
+      data: body,
     );
-    return ReservationDto.fromJson(response);
+    return ReservationDto.fromJson(response.data!);
   }
 
   /// GET /traveler/reservations
@@ -31,47 +28,43 @@ class ReservationRemoteDataSource {
     int skip = 0,
     int limit = 50,
   }) async {
-    final token = await tokenStorage.getToken();
-    final queryParts = <String>['skip=$skip', 'limit=$limit'];
+    final queryParameters = <String, dynamic>{
+      'skip': skip,
+      'limit': limit,
+    };
     if (status != null) {
-      queryParts.add('status=$status');
+      queryParameters['status'] = status;
     }
-    final query = queryParts.join('&');
-    final response = await apiClient.get(
-      '/traveler/reservations?$query',
-      authToken: token,
+
+    final response = await dio.get<Map<String, dynamic>>(
+      '/traveler/reservations',
+      queryParameters: queryParameters,
     );
-    return ReservationListResponseDto.fromJson(response);
+    return ReservationListResponseDto.fromJson(response.data!);
   }
 
   /// GET /traveler/reservations/{id}
   Future<ReservationDto> getReservation(String id) async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.get(
+    final response = await dio.get<Map<String, dynamic>>(
       '/traveler/reservations/$id',
-      authToken: token,
     );
-    return ReservationDto.fromJson(response);
+    return ReservationDto.fromJson(response.data!);
   }
 
   /// DELETE /traveler/reservations/{id}
   Future<ReservationDto> cancelReservation(String id) async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.delete(
+    final response = await dio.delete<Map<String, dynamic>>(
       '/traveler/reservations/$id',
-      authToken: token,
     );
-    return ReservationDto.fromJson(response);
+    return ReservationDto.fromJson(response.data!);
   }
 
   /// POST /traveler/reservations/{id}/checkin-token
   Future<CheckInTokenDto> generateCheckInToken(String reservationId) async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.post(
+    final response = await dio.post<Map<String, dynamic>>(
       '/traveler/reservations/$reservationId/checkin-token',
-      body: {},
-      authToken: token,
+      data: {},
     );
-    return CheckInTokenDto.fromJson(response);
+    return CheckInTokenDto.fromJson(response.data!);
   }
 }

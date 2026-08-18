@@ -133,6 +133,7 @@ GoRouter createRouter(
             builder: (context, state) => HomeScreen(
               authNotifier: authNotifier,
               profileRepository: profileRepository,
+              verificationRepository: verificationNotifier.repository,
               settingsRepository: settingsRepository,
             ),
           ),

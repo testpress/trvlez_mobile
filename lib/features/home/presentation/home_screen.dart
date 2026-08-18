@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 /// The primary landing screen for all authenticated travelers.
 ///
@@ -16,12 +16,14 @@ import 'package:trvlez_mobile/app/routes.dart';
 class HomeScreen extends StatefulWidget {
   final AuthNotifier authNotifier;
   final ProfileRepository profileRepository;
+  final VerificationRepository verificationRepository;
   final SettingsRepository settingsRepository;
 
   const HomeScreen({
     super.key,
     required this.authNotifier,
     required this.profileRepository,
+    required this.verificationRepository,
     required this.settingsRepository,
   });
 
@@ -35,7 +37,10 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    notifier = HomeNotifier(profileRepository: widget.profileRepository);
+    notifier = HomeNotifier(
+      profileRepository: widget.profileRepository,
+      verificationRepository: widget.verificationRepository,
+    );
     notifier.addListener(onStateChanged);
     notifier.loadProfile();
   }

@@ -1,18 +1,20 @@
-import 'package:trvlez_mobile/core/network/api_client.dart';import 'package:trvlez_mobile/core/storage/token_storage.dart';import 'package:trvlez_mobile/features/profile/data/profile_dto.dart';
-class ProfileRemoteDataSource {
-  final ApiClient apiClient;
-  final TokenStorage tokenStorage;
+import 'package:dio/dio.dart';
 
-  const ProfileRemoteDataSource({
-    required this.apiClient,
-    required this.tokenStorage,
-  });
+import 'package:trvlez_mobile/features/profile/data/profile_dto.dart';
+
+/// Remote data source for traveler profile API calls.
+///
+/// Auth token injection is handled by the Dio [AuthInterceptor].
+/// Errors are mapped to [ApiException] by the Dio [ErrorInterceptor].
+class ProfileRemoteDataSource {
+  final Dio dio;
+
+  const ProfileRemoteDataSource({required this.dio});
 
   /// Fetches the current traveler profile.
   Future<ProfileDto> getProfile() async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.get('/traveler/profile', authToken: token);
-    return ProfileDto.fromJson(response);
+    final response = await dio.get<Map<String, dynamic>>('/traveler/profile');
+    return ProfileDto.fromJson(response.data!);
   }
 
   Future<ProfileDto> updateProfile({
@@ -23,12 +25,9 @@ class ProfileRemoteDataSource {
     String? passportNumber,
     String? passportExpiry,
   }) async {
-    final token = await tokenStorage.getToken();
-
-    final response = await apiClient.patch(
+    final response = await dio.patch<Map<String, dynamic>>(
       '/traveler/profile',
-      authToken: token,
-      body: {
+      data: {
         'phone': ?phone,
         'nationality': ?nationality,
         'gender': ?gender,
@@ -38,6 +37,6 @@ class ProfileRemoteDataSource {
       },
     );
 
-    return ProfileDto.fromJson(response);
+    return ProfileDto.fromJson(response.data!);
   }
 }

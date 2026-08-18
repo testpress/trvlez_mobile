@@ -1,34 +1,31 @@
-import 'package:trvlez_mobile/core/network/api_client.dart';
-import 'package:trvlez_mobile/core/storage/token_storage.dart';
+import 'package:dio/dio.dart';
+
 import 'package:trvlez_mobile/features/properties/data/property_dto.dart';
 
+/// Remote data source for property listing and detail API calls.
+///
+/// Auth token injection is handled by the Dio [AuthInterceptor].
+/// Errors are mapped to [ApiException] by the Dio [ErrorInterceptor].
 class PropertiesRemoteDataSource {
-  final ApiClient apiClient;
-  final TokenStorage tokenStorage;
+  final Dio dio;
 
-  const PropertiesRemoteDataSource({
-    required this.apiClient,
-    required this.tokenStorage,
-  });
+  const PropertiesRemoteDataSource({required this.dio});
 
   Future<PropertyListingResponseDto> getProperties({
     int skip = 0,
     int limit = 50,
   }) async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.get(
-      '/properties/listing?skip=$skip&limit=$limit',
-      authToken: token,
+    final response = await dio.get<Map<String, dynamic>>(
+      '/properties/listing',
+      queryParameters: {'skip': skip, 'limit': limit},
     );
-    return PropertyListingResponseDto.fromJson(response);
+    return PropertyListingResponseDto.fromJson(response.data!);
   }
 
   Future<PropertyDto> getPropertyDetail(String id) async {
-    final token = await tokenStorage.getToken();
-    final response = await apiClient.get(
+    final response = await dio.get<Map<String, dynamic>>(
       '/properties/$id/public',
-      authToken: token,
     );
-    return PropertyDto.fromJson(response);
+    return PropertyDto.fromJson(response.data!);
   }
 }

@@ -49,9 +49,8 @@ class VerificationNotifier extends ChangeNotifier {
   final VerificationRepository repository;
   late final VerificationPollingService _pollingService;
 
-  VerificationNotifier({VerificationRepository? repository})
-    : repository = repository ?? VerificationRepository() {
-    _pollingService = VerificationPollingService(repository: this.repository);
+  VerificationNotifier({required this.repository}) {
+    _pollingService = VerificationPollingService(repository: repository);
   }
 
   File? capturedImage;
