@@ -3,10 +3,11 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+
 
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/face_guide_painter.dart';
 
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
@@ -244,168 +245,111 @@ class SelfieCaptureScreenState extends State<SelfieCaptureScreen>
             ),
           ),
 
-          // Instructions Overlay
-          const Positioned(
-            top: 64,
-            left: 24,
-            right: 24,
-            child: Text(
-              'Please look directly into the camera',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
-              ),
-            ),
-          ),
-
-          // Timer Overlay
-          if (isRecording)
-            Positioned(
-              top: 100,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '00:${recordedSeconds.toString().padLeft(2, '0')}',
-                    style: const TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-          // Controls
-          Positioned(
-            bottom: 48,
-            left: 32,
-            right: 32,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  width: 48,
-                ), // Spacer to keep record button centered
-                if (!isRecording)
-                  FloatingActionButton(
-                    heroTag: 'record_btn',
-                    onPressed: startRecording,
-                    backgroundColor: Colors.red,
-                    child: const Icon(Icons.videocam, color: Colors.white),
-                  )
-                else
-                  FloatingActionButton(
-                    heroTag: 'stop_btn',
-                    onPressed: stopRecording,
-                    backgroundColor: isMinTimeMet ? Colors.red : Colors.grey,
-                    child: const Icon(Icons.stop, color: Colors.white),
-                  ),
-                if (!isRecording)
-                  IconButton(
-                    iconSize: 32,
-                    onPressed: pickVideoFromGallery,
-                    icon: const Icon(Icons.video_library, color: Colors.white),
-                  )
-                else
-                  const SizedBox(
-                    width: 48,
-                  ), // Match the size of the gallery button when hidden
-              ],
-            ),
-          ),
-
-          // Back Button
-          Positioned(
-            top: 48,
-            left: 16,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                if (isRecording) {
-                  stopRecording();
-                }
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.go(AppRoutes.verificationStatus);
-                }
-              },
-            ),
-          ),
+          _buildInstructionsOverlay(),
+          if (isRecording) _buildTimerOverlay(),
+          _buildControls(isMinTimeMet),
+          _buildBackButton(),
         ],
       ),
     );
   }
-}
 
-class FaceGuidePainter extends CustomPainter {
-  final double progress;
-
-  FaceGuidePainter({required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Draw semi-transparent background
-    final paint = Paint()..color = Colors.black54;
-    final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    // Define the oval face guide area
-    final ovalWidth = size.width * 0.92;
-    final ovalHeight = ovalWidth * 1.35;
-    final ovalRect = Rect.fromCenter(
-      center: Offset(size.width / 2, size.height / 2.05),
-      width: ovalWidth,
-      height: ovalHeight,
+  Widget _buildInstructionsOverlay() {
+    return const Positioned(
+      top: 64,
+      left: 24,
+      right: 24,
+      child: Text(
+        'Please look directly into the camera',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+        ),
+      ),
     );
-
-    // Create the cutout
-    final ovalPath = Path()..addOval(ovalRect);
-    final combinedPath = Path.combine(PathOperation.difference, path, ovalPath);
-
-    canvas.drawPath(combinedPath, paint);
-
-    // Draw the base oval border
-    final borderPaint = Paint()
-      ..color = Colors.white54
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-    canvas.drawOval(ovalRect, borderPaint);
-
-    // Draw the progress ring
-    if (progress > 0) {
-      final progressPaint = Paint()
-        ..color = Colors.red
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 6.0
-        ..strokeCap = StrokeCap.round;
-
-      // Sweep angle is progress * 2 * pi
-      canvas.drawArc(
-        ovalRect,
-        -math.pi / 2, // Start at top
-        progress * 2 * math.pi,
-        false,
-        progressPaint,
-      );
-    }
   }
 
-  @override
-  bool shouldRepaint(FaceGuidePainter oldDelegate) {
-    return oldDelegate.progress != progress;
+  Widget _buildTimerOverlay() {
+    return Positioned(
+      top: 100,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            '00:${recordedSeconds.toString().padLeft(2, '0')}',
+            style: const TextStyle(
+              color: Colors.redAccent,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControls(bool isMinTimeMet) {
+    return Positioned(
+      bottom: 48,
+      left: 32,
+      right: 32,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const SizedBox(width: 48), // Spacer to keep record button centered
+          if (!isRecording)
+            FloatingActionButton(
+              heroTag: 'record_btn',
+              onPressed: startRecording,
+              backgroundColor: Colors.red,
+              child: const Icon(Icons.videocam, color: Colors.white),
+            )
+          else
+            FloatingActionButton(
+              heroTag: 'stop_btn',
+              onPressed: stopRecording,
+              backgroundColor: isMinTimeMet ? Colors.red : Colors.grey,
+              child: const Icon(Icons.stop, color: Colors.white),
+            ),
+          if (!isRecording)
+            IconButton(
+              iconSize: 32,
+              onPressed: pickVideoFromGallery,
+              icon: const Icon(Icons.video_library, color: Colors.white),
+            )
+          else
+            const SizedBox(width: 48), // Match the size of the gallery button when hidden
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackButton() {
+    return Positioned(
+      top: 48,
+      left: 16,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () {
+          if (isRecording) {
+            stopRecording();
+          }
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go(AppRoutes.verificationStatus);
+          }
+        },
+      ),
+    );
   }
 }
