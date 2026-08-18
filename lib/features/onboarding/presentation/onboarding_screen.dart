@@ -2,51 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
-class OnboardingScreen extends StatefulWidget {
-  final AuthNotifier authNotifier;
-  final ProfileRepository profileRepository;
-
-  const OnboardingScreen({
-    super.key,
-    required this.authNotifier,
-    required this.profileRepository,
-  });
+class OnboardingScreen extends ConsumerStatefulWidget {
+  const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => OnboardingScreenState();
 }
 
-class OnboardingScreenState extends State<OnboardingScreen> {
-  late final ProfileNotifier profileNotifier;
-
+class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    profileNotifier = ProfileNotifier(repository: widget.profileRepository);
-    profileNotifier.addListener(onProfileChanged);
-    loadProfile();
-  }
-
-  @override
-  void dispose() {
-    profileNotifier.removeListener(onProfileChanged);
-    profileNotifier.dispose();
-    super.dispose();
-  }
-
-  void onProfileChanged() {
-    if (mounted) setState(() {});
   }
 
   Future<void> loadProfile() async {
-    await profileNotifier.loadProfile();
+    final _ = await ref.refresh(currentProfileProvider.future);
   }
 
   int _stepToProgressIndex(String step) {
@@ -71,11 +48,12 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileState = ref.watch(currentProfileProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final isLoading = profileNotifier.isLoading;
-    final step = profileNotifier.profile?.onboardingStep ?? 'profile_pending';
+    final isLoading = profileState.isLoading;
+    final step = profileState.value?.onboardingStep ?? 'profile_pending';
     final progressIndex = _stepToProgressIndex(step);
 
     final bool isPassportUploaded = progressIndex >= 1;
@@ -107,7 +85,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: isLoading && profileNotifier.profile == null
+      body: isLoading && profileState.value == null
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: RefreshIndicator(

@@ -4,8 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/app/colors.dart';
-import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/registration_controller.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
@@ -17,22 +19,19 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// - Client-side validation + server error display
 /// - Primary red CTA with loading state
 /// - "Already have an account? Sign in" footer link
-class RegistrationScreen extends StatefulWidget {
-  final AuthRepository authRepository;
-
-  const RegistrationScreen({super.key, required this.authRepository});
+class RegistrationScreen extends ConsumerStatefulWidget {
+  const RegistrationScreen({super.key});
 
   @override
-  State<RegistrationScreen> createState() => RegistrationScreenState();
+  ConsumerState<RegistrationScreen> createState() => RegistrationScreenState();
 }
 
-class RegistrationScreenState extends State<RegistrationScreen>
+class RegistrationScreenState extends ConsumerState<RegistrationScreen>
     with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  late final RegistrationController controller;
   late final AnimationController fadeController;
   late final Animation<double> fadeAnimation;
 
@@ -41,10 +40,6 @@ class RegistrationScreenState extends State<RegistrationScreen>
   @override
   void initState() {
     super.initState();
-
-    controller = RegistrationController(repository: widget.authRepository);
-
-    controller.addListener(onControllerChanged);
 
     fadeController = AnimationController(
       vsync: this,
@@ -59,21 +54,10 @@ class RegistrationScreenState extends State<RegistrationScreen>
 
   @override
   void dispose() {
-    controller.removeListener(onControllerChanged);
-    controller.dispose();
     emailController.dispose();
     passwordController.dispose();
     fadeController.dispose();
     super.dispose();
-  }
-
-  void onControllerChanged() {
-    if (!mounted) return;
-    setState(() {});
-
-    if (controller.isSuccess) {
-      showSuccessAndNavigate();
-    }
   }
 
   void showSuccessAndNavigate() {
@@ -99,7 +83,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
   void onSubmit() {
     if (!formKey.currentState!.validate()) return;
 
-    controller.signUp(
+    ref.read(registrationControllerProvider.notifier).signUp(
       email: emailController.text.trim(),
       password: passwordController.text,
     );
@@ -136,6 +120,15 @@ class RegistrationScreenState extends State<RegistrationScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(
+      registrationControllerProvider,
+      (previous, next) {
+        if (!next.isLoading && !next.hasError && previous?.isLoading == true) {
+          showSuccessAndNavigate();
+        }
+      },
+    );
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -290,7 +283,8 @@ class RegistrationScreenState extends State<RegistrationScreen>
   // ─── Error Banner ─────────────────────────────────────────────────
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
-    final errorMessageText = controller.errorMessage;
+    final error = ref.watch(registrationControllerProvider).error;
+    final errorMessageText = (error as ApiException?)?.message ?? error?.toString();
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
@@ -323,7 +317,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
                 ),
               ),
               GestureDetector(
-                onTap: controller.clearError,
+                onTap: () => ref.read(registrationControllerProvider.notifier).clearError(),
                 child: Icon(
                   Icons.close_rounded,
                   color: colorScheme.error.withAlpha(150),
@@ -348,7 +342,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
         TextFormField(
           controller: emailController,
           validator: validateEmail,
-          enabled: !controller.isLoading,
+          enabled: !ref.watch(registrationControllerProvider).isLoading,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           autocorrect: false,
@@ -372,7 +366,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
         TextFormField(
           controller: passwordController,
           validator: validatePassword,
-          enabled: !controller.isLoading,
+          enabled: !ref.watch(registrationControllerProvider).isLoading,
           obscureText: !isPasswordVisible,
           textInputAction: TextInputAction.done,
           onFieldSubmitted: (_) => onSubmit(),
@@ -408,7 +402,7 @@ class RegistrationScreenState extends State<RegistrationScreen>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: FilledButton(
-        onPressed: controller.isLoading ? null : onSubmit,
+        onPressed: ref.watch(registrationControllerProvider).isLoading ? null : onSubmit,
         style: FilledButton.styleFrom(
           minimumSize: const Size(double.infinity, 44),
           backgroundColor: colorScheme.primary,
@@ -418,10 +412,10 @@ class RegistrationScreenState extends State<RegistrationScreen>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          elevation: controller.isLoading ? 0 : 2,
+          elevation: ref.watch(registrationControllerProvider).isLoading ? 0 : 2,
           shadowColor: colorScheme.primary.withAlpha(60),
         ),
-        child: controller.isLoading
+        child: ref.watch(registrationControllerProvider).isLoading
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

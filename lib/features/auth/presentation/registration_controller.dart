@@ -1,52 +1,42 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 
-import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+
+/// Provider for the [RegistrationController].
+final registrationControllerProvider =
+    AutoDisposeAsyncNotifierProvider<RegistrationController, void>(
+  () => RegistrationController(),
+);
+
 /// State management for the registration screen.
 ///
 /// Manages the signup API call lifecycle and exposes
 /// observable state for the UI to react to.
-class RegistrationController extends ChangeNotifier {
-  final AuthRepository repository;
-
-  RegistrationController({required this.repository});
-
-  bool isLoading = false;
-  String? errorMessage;
-  bool isSuccess = false;
+class RegistrationController extends AutoDisposeAsyncNotifier<void> {
+  @override
+  FutureOr<void> build() {}
 
   /// Attempts to create a new traveler account.
-  ///
-  /// Sets [isLoading] during the API call, [errorMessage] on failure,
-  /// and [isSuccess] when the account is created.
   Future<void> signUp({
     required String email,
     required String password,
   }) async {
-    isLoading = true;
-    errorMessage = null;
-    isSuccess = false;
-    notifyListeners();
+    state = const AsyncValue.loading();
 
-    try {
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(authRepositoryProvider);
       await repository.signUp(
         email: email,
         password: password,
       );
-
-      isSuccess = true;
-    } on ApiException catch (e) {
-      errorMessage = e.message;
-    } catch (e) {
-      errorMessage = 'An unexpected error occurred. Please try again.';
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
+    });
   }
 
   /// Clears the current error message.
   void clearError() {
-    errorMessage = null;
-    notifyListeners();
+    if (state.hasError) {
+      state = const AsyncValue.data(null);
+    }
   }
 }

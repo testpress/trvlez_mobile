@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
@@ -23,37 +24,31 @@ import 'package:trvlez_mobile/app/routes.dart';
 ///
 /// When [verificationJobId] is provided, polls the backend for real-time
 /// verification pipeline progress.
-class VerificationStatusScreen extends StatefulWidget {
-  final ProfileRepository profileRepository;
+class VerificationStatusScreen extends ConsumerStatefulWidget {
   final AuthNotifier authNotifier;
   final String? verificationJobId;
   final VerificationNotifier? verificationNotifier;
 
   const VerificationStatusScreen({
     super.key,
-    required this.profileRepository,
     required this.authNotifier,
     this.verificationJobId,
     this.verificationNotifier,
   });
 
   @override
-  State<VerificationStatusScreen> createState() =>
+  ConsumerState<VerificationStatusScreen> createState() =>
       VerificationStatusScreenState();
 }
 
-class VerificationStatusScreenState extends State<VerificationStatusScreen>
+class VerificationStatusScreenState extends ConsumerState<VerificationStatusScreen>
     with SingleTickerProviderStateMixin {
-  late final ProfileNotifier profileNotifier;
   late final AnimationController pulseController;
   late final Animation<double> pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    profileNotifier = ProfileNotifier(repository: widget.profileRepository);
-    profileNotifier.addListener(onStateChanged);
-    profileNotifier.loadProfile();
 
     pulseController = AnimationController(
       vsync: this,
@@ -71,14 +66,8 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
   @override
   void dispose() {
     widget.verificationNotifier?.removeListener(onNotifierChanged);
-    profileNotifier.removeListener(onStateChanged);
-    profileNotifier.dispose();
     pulseController.dispose();
     super.dispose();
-  }
-
-  void onStateChanged() {
-    if (mounted) setState(() {});
   }
 
   void onNotifierChanged() {
@@ -86,14 +75,15 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
   }
 
   Future<void> handleRefresh() async {
-    await profileNotifier.loadProfile();
+    final _ = await ref.refresh(currentProfileProvider.future);
     await widget.authNotifier.refreshVerificationState();
     await widget.verificationNotifier?.fetchVerificationStatus();
   }
 
   /// Derives the effective verification state.
   TravelerVerificationState get effectiveState {
-    final profileState = profileNotifier.profile?.verificationState ?? TravelerVerificationState.submitted;
+    final profile = ref.read(currentProfileProvider).value;
+    final profileState = profile?.verificationState ?? TravelerVerificationState.submitted;
     return widget.verificationNotifier?.effectiveState(profileState) ?? profileState;
   }
 
@@ -115,6 +105,7 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
 
   @override
   Widget build(BuildContext context) {
+    final profileState = ref.watch(currentProfileProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final state = effectiveState;
@@ -145,7 +136,7 @@ class VerificationStatusScreenState extends State<VerificationStatusScreen>
           },
         ),
       ),
-      body: profileNotifier.isLoading && profileNotifier.profile == null
+      body: profileState.isLoading && profileState.value == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: handleRefresh,

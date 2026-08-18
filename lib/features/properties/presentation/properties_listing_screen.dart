@@ -3,21 +3,21 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/widgets/property_card.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
-class PropertiesListingScreen extends StatefulWidget {
-  final PropertiesNotifier notifier;
-
-  const PropertiesListingScreen({super.key, required this.notifier});
+class PropertiesListingScreen extends ConsumerStatefulWidget {
+  const PropertiesListingScreen({super.key});
 
   @override
-  State<PropertiesListingScreen> createState() => _PropertiesListingScreenState();
+  ConsumerState<PropertiesListingScreen> createState() => _PropertiesListingScreenState();
 }
 
-class _PropertiesListingScreenState extends State<PropertiesListingScreen> {
+class _PropertiesListingScreenState extends ConsumerState<PropertiesListingScreen> {
   int _selectedCategoryIndex = 0;
 
   final List<String> categories = ['Location', 'Hotels', 'Food', 'Adventure'];
@@ -25,18 +25,11 @@ class _PropertiesListingScreenState extends State<PropertiesListingScreen> {
   @override
   void initState() {
     super.initState();
-    widget.notifier.fetchProperties();
-    widget.notifier.addListener(_onStateChanged);
   }
 
   @override
   void dispose() {
-    widget.notifier.removeListener(_onStateChanged);
     super.dispose();
-  }
-
-  void _onStateChanged() {
-    if (mounted) setState(() {});
   }
 
   void _onCategorySelected(int index) {
@@ -46,7 +39,10 @@ class _PropertiesListingScreenState extends State<PropertiesListingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final properties = widget.notifier.properties;
+    final propertiesState = ref.watch(propertiesProvider);
+    final properties = propertiesState.value ?? [];
+    final isLoading = propertiesState.isLoading;
+    final error = propertiesState.error;
 
     // Slice properties for UI sections
     final popularProperties = properties.take(5).toList();
@@ -55,24 +51,24 @@ class _PropertiesListingScreenState extends State<PropertiesListingScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: widget.notifier.isLoading && properties.isEmpty
+        child: isLoading && properties.isEmpty
             ? const Center(child: CircularProgressIndicator())
-            : widget.notifier.error != null && properties.isEmpty
+            : error != null && properties.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Error: ${widget.notifier.error}', style: TextStyle(color: theme.colorScheme.error)),
+                        Text('Error: $error', style: TextStyle(color: theme.colorScheme.error)),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: widget.notifier.fetchProperties,
+                          onPressed: () => ref.read(propertiesProvider.notifier).fetchProperties(),
                           child: const Text('Retry'),
                         ),
                       ],
                     ),
                   )
                 : RefreshIndicator(
-                    onRefresh: widget.notifier.fetchProperties,
+                    onRefresh: () => ref.refresh(propertiesProvider.future),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Padding(

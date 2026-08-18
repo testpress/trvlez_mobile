@@ -9,7 +9,6 @@ import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
-import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
@@ -30,7 +29,6 @@ import 'package:trvlez_mobile/features/home/presentation/main_scaffold.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
-import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
@@ -51,7 +49,6 @@ GoRouter createRouter(
   PropertiesRepository propertiesRepository,
   ReservationRepository reservationRepository,
   VerificationNotifier verificationNotifier,
-  PropertiesNotifier propertiesNotifier,
   ReservationsNotifier reservationsNotifier,
   SettingsRepository settingsRepository,
 ) {
@@ -89,21 +86,16 @@ GoRouter createRouter(
       GoRoute(
         path: AppRoutes.login,
         builder: (context, state) => LoginScreen(
-          authRepository: authRepository,
           authNotifier: authNotifier,
         ),
       ),
       GoRoute(
         path: AppRoutes.register,
-        builder: (context, state) =>
-            RegistrationScreen(authRepository: authRepository),
+        builder: (context, state) => const RegistrationScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (context, state) => OnboardingScreen(
-          authNotifier: authNotifier,
-          profileRepository: profileRepository,
-        ),
+        builder: (context, state) => const OnboardingScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -112,9 +104,7 @@ GoRouter createRouter(
         routes: [
           GoRoute(
             path: AppRoutes.home,
-            builder: (context, state) => PropertiesListingScreen(
-              notifier: propertiesNotifier,
-            ),
+            builder: (context, state) => const PropertiesListingScreen(),
           ),
           GoRoute(
             path: AppRoutes.myTrips,
@@ -185,9 +175,7 @@ GoRouter createRouter(
       // ─── Profile & Verification Routes ──────────────────────────
       GoRoute(
         path: AppRoutes.profileSetup,
-        builder: (context, state) => ProfileSetupScreen(
-          profileNotifier: ProfileNotifier(repository: profileRepository),
-        ),
+        builder: (context, state) => const ProfileSetupScreen(),
       ),
       GoRoute(
         path: AppRoutes.passportCapture,
@@ -251,7 +239,6 @@ GoRouter createRouter(
           final jobId = extras?['jobId'] as String?;
 
           return VerificationStatusScreen(
-            profileRepository: profileRepository,
             authNotifier: authNotifier,
             verificationJobId: jobId,
             verificationNotifier: verificationNotifier,

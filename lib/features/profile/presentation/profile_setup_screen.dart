@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/core/constants/nationalities.dart';import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
-import 'package:trvlez_mobile/app/routes.dart';
-class ProfileSetupScreen extends StatefulWidget {
-  final ProfileNotifier profileNotifier;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-  const ProfileSetupScreen({super.key, required this.profileNotifier});
+import 'package:trvlez_mobile/core/constants/nationalities.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/app/routes.dart';
+
+class ProfileSetupScreen extends ConsumerStatefulWidget {
+  const ProfileSetupScreen({super.key});
 
   @override
-  State<ProfileSetupScreen> createState() => ProfileSetupScreenState();
+  ConsumerState<ProfileSetupScreen> createState() => ProfileSetupScreenState();
 }
 
-class ProfileSetupScreenState extends State<ProfileSetupScreen>
+class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
     with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final phoneController = TextEditingController();
@@ -27,10 +30,11 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
   late final AnimationController fadeController;
   late final Animation<double> fadeAnimation;
 
+  bool _isInitialized = false;
+
   @override
   void initState() {
     super.initState();
-    widget.profileNotifier.addListener(onNotifierChanged);
 
     fadeController = AnimationController(
       vsync: this,
@@ -41,37 +45,14 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
       curve: Curves.easeOut,
     );
     fadeController.forward();
-
-    // Load existing profile data
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.profileNotifier.loadProfile().then((_) {
-        final profile = widget.profileNotifier.profile;
-        if (profile != null && mounted) {
-          setState(() {
-            phoneController.text = profile.phone ?? '';
-            selectedNationality = profile.nationality;
-            passportNumberController.text = profile.passportNumber ?? '';
-            selectedGender = profile.gender;
-            selectedDateOfBirth = profile.dateOfBirth;
-            selectedPassportExpiry = profile.passportExpiry;
-          });
-        }
-      });
-    });
   }
 
   @override
   void dispose() {
-    widget.profileNotifier.removeListener(onNotifierChanged);
     phoneController.dispose();
     passportNumberController.dispose();
     fadeController.dispose();
     super.dispose();
-  }
-
-  void onNotifierChanged() {
-    if (!mounted) return;
-    setState(() {});
   }
 
   Future<void> selectDate(BuildContext context) async {
@@ -191,7 +172,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
   Future<void> onSubmit() async {
     if (!formKey.currentState!.validate()) return;
 
-    final success = await widget.profileNotifier.updateProfile(
+    final success = await ref.read(currentProfileProvider.notifier).updateProfile(
       phone: phoneController.text.trim(),
       nationality: selectedNationality,
       gender: selectedGender,
@@ -225,6 +206,21 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(currentProfileProvider, (previous, next) {
+      if (!mounted) return;
+      if (!_isInitialized && next.hasValue && next.value != null) {
+        final profile = next.value!;
+        phoneController.text = profile.phone ?? '';
+        selectedNationality = profile.nationality;
+        passportNumberController.text = profile.passportNumber ?? '';
+        selectedGender = profile.gender;
+        selectedDateOfBirth = profile.dateOfBirth;
+        selectedPassportExpiry = profile.passportExpiry;
+        _isInitialized = true;
+        setState(() {});
+      }
+    });
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -331,7 +327,8 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
   // ─── Error Banner ─────────────────────────────────────────────────
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
-    final errorMessageText = widget.profileNotifier.errorMessage;
+    final error = ref.watch(currentProfileProvider).error;
+    final errorMessageText = (error as ApiException?)?.message ?? error?.toString();
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
@@ -386,7 +383,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
         TextFormField(
           controller: controller,
           validator: (val) => validateRequired(val, label),
-          enabled: !widget.profileNotifier.isLoading,
+          enabled: !ref.watch(currentProfileProvider).isLoading,
           keyboardType: keyboardType,
           textInputAction: TextInputAction.next,
           style: GoogleFonts.cabin(fontSize: 15),
@@ -403,7 +400,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
         Text('Nationality', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         InkWell(
-          onTap: widget.profileNotifier.isLoading
+          onTap: ref.watch(currentProfileProvider).isLoading
               ? null
               : () => showNationalityPicker(context, colorScheme),
           borderRadius: BorderRadius.circular(12),
@@ -456,7 +453,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
               child: Text('Prefer not to say'),
             ),
           ],
-          onChanged: widget.profileNotifier.isLoading
+          onChanged: ref.watch(currentProfileProvider).isLoading
               ? null
               : (value) {
                   setState(() {
@@ -475,7 +472,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
         Text('Date of Birth', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         InkWell(
-          onTap: widget.profileNotifier.isLoading
+          onTap: ref.watch(currentProfileProvider).isLoading
               ? null
               : () => selectDate(context),
           borderRadius: BorderRadius.circular(12),
@@ -519,7 +516,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
         Text('Passport Expiry', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         InkWell(
-          onTap: widget.profileNotifier.isLoading
+          onTap: ref.watch(currentProfileProvider).isLoading
               ? null
               : () => selectExpiryDate(context),
           borderRadius: BorderRadius.circular(12),
@@ -559,7 +556,7 @@ class ProfileSetupScreenState extends State<ProfileSetupScreen>
   // ─── Submit Button ────────────────────────────────────────────────
 
   Widget buildSubmitButton(ColorScheme colorScheme) {
-    final isLoading = widget.profileNotifier.isLoading;
+    final isLoading = ref.watch(currentProfileProvider).isLoading;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: FilledButton(

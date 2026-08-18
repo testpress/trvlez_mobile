@@ -1,29 +1,18 @@
-import 'package:flutter/foundation.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/profile/domain/profile.dart';
-class ProfileNotifier extends ChangeNotifier {
-  final ProfileRepository repository;
+import 'dart:async';
 
-  ProfileNotifier({required this.repository});
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
+import 'package:trvlez_mobile/features/profile/domain/profile.dart';
 
-  bool isLoading = false;
-  String? errorMessage;
-  Profile? profile;
+final currentProfileProvider = AsyncNotifierProvider<ProfileNotifier, Profile>(
+  () => ProfileNotifier(),
+);
 
-  Future<void> loadProfile() async {
-    isLoading = true;
-    errorMessage = null;
-    notifyListeners();
-
-    try {
-      profile = await repository.getProfile();
-    } on ApiException catch (e) {
-      errorMessage = e.message;
-    } catch (e) {
-      errorMessage = 'Failed to load profile.';
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
+class ProfileNotifier extends AsyncNotifier<Profile> {
+  @override
+  FutureOr<Profile> build() async {
+    final repository = ref.read(profileRepositoryProvider);
+    return repository.getProfile();
   }
 
   Future<bool> updateProfile({
@@ -34,12 +23,11 @@ class ProfileNotifier extends ChangeNotifier {
     String? passportNumber,
     DateTime? passportExpiry,
   }) async {
-    isLoading = true;
-    errorMessage = null;
-    notifyListeners();
+    state = const AsyncLoading<Profile>().copyWithPrevious(state);
 
     try {
-      profile = await repository.updateProfile(
+      final repository = ref.read(profileRepositoryProvider);
+      final updatedProfile = await repository.updateProfile(
         phone: phone,
         nationality: nationality,
         gender: gender,
@@ -47,16 +35,17 @@ class ProfileNotifier extends ChangeNotifier {
         passportNumber: passportNumber,
         passportExpiry: passportExpiry,
       );
+      state = AsyncData(updatedProfile);
       return true;
-    } on ApiException catch (e) {
-      errorMessage = e.message;
+    } catch (e, st) {
+      state = AsyncError<Profile>(e, st).copyWithPrevious(state);
       return false;
-    } catch (e) {
-      errorMessage = 'An unexpected error occurred.';
-      return false;
-    } finally {
-      isLoading = false;
-      notifyListeners();
+    }
+  }
+
+  void clearError() {
+    if (state.hasError && state.hasValue) {
+      state = AsyncData(state.value!);
     }
   }
 }

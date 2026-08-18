@@ -4,33 +4,32 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/features/auth/data/auth_repository.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 
 /// Traveler login screen.
-class LoginScreen extends StatefulWidget {
-  final AuthRepository authRepository;
+class LoginScreen extends ConsumerStatefulWidget {
   final AuthNotifier authNotifier;
 
   const LoginScreen({
     super.key,
-    required this.authRepository,
     required this.authNotifier,
   });
 
   @override
-  State<LoginScreen> createState() => LoginScreenState();
+  ConsumerState<LoginScreen> createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen>
+class LoginScreenState extends ConsumerState<LoginScreen>
     with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  late final LoginController controller;
   late final AnimationController fadeController;
   late final Animation<double> fadeAnimation;
 
@@ -39,14 +38,6 @@ class LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
-
-    controller = LoginController(
-      repository: widget.authRepository,
-      authNotifier: widget.authNotifier,
-    );
-
-    controller.addListener(onControllerChanged);
-
     fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -60,25 +51,19 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   void dispose() {
-    controller.removeListener(onControllerChanged);
-    controller.dispose();
     emailController.dispose();
     passwordController.dispose();
     fadeController.dispose();
     super.dispose();
   }
 
-  void onControllerChanged() {
-    if (!mounted) return;
-    setState(() {});
-  }
-
   void onSubmit() {
     if (!formKey.currentState!.validate()) return;
 
-    controller.login(
+    ref.read(loginControllerProvider.notifier).login(
       email: emailController.text.trim(),
       password: passwordController.text,
+      authNotifier: widget.authNotifier,
     );
   }
 
@@ -261,7 +246,8 @@ class LoginScreenState extends State<LoginScreen>
   // ─── Error Banner ─────────────────────────────────────────────────
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
-    final errorMessageText = controller.errorMessage;
+    final error = ref.watch(loginControllerProvider).error;
+    final errorMessageText = (error as ApiException?)?.message ?? error?.toString();
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
@@ -294,7 +280,7 @@ class LoginScreenState extends State<LoginScreen>
                 ),
               ),
               GestureDetector(
-                onTap: controller.clearError,
+                onTap: () => ref.read(loginControllerProvider.notifier).clearError(),
                 child: Icon(
                   Icons.close_rounded,
                   color: colorScheme.error.withAlpha(150),
@@ -319,7 +305,7 @@ class LoginScreenState extends State<LoginScreen>
         TextFormField(
           controller: emailController,
           validator: validateEmail,
-          enabled: !controller.isLoading,
+          enabled: !ref.watch(loginControllerProvider).isLoading,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           autocorrect: false,
@@ -343,7 +329,7 @@ class LoginScreenState extends State<LoginScreen>
         TextFormField(
           controller: passwordController,
           validator: validatePassword,
-          enabled: !controller.isLoading,
+          enabled: !ref.watch(loginControllerProvider).isLoading,
           obscureText: !isPasswordVisible,
           textInputAction: TextInputAction.done,
           onFieldSubmitted: (_) => onSubmit(),
@@ -379,7 +365,7 @@ class LoginScreenState extends State<LoginScreen>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       child: FilledButton(
-        onPressed: controller.isLoading ? null : onSubmit,
+        onPressed: ref.watch(loginControllerProvider).isLoading ? null : onSubmit,
         style: FilledButton.styleFrom(
           minimumSize: const Size(double.infinity, 44),
           backgroundColor: colorScheme.primary,
@@ -389,10 +375,10 @@ class LoginScreenState extends State<LoginScreen>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          elevation: controller.isLoading ? 0 : 2,
+          elevation: ref.watch(loginControllerProvider).isLoading ? 0 : 2,
           shadowColor: colorScheme.primary.withAlpha(60),
         ),
-        child: controller.isLoading
+        child: ref.watch(loginControllerProvider).isLoading
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

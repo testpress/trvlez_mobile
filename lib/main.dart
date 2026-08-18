@@ -21,7 +21,6 @@ import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
-import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 
 void main() async {
@@ -97,7 +96,6 @@ void main() async {
   final verificationNotifier = VerificationNotifier(
     repository: VerificationRepository(dio: dio),
   );
-  final propertiesNotifier = PropertiesNotifier(repository: propertiesRepository);
   final reservationsNotifier = ReservationsNotifier(repository: reservationRepository);
 
   // 4. Auth State (with profile repo for onboarding step check)
@@ -106,7 +104,6 @@ void main() async {
     profileRepository: profileRepository,
     onLogout: () {
       verificationNotifier.reset();
-      propertiesNotifier.reset();
       reservationsNotifier.reset();
     },
   );
@@ -125,7 +122,6 @@ void main() async {
         propertiesRepository: propertiesRepository,
         reservationRepository: reservationRepository,
         verificationNotifier: verificationNotifier,
-        propertiesNotifier: propertiesNotifier,
         reservationsNotifier: reservationsNotifier,
         settingsRepository: settingsRepository,
       ),
@@ -140,7 +136,6 @@ class TrvlEzApp extends ConsumerWidget {
   final PropertiesRepository propertiesRepository;
   final ReservationRepository reservationRepository;
   final VerificationNotifier verificationNotifier;
-  final PropertiesNotifier propertiesNotifier;
   final ReservationsNotifier reservationsNotifier;
   final SettingsRepository settingsRepository;
 
@@ -152,7 +147,6 @@ class TrvlEzApp extends ConsumerWidget {
     required this.propertiesRepository,
     required this.reservationRepository,
     required this.verificationNotifier,
-    required this.propertiesNotifier,
     required this.reservationsNotifier,
     required this.settingsRepository,
   });
@@ -174,7 +168,6 @@ class TrvlEzApp extends ConsumerWidget {
         propertiesRepository,
         reservationRepository,
         verificationNotifier,
-        propertiesNotifier,
         reservationsNotifier,
         settingsRepository,
       ),
