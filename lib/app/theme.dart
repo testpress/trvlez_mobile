@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/app/typography.dart';
@@ -201,3 +204,26 @@ class AppTheme {
     );
   }
 }
+
+/// Notifier to manage the application's [ThemeMode].
+class ThemeModeNotifier extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() {
+    return ref.watch(settingsRepositoryProvider).getThemeMode();
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = mode;
+    await ref.read(settingsRepositoryProvider).setThemeMode(mode);
+  }
+
+  Future<void> toggleTheme() async {
+    final newMode = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    await setThemeMode(newMode);
+  }
+}
+
+/// Provider for the application's [ThemeMode].
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(() {
+  return ThemeModeNotifier();
+});

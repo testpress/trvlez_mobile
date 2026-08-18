@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
@@ -233,3 +236,8 @@ class VerificationRepository {
     }
   }
 }
+
+/// Provider for the [VerificationRepository].
+final verificationRepositoryProvider = Provider<VerificationRepository>((ref) {
+  return VerificationRepository(dio: ref.watch(dioProvider));
+});

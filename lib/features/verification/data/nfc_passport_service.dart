@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dmrtd/dmrtd.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
@@ -289,3 +290,8 @@ class NfcPassportService {
     }
   }
 }
+
+/// Provider for the [NfcPassportService].
+final nfcPassportServiceProvider = Provider<NfcPassportService>((ref) {
+  return NfcPassportService();
+});

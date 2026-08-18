@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data_source.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 
@@ -54,3 +56,10 @@ class ReservationRepository {
     return dto.toDomain();
   }
 }
+
+/// Provider for the [ReservationRepository].
+final reservationRepositoryProvider = Provider<ReservationRepository>((ref) {
+  return ReservationRepository(
+    remoteDataSource: ref.watch(reservationRemoteDataSourceProvider),
+  );
+});

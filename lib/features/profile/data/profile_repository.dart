@@ -1,4 +1,8 @@
-import 'package:trvlez_mobile/features/profile/domain/profile.dart';import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:trvlez_mobile/features/profile/domain/profile.dart';
+import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
+
 class ProfileRepository {
   final ProfileRemoteDataSource remoteDataSource;
 
@@ -35,3 +39,10 @@ class ProfileRepository {
     return dto.toDomain();
   }
 }
+
+/// Provider for the [ProfileRepository].
+final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
+  return ProfileRepository(
+    remoteDataSource: ref.watch(profileRemoteDataSourceProvider),
+  );
+});

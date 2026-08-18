@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trvlez_mobile/app/router.dart';
 import 'package:trvlez_mobile/app/theme.dart';
@@ -112,25 +113,27 @@ void main() async {
 
   await authNotifier.checkAuthStatus();
 
-  final themeMode = settingsRepository.getThemeMode();
-  TrvlEzApp.themeNotifier.value = themeMode;
-
   runApp(
-    TrvlEzApp(
-      authNotifier: authNotifier,
-      authRepository: authRepository,
-      profileRepository: profileRepository,
-      propertiesRepository: propertiesRepository,
-      reservationRepository: reservationRepository,
-      verificationNotifier: verificationNotifier,
-      propertiesNotifier: propertiesNotifier,
-      reservationsNotifier: reservationsNotifier,
-      settingsRepository: settingsRepository,
+    ProviderScope(
+      overrides: [
+        settingsRepositoryProvider.overrideWithValue(settingsRepository),
+      ],
+      child: TrvlEzApp(
+        authNotifier: authNotifier,
+        authRepository: authRepository,
+        profileRepository: profileRepository,
+        propertiesRepository: propertiesRepository,
+        reservationRepository: reservationRepository,
+        verificationNotifier: verificationNotifier,
+        propertiesNotifier: propertiesNotifier,
+        reservationsNotifier: reservationsNotifier,
+        settingsRepository: settingsRepository,
+      ),
     ),
   );
 }
 
-class TrvlEzApp extends StatelessWidget {
+class TrvlEzApp extends ConsumerWidget {
   final AuthNotifier authNotifier;
   final AuthRepository authRepository;
   final ProfileRepository profileRepository;
@@ -140,10 +143,6 @@ class TrvlEzApp extends StatelessWidget {
   final PropertiesNotifier propertiesNotifier;
   final ReservationsNotifier reservationsNotifier;
   final SettingsRepository settingsRepository;
-
-  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
-    ThemeMode.system,
-  );
 
   const TrvlEzApp({
     super.key,
@@ -159,29 +158,26 @@ class TrvlEzApp extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (_, currentMode, _) {
-        return MaterialApp.router(
-          title: 'TrvlEz',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: currentMode,
-          routerConfig: createRouter(
-            authNotifier,
-            authRepository,
-            profileRepository,
-            propertiesRepository,
-            reservationRepository,
-            verificationNotifier,
-            propertiesNotifier,
-            reservationsNotifier,
-            settingsRepository,
-          ),
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentMode = ref.watch(themeModeProvider);
+
+    return MaterialApp.router(
+      title: 'TrvlEz',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: currentMode,
+      routerConfig: createRouter(
+        authNotifier,
+        authRepository,
+        profileRepository,
+        propertiesRepository,
+        reservationRepository,
+        verificationNotifier,
+        propertiesNotifier,
+        reservationsNotifier,
+        settingsRepository,
+      ),
     );
   }
 }

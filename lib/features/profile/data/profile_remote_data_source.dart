@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 
 import 'package:trvlez_mobile/features/profile/data/profile_dto.dart';
 
@@ -40,3 +43,8 @@ class ProfileRemoteDataSource {
     return ProfileDto.fromJson(response.data!);
   }
 }
+
+/// Provider for the [ProfileRemoteDataSource].
+final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((ref) {
+  return ProfileRemoteDataSource(dio: ref.watch(dioProvider));
+});

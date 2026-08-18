@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 
 import 'package:trvlez_mobile/features/reservations/data/reservation_dto.dart';
 
@@ -68,3 +71,8 @@ class ReservationRemoteDataSource {
     return CheckInTokenDto.fromJson(response.data!);
   }
 }
+
+/// Provider for the [ReservationRemoteDataSource].
+final reservationRemoteDataSourceProvider = Provider<ReservationRemoteDataSource>((ref) {
+  return ReservationRemoteDataSource(dio: ref.watch(dioProvider));
+});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsRepository {
   static const _themeKey = 'isDark';
@@ -27,3 +28,11 @@ class SettingsRepository {
     }
   }
 }
+
+/// Provider for the [SettingsRepository].
+///
+/// Since [SettingsRepository] requires asynchronous initialization, this provider
+/// will throw an [UnimplementedError] if read before it is overridden in [ProviderScope].
+final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
+  throw UnimplementedError('settingsRepositoryProvider must be overridden');
+});

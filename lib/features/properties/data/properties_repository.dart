@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trvlez_mobile/features/properties/data/properties_remote_data_source.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 
@@ -16,3 +18,10 @@ class PropertiesRepository {
     return dto.toDomain();
   }
 }
+
+/// Provider for the [PropertiesRepository].
+final propertiesRepositoryProvider = Provider<PropertiesRepository>((ref) {
+  return PropertiesRepository(
+    remoteDataSource: ref.watch(propertiesRemoteDataSourceProvider),
+  );
+});

@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 
 import 'package:trvlez_mobile/features/properties/data/property_dto.dart';
 
@@ -29,3 +32,8 @@ class PropertiesRemoteDataSource {
     return PropertyDto.fromJson(response.data!);
   }
 }
+
+/// Provider for the [PropertiesRemoteDataSource].
+final propertiesRemoteDataSourceProvider = Provider<PropertiesRemoteDataSource>((ref) {
+  return PropertiesRemoteDataSource(dio: ref.watch(dioProvider));
+});

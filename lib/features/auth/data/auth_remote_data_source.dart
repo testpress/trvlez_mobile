@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 
 import 'package:trvlez_mobile/features/auth/data/login_response_dto.dart';
 import 'package:trvlez_mobile/features/auth/data/traveler_signup_dto.dart';
@@ -51,3 +54,8 @@ class AuthRemoteDataSource {
     return LoginResponseDto.fromJson(response.data!);
   }
 }
+
+/// Provider for the [AuthRemoteDataSource].
+final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
+  return AuthRemoteDataSource(dio: ref.watch(dioProvider));
+});

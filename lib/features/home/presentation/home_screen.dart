@@ -6,14 +6,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 
 import 'package:trvlez_mobile/app/colors.dart';
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/main.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/app/theme.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';import 'package:trvlez_mobile/features/home/presentation/home_notifier.dart';import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 /// The primary landing screen for all authenticated travelers.
 ///
 /// Always shown after login regardless of onboarding state. Displays a
 /// context-aware verification banner that guides users through profile
 /// completion, document upload, or shows verification progress.
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   final AuthNotifier authNotifier;
   final ProfileRepository profileRepository;
   final VerificationRepository verificationRepository;
@@ -28,10 +30,10 @@ class HomeScreen extends StatefulWidget {
   });
 
   @override
-  State<HomeScreen> createState() => HomeScreenState();
+  ConsumerState<HomeScreen> createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends ConsumerState<HomeScreen> {
   late final HomeNotifier notifier;
 
   @override
@@ -141,16 +143,11 @@ class HomeScreenState extends State<HomeScreen> {
             tooltip: 'Profile Options',
             onSelected: (value) async {
               if (value == 'theme') {
-                final current = TrvlEzApp.themeNotifier.value;
-                final newMode = current == ThemeMode.dark
-                    ? ThemeMode.light
-                    : ThemeMode.dark;
-                TrvlEzApp.themeNotifier.value = newMode;
-                await widget.settingsRepository.setThemeMode(newMode);
+                await ref.read(themeModeProvider.notifier).toggleTheme();
               }
             },
             itemBuilder: (context) {
-              final isDark = TrvlEzApp.themeNotifier.value == ThemeMode.dark;
+              final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
               return [
                 PopupMenuItem(
                   value: 'theme',
