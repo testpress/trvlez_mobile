@@ -21,6 +21,7 @@ import 'package:trvlez_mobile/features/reservations/presentation/create_reservat
 import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
@@ -154,6 +155,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           final extras = state.extra as Map<String, dynamic>;
           final reservation = extras['reservation'] as Reservation;
           return QrCodeScreen(reservation: reservation);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.reservationForm,
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>;
+          final reservation = extras['reservation'] as Reservation;
+          return PreArrivalFormScreen(reservationId: reservation.id);
         },
       ),
       // ─── Profile & Verification Routes ──────────────────────────

@@ -5,6 +5,7 @@ class ReservationDto {
   final String id;
   final String confirmationCode;
   final String status;
+  final String? formStatus;
   final String checkInDate;
   final String checkOutDate;
   final String guestName;
@@ -23,6 +24,7 @@ class ReservationDto {
     required this.id,
     required this.confirmationCode,
     required this.status,
+    this.formStatus,
     required this.checkInDate,
     required this.checkOutDate,
     required this.guestName,
@@ -43,6 +45,7 @@ class ReservationDto {
       id: json['id'] as String,
       confirmationCode: json['confirmation_code'] as String,
       status: json['status'] as String,
+      formStatus: json['form_status'] as String?,
       checkInDate: json['check_in_date'] as String,
       checkOutDate: json['check_out_date'] as String,
       guestName: json['guest_name'] as String,
@@ -68,6 +71,7 @@ class ReservationDto {
       id: id,
       confirmationCode: confirmationCode,
       status: ReservationStatus.fromString(status),
+      formStatus: formStatus,
       checkInDate: DateTime.parse(checkInDate),
       checkOutDate: DateTime.parse(checkOutDate),
       guestName: guestName,
@@ -90,6 +94,7 @@ class ReservationDto {
         city: propertySummary['city'] as String?,
         countryCode: propertySummary['country_code'] as String?,
         heroImageUrl: propertySummary['hero_image_url'] as String?,
+        requiresPrearrivalForm: propertySummary['requires_prearrival_form'] as bool? ?? false,
       ),
       createdAt: DateTime.parse(createdAt),
       cancelledAt: cancelledAt != null ? DateTime.parse(cancelledAt!) : null,

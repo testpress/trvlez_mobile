@@ -390,8 +390,52 @@ class _ReservationDetailScreenState
   }
 
   Widget _buildActions(ColorScheme colorScheme, Reservation reservation) {
+    // Determine form button text and behavior based on form status
+    String? formButtonText;
+    IconData formButtonIcon = Icons.assignment_outlined;
+    bool isFormComplete = false;
+
+    if (reservation.propertySummary.requiresPrearrivalForm) {
+      if (reservation.formStatus == null || reservation.formStatus == 'draft' || reservation.formStatus == 'resubmission_requested') {
+        formButtonText = reservation.formStatus == 'draft' ? 'Continue Pre-Arrival Form' : 'Complete Pre-Arrival Form';
+        formButtonIcon = Icons.edit_document;
+      } else {
+        formButtonText = 'View Pre-Arrival Form';
+        formButtonIcon = Icons.assignment_turned_in;
+        isFormComplete = true;
+      }
+    }
+
     return Column(
       children: [
+        // Form Action Button
+        if (formButtonText != null) ...[
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: FilledButton.icon(
+              onPressed: () {
+                context.push(
+                  '/reservations/${reservation.id}/form',
+                  extra: {'reservation': reservation},
+                );
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: isFormComplete ? colorScheme.secondary : colorScheme.primary,
+              ),
+              icon: Icon(formButtonIcon),
+              label: Text(
+                formButtonText,
+                style: GoogleFonts.nunito(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+
         // QR Code button — only for confirmed reservations
         if (reservation.status.canGenerateQr)
           SizedBox(

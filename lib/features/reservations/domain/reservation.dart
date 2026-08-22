@@ -68,6 +68,7 @@ class ReservationPropertySummary {
   final String? city;
   final String? countryCode;
   final String? heroImageUrl;
+  final bool requiresPrearrivalForm;
 
   const ReservationPropertySummary({
     required this.id,
@@ -75,6 +76,7 @@ class ReservationPropertySummary {
     this.city,
     this.countryCode,
     this.heroImageUrl,
+    this.requiresPrearrivalForm = false,
   });
 
   String get locationString {
@@ -107,6 +109,7 @@ class Reservation {
   final String id;
   final String confirmationCode;
   final ReservationStatus status;
+  final String? formStatus;
   final DateTime checkInDate;
   final DateTime checkOutDate;
   final String guestName;
@@ -125,6 +128,7 @@ class Reservation {
     required this.id,
     required this.confirmationCode,
     required this.status,
+    this.formStatus,
     required this.checkInDate,
     required this.checkOutDate,
     required this.guestName,

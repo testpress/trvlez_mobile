@@ -22,9 +22,11 @@ class AppRoutes {
   static const String createReservation = '/reservations/create';
   static const String reservationDetail = '/reservations/:id';
   static const String reservationQr = '/reservations/:id/qr';
+  static const String reservationForm = '/reservations/:id/form';
 
   static String reservationDetailPath(String id) => '/reservations/$id';
   static String reservationQrPath(String id) => '/reservations/$id/qr';
+  static String reservationFormPath(String id) => '/reservations/$id/form';
 
   // Profile Setup
   static const String profileSetup = '/profile-setup';
