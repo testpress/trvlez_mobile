@@ -41,5 +41,6 @@ class AppRoutes {
   static const String nfcIntro = '/verification/nfc-intro';
   static const String nfcScan = '/verification/nfc-scan';
   static const String nfcResult = '/verification/nfc-result';
+  static const String verificationProcessing = '/verification/processing';
   static const String verificationStatus = '/verification/status';
 }

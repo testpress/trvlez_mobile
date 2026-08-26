@@ -33,6 +33,8 @@ import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_
 import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_processing_screen.dart';
+import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
 
 /// Adapter to trigger GoRouter refresh when AuthState changes
 class RouterNotifier extends ChangeNotifier {
@@ -208,6 +210,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.nfcResult,
         builder: (context, state) => const NfcResultScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.verificationProcessing,
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>;
+          final type = extras['type'] as ProcessingType;
+          return VerificationProcessingScreen(type: type);
+        },
       ),
       GoRoute(
         path: AppRoutes.verificationStatus,

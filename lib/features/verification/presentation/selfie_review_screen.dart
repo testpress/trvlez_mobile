@@ -1,15 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_review_scaffold.dart';
 
+/// Displays the captured selfie video for the traveler to review
+/// before uploading.
+///
+/// Uses the shared KYC review layout (light theme, card, stepper).
+/// On upload, fires the upload and navigates to [VerificationProcessingScreen].
 class SelfieReviewScreen extends ConsumerStatefulWidget {
   const SelfieReviewScreen({super.key});
 
@@ -18,9 +25,8 @@ class SelfieReviewScreen extends ConsumerStatefulWidget {
 }
 
 class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
-  VideoPlayerController? videoController;
-  bool isPlaying = false;
-  bool isUploadingLocally = false;
+  VideoPlayerController? _videoController;
+  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -28,15 +34,15 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final videoFile = ref.read(verificationNotifierProvider).capturedVideo;
       if (videoFile != null) {
-        initializeVideo(videoFile);
+        _initializeVideo(videoFile);
       }
     });
   }
 
-  Future<void> initializeVideo(File videoFile) async {
-    videoController = VideoPlayerController.file(videoFile);
-    await videoController!.initialize();
-    await videoController!.setLooping(true);
+  Future<void> _initializeVideo(File videoFile) async {
+    _videoController = VideoPlayerController.file(videoFile);
+    await _videoController!.initialize();
+    await _videoController!.setLooping(true);
     if (mounted) {
       setState(() {});
     }
@@ -44,67 +50,30 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
 
   @override
   void dispose() {
-    videoController?.dispose();
+    _videoController?.dispose();
     super.dispose();
   }
 
-  void togglePlay() {
-    if (videoController == null) return;
+  void _togglePlayback() {
+    if (_videoController == null) return;
 
-    if (videoController!.value.isPlaying) {
-      videoController!.pause();
-      setState(() => isPlaying = false);
+    if (_videoController!.value.isPlaying) {
+      _videoController!.pause();
+      setState(() => _isPlaying = false);
     } else {
-      videoController!.play();
-      setState(() => isPlaying = true);
+      _videoController!.play();
+      setState(() => _isPlaying = true);
     }
   }
 
-  Future<void> handleUpload() async {
-    if (isUploadingLocally) return;
-    setState(() => isUploadingLocally = true);
-    await ref.read(verificationNotifierProvider.notifier).uploadSelfie();
-
-    if (!mounted) return;
-    setState(() => isUploadingLocally = false);
-
-    final phase = ref.read(verificationNotifierProvider).phase;
-
-    if (phase == VerificationPhase.error ||
-        phase == VerificationPhase.videoQualityFailed) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ref.read(verificationNotifierProvider).errorMessage ??
-                'Upload failed',
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Upload succeeded — show confirmation summary before navigating
-    if (!mounted) return;
-    showUploadSuccessSheet(phase);
-  }
-
-  void showUploadSuccessSheet(VerificationPhase phase) {
-    showModalBottomSheet<void>(
-      context: context,
-      isDismissible: false,
-      enableDrag: false,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        return UploadSuccessSheet(
-          phase: phase,
-          onViewStatus: () {
-            Navigator.of(sheetContext).pop();
-            // Proceed to the NFC step
-            context.go(AppRoutes.nfcIntro);
-          },
-        );
-      },
+  void _handleUpload() {
+    final notifier = ref.read(verificationNotifierProvider.notifier);
+    // Fire-and-forget: the notifier manages the async state
+    notifier.uploadSelfie();
+    // Navigate to the dedicated processing experience
+    context.go(
+      AppRoutes.verificationProcessing,
+      extra: {'type': ProcessingType.video},
     );
   }
 
@@ -112,182 +81,62 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.watch(verificationNotifierProvider.notifier);
-
     final phase = state.phase;
-    final isUploading = phase == VerificationPhase.uploading ||
-        phase == VerificationPhase.checkingVideoQuality;
-    final isSubmitting = phase == VerificationPhase.submitting;
-    final isBusy = isUploading || isSubmitting;
 
-    Widget mainChild;
-    if (videoController != null && videoController!.value.isInitialized) {
-      mainChild = Stack(
-        fit: StackFit.expand,
-        children: [
-          Center(
-            child: AspectRatio(
-              aspectRatio: videoController!.value.aspectRatio,
-              child: GestureDetector(
-                onTap: togglePlay,
-                child: VideoPlayer(videoController!),
-              ),
-            ),
-          ),
-          if (!isPlaying && !isBusy)
-            Center(
-              child: IconButton(
-                iconSize: 64,
-                icon: const Icon(Icons.play_circle_fill, color: Colors.white),
-                onPressed: togglePlay,
-              ),
-            ),
-        ],
-      );
-    } else {
-      mainChild = const Center(child: CircularProgressIndicator());
-    }
+    final hasError = phase == VerificationPhase.error ||
+        phase == VerificationPhase.videoQualityFailed;
 
     return SharedReviewScaffold(
-      title: 'Review Video',
-      isBusy: isBusy,
-      busyText: switch (phase) {
-        VerificationPhase.checkingVideoQuality => 'Analyzing Video Quality...',
-        VerificationPhase.submitting => 'Submitting for verification...',
-        _ => 'Uploading Video...',
-      },
-      progress: state.uploadProgress,
+      title: 'Review Your Video',
+      subtitle: 'Make sure your face is clearly visible throughout.',
+      kycStepIndex: 2,
+      stepper: const KycProgressStepper(progressIndex: 2),
+      errorMessage: hasError ? state.errorMessage : null,
+      uploadText: hasError ? 'Retry Upload' : 'Upload',
       onRetake: () {
         notifier.clearVideo();
         context.go(AppRoutes.selfieCapture);
       },
-      onUpload: handleUpload,
-      uploadText: (phase == VerificationPhase.error ||
-              phase == VerificationPhase.videoQualityFailed)
-          ? 'Retry Upload'
-          : 'Upload',
-      child: mainChild,
+      onUpload: _handleUpload,
+      mediaChild: _buildVideoPreview(),
     );
   }
-}
 
-// ─── Upload Success Confirmation Sheet ────────────────────────────────────
+  Widget _buildVideoPreview() {
+    final isReady =
+        _videoController != null && _videoController!.value.isInitialized;
 
-class UploadSuccessSheet extends StatelessWidget {
-  final VerificationPhase phase;
-  final VoidCallback onViewStatus;
-
-  const UploadSuccessSheet({
-    super.key,
-    required this.phase,
-    required this.onViewStatus,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isAlreadyVerified = phase == VerificationPhase.verified;
-    final hasFailed = phase == VerificationPhase.verificationFailed;
-
-    final String title;
-    final String message;
-    final IconData icon;
-    final Color iconColor;
-
-    if (isAlreadyVerified) {
-      title = 'Verification Complete!';
-      message =
-          'Your identity has been verified successfully. You\'re all set to start exploring.';
-      icon = Icons.verified_rounded;
-      iconColor = const Color(0xFF27AE60);
-    } else if (hasFailed) {
-      title = 'Verification Unsuccessful';
-      message =
-          'We couldn\'t verify your identity at this time. Please review your documents and try again.';
-      icon = Icons.error_outline_rounded;
-      iconColor = const Color(0xFFE65100);
-    } else {
-      title = 'Documents Uploaded!';
-      message =
-          'Your documents have been uploaded successfully. Your verification is now in progress — you can track the status on the next screen.';
-      icon = Icons.cloud_done_rounded;
-      iconColor = const Color(0xFF0277BD);
+    if (!isReady) {
+      return const SizedBox(
+        height: 200,
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 40,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 24),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(40),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // Icon
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: iconColor.withAlpha(20),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: iconColor, size: 36),
-          ),
-          const SizedBox(height: 20),
-          // Title
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          // Message
-          Text(
-            message,
-            style: TextStyle(
-              fontSize: 15,
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(160),
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 28),
-          // CTA Button
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: FilledButton.icon(
-              onPressed: onViewStatus,
-              icon: Icon(
-                isAlreadyVerified
-                    ? Icons.explore_rounded
-                    : Icons.visibility_rounded,
-              ),
-              label: Text(
-                isAlreadyVerified
-                    ? 'Start Exploring'
-                    : 'Continue to Passport Scan',
-              ),
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+    return AspectRatio(
+      aspectRatio: _videoController!.value.aspectRatio,
+      child: GestureDetector(
+        onTap: _togglePlayback,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            VideoPlayer(_videoController!),
+            if (!_isPlaying)
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 32,
                 ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

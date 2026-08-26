@@ -194,11 +194,11 @@ class MrzReviewScreen extends ConsumerWidget {
                                 }
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.onSurface,
-                          foregroundColor: colorScheme.surface,
-                          minimumSize: const Size(double.infinity, 44),
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          minimumSize: const Size(double.infinity, 48),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(22),
+                            borderRadius: BorderRadius.circular(24),
                           ),
                           elevation: 0,
                         ),
@@ -214,8 +214,9 @@ class MrzReviewScreen extends ConsumerWidget {
                             : Text(
                                 'Confirm & Continue',
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 16,
+                                  color: colorScheme.onPrimary,
                                 ),
                               ),
                       ),
