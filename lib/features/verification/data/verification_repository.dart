@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/core/network/dio_provider.dart';
 
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/quality_check_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
@@ -92,6 +93,26 @@ class VerificationRepository {
 
     // 3. Complete the upload
     await dio.post('/upload/video/complete', data: {'file_id': fileId});
+  }
+
+  /// Validates passport image quality (blur, face existence, MRZ presence).
+  Future<ImageQualityResult> checkImageQuality() async {
+    final response = await dio.post<Map<String, dynamic>>(
+      '/traveler/verification/image-quality',
+      data: {},
+    );
+
+    return ImageQualityResult.fromJson(response.data!);
+  }
+
+  /// Validates selfie video quality (blur variance across frames).
+  Future<VideoQualityResult> checkVideoQuality() async {
+    final response = await dio.post<Map<String, dynamic>>(
+      '/traveler/verification/video-quality',
+      data: {},
+    );
+
+    return VideoQualityResult.fromJson(response.data!);
   }
 
   /// Extracts MRZ data from the uploaded passport image.

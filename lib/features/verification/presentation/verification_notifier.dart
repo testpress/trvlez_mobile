@@ -6,6 +6,7 @@ import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/quality_check_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart'
@@ -18,11 +19,15 @@ import 'package:trvlez_mobile/features/verification/presentation/verification_pr
 enum VerificationPhase {
   idle,
   uploading,
+  checkingImageQuality,
+  imageQualityFailed,
   uploadSuccess,
   extractingMrz,
   mrzExtractionFailed,
   mrzReviewed,
   confirmingMrz,
+  checkingVideoQuality,
+  videoQualityFailed,
   submitting,
   verifying,
   verified,
@@ -43,6 +48,10 @@ class VerificationState {
   final VerificationJobResult? jobResult;
   final domain.VerificationStatus? verificationStatus;
 
+  // Quality State
+  final ImageQualityResult? imageQualityResult;
+  final VideoQualityResult? videoQualityResult;
+
   // MRZ State
   final MrzExtractionResult? mrzExtractionResult;
 
@@ -62,6 +71,8 @@ class VerificationState {
     this.submitResult,
     this.jobResult,
     this.verificationStatus,
+    this.imageQualityResult,
+    this.videoQualityResult,
     this.mrzExtractionResult,
     this.nfcResult,
     this.isNfcSkipped = false,
@@ -82,6 +93,8 @@ class VerificationState {
     VerificationSubmitResult? submitResult,
     VerificationJobResult? jobResult,
     domain.VerificationStatus? verificationStatus,
+    ImageQualityResult? imageQualityResult,
+    VideoQualityResult? videoQualityResult,
     MrzExtractionResult? mrzExtractionResult,
     NfcPassportResult? nfcResult,
     bool clearNfcResult = false,
@@ -99,6 +112,8 @@ class VerificationState {
       submitResult: submitResult ?? this.submitResult,
       jobResult: jobResult ?? this.jobResult,
       verificationStatus: verificationStatus ?? this.verificationStatus,
+      imageQualityResult: imageQualityResult ?? this.imageQualityResult,
+      videoQualityResult: videoQualityResult ?? this.videoQualityResult,
       mrzExtractionResult: mrzExtractionResult ?? this.mrzExtractionResult,
       nfcResult: clearNfcResult ? null : (nfcResult ?? this.nfcResult),
       isNfcSkipped: isNfcSkipped ?? this.isNfcSkipped,
@@ -124,15 +139,18 @@ class VerificationNotifier extends Notifier<VerificationState> {
   /// Backward-compatible status getter used by existing UI code.
   VerificationActionStatus get status => switch (state.phase) {
     VerificationPhase.idle => VerificationActionStatus.idle,
-    VerificationPhase.uploading => VerificationActionStatus.uploading,
+    VerificationPhase.uploading ||
+    VerificationPhase.checkingImageQuality ||
+    VerificationPhase.checkingVideoQuality ||
+    VerificationPhase.extractingMrz => VerificationActionStatus.uploading,
     VerificationPhase.uploadSuccess ||
     VerificationPhase.mrzReviewed ||
     VerificationPhase.confirmingMrz ||
     VerificationPhase.submitting ||
     VerificationPhase.verifying ||
     VerificationPhase.verified => VerificationActionStatus.success,
-    VerificationPhase.extractingMrz =>
-      VerificationActionStatus.uploading, // Keep UI in loading state
+    VerificationPhase.imageQualityFailed ||
+    VerificationPhase.videoQualityFailed ||
     VerificationPhase.mrzExtractionFailed ||
     VerificationPhase.verificationFailed ||
     VerificationPhase.error => VerificationActionStatus.error,
@@ -271,7 +289,24 @@ class VerificationNotifier extends Notifier<VerificationState> {
         },
       );
 
-      // After successful upload, immediately extract MRZ
+      // 1. After successful upload, perform targeted image quality check
+      state = state.copyWith(phase: VerificationPhase.checkingImageQuality);
+
+      final qualityResult = await repository.checkImageQuality();
+      state = state.copyWith(imageQualityResult: qualityResult);
+
+      if (!qualityResult.isAcceptable) {
+        final errorMsg = qualityResult.uiGuidance ??
+            qualityResult.message ??
+            'Passport photo quality is insufficient. Please retake the photo.';
+        state = state.copyWith(
+          phase: VerificationPhase.imageQualityFailed,
+          errorMessage: errorMsg,
+        );
+        return;
+      }
+
+      // 2. Only on PASS: Proceed to MRZ extraction with the same uploaded image
       state = state.copyWith(phase: VerificationPhase.extractingMrz);
 
       final mrzResult = await repository.extractMrz();
@@ -362,9 +397,6 @@ class VerificationNotifier extends Notifier<VerificationState> {
       phase: VerificationPhase.uploading,
       uploadProgress: 0.0,
       clearError: true,
-      // Clearing submitResult and jobResult implicitly here would require
-      // adding more clear flags, let's just create a completely fresh state or use clear flags
-      // We'll keep the current submitResult/jobResult as is until submit Verification
     );
 
     try {
@@ -376,7 +408,24 @@ class VerificationNotifier extends Notifier<VerificationState> {
         },
       );
 
-      // Upload complete. Wait for user to proceed to NFC.
+      // 1. After successful upload, perform targeted video quality check
+      state = state.copyWith(phase: VerificationPhase.checkingVideoQuality);
+
+      final qualityResult = await repository.checkVideoQuality();
+      state = state.copyWith(videoQualityResult: qualityResult);
+
+      if (!qualityResult.isAcceptable) {
+        final errorMsg = qualityResult.uiGuidance ??
+            qualityResult.message ??
+            'Selfie video quality is insufficient. Please re-record your video.';
+        state = state.copyWith(
+          phase: VerificationPhase.videoQualityFailed,
+          errorMessage: errorMsg,
+        );
+        return;
+      }
+
+      // 2. Only on PASS: Proceed to NFC / submission step
       state = state.copyWith(phase: VerificationPhase.uploadSuccess);
     } on ApiException catch (e) {
       state = state.copyWith(

@@ -68,9 +68,11 @@ class PassportReviewScreen extends ConsumerWidget {
     return SharedReviewScaffold(
       title: 'Review',
       isBusy: status == VerificationActionStatus.uploading,
-      busyText: state.phase == VerificationPhase.extractingMrz
-          ? 'Extracting Passport Data...'
-          : 'Uploading Passport...',
+      busyText: switch (state.phase) {
+        VerificationPhase.checkingImageQuality => 'Analyzing Image Quality...',
+        VerificationPhase.extractingMrz => 'Extracting Passport Data...',
+        _ => 'Uploading Passport...',
+      },
       progress: progress,
       overlay: successOverlay,
       errorMessage: status == VerificationActionStatus.error ? error : null,

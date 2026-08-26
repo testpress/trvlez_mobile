@@ -70,7 +70,8 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
 
     final phase = ref.read(verificationNotifierProvider).phase;
 
-    if (phase == VerificationPhase.error) {
+    if (phase == VerificationPhase.error ||
+        phase == VerificationPhase.videoQualityFailed) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -113,7 +114,8 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
     final notifier = ref.watch(verificationNotifierProvider.notifier);
 
     final phase = state.phase;
-    final isUploading = phase == VerificationPhase.uploading;
+    final isUploading = phase == VerificationPhase.uploading ||
+        phase == VerificationPhase.checkingVideoQuality;
     final isSubmitting = phase == VerificationPhase.submitting;
     final isBusy = isUploading || isSubmitting;
 
@@ -148,16 +150,21 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
     return SharedReviewScaffold(
       title: 'Review Video',
       isBusy: isBusy,
-      busyText: isSubmitting
-          ? 'Submitting for verification...'
-          : 'Uploading Video...',
+      busyText: switch (phase) {
+        VerificationPhase.checkingVideoQuality => 'Analyzing Video Quality...',
+        VerificationPhase.submitting => 'Submitting for verification...',
+        _ => 'Uploading Video...',
+      },
       progress: state.uploadProgress,
       onRetake: () {
         notifier.clearVideo();
         context.go(AppRoutes.selfieCapture);
       },
       onUpload: handleUpload,
-      uploadText: 'Upload',
+      uploadText: (phase == VerificationPhase.error ||
+              phase == VerificationPhase.videoQualityFailed)
+          ? 'Retry Upload'
+          : 'Upload',
       child: mainChild,
     );
   }
