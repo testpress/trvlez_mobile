@@ -95,11 +95,17 @@ class VerificationRepository {
     await dio.post('/upload/video/complete', data: {'file_id': fileId});
   }
 
+  static const Duration _verificationApiTimeout = Duration(seconds: 45);
+
   /// Validates passport image quality (blur, face existence, MRZ presence).
   Future<ImageQualityResult> checkImageQuality() async {
     final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/image-quality',
       data: {},
+      options: Options(
+        receiveTimeout: _verificationApiTimeout,
+        sendTimeout: _verificationApiTimeout,
+      ),
     );
 
     return ImageQualityResult.fromJson(response.data!);
@@ -110,6 +116,10 @@ class VerificationRepository {
     final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/video-quality',
       data: {},
+      options: Options(
+        receiveTimeout: _verificationApiTimeout,
+        sendTimeout: _verificationApiTimeout,
+      ),
     );
 
     return VideoQualityResult.fromJson(response.data!);
@@ -123,6 +133,10 @@ class VerificationRepository {
     final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/extract-mrz',
       data: {},
+      options: Options(
+        receiveTimeout: _verificationApiTimeout,
+        sendTimeout: _verificationApiTimeout,
+      ),
     );
 
     return MrzExtractionResult.fromJson(response.data!);
@@ -143,6 +157,10 @@ class VerificationRepository {
     final response = await dio.post<Map<String, dynamic>>(
       '/traveler/verification/submit',
       data: body,
+      options: Options(
+        receiveTimeout: _verificationApiTimeout,
+        sendTimeout: _verificationApiTimeout,
+      ),
     );
 
     return VerificationSubmitResult.fromJson(response.data!);
@@ -213,7 +231,13 @@ class VerificationRepository {
     required int fileLength,
     required void Function(double progress) onProgress,
   }) async {
-    final s3Dio = Dio();
+    final s3Dio = Dio(
+      BaseOptions(
+        connectTimeout: _verificationApiTimeout,
+        sendTimeout: _verificationApiTimeout,
+        receiveTimeout: _verificationApiTimeout,
+      ),
+    );
 
     try {
       final fileStream = file.openRead();

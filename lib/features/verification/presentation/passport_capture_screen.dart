@@ -17,9 +17,9 @@ import 'package:trvlez_mobile/app/routes.dart';
 /// Crops the passport region from the full camera capture.
 ///
 /// In landscape mode the captured image already has the correct orientation,
-/// so no rotation is needed. The result is encoded as high-quality JPEG
-/// to preserve text sharpness for MRZ extraction while keeping file size
-/// reasonable (~1-3 MB vs 10-20 MB for PNG).
+/// so no rotation is needed. The cropped image is normalized to max 1920px width
+/// (~380-400 DPI) and encoded as lossless PNG to maintain pristine text sharpness
+/// for MRZ extraction while keeping the file size small (~1.5-2.5 MB).
 Future<File?> processAndCropImage(Map<String, dynamic> params) async {
   final String imagePath = params['path'] as String;
   final double sw = params['sw'] as double;
@@ -47,7 +47,7 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
     final double cropX = cropCenterX - (cropW / 2);
     final double cropY = (ih - cropH) / 2;
 
-    final img.Image croppedImage = img.copyCrop(
+    img.Image croppedImage = img.copyCrop(
       originalImage,
       x: cropX.toInt().clamp(0, originalImage.width - 1),
       y: cropY.toInt().clamp(0, originalImage.height - 1),
@@ -55,8 +55,18 @@ Future<File?> processAndCropImage(Map<String, dynamic> params) async {
       height: cropH.toInt().clamp(1, originalImage.height),
     );
 
-    // Encode as PNG — no rotation needed in landscape mode.
-    final pngBytes = img.encodePng(croppedImage);
+    // Normalize resolution: standard passport page needs ~300-400 DPI (~1800-1920px width).
+    // Downscaling from raw 12MP/48MP reduces PNG size from 20MB to ~1.5-2MB while eliminating sensor noise.
+    if (croppedImage.width > 1920) {
+      croppedImage = img.copyResize(
+        croppedImage,
+        width: 1920,
+        interpolation: img.Interpolation.cubic,
+      );
+    }
+
+    // Encode as Lossless PNG — no rotation needed in landscape mode.
+    final pngBytes = img.encodePng(croppedImage, level: 6);
     final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_cropped.png');
     final pngFile = File(pngPath)..writeAsBytesSync(pngBytes);
     return pngFile;
