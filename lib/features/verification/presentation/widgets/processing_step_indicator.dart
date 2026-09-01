@@ -115,18 +115,18 @@ class _StepDot extends StatelessWidget {
     final dotColor = isCompleted
         ? successColor
         : isActive
-            ? primaryColor
-            : isFailed
-                ? errorColor
-                : mutedColor;
+        ? primaryColor
+        : isFailed
+        ? errorColor
+        : mutedColor;
 
     final labelColor = isCompleted
         ? successColor
         : isActive
-            ? onSurfaceColor
-            : isFailed
-                ? errorColor
-                : onSurfaceColor.withValues(alpha: 0.4);
+        ? onSurfaceColor
+        : isFailed
+        ? errorColor
+        : onSurfaceColor.withValues(alpha: 0.4);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -138,10 +138,7 @@ class _StepDot extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isUpcoming ? Colors.transparent : dotColor,
-            border: Border.all(
-              color: dotColor,
-              width: isActive ? 2.0 : 1.5,
-            ),
+            border: Border.all(color: dotColor, width: isActive ? 2.0 : 1.5),
           ),
           child: isCompleted
               ? const Icon(Icons.check, size: 6, color: Colors.white)

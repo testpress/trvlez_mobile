@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_screen.dart';
@@ -12,17 +12,18 @@ import 'package:trvlez_mobile/features/home/presentation/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/main_scaffold.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_setup_screen.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
-import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
@@ -32,47 +33,51 @@ import 'package:trvlez_mobile/features/verification/presentation/passport_review
 import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_review_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_processing_screen.dart';
-import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_status_screen.dart';
 
-/// Adapter to trigger GoRouter refresh when AuthState changes
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
+
   RouterNotifier(this._ref) {
-    _ref.listen(authNotifierProvider, (_, _) => notifyListeners());
+    _ref.listen<AsyncValue<AuthState>>(
+      authNotifierProvider,
+      (previous, next) {
+        if (previous?.valueOrNull?.isAuthenticated !=
+            next.valueOrNull?.isAuthenticated) {
+          notifyListeners();
+        }
+      },
+    );
   }
 }
 
-/// Central router configuration for the TrvlEz app.
-///
-/// Redirect logic:
-/// - Not authenticated → `/login`
 final routerProvider = Provider<GoRouter>((ref) {
-  final routerNotifier = RouterNotifier(ref);
-
+  final notifier = RouterNotifier(ref);
   final cameraService = ref.read(cameraServiceProvider);
   final nfcPassportService = ref.read(nfcPassportServiceProvider);
 
   return GoRouter(
-    initialLocation: AppRoutes.welcome,
-    refreshListenable: routerNotifier,
+    initialLocation: AppRoutes.home,
+    refreshListenable: notifier,
     redirect: (context, state) {
-      final authState = ref.read(authNotifierProvider).valueOrNull;
-      final isAuthenticated = authState?.isAuthenticated ?? false;
+      final authState = ref.read(authNotifierProvider);
+      if (authState.isLoading) return null;
 
-      final location = state.matchedLocation;
+      final auth = authState.valueOrNull;
+      final isAuthenticated = auth?.isAuthenticated ?? false;
+      final currentPath = state.matchedLocation;
+
       final isAuthRoute =
-          location == AppRoutes.login ||
-          location == AppRoutes.register ||
-          location == AppRoutes.welcome;
+          currentPath == AppRoutes.welcome ||
+          currentPath == AppRoutes.login ||
+          currentPath == AppRoutes.register;
 
       if (!isAuthenticated) {
-        if (!isAuthRoute) return AppRoutes.login;
-        return null;
+        return isAuthRoute ? null : AppRoutes.welcome;
       }
 
-      if (location == AppRoutes.login || location == AppRoutes.register) {
+      if (isAuthRoute) {
         return AppRoutes.home;
       }
 
@@ -80,13 +85,13 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(
+        path: AppRoutes.splash,
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+      ),
+      GoRoute(
         path: AppRoutes.welcome,
-        builder: (context, state) {
-          final authState = ref.read(authNotifierProvider).valueOrNull;
-          return WelcomeScreen(
-            isAuthenticated: authState?.isAuthenticated ?? false,
-          );
-        },
+        builder: (context, state) => const WelcomeScreen(),
       ),
       GoRoute(
         path: AppRoutes.login,
@@ -128,7 +133,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.propertyDetail,
         builder: (context, state) {
-          final property = state.extra as Property;
+          final property = state.extra is Property ? state.extra as Property : null;
+          if (property == null) {
+            return const PropertiesListingScreen();
+          }
           return PropertyDetailScreen(
             property: property,
             repository: ref.read(propertiesRepositoryProvider),
@@ -139,32 +147,48 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.createReservation,
         builder: (context, state) {
-          final property = state.extra as Property;
+          final property = state.extra is Property ? state.extra as Property : null;
+          if (property == null) {
+            return const PropertiesListingScreen();
+          }
           return CreateReservationScreen(property: property);
         },
       ),
       GoRoute(
         path: AppRoutes.reservationDetail,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final reservation = extras['reservation'] as Reservation;
+          final extras = state.extra is Map<String, dynamic>
+              ? state.extra as Map<String, dynamic>
+              : null;
+          final reservation = extras?['reservation'] as Reservation?;
+          if (reservation == null) {
+            return const MyTripsScreen();
+          }
           return ReservationDetailScreen(reservation: reservation);
         },
       ),
       GoRoute(
         path: AppRoutes.reservationQr,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final reservation = extras['reservation'] as Reservation;
+          final extras = state.extra is Map<String, dynamic>
+              ? state.extra as Map<String, dynamic>
+              : null;
+          final reservation = extras?['reservation'] as Reservation?;
+          if (reservation == null) {
+            return const MyTripsScreen();
+          }
           return QrCodeScreen(reservation: reservation);
         },
       ),
       GoRoute(
         path: AppRoutes.reservationForm,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final reservation = extras['reservation'] as Reservation;
-          return PreArrivalFormScreen(reservationId: reservation.id);
+          final extras = state.extra is Map<String, dynamic>
+              ? state.extra as Map<String, dynamic>
+              : null;
+          final reservation = extras?['reservation'] as Reservation?;
+          final reservationId = reservation?.id ?? (extras?['reservationId'] as String?) ?? '';
+          return PreArrivalFormScreen(reservationId: reservationId);
         },
       ),
       // ─── Profile & Verification Routes ──────────────────────────
@@ -214,15 +238,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.verificationProcessing,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final type = extras['type'] as ProcessingType;
+          final extras = state.extra is Map<String, dynamic>
+              ? state.extra as Map<String, dynamic>
+              : null;
+          final type = (extras?['type'] as ProcessingType?) ?? ProcessingType.passport;
           return VerificationProcessingScreen(type: type);
         },
       ),
       GoRoute(
         path: AppRoutes.verificationStatus,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>?;
+          final extras = state.extra is Map<String, dynamic>
+              ? state.extra as Map<String, dynamic>
+              : null;
           final jobId = extras?['jobId'] as String?;
           return VerificationStatusScreen(verificationJobId: jobId);
         },

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 
 /// Screen that introduces the NFC passport reading feature to the user.
 /// Explains the benefits and requirements, offering options to proceed or skip.
@@ -171,6 +171,9 @@ class NfcIntroScreen extends ConsumerWidget {
                     // Action Buttons
                     ElevatedButton(
                       onPressed: () {
+                        ref
+                            .read(verificationNotifierProvider.notifier)
+                            .send(const StartNfcScan());
                         context.push(AppRoutes.nfcScan);
                       },
                       style: ElevatedButton.styleFrom(
@@ -292,35 +295,10 @@ class NfcIntroScreen extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      // Show loading overlay
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator()),
-      );
-
-      ref.read(verificationNotifierProvider.notifier).skipNfc();
-      await ref
+      ref
           .read(verificationNotifierProvider.notifier)
-          .submitVerificationAsync();
-
-      if (context.mounted) {
-        // Pop loading overlay
-        Navigator.pop(context);
-
-        final state = ref.read(verificationNotifierProvider);
-        if (state.phase == VerificationPhase.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Submission failed'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        } else {
-          // Skipping NFC marks the flow as complete (for MVP).
-          context.go(AppRoutes.verificationStatus);
-        }
-      }
+          .send(const SubmitRequested(isSkipped: true));
+      context.go(AppRoutes.verificationStatus);
     }
   }
 }

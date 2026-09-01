@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_review_scaffold.dart';
@@ -20,20 +21,32 @@ class PassportReviewScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(verificationNotifierProvider);
-    final notifier = ref.watch(verificationNotifierProvider.notifier);
+    final notifier = ref.read(verificationNotifierProvider.notifier);
     final image = state.capturedImage;
-    final phase = state.phase;
 
     if (image == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Review')),
-        body: const Center(child: Text('No image captured')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('No passport photo captured.'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.go(AppRoutes.passportCapture),
+                child: const Text('Capture Passport'),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
-    final hasError = phase == VerificationPhase.error ||
-        phase == VerificationPhase.imageQualityFailed ||
-        phase == VerificationPhase.mrzExtractionFailed;
+    final hasError =
+        state is VerificationStateError ||
+        state is VerificationStatePassportQualityFailed ||
+        state is VerificationStateMrzExtractionFailed;
 
     return SharedReviewScaffold(
       title: 'Review Your Passport',
@@ -47,9 +60,7 @@ class PassportReviewScreen extends ConsumerWidget {
         context.go(AppRoutes.passportCapture);
       },
       onUpload: () {
-        // Fire-and-forget: the notifier manages the async state
-        notifier.uploadPassport();
-        // Navigate to the dedicated processing experience
+        notifier.send(PassportCaptured(image));
         context.go(
           AppRoutes.verificationProcessing,
           extra: {'type': ProcessingType.passport},

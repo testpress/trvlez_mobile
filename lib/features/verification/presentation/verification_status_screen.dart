@@ -1,30 +1,27 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/step_checklist.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_info_card.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_score_indicator.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_status_config.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 
 /// Displays the full verification journey with step-by-step progress.
 ///
 /// Shows a large animated status icon, a descriptive title, individual
-/// step completion states, and contextual actions (re-submit for failed,
-/// contact support).
-///
-/// When [verificationJobId] is provided, polls the backend for real-time
-/// verification pipeline progress.
+/// step completion states, and contextual actions (re-submit for failed, contact support).
 class VerificationStatusScreen extends ConsumerStatefulWidget {
   final String? verificationJobId;
 
@@ -55,7 +52,13 @@ class VerificationStatusScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(verificationNotifierProvider.notifier).fetchVerificationStatus();
+      final notifier = ref.read(verificationNotifierProvider.notifier);
+      if (widget.verificationJobId != null &&
+          widget.verificationJobId!.isNotEmpty) {
+        notifier.send(SubmissionAccepted(widget.verificationJobId!));
+      } else {
+        notifier.send(const ReconcileRequested());
+      }
     });
   }
 
@@ -68,9 +71,9 @@ class VerificationStatusScreenState
   Future<void> handleRefresh() async {
     final _ = await ref.refresh(currentProfileProvider.future);
     await ref.read(authNotifierProvider.notifier).refreshVerificationState();
-    await ref
+    ref
         .read(verificationNotifierProvider.notifier)
-        .fetchVerificationStatus();
+        .send(const ReconcileRequested(force: true));
   }
 
   /// Derives the effective verification state.
@@ -85,22 +88,40 @@ class VerificationStatusScreenState
 
   double? get activeVerificationScore {
     final state = ref.read(verificationNotifierProvider);
-    return state.jobResult?.verificationScore ??
-        state.submitResult?.verificationScore;
+    if (state is VerificationStateVerified) {
+      return state.verificationScore ?? state.jobResult?.verificationScore;
+    }
+    if (state is VerificationStateProcessing) {
+      return state.interimScore ?? state.jobResult?.verificationScore;
+    }
+    return null;
   }
 
-  String? get failedStep =>
-      ref.read(verificationNotifierProvider).verificationStatus?.failedStep;
+  String? get failedStep {
+    final state = ref.read(verificationNotifierProvider);
+    if (state is VerificationStateFailed) {
+      return state.failedStep ?? state.verificationStatus?.failedStep;
+    }
+    return null;
+  }
 
   String? get errorReason {
     final state = ref.read(verificationNotifierProvider);
-    final reason = state.verificationStatus?.errorReason ?? state.errorMessage;
-    if (reason == uiMitigation) return null;
-    return reason;
+    if (state is VerificationStateFailed) {
+      final reason = state.errorReason ?? state.errorMessage;
+      if (reason == uiMitigation) return null;
+      return reason;
+    }
+    return null;
   }
 
-  String? get uiMitigation =>
-      ref.read(verificationNotifierProvider).verificationStatus?.uiMitigation;
+  String? get uiMitigation {
+    final state = ref.read(verificationNotifierProvider);
+    if (state is VerificationStateFailed) {
+      return state.uiMitigation ?? state.verificationStatus?.uiMitigation;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,152 +222,94 @@ class VerificationStatusScreenState
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          // ── Verification Score ───────────────────────
-                          if (activeVerificationScore != null) ...[
-                            const SizedBox(height: 16),
+
+                          // ── Score Indicator (when verified) ───────────
+                          if (state == TravelerVerificationState.verified &&
+                              activeVerificationScore != null) ...[
+                            const SizedBox(height: 24),
                             VerificationScoreIndicator(
                               score: activeVerificationScore!,
-                              isVerified:
-                                  state == TravelerVerificationState.verified,
+                              isVerified: true,
                             ),
                           ],
-                          const SizedBox(height: 32),
-                          // ── Step Checklist ────────────────────────────
-                          StepChecklist(
-                            state: state,
-                            isNfcSkipped: ref
-                                .read(verificationNotifierProvider)
-                                .isNfcSkipped,
-                            hasNfcResult:
-                                ref
-                                    .read(verificationNotifierProvider)
-                                    .nfcResult !=
-                                null,
-                          ),
-                          const SizedBox(height: 24),
-                          // ── Info Card ─────────────────────────────────
-                          InfoCard(
-                            state: state,
-                            failedStep: failedStep,
-                            errorReason: errorReason,
-                            uiMitigation: uiMitigation,
-                          ),
-                          const SizedBox(height: 24),
-                          // ── Actions ───────────────────────────────────
-                          if (state.isFailed) ...[
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                ref
-                                    .read(verificationNotifierProvider.notifier)
-                                    .reset();
-                                context.go(AppRoutes.passportCapture);
-                              },
-                              icon: const Icon(Icons.refresh_rounded),
-                              label: Text(
-                                'Re-submit Documents',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
+
+                          // ── Mitigation Guidance (when failed) ─────────
+                          if (state == TravelerVerificationState.failed &&
+                              uiMitigation != null) ...[
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: colorScheme.error.withValues(
+                                  alpha: 0.08,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: colorScheme.error.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorScheme.onSurface,
-                                foregroundColor: colorScheme.surface,
-                                minimumSize: const Size(double.infinity, 44),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                                elevation: 0,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            TextButton.icon(
-                              onPressed: () {
-                                // Future: open support chat/email
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text(
-                                      'Support — coming soon!',
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.lightbulb_outline_rounded,
+                                    color: colorScheme.error,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      uiMitigation!,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13,
+                                        color: colorScheme.error,
+                                        height: 1.4,
+                                      ),
                                     ),
                                   ),
-                                );
-                              },
-                              icon: const Icon(Icons.support_agent_rounded),
-                              label: Text(
-                                'Contact Support',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              style: TextButton.styleFrom(
-                                foregroundColor: colorScheme.onSurface
-                                    .withValues(alpha: 0.7),
-                                minimumSize: const Size(double.infinity, 44),
+                                ],
                               ),
                             ),
                           ],
-                          if (state.isVerified) ...[
-                            ElevatedButton.icon(
-                              onPressed: () => context.go(AppRoutes.home),
-                              icon: const Icon(Icons.explore_rounded),
-                              label: Text(
-                                'Start Exploring',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
+
+                          // ── Error Reason Details (when failed) ────────
+                          if (state == TravelerVerificationState.failed &&
+                              errorReason != null) ...[
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
                               ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorScheme.onSurface,
-                                foregroundColor: colorScheme.surface,
-                                minimumSize: const Size(double.infinity, 44),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
+                              child: Text(
+                                errorReason!,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
-                                elevation: 0,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ],
+
+                          const SizedBox(height: 24),
+
+                          // ── Step Checklist ────────────────────────────
+                          StepChecklist(state: state),
+                          const SizedBox(height: 32),
+
+                          // ── Actions ───────────────────────────────────
+                          buildActions(context, state, colorScheme),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    // Footer text
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.65,
-                              ),
-                            ),
-                            children: [
-                              const TextSpan(
-                                text:
-                                    'If you are facing any difficulties, please get in touch with us on ',
-                              ),
-                              TextSpan(
-                                text: 'Whatsapp',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF25D366),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+
+                    // ── Info Cards ──────────────────────────────────────
+                    ...buildInfoCards(state),
                   ],
                 ),
               ),
@@ -355,38 +318,165 @@ class VerificationStatusScreenState
   }
 
   Widget buildStatusIcon(StatusConfig config, TravelerVerificationState state) {
-    final icon = Container(
-      width: 96,
-      height: 96,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: config.iconGradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: config.iconGradient.first.withAlpha(60),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Icon(config.icon, color: Colors.white, size: 44),
-    );
-
-    // Only pulse the icon when processing
-    if (state.isProcessing) {
+    final color = config.iconGradient.first;
+    if (state == TravelerVerificationState.submitted) {
       return AnimatedBuilder(
         animation: pulseAnimation,
         builder: (context, child) {
           return Transform.scale(scale: pulseAnimation.value, child: child);
         },
-        child: icon,
+        child: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color.withValues(alpha: 0.1),
+          ),
+          child: Icon(config.icon, color: color, size: 40),
+        ),
       );
     }
 
-    return icon;
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: 0.1),
+      ),
+      child: Icon(config.icon, color: color, size: 40),
+    );
+  }
+
+  Widget buildActions(
+    BuildContext context,
+    TravelerVerificationState state,
+    ColorScheme colorScheme,
+  ) {
+    switch (state) {
+      case TravelerVerificationState.verified:
+        return ElevatedButton(
+          onPressed: () => context.go(AppRoutes.home),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colorScheme.onSurface,
+            foregroundColor: colorScheme.surface,
+            minimumSize: const Size(double.infinity, 44),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            'Explore properties',
+            style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+          ),
+        );
+
+      case TravelerVerificationState.failed:
+        return Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                ref
+                    .read(verificationNotifierProvider.notifier)
+                    .send(const ResetRequested());
+                context.go(AppRoutes.passportCapture);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.onSurface,
+                foregroundColor: colorScheme.surface,
+                minimumSize: const Size(double.infinity, 44),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'Re-submit Verification',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () {
+                // Future MVP: open support chat
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: colorScheme.onSurface,
+                side: BorderSide(color: colorScheme.outlineVariant),
+                minimumSize: const Size(double.infinity, 44),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
+                ),
+              ),
+              child: Text(
+                'Contact Support',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        );
+
+      case TravelerVerificationState.submitted:
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Processing...',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
+          ),
+        );
+
+      default:
+        return ElevatedButton(
+          onPressed: () => context.go(AppRoutes.home),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colorScheme.onSurface,
+            foregroundColor: colorScheme.surface,
+            minimumSize: const Size(double.infinity, 44),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            'Go to Home',
+            style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+          ),
+        );
+    }
+  }
+
+  List<Widget> buildInfoCards(TravelerVerificationState state) {
+    return [
+      InfoCard(
+        state: state,
+        failedStep: failedStep,
+        errorReason: errorReason,
+        uiMitigation: uiMitigation,
+      ),
+    ];
   }
 }

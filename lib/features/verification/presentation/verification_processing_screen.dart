@@ -8,7 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/colors.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/document_processing_visual.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
@@ -22,17 +23,8 @@ const Duration _successDisplayDuration = Duration(milliseconds: 1500);
 
 /// A calm, story-like verification processing screen.
 ///
-/// Replaces the previous generic loading spinner overlay with a dedicated
-/// processing experience that visually communicates the verification journey.
-///
-/// This is a single screen with evolving state — NOT multiple screens.
-/// The layout remains stable while content (title, subtitle, visual, step
-/// indicator) transitions smoothly between stages.
-///
-/// When the backend transitions faster than [_minimumStageDuration], stages
-/// are queued and displayed sequentially so the traveler can follow each step.
-/// An intermediate "quality passed" stage is inserted between checking and
-/// reading/completed to explicitly confirm that checks passed.
+/// Driven by the [VerificationWorkflowState] published by Riverpod.
+/// Transitions smoothly between uploading, quality checking, MRZ reading, and completed stages.
 class VerificationProcessingScreen extends ConsumerStatefulWidget {
   final ProcessingType type;
 
@@ -66,9 +58,7 @@ class _VerificationProcessingScreenState
   @override
   void initState() {
     super.initState();
-    _displayedStage = _resolveStage(
-      ref.read(verificationNotifierProvider),
-    );
+    _displayedStage = _resolveStage(ref.read(verificationNotifierProvider));
     _stageShownAt = DateTime.now();
   }
 
@@ -79,17 +69,8 @@ class _VerificationProcessingScreenState
     super.dispose();
   }
 
-  ProcessingStage _resolveStage(VerificationState state) {
-    return switch (widget.type) {
-      ProcessingType.passport => ProcessingStage.forPassport(
-        state.phase,
-        errorMessage: state.errorMessage,
-      ),
-      ProcessingType.video => ProcessingStage.forVideo(
-        state.phase,
-        errorMessage: state.errorMessage,
-      ),
-    };
+  ProcessingStage _resolveStage(VerificationWorkflowState state) {
+    return ProcessingStage.fromWorkflowState(state, widget.type);
   }
 
   /// Enqueues a new backend stage, inserting intermediate quality-passed
@@ -105,8 +86,8 @@ class _VerificationProcessingScreenState
     // Insert quality-passed intermediate when transitioning from checking
     final isQualityCheckSuccess =
         effectiveCurrent.type == ProcessingStageType.checking &&
-            (newStage.type == ProcessingStageType.reading ||
-                newStage.type == ProcessingStageType.completed);
+        (newStage.type == ProcessingStageType.reading ||
+            newStage.type == ProcessingStageType.completed);
 
     if (isQualityCheckSuccess) {
       final qualityPassed = widget.type == ProcessingType.passport
@@ -182,11 +163,10 @@ class _VerificationProcessingScreenState
   void _handleRetry() {
     final notifier = ref.read(verificationNotifierProvider.notifier);
 
+    notifier.send(const RetryRequested());
     if (widget.type == ProcessingType.passport) {
-      notifier.clearImage();
       context.go(AppRoutes.passportCapture);
     } else {
-      notifier.clearVideo();
       context.go(AppRoutes.selfieCapture);
     }
   }
@@ -197,13 +177,13 @@ class _VerificationProcessingScreenState
     final colorScheme = theme.colorScheme;
 
     // Listen to backend state changes and enqueue stages
-    ref.listen<VerificationState>(
-      verificationNotifierProvider,
-      (previous, next) {
-        final newStage = _resolveStage(next);
-        _enqueueStage(newStage);
-      },
-    );
+    ref.listen<VerificationWorkflowState>(verificationNotifierProvider, (
+      previous,
+      next,
+    ) {
+      final newStage = _resolveStage(next);
+      _enqueueStage(newStage);
+    });
 
     final stage = _displayedStage;
     final stepLabels = ProcessingStage.stepLabels(widget.type);
@@ -355,12 +335,7 @@ class _VerificationProcessingScreenState
           ),
         );
       },
-      child: Text(
-        text,
-        key: key,
-        textAlign: TextAlign.center,
-        style: style,
-      ),
+      child: Text(text, key: key, textAlign: TextAlign.center, style: style),
     );
   }
 
@@ -375,9 +350,7 @@ class _VerificationProcessingScreenState
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         minimumSize: const Size(double.infinity, 44),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
         elevation: 0,
       ),
       child: Text(

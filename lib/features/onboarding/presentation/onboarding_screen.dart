@@ -84,6 +84,20 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: colorScheme.onSurface,
+            size: 18,
+          ),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
+        ),
       ),
       body: isLoading && profileState.value == null
           ? const Center(child: CircularProgressIndicator())

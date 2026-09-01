@@ -7,7 +7,8 @@ import 'package:video_player/video_player.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_review_scaffold.dart';
@@ -16,7 +17,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_
 /// before uploading.
 ///
 /// Uses the shared KYC review layout (light theme, card, stepper).
-/// On upload, fires the upload and navigates to [VerificationProcessingScreen].
+/// On upload, fires the upload event and navigates to [VerificationProcessingScreen].
 class SelfieReviewScreen extends ConsumerStatefulWidget {
   const SelfieReviewScreen({super.key});
 
@@ -67,24 +68,49 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   }
 
   void _handleUpload() {
-    final notifier = ref.read(verificationNotifierProvider.notifier);
-    // Fire-and-forget: the notifier manages the async state
-    notifier.uploadSelfie();
-    // Navigate to the dedicated processing experience
-    context.go(
-      AppRoutes.verificationProcessing,
-      extra: {'type': ProcessingType.video},
-    );
+    final video = ref.read(verificationNotifierProvider).capturedVideo;
+    if (video != null) {
+      ref
+          .read(verificationNotifierProvider.notifier)
+          .send(SelfieCaptured(video));
+      context.go(
+        AppRoutes.verificationProcessing,
+        extra: {'type': ProcessingType.video},
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(verificationNotifierProvider);
-    final notifier = ref.watch(verificationNotifierProvider.notifier);
-    final phase = state.phase;
+    final notifier = ref.read(verificationNotifierProvider.notifier);
+    final video = state.capturedVideo;
 
-    final hasError = phase == VerificationPhase.error ||
-        phase == VerificationPhase.videoQualityFailed;
+    if (video == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Review Video')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('No selfie video recorded.'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  notifier.send(const StartSelfieCapture());
+                  context.go(AppRoutes.selfieCapture);
+                },
+                child: const Text('Record Selfie'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final hasError =
+        state is VerificationStateError ||
+        state is VerificationStateSelfieQualityFailed;
 
     return SharedReviewScaffold(
       title: 'Review Your Video',
@@ -94,7 +120,7 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
       errorMessage: hasError ? state.errorMessage : null,
       uploadText: hasError ? 'Retry Upload' : 'Upload',
       onRetake: () {
-        notifier.clearVideo();
+        notifier.send(const StartSelfieCapture());
         context.go(AppRoutes.selfieCapture);
       },
       onUpload: _handleUpload,

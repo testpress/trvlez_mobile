@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/profile/data/profile_repository.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
-import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
-import 'package:trvlez_mobile/core/network/dio_provider.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 class AuthState {
@@ -86,11 +87,18 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       ),
     );
 
+    // Reset and clear verification state machine & storage
+    try {
+      ref
+          .read(verificationNotifierProvider.notifier)
+          .send(const ResetRequested());
+    } catch (_) {}
+
     // Invalidate feature providers to clear sensitive data
     ref.invalidate(propertiesProvider);
     ref.invalidate(reservationListProvider);
     ref.invalidate(currentProfileProvider);
     ref.invalidate(verificationStatusProvider);
-    // Note: We don't have verificationNotifierProvider yet.
+    ref.invalidate(verificationNotifierProvider);
   }
 }

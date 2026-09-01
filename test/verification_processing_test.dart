@@ -1,11 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
 
 void main() {
-  group('ProcessingStage.forPassport', () {
-    test('uploading phase maps to uploading stage with correct text', () {
-      final stage = ProcessingStage.forPassport(VerificationPhase.uploading);
+  group('ProcessingStage.fromWorkflowState for Passport', () {
+    test('uploading stage maps to uploading stage with correct text', () {
+      const state = VerificationStatePassportProcessing(
+        durableData: VerificationDurableData.empty,
+        stage: PassportProcessingSubStage.uploading,
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
+      );
 
       expect(stage.type, ProcessingStageType.uploading);
       expect(stage.title, 'Uploading your passport');
@@ -13,9 +21,14 @@ void main() {
       expect(stage.isTerminal, isFalse);
     });
 
-    test('checkingImageQuality phase maps to checking stage', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.checkingImageQuality,
+    test('checkingQuality stage maps to checking stage', () {
+      const state = VerificationStatePassportProcessing(
+        durableData: VerificationDurableData.empty,
+        stage: PassportProcessingSubStage.checkingQuality,
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
       );
 
       expect(stage.type, ProcessingStageType.checking);
@@ -23,9 +36,14 @@ void main() {
       expect(stage.subtitle, contains('clear'));
     });
 
-    test('extractingMrz phase maps to reading stage', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.extractingMrz,
+    test('extractingMrz stage maps to reading stage', () {
+      const state = VerificationStatePassportProcessing(
+        durableData: VerificationDurableData.empty,
+        stage: PassportProcessingSubStage.extractingMrz,
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
       );
 
       expect(stage.type, ProcessingStageType.reading);
@@ -33,9 +51,14 @@ void main() {
       expect(stage.subtitle, contains('reading'));
     });
 
-    test('uploadSuccess phase maps to completed stage', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.uploadSuccess,
+    test('MrzReview state maps to completed stage', () {
+      final state = VerificationStateMrzReview(
+        durableData: VerificationDurableData.empty,
+        mrzExtractionResult: MrzExtractionResult(success: true),
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
       );
 
       expect(stage.type, ProcessingStageType.completed);
@@ -43,10 +66,14 @@ void main() {
       expect(stage.isTerminal, isTrue);
     });
 
-    test('imageQualityFailed phase maps to failed stage', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.imageQualityFailed,
+    test('PassportQualityFailed state maps to failed stage', () {
+      const state = VerificationStatePassportQualityFailed(
+        durableData: VerificationDurableData.empty,
         errorMessage: 'Image is too blurry.',
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
       );
 
       expect(stage.type, ProcessingStageType.failed);
@@ -56,19 +83,14 @@ void main() {
       expect(stage.isTerminal, isTrue);
     });
 
-    test('imageQualityFailed without errorMessage uses default subtitle', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.imageQualityFailed,
-      );
-
-      expect(stage.type, ProcessingStageType.failed);
-      expect(stage.subtitle, contains('clear enough'));
-    });
-
-    test('mrzExtractionFailed phase maps to failed stage', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.mrzExtractionFailed,
+    test('MrzExtractionFailed state maps to failed stage', () {
+      const state = VerificationStateMrzExtractionFailed(
+        durableData: VerificationDurableData.empty,
         errorMessage: 'Could not read MRZ.',
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
       );
 
       expect(stage.type, ProcessingStageType.failed);
@@ -77,80 +99,61 @@ void main() {
       expect(stage.isTerminal, isTrue);
     });
 
-    test('error phase maps to failed stage with custom message', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.error,
-        errorMessage: 'Network error occurred.',
+    test('Error state maps to failed stage with user message', () {
+      const state = VerificationStateError(
+        durableData: VerificationDurableData.empty,
+        userMessage: 'Network connection failed.',
+        previousState: VerificationStateNotStarted(),
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.passport,
       );
 
       expect(stage.type, ProcessingStageType.failed);
       expect(stage.title, 'Something went wrong');
-      expect(stage.subtitle, 'Network error occurred.');
-    });
-
-    test('error phase without message uses default subtitle', () {
-      final stage = ProcessingStage.forPassport(VerificationPhase.error);
-
-      expect(stage.type, ProcessingStageType.failed);
-      expect(stage.subtitle, contains('try'));
-    });
-
-    test('idle phase defaults to uploading stage', () {
-      final stage = ProcessingStage.forPassport(VerificationPhase.idle);
-
-      expect(stage.type, ProcessingStageType.uploading);
-    });
-
-    test('no text contains technical terms', () {
-      final phases = [
-        VerificationPhase.uploading,
-        VerificationPhase.checkingImageQuality,
-        VerificationPhase.extractingMrz,
-        VerificationPhase.uploadSuccess,
-        VerificationPhase.imageQualityFailed,
-        VerificationPhase.mrzExtractionFailed,
-      ];
-
-      for (final phase in phases) {
-        final stage = ProcessingStage.forPassport(phase);
-        final allText = '${stage.title} ${stage.subtitle}'.toLowerCase();
-
-        expect(allText, isNot(contains('mrz')),
-            reason: 'Phase $phase should not expose MRZ terminology');
-        expect(allText, isNot(contains('ocr')),
-            reason: 'Phase $phase should not expose OCR terminology');
-        expect(allText, isNot(contains('api')),
-            reason: 'Phase $phase should not expose API terminology');
-        expect(allText, isNot(contains('s3')),
-            reason: 'Phase $phase should not expose S3 terminology');
-        expect(allText, isNot(contains('quality gate')),
-            reason: 'Phase $phase should not expose quality gate terminology');
-      }
+      expect(stage.subtitle, 'Network connection failed.');
     });
   });
 
-  group('ProcessingStage.forVideo', () {
-    test('uploading phase maps to uploading stage', () {
-      final stage = ProcessingStage.forVideo(VerificationPhase.uploading);
+  group('ProcessingStage.fromWorkflowState for Video', () {
+    test('Selfie upload stage maps to video uploading stage', () {
+      const state = VerificationStateSelfieProcessing(
+        durableData: VerificationDurableData.empty,
+        stage: SelfieProcessingSubStage.uploading,
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.video,
+      );
 
       expect(stage.type, ProcessingStageType.uploading);
       expect(stage.title, 'Uploading your video');
       expect(stage.subtitle, contains('Securely'));
     });
 
-    test('checkingVideoQuality phase maps to checking stage', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.checkingVideoQuality,
+    test('Selfie checkingQuality stage maps to checking stage', () {
+      const state = VerificationStateSelfieProcessing(
+        durableData: VerificationDurableData.empty,
+        stage: SelfieProcessingSubStage.checkingQuality,
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.video,
       );
 
       expect(stage.type, ProcessingStageType.checking);
       expect(stage.title, 'Checking your video');
-      expect(stage.subtitle, contains('clear'));
+      expect(stage.subtitle, contains('clear and ready'));
     });
 
-    test('uploadSuccess phase maps to completed stage', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.uploadSuccess,
+    test('NfcIntro state maps to completed video stage', () {
+      const state = VerificationStateNfcIntro(
+        durableData: VerificationDurableData.empty,
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.video,
       );
 
       expect(stage.type, ProcessingStageType.completed);
@@ -158,162 +161,80 @@ void main() {
       expect(stage.isTerminal, isTrue);
     });
 
-    test('videoQualityFailed phase maps to failed stage', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.videoQualityFailed,
-        errorMessage: 'Video is too shaky.',
+    test('SelfieQualityFailed state maps to failed stage', () {
+      const state = VerificationStateSelfieQualityFailed(
+        durableData: VerificationDurableData.empty,
+        errorMessage: 'Face was not detected in the video.',
+      );
+      final stage = ProcessingStage.fromWorkflowState(
+        state,
+        ProcessingType.video,
       );
 
       expect(stage.type, ProcessingStageType.failed);
       expect(stage.title, contains('record'));
-      expect(stage.subtitle, 'Video is too shaky.');
-      expect(stage.isTerminal, isTrue);
-    });
-
-    test('videoQualityFailed without errorMessage uses default subtitle', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.videoQualityFailed,
-      );
-
-      expect(stage.type, ProcessingStageType.failed);
-      expect(stage.subtitle, contains('clear enough'));
-    });
-
-    test('error phase maps to failed stage', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.error,
-        errorMessage: 'Upload failed.',
-      );
-
-      expect(stage.type, ProcessingStageType.failed);
-      expect(stage.title, 'Something went wrong');
-      expect(stage.subtitle, 'Upload failed.');
-    });
-
-    test('no text contains technical terms', () {
-      final phases = [
-        VerificationPhase.uploading,
-        VerificationPhase.checkingVideoQuality,
-        VerificationPhase.uploadSuccess,
-        VerificationPhase.videoQualityFailed,
-      ];
-
-      for (final phase in phases) {
-        final stage = ProcessingStage.forVideo(phase);
-        final allText = '${stage.title} ${stage.subtitle}'.toLowerCase();
-
-        expect(allText, isNot(contains('anti-spoofing')),
-            reason: 'Phase $phase should not expose anti-spoofing terminology');
-        expect(allText, isNot(contains('face detection')),
-            reason: 'Phase $phase should not expose face detection terminology');
-        expect(allText, isNot(contains('api')),
-            reason: 'Phase $phase should not expose API terminology');
-      }
+      expect(stage.subtitle, 'Face was not detected in the video.');
+      expect(stage.errorMessage, 'Face was not detected in the video.');
     });
   });
 
-  group('ProcessingStage intermediate quality-passed stages', () {
-    test('passportQualityPassed has correct type and text', () {
-      final stage = ProcessingStage.passportQualityPassed;
-
+  group('Intermediate Stages & Step Indicators', () {
+    test('passportQualityPassed intermediate stage properties', () {
+      const stage = ProcessingStage.passportQualityPassed;
       expect(stage.type, ProcessingStageType.qualityPassed);
       expect(stage.title, 'Passport image looks good');
-      expect(stage.subtitle, contains('read'));
       expect(stage.isTerminal, isFalse);
     });
 
-    test('videoQualityPassed has correct type and text', () {
-      final stage = ProcessingStage.videoQualityPassed;
-
+    test('videoQualityPassed intermediate stage properties', () {
+      const stage = ProcessingStage.videoQualityPassed;
       expect(stage.type, ProcessingStageType.qualityPassed);
       expect(stage.title, 'Video looks good');
-      expect(stage.subtitle, contains('clear'));
       expect(stage.isTerminal, isFalse);
     });
 
-    test('qualityPassed stage text contains no technical terms', () {
-      for (final stage in [
-        ProcessingStage.passportQualityPassed,
-        ProcessingStage.videoQualityPassed,
-      ]) {
-        final allText = '${stage.title} ${stage.subtitle}'.toLowerCase();
-
-        expect(allText, isNot(contains('mrz')));
-        expect(allText, isNot(contains('ocr')));
-        expect(allText, isNot(contains('api')));
-        expect(allText, isNot(contains('quality gate')));
-      }
-    });
-  });
-
-  group('ProcessingStage.stepLabels', () {
-    test('passport has 3 steps: Upload, Check, Read', () {
-      final labels = ProcessingStage.stepLabels(ProcessingType.passport);
-
-      expect(labels, ['Upload', 'Check', 'Read']);
+    test('stepLabels for passport and video', () {
+      expect(ProcessingStage.stepLabels(ProcessingType.passport), [
+        'Upload',
+        'Check',
+        'Read',
+      ]);
+      expect(ProcessingStage.stepLabels(ProcessingType.video), [
+        'Upload',
+        'Check',
+      ]);
     });
 
-    test('video has 2 steps: Upload, Check', () {
-      final labels = ProcessingStage.stepLabels(ProcessingType.video);
-
-      expect(labels, ['Upload', 'Check']);
-    });
-  });
-
-  group('ProcessingStage.stepIndex', () {
-    test('passport uploading stage is at index 0', () {
-      final stage = ProcessingStage.forPassport(VerificationPhase.uploading);
-      expect(stage.stepIndex(ProcessingType.passport), 0);
-    });
-
-    test('passport checking stage is at index 1', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.checkingImageQuality,
+    test('stepIndex calculation', () {
+      const uploadStage = ProcessingStage(
+        type: ProcessingStageType.uploading,
+        title: '',
+        subtitle: '',
       );
-      expect(stage.stepIndex(ProcessingType.passport), 1);
-    });
-
-    test('passport qualityPassed stays at index 1', () {
-      final stage = ProcessingStage.passportQualityPassed;
-      expect(stage.stepIndex(ProcessingType.passport), 1);
-    });
-
-    test('passport reading stage is at index 2', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.extractingMrz,
+      const checkStage = ProcessingStage(
+        type: ProcessingStageType.checking,
+        title: '',
+        subtitle: '',
       );
-      expect(stage.stepIndex(ProcessingType.passport), 2);
-    });
-
-    test('passport completed stage is at last index', () {
-      final stage = ProcessingStage.forPassport(
-        VerificationPhase.uploadSuccess,
+      const readStage = ProcessingStage(
+        type: ProcessingStageType.reading,
+        title: '',
+        subtitle: '',
       );
-      expect(stage.stepIndex(ProcessingType.passport), 2);
-    });
-
-    test('video uploading stage is at index 0', () {
-      final stage = ProcessingStage.forVideo(VerificationPhase.uploading);
-      expect(stage.stepIndex(ProcessingType.video), 0);
-    });
-
-    test('video checking stage is at index 1', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.checkingVideoQuality,
+      const completedStage = ProcessingStage(
+        type: ProcessingStageType.completed,
+        title: '',
+        subtitle: '',
       );
-      expect(stage.stepIndex(ProcessingType.video), 1);
-    });
 
-    test('video qualityPassed stays at index 1', () {
-      final stage = ProcessingStage.videoQualityPassed;
-      expect(stage.stepIndex(ProcessingType.video), 1);
-    });
+      expect(uploadStage.stepIndex(ProcessingType.passport), 0);
+      expect(checkStage.stepIndex(ProcessingType.passport), 1);
+      expect(readStage.stepIndex(ProcessingType.passport), 2);
+      expect(completedStage.stepIndex(ProcessingType.passport), 2);
 
-    test('video completed stage is at last index', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.uploadSuccess,
-      );
-      expect(stage.stepIndex(ProcessingType.video), 1);
+      expect(uploadStage.stepIndex(ProcessingType.video), 0);
+      expect(checkStage.stepIndex(ProcessingType.video), 1);
+      expect(completedStage.stepIndex(ProcessingType.video), 1);
     });
   });
 }

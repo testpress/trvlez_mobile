@@ -2,10 +2,7 @@ class QualityFailureReason {
   final String code;
   final String message;
 
-  QualityFailureReason({
-    required this.code,
-    required this.message,
-  });
+  QualityFailureReason({required this.code, required this.message});
 
   factory QualityFailureReason.fromJson(Map<String, dynamic> json) {
     return QualityFailureReason(

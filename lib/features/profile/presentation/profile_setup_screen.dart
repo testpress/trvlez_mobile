@@ -231,6 +231,16 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
         title: const Text('Profile Setup'),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -330,9 +340,8 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
     final error = ref.watch(currentProfileProvider).error;
-    final errorMessageText =
-        (error as ApiException?)?.message ?? error?.toString();
-    if (errorMessageText == null) return const SizedBox.shrink();
+    if (error == null) return const SizedBox.shrink();
+    final errorMessageText = ApiException.extractMessage(error);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
