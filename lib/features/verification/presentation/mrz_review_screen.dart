@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/colors.dart';
-import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen for reviewing MRZ-extracted passport details before confirmation.
 ///
@@ -19,24 +19,12 @@ class MrzReviewScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final notifier = ref.read(verificationNotifierProvider.notifier);
+    final notifier = ref.watch(verificationNotifierProvider.notifier);
     final state = ref.watch(verificationNotifierProvider);
-
-    // Listen to state transitions for automatic navigation
-    ref.listen<VerificationWorkflowState>(verificationNotifierProvider, (
-      previous,
-      next,
-    ) {
-      if (next is VerificationStateSelfieInstruction ||
-          next is VerificationStateSelfieCapture) {
-        context.go(AppRoutes.selfieInstructions);
-      }
-    });
-
-    final mrz = state.mrzResult;
-
+    final mrz = state.mrzExtractionResult;
+    final phase = state.phase;
     final error = state.errorMessage;
-    final isConfirming = state is VerificationStateConfirmingMrz;
+    final isConfirming = phase == VerificationPhase.confirmingMrz;
 
     if (mrz == null) {
       return Scaffold(
@@ -51,22 +39,7 @@ class MrzReviewScreen extends ConsumerWidget {
           ),
           centerTitle: true,
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('No passport data available.'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  notifier.send(const StartVerification());
-                  context.go(AppRoutes.passportCapture);
-                },
-                child: const Text('Capture Passport'),
-              ),
-            ],
-          ),
-        ),
+        body: const Center(child: Text('No passport data available')),
       );
     }
 
@@ -89,7 +62,7 @@ class MrzReviewScreen extends ConsumerWidget {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            notifier.send(const ReconcileRequested(force: true));
+            await notifier.fetchVerificationStatus();
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -210,8 +183,15 @@ class MrzReviewScreen extends ConsumerWidget {
                       ElevatedButton(
                         onPressed: isConfirming
                             ? null
-                            : () {
-                                notifier.send(const ConfirmMrzRequested());
+                            : () async {
+                                await notifier.confirmMrz();
+                                if (context.mounted &&
+                                    ref
+                                            .read(verificationNotifierProvider)
+                                            .phase ==
+                                        VerificationPhase.mrzReviewed) {
+                                  context.go(AppRoutes.selfieInstructions);
+                                }
                               },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: colorScheme.primary,
@@ -247,7 +227,7 @@ class MrzReviewScreen extends ConsumerWidget {
                         onPressed: isConfirming
                             ? null
                             : () {
-                                notifier.send(const StartVerification());
+                                notifier.clearImage();
                                 context.go(AppRoutes.passportCapture);
                               },
                         style: OutlinedButton.styleFrom(

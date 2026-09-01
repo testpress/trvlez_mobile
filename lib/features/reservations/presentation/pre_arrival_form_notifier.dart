@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/reservations/data/form_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/form.dart';
 
@@ -68,7 +67,7 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
         currentResponses: initialResponses,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: ApiException.extractMessage(e));
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -111,7 +110,7 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
       );
       return true;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: ApiException.extractMessage(e));
+      state = state.copyWith(isLoading: false, error: e.toString());
       return false;
     }
   }

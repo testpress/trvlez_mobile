@@ -288,8 +288,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
     final error = ref.watch(registrationControllerProvider).error;
-    if (error == null) return const SizedBox.shrink();
-    final errorMessageText = ApiException.extractMessage(error);
+    final errorMessageText =
+        (error as ApiException?)?.message ?? error?.toString();
+    if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),

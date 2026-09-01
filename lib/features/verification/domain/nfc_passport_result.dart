@@ -89,12 +89,6 @@ class NfcPassportResult {
     required this.availableDataGroups,
   });
 
-  /// Whether Passive Authentication data (EF.SOD) was successfully read.
-  bool get isPassiveAuthSuccess => sodBytesBase64 != null;
-
-  /// Whether Chip Access (BAC or PACE) succeeded.
-  bool get isChipAccessSuccess => authMethod != NfcAuthMethod.none;
-
   /// Converts the result to a JSON payload suitable for backend verification.
   Map<String, dynamic> toJson() {
     return {

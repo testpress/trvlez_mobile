@@ -10,7 +10,6 @@ import 'package:trvlez_mobile/features/reservations/presentation/reservations_no
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/date_picker_tile.dart';
 import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';
 
 /// Screen for creating a reservation at a property.
 ///
@@ -169,8 +168,6 @@ class _CreateReservationScreenState
       }
     }
 
-    if (ref.read(createReservationProvider).isLoading) return;
-
     final reservation = await ref
         .read(createReservationProvider.notifier)
         .createReservation(
@@ -202,7 +199,7 @@ class _CreateReservationScreenState
     final createState = ref.watch(createReservationProvider);
     final isCreating = createState.isLoading;
     final createError = createState.hasError
-        ? ApiException.extractMessage(createState.error)
+        ? createState.error.toString()
         : null;
 
     return Scaffold(

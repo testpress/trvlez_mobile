@@ -1,6 +1,6 @@
-import 'package:trvlez_mobile/features/verification/domain/verification_workflow_state.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
-/// The type of media processing being performed.
+/// The type of processing being performed.
 enum ProcessingType { passport, video }
 
 /// The visual stage shown to the user during processing.
@@ -15,7 +15,8 @@ enum ProcessingStageType {
 
 /// Represents a single user-facing stage of the verification processing journey.
 ///
-/// Maps technical verification states to calm, human-readable titles and subtitles.
+/// Maps technical backend phases to calm, human-readable titles and subtitles.
+/// All technical→human language translation lives here.
 class ProcessingStage {
   final ProcessingStageType type;
   final String title;
@@ -47,133 +48,102 @@ class ProcessingStage {
     subtitle: 'Your video is clear and ready for verification.',
   );
 
-  /// Resolves the user-facing processing stage from [VerificationWorkflowState].
-  factory ProcessingStage.fromWorkflowState(
-    VerificationWorkflowState state,
-    ProcessingType type,
-  ) {
-    if (type == ProcessingType.passport) {
-      return switch (state) {
-        VerificationStatePassportProcessing(
-          stage: PassportProcessingSubStage.uploading,
-        ) =>
-          const ProcessingStage(
-            type: ProcessingStageType.uploading,
-            title: 'Uploading your passport',
-            subtitle: 'We\'re securely preparing your document.',
-          ),
-        VerificationStatePassportProcessing(
-          stage: PassportProcessingSubStage.checkingQuality,
-        ) =>
-          const ProcessingStage(
-            type: ProcessingStageType.checking,
-            title: 'Checking your passport',
-            subtitle: 'Making sure the image is clear and ready to use.',
-          ),
-        VerificationStatePassportProcessing(
-          stage: PassportProcessingSubStage.qualityPassed,
-        ) =>
-          passportQualityPassed,
-        VerificationStatePassportProcessing(
-          stage: PassportProcessingSubStage.extractingMrz,
-        ) =>
-          const ProcessingStage(
-            type: ProcessingStageType.reading,
-            title: 'Reading your passport',
-            subtitle: 'We\'re securely reading the details from your document.',
-          ),
-        VerificationStateMrzReview() ||
-        VerificationStateConfirmingMrz() => const ProcessingStage(
-          type: ProcessingStageType.completed,
-          title: 'Passport details ready',
-          subtitle: 'Your passport has been processed successfully.',
-        ),
-        VerificationStatePassportQualityFailed(:final errorMessage) =>
-          ProcessingStage(
-            type: ProcessingStageType.failed,
-            title: 'Let\'s try that again',
-            subtitle: errorMessage.isNotEmpty
-                ? errorMessage
-                : 'Your passport image isn\'t clear enough to continue.',
-            errorMessage: errorMessage,
-          ),
-        VerificationStateMrzExtractionFailed(:final errorMessage) =>
-          ProcessingStage(
-            type: ProcessingStageType.failed,
-            title: 'Let\'s try that again',
-            subtitle: errorMessage.isNotEmpty
-                ? errorMessage
-                : 'We couldn\'t read the details from your passport.',
-            errorMessage: errorMessage,
-          ),
-        VerificationStateError(:final userMessage) => ProcessingStage(
-          type: ProcessingStageType.failed,
-          title: 'Something went wrong',
-          subtitle: userMessage.isNotEmpty
-              ? userMessage
-              : 'Please try uploading your passport again.',
-          errorMessage: userMessage,
-        ),
-        _ => const ProcessingStage(
-          type: ProcessingStageType.uploading,
-          title: 'Uploading your passport',
-          subtitle: 'We\'re securely preparing your document.',
-        ),
-      };
-    } else {
-      return switch (state) {
-        VerificationStateSelfieProcessing(
-          stage: SelfieProcessingSubStage.uploading,
-        ) =>
-          const ProcessingStage(
-            type: ProcessingStageType.uploading,
-            title: 'Uploading your video',
-            subtitle: 'Securely preparing your video.',
-          ),
-        VerificationStateSelfieProcessing(
-          stage: SelfieProcessingSubStage.checkingQuality,
-        ) =>
-          const ProcessingStage(
-            type: ProcessingStageType.checking,
-            title: 'Checking your video',
-            subtitle:
-                'Making sure your video is clear and ready for verification.',
-          ),
-        VerificationStateSelfieProcessing(
-          stage: SelfieProcessingSubStage.qualityPassed,
-        ) ||
-        VerificationStateNfcIntro() ||
-        VerificationStateNfcScanning() ||
-        VerificationStateNfcResult() ||
-        VerificationStateSubmitting() => const ProcessingStage(
-          type: ProcessingStageType.completed,
-          title: 'Video is ready',
-          subtitle: 'Your video has been processed successfully.',
-        ),
-        VerificationStateSelfieQualityFailed(:final errorMessage) =>
-          ProcessingStage(
-            type: ProcessingStageType.failed,
-            title: 'Let\'s record that again',
-            subtitle: errorMessage.isNotEmpty
-                ? errorMessage
-                : 'We couldn\'t get a clear enough video to continue.',
-            errorMessage: errorMessage,
-          ),
-        VerificationStateError(:final userMessage) => ProcessingStage(
-          type: ProcessingStageType.failed,
-          title: 'Something went wrong',
-          subtitle: userMessage.isNotEmpty
-              ? userMessage
-              : 'Please try uploading your video again.',
-          errorMessage: userMessage,
-        ),
-        _ => const ProcessingStage(
-          type: ProcessingStageType.uploading,
-          title: 'Uploading your video',
-          subtitle: 'Securely preparing your video.',
-        ),
-      };
-    }
+  /// Maps a [VerificationPhase] to the corresponding passport processing stage.
+  factory ProcessingStage.forPassport(
+    VerificationPhase phase, {
+    String? errorMessage,
+  }) {
+    return switch (phase) {
+      VerificationPhase.uploading => const ProcessingStage(
+        type: ProcessingStageType.uploading,
+        title: 'Uploading your passport',
+        subtitle: 'We\'re securely preparing your document.',
+      ),
+      VerificationPhase.checkingImageQuality => const ProcessingStage(
+        type: ProcessingStageType.checking,
+        title: 'Checking your passport',
+        subtitle: 'Making sure the image is clear and ready to use.',
+      ),
+      VerificationPhase.extractingMrz => const ProcessingStage(
+        type: ProcessingStageType.reading,
+        title: 'Reading your passport',
+        subtitle: 'We\'re securely reading the details from your document.',
+      ),
+      VerificationPhase.uploadSuccess => const ProcessingStage(
+        type: ProcessingStageType.completed,
+        title: 'Passport details ready',
+        subtitle: 'Your passport has been processed successfully.',
+      ),
+      VerificationPhase.imageQualityFailed => ProcessingStage(
+        type: ProcessingStageType.failed,
+        title: 'Let\'s try that again',
+        subtitle: errorMessage ??
+            'Your passport image isn\'t clear enough to continue.',
+        errorMessage: errorMessage,
+      ),
+      VerificationPhase.mrzExtractionFailed => ProcessingStage(
+        type: ProcessingStageType.failed,
+        title: 'Let\'s try that again',
+        subtitle: errorMessage ??
+            'We couldn\'t read the details from your passport.',
+        errorMessage: errorMessage,
+      ),
+      VerificationPhase.error => ProcessingStage(
+        type: ProcessingStageType.failed,
+        title: 'Something went wrong',
+        subtitle: errorMessage ?? 'Please try uploading your passport again.',
+        errorMessage: errorMessage,
+      ),
+      // For any other phase, default to uploading
+      _ => const ProcessingStage(
+        type: ProcessingStageType.uploading,
+        title: 'Uploading your passport',
+        subtitle: 'We\'re securely preparing your document.',
+      ),
+    };
+  }
+
+  /// Maps a [VerificationPhase] to the corresponding video processing stage.
+  factory ProcessingStage.forVideo(
+    VerificationPhase phase, {
+    String? errorMessage,
+  }) {
+    return switch (phase) {
+      VerificationPhase.uploading => const ProcessingStage(
+        type: ProcessingStageType.uploading,
+        title: 'Uploading your video',
+        subtitle: 'Securely preparing your video.',
+      ),
+      VerificationPhase.checkingVideoQuality => const ProcessingStage(
+        type: ProcessingStageType.checking,
+        title: 'Checking your video',
+        subtitle: 'Making sure your video is clear and ready for verification.',
+      ),
+      VerificationPhase.uploadSuccess => const ProcessingStage(
+        type: ProcessingStageType.completed,
+        title: 'Video is ready',
+        subtitle: 'Your video has been processed successfully.',
+      ),
+      VerificationPhase.videoQualityFailed => ProcessingStage(
+        type: ProcessingStageType.failed,
+        title: 'Let\'s record that again',
+        subtitle: errorMessage ??
+            'We couldn\'t get a clear enough video to continue.',
+        errorMessage: errorMessage,
+      ),
+      VerificationPhase.error => ProcessingStage(
+        type: ProcessingStageType.failed,
+        title: 'Something went wrong',
+        subtitle: errorMessage ?? 'Please try uploading your video again.',
+        errorMessage: errorMessage,
+      ),
+      // For any other phase, default to uploading
+      _ => const ProcessingStage(
+        type: ProcessingStageType.uploading,
+        title: 'Uploading your video',
+        subtitle: 'Securely preparing your video.',
+      ),
+    };
   }
 
   /// Returns the step labels for the processing step indicator.

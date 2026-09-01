@@ -145,8 +145,13 @@ class SharedReviewScaffold extends StatelessWidget {
           // Media preview
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-              border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
+              color: colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.3,
+              ),
+              border: Border.all(
+                color: colorScheme.outlineVariant,
+                width: 0.8,
+              ),
               borderRadius: BorderRadius.circular(10),
             ),
             child: ClipRRect(
@@ -178,7 +183,11 @@ class SharedReviewScaffold extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded, color: colorScheme.error, size: 20),
+          Icon(
+            Icons.error_outline_rounded,
+            color: colorScheme.error,
+            size: 20,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

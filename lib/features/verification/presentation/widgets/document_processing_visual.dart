@@ -182,10 +182,8 @@ class _DocumentPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
-    final frameRRect = RRect.fromRectAndRadius(
-      frameRect,
-      const Radius.circular(6),
-    );
+    final frameRRect =
+        RRect.fromRectAndRadius(frameRect, const Radius.circular(6));
     canvas.drawRRect(frameRRect, framePaint);
     canvas.drawRRect(frameRRect, frameBorderPaint);
 
@@ -304,10 +302,8 @@ class _DocumentPainter extends CustomPainter {
 
   void _paintUploadIndicator(Canvas canvas, double centerX, Rect docRect) {
     final arrowY = docRect.bottom + 12 - (animationValue * 6);
-    final arrowOpacity = (1.0 - (animationValue - 0.5).abs() * 2).clamp(
-      0.3,
-      1.0,
-    );
+    final arrowOpacity =
+        (1.0 - (animationValue - 0.5).abs() * 2).clamp(0.3, 1.0);
 
     final arrowPaint = Paint()
       ..color = primaryColor.withValues(alpha: arrowOpacity * 0.6)
@@ -367,7 +363,11 @@ class _DocumentPainter extends CustomPainter {
     final badgeCenter = Offset(centerX + 24, centerY + 20);
     const badgeRadius = 12.0;
 
-    canvas.drawCircle(badgeCenter, badgeRadius, Paint()..color = successColor);
+    canvas.drawCircle(
+      badgeCenter,
+      badgeRadius,
+      Paint()..color = successColor,
+    );
 
     final checkPaint = Paint()
       ..color = surfaceColor
@@ -386,7 +386,11 @@ class _DocumentPainter extends CustomPainter {
     final badgeCenter = Offset(centerX + 24, centerY + 20);
     const badgeRadius = 12.0;
 
-    canvas.drawCircle(badgeCenter, badgeRadius, Paint()..color = errorColor);
+    canvas.drawCircle(
+      badgeCenter,
+      badgeRadius,
+      Paint()..color = errorColor,
+    );
 
     final excPaint = Paint()
       ..color = surfaceColor

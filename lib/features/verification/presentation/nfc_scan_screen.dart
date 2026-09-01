@@ -5,12 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:app_settings/app_settings.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_event.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/app/routes.dart';
 
 /// Active scanning screen that handles the real-time interaction with the NFC service.
 class NfcScanScreen extends ConsumerStatefulWidget {
@@ -94,9 +93,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
 
     try {
       final state = ref.read(verificationNotifierProvider);
-      final docNumber = state.durableData.extractedDocumentNumber ?? '';
-      final dob = state.durableData.extractedDateOfBirth;
-      final doe = state.durableData.extractedDateOfExpiry;
+      final docNumber = state.extractedDocumentNumber ?? '';
+      final dob = state.extractedDateOfBirth;
+      final doe = state.extractedDateOfExpiry;
 
       if (docNumber.isEmpty || dob == null || doe == null) {
         throw const NfcError(
@@ -141,9 +140,8 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
   }
 
   void _skipNfc() {
-    ref
-        .read(verificationNotifierProvider.notifier)
-        .send(const SubmitRequested(isSkipped: true));
+    ref.read(verificationNotifierProvider.notifier).skipNfc();
+    ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
     context.go(AppRoutes.verificationStatus);
   }
 
