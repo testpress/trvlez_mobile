@@ -18,10 +18,15 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
   if (originalImage != null) {
     originalImage = img.bakeOrientation(originalImage);
 
+    // If device was in landscape but captured image is portrait, rotate to match
+    if (sw > sh && originalImage.width < originalImage.height) {
+      originalImage = img.copyRotate(originalImage, angle: 90);
+    }
+
     final double iw = originalImage.width.toDouble();
     final double ih = originalImage.height.toDouble();
 
-    // Uniform scale matching BoxFit.cover for CameraPreview
+    // Uniform scale matching BoxFit.cover — no stretch or compression
     final double scale = max(sw / iw, sh / ih);
 
     final double cropCenterX = (frameCenterX - (sw / 2)) / scale + (iw / 2);

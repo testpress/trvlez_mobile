@@ -75,7 +75,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      if (location == AppRoutes.login || location == AppRoutes.register) {
+      if (location == AppRoutes.login ||
+          location == AppRoutes.register ||
+          location == AppRoutes.welcome) {
         return AppRoutes.home;
       }
 
@@ -84,12 +86,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: AppRoutes.welcome,
-        builder: (context, state) {
-          final authState = ref.read(authNotifierProvider).valueOrNull;
-          return WelcomeScreen(
-            isAuthenticated: authState?.isAuthenticated ?? false,
-          );
-        },
+        builder: (context, state) => const WelcomeScreen(),
       ),
       GoRoute(
         path: AppRoutes.login,

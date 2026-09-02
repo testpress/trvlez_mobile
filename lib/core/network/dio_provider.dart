@@ -10,7 +10,7 @@ import 'package:trvlez_mobile/core/storage/token_storage.dart';
 
 /// Provides the app-wide [TokenStorage] instance.
 final tokenStorageProvider = Provider<TokenStorage>((ref) {
-  return const TokenStorage();
+  return TokenStorage();
 });
 
 /// Provides the app-wide configured [Dio] instance.

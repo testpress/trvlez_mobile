@@ -39,22 +39,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     final token = await tokenStorage.getToken();
     final isAuthenticated = token != null;
 
-    TravelerVerificationState verificationState =
-        TravelerVerificationState.profilePending;
-
-    if (isAuthenticated) {
-      try {
-        final profileRepository = ref.read(profileRepositoryProvider);
-        final profile = await profileRepository.getProfile();
-        verificationState = profile.verificationState;
-      } catch (_) {
-        // If profile fetch fails, keep default — router will send to onboarding
-      }
-    }
-
     return AuthState(
       isAuthenticated: isAuthenticated,
-      verificationState: verificationState,
+      verificationState: TravelerVerificationState.profilePending,
     );
   }
 

@@ -55,8 +55,11 @@ class PassportReviewScreen extends ConsumerWidget {
           extra: {'type': ProcessingType.passport},
         );
       },
-      mediaChild: InteractiveViewer(
-        child: Image.file(image, fit: BoxFit.contain),
+      mediaChild: AspectRatio(
+        aspectRatio: 125.0 / 88.0,
+        child: InteractiveViewer(
+          child: Image.file(image, fit: BoxFit.contain),
+        ),
       ),
     );
   }

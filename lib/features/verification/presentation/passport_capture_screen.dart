@@ -345,7 +345,14 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          CameraPreview(controller!),
+          FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+              width: controller!.value.aspectRatio,
+              height: 1,
+              child: CameraPreview(controller!),
+            ),
+          ),
           CustomPaint(
             size: Size.infinite,
             painter: CameraOverlayPainter(
