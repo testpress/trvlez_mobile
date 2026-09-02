@@ -128,7 +128,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.propertyDetail,
         builder: (context, state) {
-          final property = state.extra as Property;
+          final property = state.extra as Property?;
+          if (property == null) {
+            return const PropertiesListingScreen();
+          }
           return PropertyDetailScreen(
             property: property,
             repository: ref.read(propertiesRepositoryProvider),
@@ -139,31 +142,43 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.createReservation,
         builder: (context, state) {
-          final property = state.extra as Property;
+          final property = state.extra as Property?;
+          if (property == null) {
+            return const PropertiesListingScreen();
+          }
           return CreateReservationScreen(property: property);
         },
       ),
       GoRoute(
         path: AppRoutes.reservationDetail,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final reservation = extras['reservation'] as Reservation;
+          final extras = state.extra as Map<String, dynamic>?;
+          final reservation = extras?['reservation'] as Reservation?;
+          if (reservation == null) {
+            return const MyTripsScreen();
+          }
           return ReservationDetailScreen(reservation: reservation);
         },
       ),
       GoRoute(
         path: AppRoutes.reservationQr,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final reservation = extras['reservation'] as Reservation;
+          final extras = state.extra as Map<String, dynamic>?;
+          final reservation = extras?['reservation'] as Reservation?;
+          if (reservation == null) {
+            return const MyTripsScreen();
+          }
           return QrCodeScreen(reservation: reservation);
         },
       ),
       GoRoute(
         path: AppRoutes.reservationForm,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final reservation = extras['reservation'] as Reservation;
+          final extras = state.extra as Map<String, dynamic>?;
+          final reservation = extras?['reservation'] as Reservation?;
+          if (reservation == null) {
+            return const MyTripsScreen();
+          }
           return PreArrivalFormScreen(reservationId: reservation.id);
         },
       ),
@@ -214,8 +229,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.verificationProcessing,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>;
-          final type = extras['type'] as ProcessingType;
+          final extras = state.extra as Map<String, dynamic>?;
+          final type = extras?['type'] as ProcessingType?;
+          if (type == null) {
+            // Process death recovery: redirect to status screen which
+            // will reconcile with backend
+            return const VerificationStatusScreen(verificationJobId: null);
+          }
           return VerificationProcessingScreen(type: type);
         },
       ),

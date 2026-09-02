@@ -86,11 +86,14 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       ),
     );
 
+    // Reset verification state first (stops polling, clears in-memory data)
+    ref.read(verificationNotifierProvider.notifier).reset();
+
     // Invalidate feature providers to clear sensitive data
     ref.invalidate(propertiesProvider);
     ref.invalidate(reservationListProvider);
     ref.invalidate(currentProfileProvider);
     ref.invalidate(verificationStatusProvider);
-    // Note: We don't have verificationNotifierProvider yet.
+    ref.invalidate(verificationNotifierProvider);
   }
 }

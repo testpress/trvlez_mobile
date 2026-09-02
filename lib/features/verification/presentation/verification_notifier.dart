@@ -129,6 +129,12 @@ class VerificationState {
 class VerificationNotifier extends Notifier<VerificationState> {
   late final VerificationPollingService _pollingService;
 
+  /// Guards against duplicate submissions from rapid taps.
+  bool _isSubmitting = false;
+
+  /// Guards against concurrent reconciliation calls.
+  bool _isReconciling = false;
+
   @override
   VerificationState build() {
     final repository = ref.read(verificationRepositoryProvider);
@@ -207,6 +213,83 @@ class VerificationNotifier extends Notifier<VerificationState> {
     return profileState;
   }
 
+  // ─── Backend Reconciliation ──────────────────────────────────────
+
+  /// Reconciles local state with the backend's source of truth.
+  ///
+  /// Called on app startup, app resume from background, and when
+  /// entering the verification status screen. Handles the case where
+  /// local state was lost due to process death or navigation away.
+  ///
+  /// Maps server status to the appropriate [VerificationPhase] and
+  /// automatically resumes polling if verification is processing.
+  Future<void> reconcileWithBackend() async {
+    if (_isReconciling) return;
+    _isReconciling = true;
+
+    try {
+      final repository = ref.read(verificationRepositoryProvider);
+      final verificationStatus = await repository.getVerificationStatus();
+      state = state.copyWith(verificationStatus: verificationStatus);
+
+      if (!verificationStatus.hasActiveSession) {
+        // No session exists — fresh start is valid
+        return;
+      }
+
+      final serverStatus = verificationStatus.status;
+
+      if (verificationStatus.isVerified) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+        return;
+      }
+
+      if (verificationStatus.isFailed) {
+        state = state.copyWith(
+          phase: VerificationPhase.verificationFailed,
+          errorMessage: verificationStatus.errorReason,
+        );
+        return;
+      }
+
+      if (verificationStatus.isProcessing) {
+        final jobId = verificationStatus.verificationJobId;
+        if (jobId != null) {
+          state = state.copyWith(phase: VerificationPhase.verifying);
+          _startPollingForJob(jobId);
+        }
+        return;
+      }
+
+      // Backend says 'uploaded' — user has documents but hasn't submitted.
+      // Let them continue from the NFC/submit step.
+      if (verificationStatus.isUploaded) {
+        // Don't change phase if user is actively in the middle of a step.
+        // Only recover if we're in idle (i.e., state was lost).
+        if (state.phase == VerificationPhase.idle) {
+          state = state.copyWith(phase: VerificationPhase.uploadSuccess);
+        }
+        return;
+      }
+
+      // For other statuses (started, etc.), check if user was mid-flow
+      // and only reset to idle if truly no local state exists
+      if (serverStatus == 'submitted') {
+        // Submitted but not yet processing — treat like processing
+        state = state.copyWith(phase: VerificationPhase.verifying);
+        final jobId = verificationStatus.verificationJobId;
+        if (jobId != null) {
+          _startPollingForJob(jobId);
+        }
+      }
+    } catch (e) {
+      // Reconciliation is best-effort — if network is down, we'll try
+      // again on next resume. Don't show errors to the user for this.
+    } finally {
+      _isReconciling = false;
+    }
+  }
+
   Future<void> fetchVerificationStatus() async {
     try {
       final repository = ref.read(verificationRepositoryProvider);
@@ -252,6 +335,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
   /// Resets the notifier state completely for a new verification session.
   void reset() {
     stopPolling();
+    _isSubmitting = false;
+    _isReconciling = false;
     state = const VerificationState();
   }
 
@@ -348,15 +433,21 @@ class VerificationNotifier extends Notifier<VerificationState> {
               mrzResult.errorMessage ?? 'Could not read passport MRZ data',
         );
       }
-    } on ApiException catch (e) {
-      state = state.copyWith(
-        phase: VerificationPhase.error,
-        errorMessage: e.message,
-      );
     } catch (e) {
+      // Handle 409 "already verified" — transition to verified, not error
+      final apiException = ApiException.from(e);
+      if (apiException?.isAlreadyVerified == true) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+        return;
+      }
+      if (apiException?.isAlreadySubmitted == true) {
+        await reconcileWithBackend();
+        return;
+      }
+
       state = state.copyWith(
         phase: VerificationPhase.error,
-        errorMessage: 'Upload failed: $e',
+        errorMessage: ApiException.extractMessage(e, 'Upload failed'),
       );
     }
   }
@@ -376,15 +467,19 @@ class VerificationNotifier extends Notifier<VerificationState> {
         state.mrzExtractionResult!.toConfirmPayload(),
       );
       state = state.copyWith(phase: VerificationPhase.mrzReviewed);
-    } on ApiException catch (e) {
-      state = state.copyWith(
-        phase: VerificationPhase.error,
-        errorMessage: e.message,
-      );
     } catch (e) {
+      final apiException = ApiException.from(e);
+      if (apiException?.isAlreadyVerified == true) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+        return;
+      }
+
       state = state.copyWith(
         phase: VerificationPhase.error,
-        errorMessage: 'Failed to confirm passport data: $e',
+        errorMessage: ApiException.extractMessage(
+          e,
+          'Failed to confirm passport data',
+        ),
       );
     }
   }
@@ -427,20 +522,38 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
       // 2. Only on PASS: Proceed to NFC / submission step
       state = state.copyWith(phase: VerificationPhase.uploadSuccess);
-    } on ApiException catch (e) {
-      state = state.copyWith(
-        phase: VerificationPhase.error,
-        errorMessage: e.message,
-      );
     } catch (e) {
+      // Handle 409 "already verified" — transition to verified, not error
+      final apiException = ApiException.from(e);
+      if (apiException?.isAlreadyVerified == true) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+        return;
+      }
+      if (apiException?.isAlreadySubmitted == true) {
+        await reconcileWithBackend();
+        return;
+      }
+
       state = state.copyWith(
         phase: VerificationPhase.error,
-        errorMessage: 'Upload failed: $e',
+        errorMessage: ApiException.extractMessage(e, 'Upload failed'),
       );
     }
   }
 
+  /// Submits the verification session for ML pipeline processing.
+  ///
+  /// Guarded against duplicate calls from rapid taps.
   Future<void> submitVerificationAsync() async {
+    // Guard against duplicate submissions
+    if (_isSubmitting) return;
+    if (state.phase == VerificationPhase.submitting ||
+        state.phase == VerificationPhase.verifying ||
+        state.phase == VerificationPhase.verified) {
+      return;
+    }
+
+    _isSubmitting = true;
     state = state.copyWith(phase: VerificationPhase.submitting);
 
     try {
@@ -461,34 +574,45 @@ class VerificationNotifier extends Notifier<VerificationState> {
         );
       } else {
         state = state.copyWith(phase: VerificationPhase.verifying);
-        _pollingService.startPolling(
-          jobId: submitResult.verificationJobId!,
-          onUpdate: (pollingResult, domainStatus) {
-            state = state.copyWith(
-              phase: pollingResult.isVerified
-                  ? VerificationPhase.verified
-                  : (pollingResult.isFailed
-                        ? VerificationPhase.verificationFailed
-                        : VerificationPhase.verifying),
-              jobResult: pollingResult,
-            );
-          },
-        );
+        if (submitResult.verificationJobId != null) {
+          _startPollingForJob(submitResult.verificationJobId!);
+        }
       }
-    } on ApiException catch (e) {
-      state = state.copyWith(
-        phase: VerificationPhase.error,
-        errorMessage: e.message,
-      );
     } catch (e) {
+      // Handle 409 conflicts as domain transitions, not errors
+      final apiException = ApiException.from(e);
+      if (apiException != null && apiException.isConflict) {
+        if (apiException.isAlreadyVerified) {
+          state = state.copyWith(phase: VerificationPhase.verified);
+          return;
+        }
+        // "Already submitted" or "Already processing" — reconcile to get
+        // the job ID and resume polling
+        await reconcileWithBackend();
+        return;
+      }
+
+      // Handle session expired — try to reconcile silently
+      if (apiException?.isSessionExpired == true) {
+        await reconcileWithBackend();
+        return;
+      }
+
       state = state.copyWith(
         phase: VerificationPhase.error,
-        errorMessage: 'Submission failed: $e',
+        errorMessage: ApiException.extractMessage(e, 'Submission failed'),
       );
+    } finally {
+      _isSubmitting = false;
     }
   }
 
   void startPollingVerificationJob(String jobId) {
+    _startPollingForJob(jobId);
+  }
+
+  /// Starts polling for a verification job with proper state management.
+  void _startPollingForJob(String jobId) {
     _pollingService.startPolling(
       jobId: jobId,
       onUpdate: (pollingResult, domainStatus) {
@@ -499,6 +623,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
                     ? VerificationPhase.verificationFailed
                     : VerificationPhase.verifying),
           jobResult: pollingResult,
+          // Update verification status if available (for failedStep, uiMitigation)
+          verificationStatus: domainStatus ?? state.verificationStatus,
         );
       },
     );

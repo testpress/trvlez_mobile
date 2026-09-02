@@ -55,7 +55,9 @@ class VerificationStatusScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(verificationNotifierProvider.notifier).fetchVerificationStatus();
+      // Reconcile with backend to recover state after process death,
+      // resume polling if processing, and update verification status.
+      ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
     });
   }
 
