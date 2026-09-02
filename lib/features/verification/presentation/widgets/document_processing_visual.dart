@@ -34,6 +34,7 @@ class _DocumentProcessingVisualState extends State<DocumentProcessingVisual>
   late AnimationController _controller;
 
   static const _animatingStages = {
+    ProcessingStageType.preparing,
     ProcessingStageType.uploading,
     ProcessingStageType.checking,
     ProcessingStageType.reading,
@@ -285,6 +286,7 @@ class _DocumentPainter extends CustomPainter {
     double centerY,
   ) {
     switch (stageType) {
+      case ProcessingStageType.preparing:
       case ProcessingStageType.uploading:
         _paintUploadIndicator(canvas, centerX, contentRect);
       case ProcessingStageType.checking:

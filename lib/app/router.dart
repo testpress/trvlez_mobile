@@ -27,7 +27,9 @@ import 'package:trvlez_mobile/features/verification/presentation/mrz_review_scre
 import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';
+import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/passport_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_instruction_screen.dart';
@@ -191,6 +193,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.passportCapture,
         builder: (context, state) =>
             PassportCaptureScreen(cameraService: cameraService),
+      ),
+      GoRoute(
+        path: AppRoutes.passportProcessing,
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>?;
+          final cropParams = extras?['cropParams'] as PassportCropParams?;
+          return PassportProcessingScreen(cropParams: cropParams);
+        },
       ),
       GoRoute(
         path: AppRoutes.passportReview,

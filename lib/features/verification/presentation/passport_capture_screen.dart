@@ -1,78 +1,17 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image/image.dart' as img;
-import 'package:image_cropper/image_cropper.dart';
-import 'package:trvlez_mobile/core/device/camera_service.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/camera_overlay_painter.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
+
 import 'package:trvlez_mobile/app/routes.dart';
-
-/// Crops the passport region from the full camera capture.
-///
-/// In landscape mode the captured image already has the correct orientation,
-/// so no rotation is needed. The cropped image is normalized to max 1920px width
-/// (~380-400 DPI) and encoded as lossless PNG to maintain pristine text sharpness
-/// for MRZ extraction while keeping the file size small (~1.5-2.5 MB).
-Future<File?> processAndCropImage(Map<String, dynamic> params) async {
-  final String imagePath = params['path'] as String;
-  final double sw = params['sw'] as double;
-  final double sh = params['sh'] as double;
-  final double frameWidth = params['frameWidth'] as double;
-  final double frameHeight = params['frameHeight'] as double;
-
-  final bytes = File(imagePath).readAsBytesSync();
-  img.Image? originalImage = img.decodeImage(bytes);
-
-  if (originalImage != null) {
-    originalImage = img.bakeOrientation(originalImage);
-
-    final double iw = originalImage.width.toDouble();
-    final double ih = originalImage.height.toDouble();
-
-    final double scaleX = sw / iw;
-    final double scaleY = sh / ih;
-
-    final double frameCenterX = (params['frameCenterX'] as double?) ?? (sw / 2);
-    final double cropCenterX = frameCenterX / scaleX;
-
-    final double cropW = frameWidth / scaleX;
-    final double cropH = frameHeight / scaleY;
-    final double cropX = cropCenterX - (cropW / 2);
-    final double cropY = (ih - cropH) / 2;
-
-    img.Image croppedImage = img.copyCrop(
-      originalImage,
-      x: cropX.toInt().clamp(0, originalImage.width - 1),
-      y: cropY.toInt().clamp(0, originalImage.height - 1),
-      width: cropW.toInt().clamp(1, originalImage.width),
-      height: cropH.toInt().clamp(1, originalImage.height),
-    );
-
-    // Normalize resolution: standard passport page needs ~300-400 DPI (~1800-1920px width).
-    // Downscaling from raw 12MP/48MP reduces PNG size from 20MB to ~1.5-2MB while eliminating sensor noise.
-    if (croppedImage.width > 1920) {
-      croppedImage = img.copyResize(
-        croppedImage,
-        width: 1920,
-        interpolation: img.Interpolation.cubic,
-      );
-    }
-
-    // Encode as Lossless PNG — no rotation needed in landscape mode.
-    final pngBytes = img.encodePng(croppedImage, level: 6);
-    final pngPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_cropped.png');
-    final pngFile = File(pngPath)..writeAsBytesSync(pngBytes);
-    return pngFile;
-  }
-  return null;
-}
+import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/camera_overlay_painter.dart';
 
 class PassportCaptureScreen extends ConsumerStatefulWidget {
   final CameraService cameraService;
@@ -89,7 +28,6 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   bool isCameraInitialized = false;
   bool isCapturing = false;
   FlashMode currentFlashMode = FlashMode.off;
-  String? captureStatusMessage;
 
   /// ICAO 9303 TD3 passport data page: 125 mm × 88 mm → ratio ≈ 1.42.
   static const double _passportAspectRatio = 125.0 / 88.0;
@@ -101,8 +39,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   }
 
   Future<void> _initOrientationAndCamera() async {
-    // Lock to landscape for natural passport framing — eliminates the need
-    // to rotate the captured image, which previously degraded MRZ text quality.
+    // Lock to landscape for natural passport framing
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -164,12 +101,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
 
   @override
   void dispose() {
-    // Restore all orientations so subsequent screens are not stuck in landscape
+    // Restore portrait orientation so subsequent screens render in portrait
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
     ]);
     controller?.dispose();
     super.dispose();
@@ -225,51 +159,46 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
 
     setState(() {
       isCapturing = true;
-      captureStatusMessage = 'Capturing...';
     });
 
-    // Capture screen dimensions before any async work to avoid using
-    // BuildContext across async gaps.
     final screenSize = MediaQuery.sizeOf(context);
     final sw = screenSize.width;
     final sh = screenSize.height;
     final (frameWidth, frameHeight) = _computeFrameDimensions(screenSize);
+    const double controlColumnWidth = 100.0;
+    final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
 
     try {
       final XFile file = await controller!.takePicture();
 
-      setState(() {
-        captureStatusMessage = 'Processing...';
-      });
+      // Immediately freeze/stop the camera preview
+      await controller?.pausePreview();
 
-      // Offset frame slightly left to make room for the right-side controls
-      // This matches the calculation in the build method.
-      const double controlColumnWidth = 100.0;
-      final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
+      final cropParams = PassportCropParams(
+        imagePath: file.path,
+        screenWidth: sw,
+        screenHeight: sh,
+        frameWidth: frameWidth,
+        frameHeight: frameHeight,
+        frameCenterX: frameCenterX,
+      );
 
-      final croppedFile = await compute(processAndCropImage, {
-        'path': file.path,
-        'sw': sw,
-        'sh': sh,
-        'frameWidth': frameWidth,
-        'frameHeight': frameHeight,
-        'frameCenterX': frameCenterX,
-      });
-
-      if (croppedFile == null) {
-        throw Exception('Failed to process captured image.');
-      }
-
-      // Hand off image and navigate to review
-      ref.read(verificationNotifierProvider.notifier).setImage(croppedFile);
+      // Hand off image and crop params, then transition to review screen immediately
+      ref.read(verificationNotifierProvider.notifier).setImage(
+        File(file.path),
+        cropParams: cropParams,
+      );
 
       if (mounted) {
-        // Restore portrait before leaving so the review screen renders correctly
+        // Restore portrait before leaving so the processing screen renders correctly
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
         ]);
         if (mounted) {
-          context.go(AppRoutes.passportReview);
+          context.go(
+            AppRoutes.passportProcessing,
+            extra: {'cropParams': cropParams},
+          );
         }
       }
     } catch (e) {
@@ -280,11 +209,12 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           ),
         );
       }
-    } finally {
+      try {
+        await controller?.resumePreview();
+      } catch (_) {}
       if (mounted) {
         setState(() {
           isCapturing = false;
-          captureStatusMessage = null;
         });
       }
     }
@@ -323,6 +253,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         );
 
         if (croppedFile != null) {
+          await controller?.pausePreview();
           ref
               .read(verificationNotifierProvider.notifier)
               .setImage(File(croppedFile.path));
@@ -334,6 +265,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
               context.go(AppRoutes.passportReview);
             }
           }
+          return;
         }
       }
     } catch (e) {
@@ -424,7 +356,6 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           ),
           _buildTopBar(theme, padding),
           _buildGuidanceText(theme, cutoutRect, screenSize),
-          if (captureStatusMessage != null) _buildStatusOverlay(theme),
           _buildControls(padding),
         ],
       ),
@@ -442,6 +373,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
+              SystemChrome.setPreferredOrientations([
+                DeviceOrientation.portraitUp,
+              ]);
               if (context.canPop()) {
                 context.pop();
               } else {
@@ -486,35 +420,6 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         'Hold steady • ~20 cm away • Ensure MRZ zone is visible',
         textAlign: TextAlign.center,
         style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
-      ),
-    );
-  }
-
-  Widget _buildStatusOverlay(ThemeData theme) {
-    return Container(
-      color: Colors.black.withAlpha(100),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              width: 32,
-              height: 32,
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 3,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              captureStatusMessage!,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

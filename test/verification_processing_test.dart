@@ -101,8 +101,20 @@ void main() {
       expect(stage.type, ProcessingStageType.uploading);
     });
 
+    test('preparingImage phase maps to preparing stage with correct text', () {
+      final stage = ProcessingStage.forPassport(
+        VerificationPhase.preparingImage,
+      );
+
+      expect(stage.type, ProcessingStageType.preparing);
+      expect(stage.title, 'Preparing your passport');
+      expect(stage.subtitle, contains('Optimizing'));
+      expect(stage.isTerminal, isFalse);
+    });
+
     test('no text contains technical terms', () {
       final phases = [
+        VerificationPhase.preparingImage,
         VerificationPhase.uploading,
         VerificationPhase.checkingImageQuality,
         VerificationPhase.extractingMrz,

@@ -33,6 +33,7 @@ class AppRoutes {
 
   // Verification Flow
   static const String passportCapture = '/verification/passport-capture';
+  static const String passportProcessing = '/verification/passport-processing';
   static const String passportReview = '/verification/passport-review';
   static const String mrzReview = '/verification/mrz-review';
   static const String selfieInstructions = '/verification/selfie-instructions';

@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
+import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/domain/quality_check_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
@@ -18,6 +21,7 @@ import 'package:trvlez_mobile/features/verification/presentation/verification_pr
 /// Tracks the current phase of the verification flow in the UI.
 enum VerificationPhase {
   idle,
+  preparingImage,
   uploading,
   checkingImageQuality,
   imageQualityFailed,
@@ -41,6 +45,7 @@ enum VerificationActionStatus { idle, uploading, success, error }
 class VerificationState {
   final File? capturedImage;
   final File? capturedVideo;
+  final PassportCropParams? cropParams;
   final VerificationPhase phase;
   final double uploadProgress;
   final String? errorMessage;
@@ -65,6 +70,7 @@ class VerificationState {
   const VerificationState({
     this.capturedImage,
     this.capturedVideo,
+    this.cropParams,
     this.phase = VerificationPhase.idle,
     this.uploadProgress = 0.0,
     this.errorMessage,
@@ -86,6 +92,8 @@ class VerificationState {
     bool clearImage = false,
     File? capturedVideo,
     bool clearVideo = false,
+    PassportCropParams? cropParams,
+    bool clearCropParams = false,
     VerificationPhase? phase,
     double? uploadProgress,
     String? errorMessage,
@@ -106,6 +114,8 @@ class VerificationState {
     return VerificationState(
       capturedImage: clearImage ? null : (capturedImage ?? this.capturedImage),
       capturedVideo: clearVideo ? null : (capturedVideo ?? this.capturedVideo),
+      cropParams:
+          clearCropParams ? null : (cropParams ?? this.cropParams),
       phase: phase ?? this.phase,
       uploadProgress: uploadProgress ?? this.uploadProgress,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
@@ -145,6 +155,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
   /// Backward-compatible status getter used by existing UI code.
   VerificationActionStatus get status => switch (state.phase) {
     VerificationPhase.idle => VerificationActionStatus.idle,
+    VerificationPhase.preparingImage ||
     VerificationPhase.uploading ||
     VerificationPhase.checkingImageQuality ||
     VerificationPhase.checkingVideoQuality ||
@@ -298,9 +309,11 @@ class VerificationNotifier extends Notifier<VerificationState> {
     } catch (_) {}
   }
 
-  void setImage(File image) {
+  void setImage(File image, {PassportCropParams? cropParams}) {
     state = state.copyWith(
       capturedImage: image,
+      cropParams: cropParams,
+      clearCropParams: cropParams == null,
       phase: VerificationPhase.idle,
       clearError: true,
     );
@@ -309,6 +322,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
   void clearImage() {
     state = state.copyWith(
       clearImage: true,
+      clearCropParams: true,
       phase: VerificationPhase.idle,
       clearError: true,
       uploadProgress: 0.0,
@@ -359,6 +373,34 @@ class VerificationNotifier extends Notifier<VerificationState> {
   Future<void> uploadPassport() async {
     if (state.capturedImage == null) return;
 
+    File fileToUpload = state.capturedImage!;
+
+    // 0. If crop parameters exist, process and crop the image within the frame with 100% JPEG quality
+    if (state.cropParams != null) {
+      state = state.copyWith(
+        phase: VerificationPhase.preparingImage,
+        uploadProgress: 0.0,
+        clearError: true,
+      );
+
+      try {
+        final croppedFile = await compute(
+          cropAndOptimizePassportImage,
+          state.cropParams!.toMap(),
+        );
+
+        if (croppedFile != null) {
+          fileToUpload = croppedFile;
+          state = state.copyWith(
+            capturedImage: croppedFile,
+            clearCropParams: true,
+          );
+        }
+      } catch (_) {
+        // Fallback to original image if cropping encounters an unexpected error
+      }
+    }
+
     state = state.copyWith(
       phase: VerificationPhase.uploading,
       uploadProgress: 0.0,
@@ -368,7 +410,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
     try {
       final repository = ref.read(verificationRepositoryProvider);
       await repository.uploadPassport(
-        state.capturedImage!,
+        fileToUpload,
         onProgress: (progress) {
           state = state.copyWith(uploadProgress: progress);
         },

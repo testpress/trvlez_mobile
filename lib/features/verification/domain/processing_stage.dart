@@ -5,6 +5,7 @@ enum ProcessingType { passport, video }
 
 /// The visual stage shown to the user during processing.
 enum ProcessingStageType {
+  preparing,
   uploading,
   checking,
   qualityPassed,
@@ -54,6 +55,11 @@ class ProcessingStage {
     String? errorMessage,
   }) {
     return switch (phase) {
+      VerificationPhase.preparingImage => const ProcessingStage(
+        type: ProcessingStageType.preparing,
+        title: 'Preparing your passport',
+        subtitle: 'Optimizing and preparing your document.',
+      ),
       VerificationPhase.uploading => const ProcessingStage(
         type: ProcessingStageType.uploading,
         title: 'Uploading your passport',
@@ -159,6 +165,7 @@ class ProcessingStage {
     final maxIndex = stepLabels(type).length - 1;
     return switch (type) {
       ProcessingType.passport => switch (this.type) {
+        ProcessingStageType.preparing => 0,
         ProcessingStageType.uploading => 0,
         ProcessingStageType.checking => 1,
         ProcessingStageType.qualityPassed => 1,
@@ -167,6 +174,7 @@ class ProcessingStage {
         ProcessingStageType.failed => maxIndex,
       },
       ProcessingType.video => switch (this.type) {
+        ProcessingStageType.preparing => 0,
         ProcessingStageType.uploading => 0,
         ProcessingStageType.checking => 1,
         ProcessingStageType.qualityPassed => 1,
