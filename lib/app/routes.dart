@@ -32,6 +32,7 @@ class AppRoutes {
   static const String profileSetup = '/profile-setup';
 
   // Verification Flow
+  static const String passportInstructions = '/verification/passport-instructions';
   static const String passportCapture = '/verification/passport-capture';
   static const String passportProcessing = '/verification/passport-processing';
   static const String passportReview = '/verification/passport-review';

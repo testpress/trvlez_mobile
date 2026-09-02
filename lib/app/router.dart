@@ -29,6 +29,7 @@ import 'package:trvlez_mobile/features/verification/presentation/nfc_result_scre
 import 'package:trvlez_mobile/features/verification/presentation/nfc_scan_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/passport_instruction_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/selfie_capture_screen.dart';
@@ -188,6 +189,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.profileSetup,
         builder: (context, state) => const ProfileSetupScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.passportInstructions,
+        builder: (context, state) => const PassportInstructionScreen(),
       ),
       GoRoute(
         path: AppRoutes.passportCapture,

@@ -379,7 +379,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
               if (context.canPop()) {
                 context.pop();
               } else {
-                context.go(AppRoutes.profile);
+                context.go(AppRoutes.passportInstructions);
               }
             },
           ),
@@ -417,7 +417,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       left: cutoutRect.left,
       right: screenSize.width - cutoutRect.right,
       child: Text(
-        'Hold steady • ~20 cm away • Ensure MRZ zone is visible',
+        'Hold steady • ~20 cm away • Keep bottom 2 lines in frame',
         textAlign: TextAlign.center,
         style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
       ),

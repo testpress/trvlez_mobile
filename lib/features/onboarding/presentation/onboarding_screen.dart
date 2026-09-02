@@ -317,7 +317,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               : OnboardingStepState.active,
           onTap: !isPassportUploaded
               ? () async {
-                  await context.push(AppRoutes.passportCapture);
+                  await context.push(AppRoutes.passportInstructions);
                   loadProfile();
                 }
               : null,
