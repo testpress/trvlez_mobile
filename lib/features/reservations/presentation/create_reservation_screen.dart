@@ -189,7 +189,10 @@ class _CreateReservationScreenState
         );
 
     if (reservation != null && mounted) {
-      context.go(AppRoutes.myTrips);
+      context.pushReplacement(
+        AppRoutes.bookingConfirmationPath(reservation.id),
+        extra: reservation,
+      );
     }
   }
 

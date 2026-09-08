@@ -16,7 +16,9 @@ import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
+import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/booking_confirmation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
@@ -154,8 +156,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.reservationDetail,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>?;
-          final reservation = extras?['reservation'] as Reservation?;
+          final reservation = state.extra is Reservation
+              ? state.extra as Reservation
+              : (state.extra is Map<String, dynamic>
+                  ? (state.extra as Map<String, dynamic>)['reservation']
+                      as Reservation?
+                  : null);
           if (reservation == null) {
             return const MyTripsScreen();
           }
@@ -163,10 +169,34 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: AppRoutes.bookingConfirmation,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          final reservation = state.extra is Reservation
+              ? state.extra as Reservation
+              : (state.extra is Map<String, dynamic>
+                  ? (state.extra as Map<String, dynamic>)['reservation']
+                      as Reservation?
+                  : null);
+          if (reservation == null && id.isEmpty) {
+            return const MyTripsScreen();
+          }
+          return BookingConfirmationScreen(
+            reservationId: reservation?.id ?? id,
+            reservation: reservation,
+            repository: ref.read(reservationRepositoryProvider),
+          );
+        },
+      ),
+      GoRoute(
         path: AppRoutes.reservationQr,
         builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>?;
-          final reservation = extras?['reservation'] as Reservation?;
+          final reservation = state.extra is Reservation
+              ? state.extra as Reservation
+              : (state.extra is Map<String, dynamic>
+                  ? (state.extra as Map<String, dynamic>)['reservation']
+                      as Reservation?
+                  : null);
           if (reservation == null) {
             return const MyTripsScreen();
           }
