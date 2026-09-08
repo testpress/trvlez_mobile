@@ -91,9 +91,43 @@ class _ReservationDetailScreenState
     );
 
     if (confirmed == true) {
-      await ref
-          .read(reservationListProvider.notifier)
-          .cancelReservation(reservation.id);
+      try {
+        final success = await ref
+            .read(reservationListProvider.notifier)
+            .cancelReservation(reservation.id);
+        if (mounted) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Reservation cancelled successfully.'),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else {
+            final colorScheme = Theme.of(context).colorScheme;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'Failed to cancel reservation. Please try again.',
+                ),
+                backgroundColor: colorScheme.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          final colorScheme = Theme.of(context).colorScheme;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to cancel reservation: ${e.toString()}'),
+              backgroundColor: colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -101,7 +135,7 @@ class _ReservationDetailScreenState
   Widget build(BuildContext context) {
     if (widget.reservation != null) {
       final reservationsState = ref.watch(reservationListProvider);
-      final updated = reservationsState.value
+      final updated = reservationsState.valueOrNull
           ?.where((r) => r.id == widget.reservationId)
           .firstOrNull;
       final reservation = updated ?? widget.reservation!;
@@ -192,7 +226,7 @@ class _ReservationDetailScreenState
         }
 
         final reservationsState = ref.watch(reservationListProvider);
-        final updated = reservationsState.value
+        final updated = reservationsState.valueOrNull
             ?.where((r) => r.id == widget.reservationId)
             .firstOrNull;
         final reservation = updated ?? snapshot.data!;
@@ -217,11 +251,18 @@ class _ReservationDetailScreenState
           style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _loadReservation();
+          ref.invalidate(reservationListProvider);
+          await ref.read(reservationListProvider.future);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Property summary
             _buildPropertyCard(colorScheme, reservation),
             const SizedBox(height: 20),
@@ -321,8 +362,9 @@ class _ReservationDetailScreenState
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPropertyCard(ColorScheme colorScheme, Reservation reservation) {
     final property = reservation.propertySummary;

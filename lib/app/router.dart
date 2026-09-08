@@ -146,11 +146,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.createReservation,
         builder: (context, state) {
-          final property = state.extra as Property?;
-          if (property == null) {
+          Property? property;
+          String? selectedRoomTypeId;
+          if (state.extra is Property) {
+            property = state.extra as Property;
+          } else if (state.extra is Map<String, dynamic>) {
+            final map = state.extra as Map<String, dynamic>;
+            property = map['property'] as Property?;
+            selectedRoomTypeId = map['selectedRoomTypeId'] as String?;
+          }
+          final propertyId = property?.id ??
+              state.uri.queryParameters['property_id'] ??
+              '';
+          if (property == null && propertyId.isEmpty) {
             return const PropertiesListingScreen();
           }
-          return CreateReservationScreen(property: property);
+          return CreateReservationScreen(
+            property: property,
+            propertyId: propertyId.isNotEmpty ? propertyId : null,
+            initialRoomTypeId: selectedRoomTypeId,
+          );
         },
       ),
       GoRoute(

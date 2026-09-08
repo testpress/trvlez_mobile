@@ -55,6 +55,11 @@ class _PropertiesListingScreenState
     });
   }
 
+  void _onSearchSubmitted(String query) {
+    _debounceTimer?.cancel();
+    ref.read(propertiesProvider.notifier).search(query);
+  }
+
   void _clearSearch() {
     _searchController.clear();
     ref.read(propertiesProvider.notifier).search('');
@@ -77,6 +82,15 @@ class _PropertiesListingScreenState
         );
   }
 
+  Future<void> _onRefresh() async {
+    final selectedCategory = _categories[_selectedCategoryIndex];
+    final propertyType = _categoryToType[selectedCategory];
+    await ref.read(propertiesProvider.notifier).fetchProperties(
+          search: _searchController.text,
+          propertyType: propertyType,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -89,7 +103,7 @@ class _PropertiesListingScreenState
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () => ref.refresh(propertiesProvider.future),
+          onRefresh: _onRefresh,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
@@ -102,6 +116,7 @@ class _PropertiesListingScreenState
                     _SearchBar(
                       controller: _searchController,
                       onChanged: _onSearchChanged,
+                      onSubmitted: _onSearchSubmitted,
                       onClear: _clearSearch,
                     ),
                     const SizedBox(height: 20),
@@ -242,16 +257,39 @@ class _PropertiesHeader extends StatelessWidget {
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _SearchBar extends StatefulWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final ValueChanged<String> onSubmitted;
   final VoidCallback onClear;
 
   const _SearchBar({
     required this.controller,
     required this.onChanged,
+    required this.onSubmitted,
     required this.onClear,
   });
+
+  @override
+  State<_SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<_SearchBar> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_handleControllerChange);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_handleControllerChange);
+    super.dispose();
+  }
+
+  void _handleControllerChange() {
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,8 +302,10 @@ class _SearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
-        controller: controller,
-        onChanged: onChanged,
+        controller: widget.controller,
+        onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
+        textInputAction: TextInputAction.search,
         style: GoogleFonts.inter(color: colorScheme.onSurface, fontSize: 14),
         decoration: InputDecoration(
           icon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
@@ -275,14 +315,14 @@ class _SearchBar extends StatelessWidget {
             fontSize: 14,
           ),
           border: InputBorder.none,
-          suffixIcon: controller.text.isNotEmpty
+          suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(
                   icon: Icon(
                     Icons.close,
                     size: 18,
                     color: colorScheme.onSurfaceVariant,
                   ),
-                  onPressed: onClear,
+                  onPressed: widget.onClear,
                 )
               : null,
         ),

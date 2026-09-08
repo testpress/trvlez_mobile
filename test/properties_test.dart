@@ -241,6 +241,62 @@ void main() {
       expect(find.text('4N/5D'), findsNothing);
       expect(find.text('355 reviews'), findsNothing);
     });
+
+    testWidgets('renders price per night on horizontal card when present',
+        (tester) async {
+      const propertyWithPrice = Property(
+        id: 'prop-price',
+        name: 'Sunny Bay Villa',
+        city: 'Goa',
+        countryCode: 'IN',
+        shortDescription: 'Cozy villa',
+        longDescription: 'Cozy villa near beach',
+        heroImageUrl: '',
+        pricePerNight: 249.0,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PropertyCard(
+              property: propertyWithPrice,
+              isHorizontal: true,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('\$249 / night'), findsOneWidget);
+    });
+
+    testWidgets('renders price per night on recommended card when present',
+        (tester) async {
+      const propertyWithPrice = Property(
+        id: 'prop-price',
+        name: 'Sunny Bay Villa',
+        city: 'Goa',
+        countryCode: 'IN',
+        shortDescription: 'Cozy villa',
+        longDescription: 'Cozy villa near beach',
+        heroImageUrl: '',
+        pricePerNight: 249.0,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PropertyCard(
+              property: propertyWithPrice,
+              isHorizontal: false,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('\$249/nt'), findsOneWidget);
+    });
   });
 
   group('PropertyDetailScreen Widget', () {
@@ -388,6 +444,33 @@ void main() {
 
       expect(find.text('Unable to load property'), findsOneWidget);
       expect(find.text('Try Again'), findsOneWidget);
+    });
+
+    testWidgets('highlights tapped room type card and updates selection state',
+        (tester) async {
+      final mockRepo = MockPropertiesRepository();
+      mockRepo.propertiesToReturn = [detailProperty];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: PropertyDetailScreen(
+            property: detailProperty,
+            repository: mockRepo,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Tap to select'), findsNWidgets(2));
+      expect(find.text('Selected'), findsNothing);
+
+      await tester.ensureVisible(find.text('Deluxe King Harbour View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Deluxe King Harbour View'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Selected'), findsOneWidget);
+      expect(find.text('Tap to select'), findsOneWidget);
     });
   });
 }

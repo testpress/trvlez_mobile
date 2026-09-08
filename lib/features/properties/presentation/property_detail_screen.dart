@@ -24,12 +24,20 @@ class PropertyDetailScreen extends StatefulWidget {
 
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late Future<Property> _propertyFuture;
+  final ScrollController _scrollController = ScrollController();
   bool _isFavorite = false;
+  String? _selectedRoomTypeId;
 
   @override
   void initState() {
     super.initState();
     _loadProperty();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _loadProperty() {
@@ -40,6 +48,20 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     setState(() {
       _loadProperty();
     });
+  }
+
+  void _onRoomTypeSelected(String roomTypeId) {
+    setState(() {
+      _selectedRoomTypeId =
+          (_selectedRoomTypeId == roomTypeId) ? null : roomTypeId;
+    });
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
@@ -87,6 +109,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 property: displayProperty,
                 isEnriching:
                     snapshot.connectionState == ConnectionState.waiting,
+                scrollController: _scrollController,
+                selectedRoomTypeId: _selectedRoomTypeId,
+                onRoomTypeSelected: _onRoomTypeSelected,
               ),
             ],
           );
@@ -234,10 +259,16 @@ class _PropertyTopBar extends StatelessWidget {
 class _PropertyContentSheet extends StatelessWidget {
   final Property property;
   final bool isEnriching;
+  final ScrollController scrollController;
+  final String? selectedRoomTypeId;
+  final ValueChanged<String> onRoomTypeSelected;
 
   const _PropertyContentSheet({
     required this.property,
     required this.isEnriching,
+    required this.scrollController,
+    this.selectedRoomTypeId,
+    required this.onRoomTypeSelected,
   });
 
   @override
@@ -270,6 +301,7 @@ class _PropertyContentSheet extends StatelessWidget {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
+                controller: scrollController,
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,6 +323,8 @@ class _PropertyContentSheet extends StatelessWidget {
                     _PropertyRoomTypesSection(
                       roomTypes: property.roomTypes,
                       isLoading: isEnriching,
+                      selectedRoomTypeId: selectedRoomTypeId,
+                      onRoomTypeSelected: onRoomTypeSelected,
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -301,6 +335,7 @@ class _PropertyContentSheet extends StatelessWidget {
             _PropertyBottomBar(
               property: property,
               isLoading: isEnriching,
+              selectedRoomTypeId: selectedRoomTypeId,
             ),
           ],
         ),
@@ -635,10 +670,14 @@ class _FacilityPill extends StatelessWidget {
 class _PropertyRoomTypesSection extends StatelessWidget {
   final List<RoomType> roomTypes;
   final bool isLoading;
+  final String? selectedRoomTypeId;
+  final ValueChanged<String>? onRoomTypeSelected;
 
   const _PropertyRoomTypesSection({
     required this.roomTypes,
     this.isLoading = false,
+    this.selectedRoomTypeId,
+    this.onRoomTypeSelected,
   });
 
   @override
@@ -696,7 +735,15 @@ class _PropertyRoomTypesSection extends StatelessWidget {
             ),
           )
         else
-          ...roomTypes.map((rt) => _RoomTypeCard(roomType: rt)),
+          ...roomTypes.map(
+            (rt) => _RoomTypeCard(
+              roomType: rt,
+              isSelected: selectedRoomTypeId == rt.id,
+              onTap: onRoomTypeSelected != null
+                  ? () => onRoomTypeSelected!(rt.id)
+                  : null,
+            ),
+          ),
       ],
     );
   }
@@ -704,100 +751,153 @@ class _PropertyRoomTypesSection extends StatelessWidget {
 
 class _RoomTypeCard extends StatelessWidget {
   final RoomType roomType;
+  final bool isSelected;
+  final VoidCallback? onTap;
 
-  const _RoomTypeCard({required this.roomType});
+  const _RoomTypeCard({
+    required this.roomType,
+    this.isSelected = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withAlpha(100),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withAlpha(50),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? colorScheme.primary.withAlpha(20)
+              : colorScheme.surfaceContainerHighest.withAlpha(100),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.outlineVariant.withAlpha(50),
+            width: isSelected ? 2.0 : 1.0,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  roomType.name,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      if (isSelected) ...[
+                        Icon(
+                          Icons.check_circle,
+                          size: 18,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+                      Expanded(
+                        child: Text(
+                          roomType.name,
+                          style: GoogleFonts.inter(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withAlpha(25),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.people_outline,
-                      size: 14,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Max ${roomType.maxOccupancy}',
-                      style: GoogleFonts.inter(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.primary,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.primary.withAlpha(25),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.people_outline,
+                        size: 14,
+                        color: isSelected
+                            ? colorScheme.onPrimary
+                            : colorScheme.primary,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (roomType.description.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              roomType.description,
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                'Adults: ${roomType.maxAdults}',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-              if (roomType.maxChildren > 0) ...[
-                const SizedBox(width: 12),
-                Text(
-                  'Children: ${roomType.maxChildren}',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
+                      const SizedBox(width: 4),
+                      Text(
+                        'Max ${roomType.maxOccupancy}',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? colorScheme.onPrimary
+                              : colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
+            ),
+            if (roomType.description.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                roomType.description,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
-          ),
-        ],
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Adults: ${roomType.maxAdults}',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    if (roomType.maxChildren > 0) ...[
+                      const SizedBox(width: 12),
+                      Text(
+                        'Children: ${roomType.maxChildren}',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                Text(
+                  isSelected ? 'Selected' : 'Tap to select',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant.withAlpha(150),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -806,10 +906,12 @@ class _RoomTypeCard extends StatelessWidget {
 class _PropertyBottomBar extends StatelessWidget {
   final Property property;
   final bool isLoading;
+  final String? selectedRoomTypeId;
 
   const _PropertyBottomBar({
     required this.property,
     this.isLoading = false,
+    this.selectedRoomTypeId,
   });
 
   @override
@@ -857,16 +959,27 @@ class _PropertyBottomBar extends StatelessWidget {
               ],
             ),
             FilledButton.icon(
-              onPressed: () {
-                context.push(
-                  AppRoutes.createReservation,
-                  extra: property,
-                );
-              },
-              icon: const Icon(Icons.arrow_forward, size: 18),
-              label: const Text(
-                'Book Now',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      context.push(
+                        AppRoutes.createReservation,
+                        extra: {
+                          'property': property,
+                          'selectedRoomTypeId': selectedRoomTypeId,
+                        },
+                      );
+                    },
+              icon: isLoading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.arrow_forward, size: 18),
+              label: Text(
+                isLoading ? 'Loading...' : 'Book Now',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(

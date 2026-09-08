@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
+import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
@@ -13,11 +15,18 @@ import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen for creating a reservation at a property.
 ///
-/// Reached from the property detail "Book Now" button.
+/// Reached from the property detail "Book Now" button or via direct property booking link.
 class CreateReservationScreen extends ConsumerStatefulWidget {
-  final Property property;
+  final Property? property;
+  final String? propertyId;
+  final String? initialRoomTypeId;
 
-  const CreateReservationScreen({super.key, required this.property});
+  const CreateReservationScreen({
+    super.key,
+    this.property,
+    this.propertyId,
+    this.initialRoomTypeId,
+  });
 
   @override
   ConsumerState<CreateReservationScreen> createState() =>
@@ -35,24 +44,78 @@ class _CreateReservationScreenState
   final _phoneController = TextEditingController();
   final _specialRequestsController = TextEditingController();
 
+  Property? _activeProperty;
+  Future<Property>? _propertyFuture;
+
   @override
   void initState() {
     super.initState();
 
-    // Initialize selected counts
-    for (final rt in widget.property.roomTypes) {
+    if (widget.property != null && widget.property!.roomTypes.isNotEmpty) {
+      _activeProperty = widget.property;
+      _initRoomCounts(widget.property!);
+    } else {
+      _loadProperty();
+    }
+
+    // Auto-prefill traveler phone from profile if available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final profile = ref.read(currentProfileProvider).valueOrNull;
+      if (profile?.phone != null &&
+          profile!.phone!.isNotEmpty &&
+          _phoneController.text.isEmpty) {
+        _phoneController.text = profile.phone!;
+      }
+    });
+  }
+
+  void _loadProperty() {
+    final propId = widget.property?.id ?? widget.propertyId ?? '';
+    if (propId.isNotEmpty) {
+      setState(() {
+        _propertyFuture =
+            ref.read(propertiesRepositoryProvider).getPropertyDetail(propId);
+      });
+    }
+  }
+
+  void _initRoomCounts(Property prop) {
+    for (final rt in prop.roomTypes) {
       _selectedRoomCounts.putIfAbsent(rt.id, () => 0);
     }
 
-    // Select 1 room of the first type by default if available
-    if (widget.property.roomTypes.isNotEmpty) {
-      _selectedRoomCounts[widget.property.roomTypes.first.id] = 1;
+    if (widget.initialRoomTypeId != null &&
+        _selectedRoomCounts.containsKey(widget.initialRoomTypeId)) {
+      _selectedRoomCounts[widget.initialRoomTypeId!] = 1;
+    } else if (prop.roomTypes.isNotEmpty && _totalSelectedRooms == 0) {
+      _selectedRoomCounts[prop.roomTypes.first.id] = 1;
     }
   }
 
   int get _totalSelectedRooms {
     return _selectedRoomCounts.values.fold(0, (sum, count) => sum + count);
   }
+
+  int get _totalMaxCapacity {
+    if (_activeProperty == null) return 0;
+    int capacity = 0;
+    for (final entry in _selectedRoomCounts.entries) {
+      if (entry.value <= 0) continue;
+      final rt = _activeProperty!.roomTypes
+          .where((r) => r.id == entry.key)
+          .firstOrNull;
+      if (rt != null) {
+        capacity += entry.value * rt.maxOccupancy;
+      }
+    }
+    return capacity;
+  }
+
+  bool get _isOccupancyExceeded =>
+      _totalSelectedRooms > 0 &&
+      _totalMaxCapacity > 0 &&
+      _numberOfGuests > _totalMaxCapacity;
 
   @override
   void dispose() {
@@ -67,7 +130,8 @@ class _CreateReservationScreenState
       _checkInDate != null &&
       _checkOutDate != null &&
       _guestNameController.text.trim().isNotEmpty &&
-      _totalSelectedRooms > 0;
+      _totalSelectedRooms > 0 &&
+      !_isOccupancyExceeded;
 
   Future<void> _selectDate({required bool isCheckIn}) async {
     final now = DateTime.now();
@@ -136,7 +200,7 @@ class _CreateReservationScreenState
   }
 
   Future<void> _submitReservation() async {
-    if (!_isFormValid) return;
+    if (!_isFormValid || _activeProperty == null) return;
 
     // Combine selected date with current UTC time
     // so that same-day bookings pass the backend's strict past-time check.
@@ -171,7 +235,7 @@ class _CreateReservationScreenState
     final reservation = await ref
         .read(createReservationProvider.notifier)
         .createReservation(
-          propertyId: widget.property.id,
+          propertyId: _activeProperty!.id,
           checkInDate: checkInExact.toIso8601String(),
           checkOutDate: checkOutExact.toIso8601String(),
           guestName: _guestNameController.text.trim(),
@@ -198,12 +262,103 @@ class _CreateReservationScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (_activeProperty == null && _propertyFuture != null) {
+      return FutureBuilder<Property>(
+        future: _propertyFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                  onPressed: () => context.pop(),
+                ),
+                title: Text(
+                  'Book Your Stay',
+                  style: GoogleFonts.nunito(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              body: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          if (snapshot.hasError || !snapshot.hasData) {
+            return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                  onPressed: () => context.pop(),
+                ),
+                title: Text(
+                  'Book Your Stay',
+                  style: GoogleFonts.nunito(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Unable to load property details',
+                        style: GoogleFonts.nunito(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        snapshot.error?.toString() ?? 'Property not found',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.cabin(fontSize: 13),
+                      ),
+                      const SizedBox(height: 24),
+                      FilledButton.icon(
+                        onPressed: _loadProperty,
+                        icon: const Icon(Icons.refresh, size: 18),
+                        label: const Text('Try Again'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          _activeProperty = snapshot.data!;
+          _initRoomCounts(_activeProperty!);
+          return _buildForm(context);
+        },
+      );
+    }
+
+    return _buildForm(context);
+  }
+
+  Widget _buildForm(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final createState = ref.watch(createReservationProvider);
     final isCreating = createState.isLoading;
     final createError = createState.hasError
         ? createState.error.toString()
         : null;
+
+    final property = _activeProperty ?? widget.property;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -222,11 +377,12 @@ class _CreateReservationScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildPropertyCard(colorScheme),
+            if (property != null) _buildPropertyCard(colorScheme, property),
             const SizedBox(height: 24),
             _buildDateSection(colorScheme),
             const SizedBox(height: 24),
-            _buildGuestRoomSection(colorScheme),
+            if (property != null)
+              _buildGuestRoomSection(colorScheme, property),
             const SizedBox(height: 24),
             _buildGuestInfoSection(colorScheme),
             const SizedBox(height: 24),
@@ -243,7 +399,7 @@ class _CreateReservationScreenState
     );
   }
 
-  Widget _buildPropertyCard(ColorScheme colorScheme) {
+  Widget _buildPropertyCard(ColorScheme colorScheme, Property property) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -255,9 +411,9 @@ class _CreateReservationScreenState
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: widget.property.heroImageUrl.isNotEmpty
+            child: property.heroImageUrl.isNotEmpty
                 ? Image.network(
-                    widget.property.heroImageUrl,
+                    property.heroImageUrl,
                     width: 64,
                     height: 64,
                     fit: BoxFit.cover,
@@ -287,7 +443,7 @@ class _CreateReservationScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.property.name,
+                  property.name,
                   style: GoogleFonts.nunito(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -296,7 +452,7 @@ class _CreateReservationScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.property.locationString,
+                  property.locationString,
                   style: GoogleFonts.cabin(
                     fontSize: 13,
                     color: colorScheme.onSurfaceVariant,
@@ -367,7 +523,7 @@ class _CreateReservationScreenState
     );
   }
 
-  Widget _buildGuestRoomSection(ColorScheme colorScheme) {
+  Widget _buildGuestRoomSection(ColorScheme colorScheme, Property property) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -400,13 +556,13 @@ class _CreateReservationScreenState
           ),
         ),
         const SizedBox(height: 8),
-        if (widget.property.roomTypes.isEmpty)
+        if (property.roomTypes.isEmpty)
           Text(
             'No rooms available for this property.',
             style: GoogleFonts.cabin(fontSize: 14, color: colorScheme.error),
           )
         else
-          ...widget.property.roomTypes.map((roomType) {
+          ...property.roomTypes.map((roomType) {
             final currentSelected = _selectedRoomCounts[roomType.id] ?? 0;
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -427,6 +583,37 @@ class _CreateReservationScreenState
               ),
             );
           }),
+        if (_isOccupancyExceeded) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.errorContainer.withAlpha(80),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: colorScheme.error),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: colorScheme.error,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Selected rooms accommodate up to $_totalMaxCapacity guests. Please add more rooms or adjust guest count to confirm reservation.',
+                    style: GoogleFonts.cabin(
+                      fontSize: 13,
+                      color: colorScheme.onErrorContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

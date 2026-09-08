@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/features/reservations/data/reservation_remote_data
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
@@ -638,6 +639,48 @@ void main() {
 
       expect(find.text('Azure Coastal Resort'), findsOneWidget);
     });
+
+    testWidgets('shows error snackbar when reservation cancellation fails',
+        (tester) async {
+      mockRepo.singleReservationToReturn = testDomainReservation;
+      mockRepo.shouldThrow = true;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+            reservationRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+          child: MaterialApp(
+            home: ReservationDetailScreen(
+              reservation: testDomainReservation,
+              repository: mockRepo,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap Cancel Reservation
+      await tester.ensureVisible(find.text('Cancel Reservation'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel Reservation'));
+      await tester.pumpAndSettle();
+
+      // Dialog confirms
+      expect(find.text('Cancel Reservation?'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Cancel Reservation'));
+      await tester.pumpAndSettle();
+
+      // SnackBar shows failure message
+      expect(
+        find.textContaining('Failed to cancel reservation'),
+        findsOneWidget,
+      );
+    });
   });
 
   group('CreateReservationScreen Widget Tests', () {
@@ -682,6 +725,127 @@ void main() {
         find.widgetWithText(FilledButton, 'Confirm Reservation'),
       );
       expect(button.onPressed, isNull);
+    });
+
+    testWidgets(
+        'enforces occupancy limit and strictly disables submission button when guests exceed capacity',
+        (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: CreateReservationScreen(property: testProperty),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Enter guest name
+      await tester.enterText(find.byType(TextField).first, 'John Traveler');
+      await tester.pumpAndSettle();
+
+      // Initial state: 1 guest, 1 room (maxOccupancy = 2)
+      // Increment guests to 2: still valid
+      final guestIncrement = find.byIcon(Icons.add).first;
+      await tester.tap(guestIncrement);
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Selected rooms accommodate up to'),
+        findsNothing,
+      );
+
+      // Increment guests to 3: exceeds maxOccupancy 2!
+      await tester.tap(guestIncrement);
+      await tester.pumpAndSettle();
+
+      // Occupancy warning must appear and button must remain disabled
+      expect(
+        find.textContaining('Selected rooms accommodate up to 2 guests'),
+        findsOneWidget,
+      );
+      var button = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Confirm Reservation'),
+      );
+      expect(button.onPressed, isNull);
+
+      // Add another room: capacity becomes 4, warning disappears
+      final roomIncrement = find.byIcon(Icons.add).last;
+      await tester.tap(roomIncrement);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.textContaining('Selected rooms accommodate up to'),
+        findsNothing,
+      );
+    });
+
+    testWidgets('pre-selects specified room type when initialRoomTypeId is passed',
+        (tester) async {
+      final multiRoomProperty = testProperty.copyWith(
+        roomTypes: const [
+          RoomType(
+            id: 'rt-std',
+            name: 'Standard Suite',
+            maxOccupancy: 2,
+            maxAdults: 2,
+            maxChildren: 0,
+            description: 'Standard room',
+          ),
+          RoomType(
+            id: 'rt-ocean',
+            name: 'Oceanfront Penthouse',
+            maxOccupancy: 4,
+            maxAdults: 4,
+            maxChildren: 2,
+            description: 'Penthouse suite',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: CreateReservationScreen(
+              property: multiRoomProperty,
+              initialRoomTypeId: 'rt-ocean',
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Oceanfront Penthouse'), findsOneWidget);
+      expect(find.text('Standard Suite'), findsOneWidget);
+    });
+  });
+
+  group('MyTripsScreen Widget Tests', () {
+    testWidgets(
+        'renders Explore Properties CTA button when upcoming trips list is empty',
+        (tester) async {
+      final mockRemoteDataSource = MockReservationRemoteDataSource();
+      mockRemoteDataSource.listResponseToReturn =
+          const ReservationListResponseDto(
+        items: [],
+        total: 0,
+      );
+      final repository = ReservationRepository(
+        remoteDataSource: mockRemoteDataSource,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            reservationRepositoryProvider.overrideWithValue(repository),
+          ],
+          child: const MaterialApp(
+            home: MyTripsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('No upcoming trips'), findsOneWidget);
+      expect(find.text('Explore Properties'), findsOneWidget);
     });
   });
 }

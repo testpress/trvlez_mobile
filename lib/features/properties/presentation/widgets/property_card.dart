@@ -154,6 +154,17 @@ class PropertyCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
+                  if (property.pricePerNight != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '\$${property.pricePerNight!.toInt()} / night',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -236,27 +247,48 @@ class PropertyCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
-                    if (property.amenities.isNotEmpty)
-                      Text(
-                        property.amenities.take(2).join(' • '),
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.primary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    else if (property.shortDescription.isNotEmpty)
-                      Text(
-                        property.shortDescription,
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Row(
+                      children: [
+                        if (property.amenities.isNotEmpty)
+                          Expanded(
+                            child: Text(
+                              property.amenities.take(2).join(' • '),
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.primary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        else if (property.shortDescription.isNotEmpty)
+                          Expanded(
+                            child: Text(
+                              property.shortDescription,
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        else
+                          const Spacer(),
+                        if (property.pricePerNight != null) ...[
+                          const SizedBox(width: 6),
+                          Text(
+                            '\$${property.pricePerNight!.toInt()}/nt',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),

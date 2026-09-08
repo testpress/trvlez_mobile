@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 
@@ -216,6 +217,17 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
+            if (type == 'upcoming') ...[
+              const SizedBox(height: 20),
+              FilledButton.icon(
+                onPressed: () => context.go(AppRoutes.home),
+                icon: const Icon(Icons.search, size: 18),
+                label: const Text(
+                  'Explore Properties',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
           ],
         ),
       ),
