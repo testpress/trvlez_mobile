@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 // ─── List State ──────────────────────────────────────────────────
 
@@ -127,6 +129,13 @@ class CheckInTokenNotifier
   Future<void> generateCheckInToken() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      final isVerified = ref.read(isKycVerifiedProvider);
+      if (!isVerified) {
+        throw const ApiException(
+          'Identity verification (KYC) is required to generate a check-in pass.',
+          statusCode: 403,
+        );
+      }
       final repository = ref.read(reservationRepositoryProvider);
       return repository.generateCheckInToken(arg);
     });

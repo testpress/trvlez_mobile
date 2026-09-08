@@ -1,35 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 /// Screen displayed immediately after a successful reservation creation.
 ///
 /// Shows confirmation code, property summary, dates, guest details,
 /// and direct actions to view the Check-in QR code or manage the trip.
-class BookingConfirmationScreen extends StatefulWidget {
+class BookingConfirmationScreen extends ConsumerStatefulWidget {
   final String reservationId;
   final Reservation? reservation;
   final ReservationRepository repository;
+  final bool? isKycVerified;
+  final TravelerVerificationState? verificationState;
 
   BookingConfirmationScreen({
     super.key,
     String? reservationId,
     this.reservation,
     required this.repository,
+    this.isKycVerified,
+    this.verificationState,
   }) : reservationId = reservationId ?? reservation?.id ?? '';
 
   @override
-  State<BookingConfirmationScreen> createState() =>
+  ConsumerState<BookingConfirmationScreen> createState() =>
       _BookingConfirmationScreenState();
 }
 
-class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
+class _BookingConfirmationScreenState
+    extends ConsumerState<BookingConfirmationScreen> {
   late Future<Reservation> _reservationFuture;
 
   @override
@@ -89,6 +97,12 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
             );
           }
 
+          final TravelerVerificationState verificationState =
+              widget.verificationState ??
+                  ref.watch(travelerVerificationStateProvider);
+          final isVerified =
+              widget.isKycVerified ?? verificationState.isVerified;
+
           return SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -104,8 +118,26 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                   ),
                   const SizedBox(height: 20),
                   _StayDetailsCard(reservation: displayReservation),
-                  const SizedBox(height: 32),
-                  _ActionButtons(reservation: displayReservation),
+                  const SizedBox(height: 20),
+                  if (!isVerified) ...[
+                    _KycNoticeBanner(
+                      verificationState: verificationState,
+                      propertyName: displayReservation.propertySummary.name,
+                      onVerifyTap: () {
+                        if (verificationState.needsOnboarding) {
+                          context.push(AppRoutes.onboarding);
+                        } else {
+                          context.push(AppRoutes.verificationStatus);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  _ActionButtons(
+                    reservation: displayReservation,
+                    isKycVerified: isVerified,
+                    verificationState: verificationState,
+                  ),
                   const SizedBox(height: 16),
                 ],
               ),
@@ -506,33 +538,85 @@ class _DetailRow extends StatelessWidget {
 
 class _ActionButtons extends StatelessWidget {
   final Reservation reservation;
+  final bool isKycVerified;
+  final TravelerVerificationState verificationState;
 
-  const _ActionButtons({required this.reservation});
+  const _ActionButtons({
+    required this.reservation,
+    required this.isKycVerified,
+    required this.verificationState,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FilledButton.icon(
-          onPressed: () {
-            context.push(
-              AppRoutes.reservationQrPath(reservation.id),
-              extra: {'reservation': reservation},
-            );
-          },
-          icon: const Icon(Icons.qr_code_rounded, size: 20),
-          label: const Text(
-            'View Check-in QR',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+        if (isKycVerified)
+          FilledButton.icon(
+            onPressed: () {
+              context.push(
+                AppRoutes.reservationQrPath(reservation.id),
+                extra: {'reservation': reservation},
+              );
+            },
+            icon: const Icon(Icons.qr_code_rounded, size: 20),
+            label: const Text(
+              'View Check-in QR',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          )
+        else ...[
+          FilledButton.icon(
+            onPressed: () {
+              if (verificationState.needsOnboarding) {
+                context.push(AppRoutes.onboarding);
+              } else {
+                context.push(AppRoutes.verificationStatus);
+              }
+            },
+            icon: const Icon(Icons.shield_outlined, size: 20),
+            label: Text(
+              verificationState.needsOnboarding
+                  ? 'Verify Identity to Check In'
+                  : 'Check Verification Status',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF0D7377),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: () {
+              context.push(
+                AppRoutes.reservationQrPath(reservation.id),
+                extra: {'reservation': reservation},
+              );
+            },
+            icon: const Icon(Icons.qr_code_rounded, size: 20),
+            label: const Text(
+              'Check-in Pass Details',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () => context.go(AppRoutes.myTrips),
@@ -560,6 +644,133 @@ class _ActionButtons extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _KycNoticeBanner extends StatelessWidget {
+  final TravelerVerificationState verificationState;
+  final String propertyName;
+  final VoidCallback onVerifyTap;
+
+  const _KycNoticeBanner({
+    required this.verificationState,
+    required this.propertyName,
+    required this.onVerifyTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final String title;
+    final String description;
+    final String buttonLabel;
+    final Color bannerBg;
+    final Color bannerBorder;
+    final Color iconColor;
+    final IconData icon;
+
+    if (verificationState.needsOnboarding) {
+      title = 'Identity Verification Required';
+      description =
+          'To generate your contactless check-in pass at $propertyName, complete your identity verification before your arrival.';
+      buttonLabel = 'Verify Identity Now';
+      bannerBg = Colors.amber.shade50;
+      bannerBorder = Colors.amber.shade300;
+      iconColor = Colors.amber.shade800;
+      icon = Icons.shield_outlined;
+    } else if (verificationState.isProcessing) {
+      title = 'Verification Under Review';
+      description =
+          'Your identity documents are currently under review. Once approved, your digital check-in QR pass will become active.';
+      buttonLabel = 'Check Status';
+      bannerBg = Colors.blue.shade50;
+      bannerBorder = Colors.blue.shade200;
+      iconColor = Colors.blue.shade700;
+      icon = Icons.hourglass_top_rounded;
+    } else if (verificationState.isFailed) {
+      title = 'Verification Unsuccessful';
+      description =
+          'Your identity verification needs to be re-submitted before a check-in QR code can be generated for this reservation.';
+      buttonLabel = 'Re-submit Documents';
+      bannerBg = colorScheme.errorContainer.withAlpha(70);
+      bannerBorder = colorScheme.error.withAlpha(120);
+      iconColor = colorScheme.error;
+      icon = Icons.error_outline_rounded;
+    } else {
+      title = 'Identity Verification Needed';
+      description =
+          'Complete identity verification to enable digital check-in for this stay.';
+      buttonLabel = 'Verify Now';
+      bannerBg = Colors.amber.shade50;
+      bannerBorder = Colors.amber.shade300;
+      iconColor = Colors.amber.shade800;
+      icon = Icons.verified_user_outlined;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bannerBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: bannerBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor, size: 22),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              height: 1.4,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onVerifyTap,
+              icon: Icon(Icons.arrow_forward_rounded, size: 16, color: iconColor),
+              label: Text(
+                buttonLabel,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: iconColor,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: bannerBorder),
+                backgroundColor: colorScheme.surface,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

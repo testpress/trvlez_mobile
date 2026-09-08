@@ -5,8 +5,11 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 /// Detailed view of a single reservation.
 ///
@@ -390,6 +393,9 @@ class _ReservationDetailScreenState
   }
 
   Widget _buildActions(ColorScheme colorScheme, Reservation reservation) {
+    final verificationState = ref.watch(travelerVerificationStateProvider);
+    final isKycVerified = verificationState.isVerified;
+
     // Determine form button text and behavior based on form status
     String? formButtonText;
     IconData formButtonIcon = Icons.assignment_outlined;
@@ -437,7 +443,20 @@ class _ReservationDetailScreenState
         ],
 
         // QR Code button — only for confirmed reservations
-        if (reservation.status.canGenerateQr)
+        if (reservation.status.canGenerateQr) ...[
+          if (!isKycVerified) ...[
+            _KycNoticeCard(
+              verificationState: verificationState,
+              onTap: () {
+                if (verificationState.needsOnboarding) {
+                  context.push(AppRoutes.onboarding);
+                } else {
+                  context.push(AppRoutes.verificationStatus);
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
           SizedBox(
             width: double.infinity,
             height: 56,
@@ -446,9 +465,11 @@ class _ReservationDetailScreenState
                 '/reservations/${reservation.id}/qr',
                 extra: {'reservation': reservation},
               ),
-              icon: const Icon(Icons.qr_code_2),
+              icon: Icon(isKycVerified ? Icons.qr_code_2 : Icons.shield_outlined),
               label: Text(
-                'Generate QR Code',
+                isKycVerified
+                    ? 'Generate QR Code'
+                    : 'Check-in QR (Verification Required)',
                 style: GoogleFonts.nunito(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -456,6 +477,7 @@ class _ReservationDetailScreenState
               ),
             ),
           ),
+        ],
 
         // Cancel button — only for upcoming reservations
         if (reservation.status.canCancel) ...[
@@ -529,6 +551,101 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _KycNoticeCard extends StatelessWidget {
+  final TravelerVerificationState verificationState;
+  final VoidCallback onTap;
+
+  const _KycNoticeCard({
+    required this.verificationState,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final String title;
+    final String body;
+    final String cta;
+
+    if (verificationState.needsOnboarding) {
+      title = 'Identity Verification Required';
+      body = 'Complete KYC verification to generate your digital check-in pass.';
+      cta = 'Verify Now';
+    } else if (verificationState.isProcessing) {
+      title = 'Verification Under Review';
+      body = 'Your documents are currently being reviewed. Pass will unlock upon approval.';
+      cta = 'Check Status';
+    } else if (verificationState.isFailed) {
+      title = 'Verification Unsuccessful';
+      body = 'Please re-submit your documents to unlock check-in.';
+      cta = 'Re-submit';
+    } else {
+      title = 'Verification Needed';
+      body = 'Complete identity verification to enable check-in QR.';
+      cta = 'Verify';
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.amber.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.amber.shade300),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.shield_outlined, color: Colors.amber.shade800, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.nunito(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    body,
+                    style: GoogleFonts.nunito(
+                      fontSize: 12,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              cta,
+              style: GoogleFonts.nunito(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: Colors.amber.shade900,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: Colors.amber.shade900,
+            ),
+          ],
+        ),
       ),
     );
   }

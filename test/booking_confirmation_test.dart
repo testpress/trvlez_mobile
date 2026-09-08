@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/booking_confirmation_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {
   Reservation? reservationToReturn;
@@ -50,16 +53,26 @@ void main() {
   );
 
   group('BookingConfirmationScreen Widget', () {
-    testWidgets('renders all booking confirmation details and action buttons',
+    testWidgets('renders all booking confirmation details and action buttons when verified',
         (tester) async {
       final mockRepo = MockReservationRepository();
       mockRepo.reservationToReturn = testReservation;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: BookingConfirmationScreen(
-            reservation: testReservation,
-            repository: mockRepo,
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservation: testReservation,
+              repository: mockRepo,
+              isKycVerified: true,
+              verificationState: TravelerVerificationState.verified,
+            ),
           ),
         ),
       );
@@ -111,10 +124,20 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: BookingConfirmationScreen(
-            reservation: testReservation,
-            repository: mockRepo,
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservation: testReservation,
+              repository: mockRepo,
+              isKycVerified: true,
+              verificationState: TravelerVerificationState.verified,
+            ),
           ),
         ),
       );
@@ -140,10 +163,20 @@ void main() {
       mockRepo.reservationToReturn = testReservation;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: BookingConfirmationScreen(
-            reservationId: 'res-101',
-            repository: mockRepo,
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservationId: 'res-101',
+              repository: mockRepo,
+              isKycVerified: true,
+              verificationState: TravelerVerificationState.verified,
+            ),
           ),
         ),
       );
@@ -165,10 +198,20 @@ void main() {
       mockRepo.shouldThrow = true;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: BookingConfirmationScreen(
-            reservationId: 'res-unknown',
-            repository: mockRepo,
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservationId: 'res-unknown',
+              repository: mockRepo,
+              isKycVerified: true,
+              verificationState: TravelerVerificationState.verified,
+            ),
           ),
         ),
       );
@@ -184,6 +227,77 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('TRV-88219042'), findsOneWidget);
+    });
+
+    testWidgets('displays KYC required banner and Verify Identity button when unverified',
+        (tester) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.reservationToReturn = testReservation;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(false),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.profilePending,
+            ),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservation: testReservation,
+              repository: mockRepo,
+              isKycVerified: false,
+              verificationState: TravelerVerificationState.profilePending,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify KYC reminder banner is visible
+      expect(find.text('Identity Verification Required'), findsOneWidget);
+      expect(
+        find.textContaining('complete your identity verification before your arrival'),
+        findsOneWidget,
+      );
+      expect(find.text('Verify Identity Now'), findsOneWidget);
+
+      // Primary CTA directs to verify, secondary lets traveler view pass details
+      expect(find.text('Verify Identity to Check In'), findsOneWidget);
+      expect(find.text('Check-in Pass Details'), findsOneWidget);
+    });
+
+    testWidgets('displays review status banner when verification is submitted',
+        (tester) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.reservationToReturn = testReservation;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(false),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.submitted,
+            ),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservation: testReservation,
+              repository: mockRepo,
+              isKycVerified: false,
+              verificationState: TravelerVerificationState.submitted,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Verification Under Review'), findsOneWidget);
+      expect(
+        find.textContaining('Your identity documents are currently under review'),
+        findsOneWidget,
+      );
+      expect(find.text('Check Verification Status'), findsOneWidget);
     });
   });
 }
