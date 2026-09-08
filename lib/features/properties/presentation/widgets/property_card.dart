@@ -27,6 +27,13 @@ class PropertyCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final badgeLabel = (property.propertyType != null &&
+            property.propertyType!.isNotEmpty)
+        ? property.propertyType!.toUpperCase()
+        : (property.amenities.isNotEmpty
+            ? property.amenities.first.toUpperCase()
+            : 'VERIFIED');
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -38,22 +45,19 @@ class PropertyCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Placeholder for image
+            // Image with fallback
             Positioned.fill(
-              child: property.heroImageUrl.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.network(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: property.heroImageUrl.isNotEmpty
+                    ? Image.network(
                         property.heroImageUrl,
                         fit: BoxFit.cover,
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: colorScheme.surfaceContainer,
-                      ),
-                    ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildFallbackImage(colorScheme),
+                      )
+                    : _buildFallbackImage(colorScheme),
+              ),
             ),
             // Gradient overlay
             Positioned.fill(
@@ -63,7 +67,7 @@ class PropertyCard extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       Colors.transparent,
-                      colorScheme.scrim.withAlpha(180), // 0.7 * 255 ≈ 180
+                      colorScheme.scrim.withAlpha(180),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -71,20 +75,27 @@ class PropertyCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Favorite button
+            // Badge (Property Type / Amenity)
             Positioned(
               top: 16,
-              right: 16,
+              left: 16,
               child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface.withAlpha(50), // 0.2 * 255
-                  shape: BoxShape.circle,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
                 ),
-                child: Icon(
-                  Icons.favorite_border,
-                  color: colorScheme.surface,
-                  size: 20,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badgeLabel,
+                  style: GoogleFonts.inter(
+                    color: colorScheme.onPrimary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ),
@@ -96,29 +107,10 @@ class PropertyCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '4N/5D',
-                      style: GoogleFonts.inter(
-                        color: colorScheme.onPrimary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   Text(
                     property.name,
                     style: GoogleFonts.inter(
-                      color: colorScheme.surface,
+                      color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -128,28 +120,19 @@ class PropertyCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.star, color: colorScheme.primary, size: 16),
-                      const SizedBox(width: 4),
-                      Text(
-                        property.rating.toString(),
-                        style: GoogleFonts.inter(
-                          color: colorScheme.surface,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
                       Icon(
                         Icons.location_on,
-                        color: colorScheme.surface.withAlpha(180),
-                        size: 16,
+                        color: Colors.white.withAlpha(200),
+                        size: 15,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          property.locationString,
+                          property.locationString.isNotEmpty
+                              ? property.locationString
+                              : 'Location available on detail',
                           style: GoogleFonts.inter(
-                            color: colorScheme.surface.withAlpha(180),
+                            color: Colors.white.withAlpha(200),
                             fontSize: 12,
                           ),
                           maxLines: 1,
@@ -158,6 +141,19 @@ class PropertyCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (property.amenities.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      property.amenities.take(2).join(' • '),
+                      style: GoogleFonts.inter(
+                        color: colorScheme.primaryContainer,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -174,14 +170,14 @@ class PropertyCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 120.0,
+        height: 110.0,
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withAlpha(13), // 0.05 * 255 ≈ 13
+              color: colorScheme.shadow.withAlpha(13),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -189,34 +185,29 @@ class PropertyCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Image placeholder
-            property.heroImageUrl.isNotEmpty
-                ? Container(
-                    width: 100,
-                    height: 100,
-                    margin: const EdgeInsets.all(10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
+            // Image
+            Container(
+              width: 90,
+              height: 90,
+              margin: const EdgeInsets.all(10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: property.heroImageUrl.isNotEmpty
+                    ? Image.network(
                         property.heroImageUrl,
                         fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : Container(
-                    width: 100,
-                    height: 100,
-                    margin: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: colorScheme.surfaceContainer,
-                    ),
-                  ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildFallbackImage(colorScheme),
+                      )
+                    : _buildFallbackImage(colorScheme),
+              ),
+            ),
+            // Property details
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 8,
+                  vertical: 12,
+                  horizontal: 6,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,67 +216,83 @@ class PropertyCard extends StatelessWidget {
                     Text(
                       property.name,
                       style: GoogleFonts.inter(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: colorScheme.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
-                      property.locationString,
+                      property.locationString.isNotEmpty
+                          ? property.locationString
+                          : 'Location available on detail',
                       style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: colorScheme.onSurface.withAlpha(
-                          153,
-                        ), // 0.6 * 255
+                        fontSize: 12,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: colorScheme.primary, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          property.rating.toString(),
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurface,
-                          ),
+                    const SizedBox(height: 6),
+                    if (property.amenities.isNotEmpty)
+                      Text(
+                        property.amenities.take(2).join(' • '),
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.primary,
                         ),
-                      ],
-                    ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    else if (property.shortDescription.isNotEmpty)
+                      Text(
+                        property.shortDescription,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                   ],
                 ),
               ),
             ),
+            // View Details arrow
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.favorite_border,
-                    color: colorScheme.outline,
-                    size: 20,
-                  ),
-                  Text(
-                    '\$${property.pricePerNight.toInt()}/N',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: colorScheme.primary,
+                ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackImage(ColorScheme colorScheme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+      ),
+      child: Center(
+        child: Icon(
+          Icons.hotel_outlined,
+          color: colorScheme.primary,
+          size: 32,
         ),
       ),
     );

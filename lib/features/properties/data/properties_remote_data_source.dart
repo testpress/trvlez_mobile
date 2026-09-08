@@ -17,10 +17,27 @@ class PropertiesRemoteDataSource {
   Future<PropertyListingResponseDto> getProperties({
     int skip = 0,
     int limit = 50,
+    String? search,
+    String? city,
+    String? propertyType,
   }) async {
+    final queryParams = <String, dynamic>{
+      'skip': skip,
+      'limit': limit,
+    };
+    if (search != null && search.trim().length >= 2) {
+      queryParams['search'] = search.trim();
+    }
+    if (city != null && city.trim().isNotEmpty) {
+      queryParams['city'] = city.trim();
+    }
+    if (propertyType != null && propertyType.trim().isNotEmpty) {
+      queryParams['property_type'] = propertyType.trim();
+    }
+
     final response = await dio.get<Map<String, dynamic>>(
       '/properties/listing',
-      queryParameters: {'skip': skip, 'limit': limit},
+      queryParameters: queryParams,
     );
     return PropertyListingResponseDto.fromJson(response.data!);
   }

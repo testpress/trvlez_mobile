@@ -62,10 +62,26 @@ class FakeSecureStorage extends Fake implements FlutterSecureStorage {
 class FakePropertiesNotifier extends AsyncNotifier<List<Property>>
     implements PropertiesNotifier {
   @override
+  String? get propertyType => null;
+
+  @override
+  String? get searchQuery => null;
+
+  @override
   Future<List<Property>> build() async => [];
 
   @override
-  Future<void> fetchProperties() async {
+  Future<void> fetchProperties({String? search, String? propertyType}) async {
+    state = const AsyncData([]);
+  }
+
+  @override
+  Future<void> filterByPropertyType(String? type) async {
+    state = const AsyncData([]);
+  }
+
+  @override
+  Future<void> search(String query) async {
     state = const AsyncData([]);
   }
 

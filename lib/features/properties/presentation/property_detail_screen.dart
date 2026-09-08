@@ -254,7 +254,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
             ),
             Text(
-              '\$${property.pricePerNight.toInt()}',
+              property.pricePerNight != null
+                  ? '\$${property.pricePerNight!.toInt()}'
+                  : 'Included',
               style: GoogleFonts.inter(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,

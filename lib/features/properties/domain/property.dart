@@ -3,14 +3,19 @@ class Property {
   final String name;
   final String city;
   final String countryCode;
+  final String stateRegion;
+  final String? propertyType;
   final String shortDescription;
   final String longDescription;
   final String heroImageUrl;
-
-  // Hardcoded for now as per Figma if backend doesn't provide them yet
-  final double pricePerNight;
-  final double rating;
-  final int reviewsCount;
+  final List<String> amenities;
+  final int? totalRooms;
+  final String? checkinTime;
+  final String? checkoutTime;
+  final String? addressLine1;
+  final double? pricePerNight;
+  final double? rating;
+  final int? reviewsCount;
   final List<RoomType> roomTypes;
 
   const Property({
@@ -18,24 +23,70 @@ class Property {
     required this.name,
     required this.city,
     required this.countryCode,
+    this.stateRegion = '',
+    this.propertyType,
     required this.shortDescription,
     required this.longDescription,
     required this.heroImageUrl,
-    required this.pricePerNight,
-    required this.rating,
-    required this.reviewsCount,
-    required this.roomTypes,
+    this.amenities = const [],
+    this.totalRooms,
+    this.checkinTime,
+    this.checkoutTime,
+    this.addressLine1,
+    this.pricePerNight,
+    this.rating,
+    this.reviewsCount,
+    this.roomTypes = const [],
   });
 
   String get locationString {
-    if (city.isNotEmpty && countryCode.isNotEmpty) {
-      return '$city, $countryCode';
-    } else if (city.isNotEmpty) {
-      return city;
-    } else if (countryCode.isNotEmpty) {
-      return countryCode;
-    }
-    return '';
+    final parts = <String>[];
+    if (city.isNotEmpty) parts.add(city);
+    if (stateRegion.isNotEmpty && stateRegion != city) parts.add(stateRegion);
+    if (countryCode.isNotEmpty) parts.add(countryCode);
+    return parts.join(', ');
+  }
+
+  Property copyWith({
+    String? id,
+    String? name,
+    String? city,
+    String? countryCode,
+    String? stateRegion,
+    String? propertyType,
+    String? shortDescription,
+    String? longDescription,
+    String? heroImageUrl,
+    List<String>? amenities,
+    int? totalRooms,
+    String? checkinTime,
+    String? checkoutTime,
+    String? addressLine1,
+    double? pricePerNight,
+    double? rating,
+    int? reviewsCount,
+    List<RoomType>? roomTypes,
+  }) {
+    return Property(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      city: city ?? this.city,
+      countryCode: countryCode ?? this.countryCode,
+      stateRegion: stateRegion ?? this.stateRegion,
+      propertyType: propertyType ?? this.propertyType,
+      shortDescription: shortDescription ?? this.shortDescription,
+      longDescription: longDescription ?? this.longDescription,
+      heroImageUrl: heroImageUrl ?? this.heroImageUrl,
+      amenities: amenities ?? this.amenities,
+      totalRooms: totalRooms ?? this.totalRooms,
+      checkinTime: checkinTime ?? this.checkinTime,
+      checkoutTime: checkoutTime ?? this.checkoutTime,
+      addressLine1: addressLine1 ?? this.addressLine1,
+      pricePerNight: pricePerNight ?? this.pricePerNight,
+      rating: rating ?? this.rating,
+      reviewsCount: reviewsCount ?? this.reviewsCount,
+      roomTypes: roomTypes ?? this.roomTypes,
+    );
   }
 }
 

@@ -8,8 +8,20 @@ class PropertiesRepository {
 
   const PropertiesRepository({required this.remoteDataSource});
 
-  Future<List<Property>> getProperties({int skip = 0, int limit = 50}) async {
-    final dto = await remoteDataSource.getProperties(skip: skip, limit: limit);
+  Future<List<Property>> getProperties({
+    int skip = 0,
+    int limit = 50,
+    String? search,
+    String? city,
+    String? propertyType,
+  }) async {
+    final dto = await remoteDataSource.getProperties(
+      skip: skip,
+      limit: limit,
+      search: search,
+      city: city,
+      propertyType: propertyType,
+    );
     return dto.items.map((e) => e.toDomain()).toList();
   }
 
