@@ -156,16 +156,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.reservationDetail,
         builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
           final reservation = state.extra is Reservation
               ? state.extra as Reservation
               : (state.extra is Map<String, dynamic>
                   ? (state.extra as Map<String, dynamic>)['reservation']
                       as Reservation?
                   : null);
-          if (reservation == null) {
+          if (reservation == null && id.isEmpty) {
             return const MyTripsScreen();
           }
-          return ReservationDetailScreen(reservation: reservation);
+          return ReservationDetailScreen(
+            reservationId: reservation?.id ?? id,
+            reservation: reservation,
+            repository: ref.read(reservationRepositoryProvider),
+          );
         },
       ),
       GoRoute(

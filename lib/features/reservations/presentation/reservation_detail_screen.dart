@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
@@ -14,11 +15,18 @@ import 'package:trvlez_mobile/features/verification/presentation/verification_pr
 /// Detailed view of a single reservation.
 ///
 /// Shows property summary, dates, guest info, status, and action buttons
-/// (QR generation, cancel).
+/// (QR generation, cancel). Supports deep linking by reservation ID.
 class ReservationDetailScreen extends ConsumerStatefulWidget {
-  final Reservation reservation;
+  final String reservationId;
+  final Reservation? reservation;
+  final ReservationRepository? repository;
 
-  const ReservationDetailScreen({super.key, required this.reservation});
+  ReservationDetailScreen({
+    super.key,
+    String? reservationId,
+    this.reservation,
+    this.repository,
+  }) : reservationId = reservationId ?? reservation?.id ?? '';
 
   @override
   ConsumerState<ReservationDetailScreen> createState() =>
@@ -27,9 +35,22 @@ class ReservationDetailScreen extends ConsumerStatefulWidget {
 
 class _ReservationDetailScreenState
     extends ConsumerState<ReservationDetailScreen> {
+  Future<Reservation>? _reservationFuture;
+
   @override
   void initState() {
     super.initState();
+    if (widget.reservation == null) {
+      _loadReservation();
+    }
+  }
+
+  void _loadReservation() {
+    final ReservationRepository repo =
+        widget.repository ?? ref.read(reservationRepositoryProvider);
+    setState(() {
+      _reservationFuture = repo.getReservation(widget.reservationId);
+    });
   }
 
   @override
@@ -78,14 +99,111 @@ class _ReservationDetailScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (widget.reservation != null) {
+      final reservationsState = ref.watch(reservationListProvider);
+      final updated = reservationsState.value
+          ?.where((r) => r.id == widget.reservationId)
+          .firstOrNull;
+      final reservation = updated ?? widget.reservation!;
+      return _buildScaffold(context, reservation);
+    }
+
+    return FutureBuilder<Reservation>(
+      future: _reservationFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          final colorScheme = Theme.of(context).colorScheme;
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                onPressed: () => context.pop(),
+              ),
+              title: Text(
+                'Reservation Details',
+                style: GoogleFonts.nunito(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            body: Center(
+              child: CircularProgressIndicator(color: colorScheme.primary),
+            ),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          final colorScheme = Theme.of(context).colorScheme;
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                onPressed: () => context.pop(),
+              ),
+              title: Text(
+                'Reservation Details',
+                style: GoogleFonts.nunito(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: colorScheme.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Unable to load reservation',
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      snapshot.error?.toString() ?? 'Reservation not found',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton.icon(
+                      onPressed: _loadReservation,
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: const Text('Try Again'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        final reservationsState = ref.watch(reservationListProvider);
+        final updated = reservationsState.value
+            ?.where((r) => r.id == widget.reservationId)
+            .firstOrNull;
+        final reservation = updated ?? snapshot.data!;
+        return _buildScaffold(context, reservation);
+      },
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, Reservation reservation) {
     final colorScheme = Theme.of(context).colorScheme;
     final dateFormat = DateFormat('EEE, MMM d, yyyy');
-
-    final reservationsState = ref.watch(reservationListProvider);
-    final updated = reservationsState.value
-        ?.where((r) => r.id == widget.reservation.id)
-        .firstOrNull;
-    final reservation = updated ?? widget.reservation;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -224,6 +342,16 @@ class _ReservationDetailScreenState
                     height: 160,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 160,
+                      width: double.infinity,
+                      color: colorScheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.hotel,
+                        size: 48,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   )
                 : Container(
                     height: 160,

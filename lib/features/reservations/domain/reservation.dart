@@ -144,8 +144,52 @@ class Reservation {
     this.checkedOutAt,
   });
 
-  /// Number of nights for the stay.
-  int get nights => checkOutDate.difference(checkInDate).inDays;
+  /// Number of nights for the stay based on calendar dates.
+  int get nights {
+    final start = DateTime.utc(checkInDate.year, checkInDate.month, checkInDate.day);
+    final end = DateTime.utc(checkOutDate.year, checkOutDate.month, checkOutDate.day);
+    return end.difference(start).inDays;
+  }
+
+  Reservation copyWith({
+    String? id,
+    String? confirmationCode,
+    ReservationStatus? status,
+    String? formStatus,
+    DateTime? checkInDate,
+    DateTime? checkOutDate,
+    String? guestName,
+    String? guestEmail,
+    String? guestPhone,
+    int? numberOfGuests,
+    List<RoomSummary>? rooms,
+    String? specialRequests,
+    ReservationPropertySummary? propertySummary,
+    DateTime? createdAt,
+    DateTime? cancelledAt,
+    DateTime? checkedInAt,
+    DateTime? checkedOutAt,
+  }) {
+    return Reservation(
+      id: id ?? this.id,
+      confirmationCode: confirmationCode ?? this.confirmationCode,
+      status: status ?? this.status,
+      formStatus: formStatus ?? this.formStatus,
+      checkInDate: checkInDate ?? this.checkInDate,
+      checkOutDate: checkOutDate ?? this.checkOutDate,
+      guestName: guestName ?? this.guestName,
+      guestEmail: guestEmail ?? this.guestEmail,
+      guestPhone: guestPhone ?? this.guestPhone,
+      numberOfGuests: numberOfGuests ?? this.numberOfGuests,
+      rooms: rooms ?? this.rooms,
+      specialRequests: specialRequests ?? this.specialRequests,
+      propertySummary: propertySummary ?? this.propertySummary,
+      createdAt: createdAt ?? this.createdAt,
+      cancelledAt: cancelledAt ?? this.cancelledAt,
+      checkedInAt: checkedInAt ?? this.checkedInAt,
+      checkedOutAt: checkedOutAt ?? this.checkedOutAt,
+    );
+  }
 }
 
 /// Response from the check-in token generation endpoint.
@@ -159,4 +203,10 @@ class CheckInToken {
     required this.reservationId,
     required this.expiresAt,
   });
+
+  /// Whether the token is expired relative to current time.
+  bool get isExpired => DateTime.now().isAfter(expiresAt);
+
+  /// Whether the token is currently active and valid.
+  bool get isValid => !isExpired;
 }
