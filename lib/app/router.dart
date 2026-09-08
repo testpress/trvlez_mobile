@@ -128,11 +128,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.propertyDetail,
         builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
           final property = state.extra as Property?;
-          if (property == null) {
+          if (property == null && id.isEmpty) {
             return const PropertiesListingScreen();
           }
           return PropertyDetailScreen(
+            propertyId: property?.id ?? id,
             property: property,
             repository: ref.read(propertiesRepositoryProvider),
           );
