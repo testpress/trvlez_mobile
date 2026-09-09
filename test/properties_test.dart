@@ -98,6 +98,81 @@ void main() {
       expect(property.amenities, ['parking', 'restaurant', 'gym']);
       expect(property.heroImageUrl, isEmpty);
     });
+
+    test('deserializes starting_price_per_night and room type base_price_per_night', () {
+      final json = {
+        'id': 'prop-789',
+        'name': 'Seaside Haven',
+        'city': 'Goa',
+        'country_code': 'IN',
+        'currency_code': 'USD',
+        'starting_price_per_night': 149.00,
+        'room_types': [
+          {
+            'id': 'rt-1',
+            'name': 'Standard Room',
+            'max_occupancy': 2,
+            'max_adults': 2,
+            'max_children': 0,
+            'description': 'Standard room',
+            'base_price_per_night': 149.00,
+            'is_active': true,
+          },
+          {
+            'id': 'rt-2',
+            'name': 'Deluxe Room',
+            'max_occupancy': 3,
+            'max_adults': 2,
+            'max_children': 1,
+            'description': 'Deluxe room',
+            'base_price_per_night': 229.00,
+            'is_active': true,
+          },
+        ],
+      };
+
+      final dto = PropertyDto.fromJson(json);
+      final property = dto.toDomain();
+
+      expect(property.pricePerNight, 149.00);
+      expect(property.currencyCode, 'USD');
+      expect(property.roomTypes.length, 2);
+      expect(property.roomTypes[0].pricePerNight, 149.00);
+      expect(property.roomTypes[0].hasValidPrice, isTrue);
+      expect(property.roomTypes[1].pricePerNight, 229.00);
+      expect(property.roomTypes[1].hasValidPrice, isTrue);
+    });
+
+    test('deserializes string-encoded pricing (e.g. from Decimal "2000.0") without error', () {
+      final json = {
+        'id': 'prop-str-price',
+        'name': 'String Price Resort',
+        'city': 'Goa',
+        'country_code': 'IN',
+        'currency_code': 'USD',
+        'latitude': '15.2993',
+        'longitude': '74.1240',
+        'starting_price_per_night': '2000.0',
+        'room_types': [
+          {
+            'id': 'rt-str',
+            'name': 'Luxury Villa',
+            'max_occupancy': 4,
+            'base_price_per_night': '2000.0',
+            'is_active': true,
+          },
+        ],
+      };
+
+      final dto = PropertyDto.fromJson(json);
+      final property = dto.toDomain();
+
+      expect(property.pricePerNight, 2000.0);
+      expect(dto.latitude, 15.2993);
+      expect(dto.longitude, 74.1240);
+      expect(property.roomTypes.first.pricePerNight, 2000.0);
+      expect(property.roomTypes.first.hasValidPrice, isTrue);
+    });
   });
 
   group('PropertiesNotifier', () {
@@ -323,6 +398,7 @@ void main() {
           maxAdults: 2,
           maxChildren: 1,
           description: 'Spacious king room facing the Arabian Sea',
+          pricePerNight: 180.0,
         ),
         RoomType(
           id: 'rt-2',
@@ -331,6 +407,7 @@ void main() {
           maxAdults: 3,
           maxChildren: 2,
           description: 'Two-room suite with private lounge access',
+          pricePerNight: 260.0,
         ),
       ],
     );
@@ -366,16 +443,18 @@ void main() {
       expect(find.text('Gym'), findsOneWidget);
       expect(find.text('Spa'), findsOneWidget);
 
-      // Verify room types section
+      // Verify room types section and pricing
       expect(find.text('Available Rooms'), findsOneWidget);
       expect(find.text('Deluxe King Harbour View'), findsOneWidget);
+      expect(find.text('\$180 / night'), findsOneWidget);
       expect(find.text('Max 3'), findsOneWidget);
       expect(find.text('Executive Suite'), findsOneWidget);
+      expect(find.text('\$260 / night'), findsOneWidget);
       expect(find.text('Max 4'), findsOneWidget);
 
-      // Verify CTA button
+      // Verify CTA button with starting rate
       expect(find.text('Book Now'), findsOneWidget);
-      expect(find.text('Free Reservation'), findsOneWidget);
+      expect(find.text('From \$180 / night'), findsOneWidget);
     });
 
     testWidgets('expands and collapses description when Read more is tapped',
@@ -471,6 +550,53 @@ void main() {
 
       expect(find.text('Selected'), findsOneWidget);
       expect(find.text('Tap to select'), findsOneWidget);
+      // Bottom bar updates from starting price to selected room type price
+      expect(find.text('Selected Room'), findsOneWidget);
+      expect(find.text('\$180 / night'), findsNWidgets(2)); // Card and bottom bar
+    });
+
+    testWidgets('renders pricing unavailable and disables book now when room types are unpriced',
+        (tester) async {
+      const unpricedProperty = Property(
+        id: 'prop-unpriced',
+        name: 'Unpriced Inn',
+        city: 'Shimla',
+        countryCode: 'IN',
+        shortDescription: 'Basic lodge',
+        longDescription: 'Basic lodge without rates set',
+        heroImageUrl: '',
+        roomTypes: [
+          RoomType(
+            id: 'rt-unpriced',
+            name: 'Dorm Bed',
+            maxOccupancy: 1,
+            maxAdults: 1,
+            maxChildren: 0,
+            description: 'Shared dorm',
+          ),
+        ],
+      );
+
+      final mockRepo = MockPropertiesRepository();
+      mockRepo.propertiesToReturn = [unpricedProperty];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: PropertyDetailScreen(
+            property: unpricedProperty,
+            repository: mockRepo,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Pricing unavailable'), findsNWidgets(2)); // Card and bottom bar
+      expect(find.text('Unavailable'), findsOneWidget);
+
+      final bookNowButton = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Book Now'),
+      );
+      expect(bookNowButton.onPressed, isNull);
     });
   });
 }

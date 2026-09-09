@@ -14,6 +14,7 @@ class Property {
   final String? checkoutTime;
   final String? addressLine1;
   final double? pricePerNight;
+  final String? currencyCode;
   final double? rating;
   final int? reviewsCount;
   final List<RoomType> roomTypes;
@@ -34,6 +35,7 @@ class Property {
     this.checkoutTime,
     this.addressLine1,
     this.pricePerNight,
+    this.currencyCode,
     this.rating,
     this.reviewsCount,
     this.roomTypes = const [],
@@ -63,6 +65,7 @@ class Property {
     String? checkoutTime,
     String? addressLine1,
     double? pricePerNight,
+    String? currencyCode,
     double? rating,
     int? reviewsCount,
     List<RoomType>? roomTypes,
@@ -83,6 +86,7 @@ class Property {
       checkoutTime: checkoutTime ?? this.checkoutTime,
       addressLine1: addressLine1 ?? this.addressLine1,
       pricePerNight: pricePerNight ?? this.pricePerNight,
+      currencyCode: currencyCode ?? this.currencyCode,
       rating: rating ?? this.rating,
       reviewsCount: reviewsCount ?? this.reviewsCount,
       roomTypes: roomTypes ?? this.roomTypes,
@@ -97,6 +101,9 @@ class RoomType {
   final int maxAdults;
   final int maxChildren;
   final String description;
+  final double? pricePerNight;
+  final String? currencyCode;
+  final bool isActive;
 
   const RoomType({
     required this.id,
@@ -105,5 +112,11 @@ class RoomType {
     required this.maxAdults,
     required this.maxChildren,
     required this.description,
+    this.pricePerNight,
+    this.currencyCode,
+    this.isActive = true,
   });
+
+  /// Whether this room type has a valid positive nightly rate configured.
+  bool get hasValidPrice => pricePerNight != null && pricePerNight! > 0;
 }

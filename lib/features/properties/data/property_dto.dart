@@ -1,3 +1,4 @@
+import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 
 class PropertyDto {
@@ -18,6 +19,7 @@ class PropertyDto {
   final String? checkinTime;
   final String? checkoutTime;
   final String? addressLine1;
+  final double? pricePerNight;
   final List<Map<String, dynamic>> roomTypes;
 
   const PropertyDto({
@@ -38,6 +40,7 @@ class PropertyDto {
     this.checkinTime,
     this.checkoutTime,
     this.addressLine1,
+    this.pricePerNight,
     this.roomTypes = const [],
   });
 
@@ -94,12 +97,8 @@ class PropertyDto {
               json['description'] ??
               json['short_description']) as String?,
       heroImageUrl: heroImageUrl,
-      latitude: json['latitude'] != null
-          ? (json['latitude'] as num).toDouble()
-          : null,
-      longitude: json['longitude'] != null
-          ? (json['longitude'] as num).toDouble()
-          : null,
+      latitude: PriceFormatter.parsePrice(json['latitude']),
+      longitude: PriceFormatter.parsePrice(json['longitude']),
       currencyCode: json['currency_code'] as String?,
       amenities: parsedAmenities,
       totalRooms: json['total_rooms'] as int?,
@@ -107,6 +106,9 @@ class PropertyDto {
       checkoutTime: json['checkout_time'] as String?,
       addressLine1:
           (json['address_line_1'] ?? json['address_line1']) as String?,
+      pricePerNight: PriceFormatter.parsePrice(
+        json['starting_price_per_night'] ?? json['price_per_night'],
+      ),
       roomTypes:
           (json['room_types'] as List<dynamic>?)
               ?.map((e) => e as Map<String, dynamic>)
@@ -116,6 +118,34 @@ class PropertyDto {
   }
 
   Property toDomain() {
+    final parsedRoomTypes = roomTypes.map((r) {
+      final priceRaw = r['base_price_per_night'] ?? r['price_per_night'];
+      final roomPrice = PriceFormatter.parsePrice(priceRaw);
+      return RoomType(
+        id: r['id']?.toString() ?? '',
+        name: r['name']?.toString() ?? '',
+        maxOccupancy: r['max_occupancy'] as int? ?? 2,
+        maxAdults: r['max_adults'] as int? ?? 2,
+        maxChildren: r['max_children'] as int? ?? 0,
+        description: r['description']?.toString() ?? '',
+        pricePerNight: roomPrice,
+        currencyCode: r['currency_code']?.toString() ?? currencyCode,
+        isActive: r['is_active'] as bool? ?? true,
+      );
+    }).toList();
+
+    double? resolvedPricePerNight = pricePerNight;
+    if (resolvedPricePerNight == null && parsedRoomTypes.isNotEmpty) {
+      final validPrices = parsedRoomTypes
+          .where((rt) => rt.isActive && rt.hasValidPrice)
+          .map((rt) => rt.pricePerNight!)
+          .toList();
+      if (validPrices.isNotEmpty) {
+        resolvedPricePerNight =
+            validPrices.reduce((a, b) => a < b ? a : b);
+      }
+    }
+
     return Property(
       id: id,
       name: name,
@@ -131,21 +161,11 @@ class PropertyDto {
       checkinTime: checkinTime,
       checkoutTime: checkoutTime,
       addressLine1: addressLine1,
-      pricePerNight: null,
+      pricePerNight: resolvedPricePerNight,
+      currencyCode: currencyCode,
       rating: null,
       reviewsCount: null,
-      roomTypes: roomTypes
-          .map(
-            (r) => RoomType(
-              id: r['id']?.toString() ?? '',
-              name: r['name']?.toString() ?? '',
-              maxOccupancy: r['max_occupancy'] as int? ?? 2,
-              maxAdults: r['max_adults'] as int? ?? 2,
-              maxChildren: r['max_children'] as int? ?? 0,
-              description: r['description']?.toString() ?? '',
-            ),
-          )
-          .toList(),
+      roomTypes: parsedRoomTypes,
     );
   }
 }

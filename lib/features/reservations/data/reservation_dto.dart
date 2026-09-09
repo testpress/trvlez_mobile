@@ -1,3 +1,4 @@
+import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 
 /// Maps the backend reservation JSON to the domain [Reservation] model.
@@ -19,6 +20,8 @@ class ReservationDto {
   final String? cancelledAt;
   final String? checkedInAt;
   final String? checkedOutAt;
+  final double? totalAmount;
+  final String? currencyCode;
 
   const ReservationDto({
     required this.id,
@@ -38,6 +41,8 @@ class ReservationDto {
     this.cancelledAt,
     this.checkedInAt,
     this.checkedOutAt,
+    this.totalAmount,
+    this.currencyCode,
   });
 
   factory ReservationDto.fromJson(Map<String, dynamic> json) {
@@ -63,6 +68,8 @@ class ReservationDto {
       cancelledAt: json['cancelled_at'] as String?,
       checkedInAt: json['checked_in_at'] as String?,
       checkedOutAt: json['checked_out_at'] as String?,
+      totalAmount: PriceFormatter.parsePrice(json['total_amount']),
+      currencyCode: json['currency_code'] as String?,
     );
   }
 
@@ -84,6 +91,11 @@ class ReservationDto {
               id: r['id'] as String? ?? '',
               roomNumber: r['room_number'] as String? ?? '',
               roomTypeId: r['room_type_id'] as String? ?? '',
+              roomTypeName: r['room_type_name'] as String?,
+              pricePerNight: PriceFormatter.parsePrice(r['price_per_night']),
+              currencyCode: r['currency_code'] as String? ?? currencyCode,
+              numberOfNights: r['number_of_nights'] as int?,
+              lineTotal: PriceFormatter.parsePrice(r['line_total']),
             ),
           )
           .toList(),
@@ -100,6 +112,8 @@ class ReservationDto {
       cancelledAt: cancelledAt != null ? DateTime.parse(cancelledAt!) : null,
       checkedInAt: checkedInAt != null ? DateTime.parse(checkedInAt!) : null,
       checkedOutAt: checkedOutAt != null ? DateTime.parse(checkedOutAt!) : null,
+      totalAmount: totalAmount,
+      currencyCode: currencyCode,
     );
   }
 }

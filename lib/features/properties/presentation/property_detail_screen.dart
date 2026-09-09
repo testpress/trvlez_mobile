@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 
@@ -55,13 +56,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       _selectedRoomTypeId =
           (_selectedRoomTypeId == roomTypeId) ? null : roomTypeId;
     });
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
   }
 
   @override
@@ -321,10 +315,12 @@ class _PropertyContentSheet extends StatelessWidget {
                     ],
                     const SizedBox(height: 24),
                     _PropertyRoomTypesSection(
+                      property: property,
                       roomTypes: property.roomTypes,
                       isLoading: isEnriching,
                       selectedRoomTypeId: selectedRoomTypeId,
                       onRoomTypeSelected: onRoomTypeSelected,
+                      propertyCurrency: property.currencyCode,
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -668,16 +664,20 @@ class _FacilityPill extends StatelessWidget {
 }
 
 class _PropertyRoomTypesSection extends StatelessWidget {
+  final Property? property;
   final List<RoomType> roomTypes;
   final bool isLoading;
   final String? selectedRoomTypeId;
   final ValueChanged<String>? onRoomTypeSelected;
+  final String? propertyCurrency;
 
   const _PropertyRoomTypesSection({
+    this.property,
     required this.roomTypes,
     this.isLoading = false,
     this.selectedRoomTypeId,
     this.onRoomTypeSelected,
+    this.propertyCurrency,
   });
 
   @override
@@ -742,6 +742,18 @@ class _PropertyRoomTypesSection extends StatelessWidget {
               onTap: onRoomTypeSelected != null
                   ? () => onRoomTypeSelected!(rt.id)
                   : null,
+              propertyCurrency: propertyCurrency,
+              onBookNow: property != null && rt.hasValidPrice && rt.isActive
+                  ? () {
+                      context.push(
+                        AppRoutes.createReservation,
+                        extra: {
+                          'property': property!,
+                          'selectedRoomTypeId': rt.id,
+                        },
+                      );
+                    }
+                  : null,
             ),
           ),
       ],
@@ -753,19 +765,24 @@ class _RoomTypeCard extends StatelessWidget {
   final RoomType roomType;
   final bool isSelected;
   final VoidCallback? onTap;
+  final String? propertyCurrency;
+  final VoidCallback? onBookNow;
 
   const _RoomTypeCard({
     required this.roomType,
     this.isSelected = false,
     this.onTap,
+    this.propertyCurrency,
+    this.onBookNow,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isBookable = roomType.hasValidPrice && roomType.isActive;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: isBookable ? onTap : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.only(bottom: 12),
@@ -805,7 +822,9 @@ class _RoomTypeCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface,
+                            color: isBookable
+                                ? colorScheme.onSurface
+                                : colorScheme.onSurface.withAlpha(150),
                           ),
                         ),
                       ),
@@ -849,6 +868,48 @@ class _RoomTypeCard extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 6),
+            if (isBookable)
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: PriceFormatter.formatPrice(
+                        roomType.pricePerNight!,
+                        currencyCode: roomType.currencyCode ?? propertyCurrency,
+                      ),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' / night',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer.withAlpha(60),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'Pricing unavailable',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.error,
+                  ),
+                ),
+              ),
             if (roomType.description.isNotEmpty) ...[
               const SizedBox(height: 6),
               Text(
@@ -885,17 +946,43 @@ class _RoomTypeCard extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  isSelected ? 'Selected' : 'Tap to select',
+                  !isBookable
+                      ? 'Unavailable'
+                      : isSelected
+                          ? 'Selected'
+                          : 'Tap to select',
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected
-                        ? colorScheme.primary
-                        : colorScheme.onSurfaceVariant.withAlpha(150),
+                    color: !isBookable
+                        ? colorScheme.error
+                        : isSelected
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant.withAlpha(150),
                   ),
                 ),
               ],
             ),
+            if (isSelected && isBookable && onBookNow != null) ...[
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: onBookNow,
+                  icon: const Icon(Icons.arrow_forward, size: 16),
+                  label: const Text(
+                    'Book This Room',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -918,6 +1005,48 @@ class _PropertyBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    final RoomType? selectedRoom = selectedRoomTypeId != null
+        ? property.roomTypes
+            .where((r) => r.id == selectedRoomTypeId)
+            .firstOrNull
+        : null;
+
+    final String priceLabel;
+    final String priceDisplay;
+    final bool canBook;
+
+    if (selectedRoom != null) {
+      priceLabel = 'Selected Room';
+      if (selectedRoom.hasValidPrice) {
+        priceDisplay =
+            '${PriceFormatter.formatPrice(selectedRoom.pricePerNight!, currencyCode: selectedRoom.currencyCode ?? property.currencyCode)} / night';
+        canBook = !isLoading;
+      } else {
+        priceDisplay = 'Pricing unavailable';
+        canBook = false;
+      }
+    } else {
+      priceLabel = 'Pricing';
+      final validRooms = property.roomTypes
+          .where((r) => r.isActive && r.hasValidPrice)
+          .toList();
+      if (validRooms.isNotEmpty) {
+        final minPrice = validRooms
+            .map((r) => r.pricePerNight!)
+            .reduce((a, b) => a < b ? a : b);
+        priceDisplay =
+            'From ${PriceFormatter.formatPrice(minPrice, currencyCode: property.currencyCode)} / night';
+        canBook = !isLoading;
+      } else if (property.pricePerNight != null && property.pricePerNight! > 0) {
+        priceDisplay =
+            '${PriceFormatter.formatPrice(property.pricePerNight!, currencyCode: property.currencyCode)} / night';
+        canBook = !isLoading;
+      } else {
+        priceDisplay = 'Pricing unavailable';
+        canBook = false;
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -935,33 +1064,37 @@ class _PropertyBottomBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Pricing',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    priceLabel,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Text(
-                  property.pricePerNight != null
-                      ? '\$${property.pricePerNight!.toInt()} / night'
-                      : 'Free Reservation',
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
+                  Text(
+                    priceDisplay,
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: canBook ? colorScheme.primary : colorScheme.error,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(width: 12),
             FilledButton.icon(
-              onPressed: isLoading
-                  ? null
-                  : () {
+              onPressed: canBook
+                  ? () {
                       context.push(
                         AppRoutes.createReservation,
                         extra: {
@@ -969,7 +1102,8 @@ class _PropertyBottomBar extends StatelessWidget {
                           'selectedRoomTypeId': selectedRoomTypeId,
                         },
                       );
-                    },
+                    }
+                  : null,
               icon: isLoading
                   ? const SizedBox(
                       width: 16,
@@ -983,7 +1117,7 @@ class _PropertyBottomBar extends StatelessWidget {
               ),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
+                  horizontal: 20,
                   vertical: 14,
                 ),
                 shape: RoundedRectangleBorder(

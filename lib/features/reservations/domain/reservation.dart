@@ -96,11 +96,21 @@ class RoomSummary {
   final String id;
   final String roomNumber;
   final String roomTypeId;
+  final String? roomTypeName;
+  final double? pricePerNight;
+  final String? currencyCode;
+  final int? numberOfNights;
+  final double? lineTotal;
 
   const RoomSummary({
     required this.id,
     required this.roomNumber,
     required this.roomTypeId,
+    this.roomTypeName,
+    this.pricePerNight,
+    this.currencyCode,
+    this.numberOfNights,
+    this.lineTotal,
   });
 }
 
@@ -123,6 +133,8 @@ class Reservation {
   final DateTime? cancelledAt;
   final DateTime? checkedInAt;
   final DateTime? checkedOutAt;
+  final double? totalAmount;
+  final String? currencyCode;
 
   const Reservation({
     required this.id,
@@ -142,6 +154,8 @@ class Reservation {
     this.cancelledAt,
     this.checkedInAt,
     this.checkedOutAt,
+    this.totalAmount,
+    this.currencyCode,
   });
 
   /// Number of nights for the stay based on calendar dates.
@@ -169,6 +183,8 @@ class Reservation {
     DateTime? cancelledAt,
     DateTime? checkedInAt,
     DateTime? checkedOutAt,
+    double? totalAmount,
+    String? currencyCode,
   }) {
     return Reservation(
       id: id ?? this.id,
@@ -188,6 +204,8 @@ class Reservation {
       cancelledAt: cancelledAt ?? this.cancelledAt,
       checkedInAt: checkedInAt ?? this.checkedInAt,
       checkedOutAt: checkedOutAt ?? this.checkedOutAt,
+      totalAmount: totalAmount ?? this.totalAmount,
+      currencyCode: currencyCode ?? this.currencyCode,
     );
   }
 }

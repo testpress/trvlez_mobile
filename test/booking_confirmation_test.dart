@@ -34,11 +34,18 @@ void main() {
     guestEmail: 'alex@example.com',
     guestPhone: '+1234567890',
     numberOfGuests: 2,
-    rooms: [
-      const RoomSummary(
+    totalAmount: 540.0,
+    currencyCode: 'USD',
+    rooms: const [
+      RoomSummary(
         id: 'room-1',
         roomNumber: '101',
         roomTypeId: 'rt-deluxe',
+        roomTypeName: 'Deluxe Suite',
+        pricePerNight: 180.0,
+        currencyCode: 'USD',
+        numberOfNights: 3,
+        lineTotal: 540.0,
       ),
     ],
     specialRequests: 'High floor preferred',
@@ -99,6 +106,8 @@ void main() {
       expect(find.text('Alex Mercer'), findsOneWidget);
       expect(find.text('High floor preferred'), findsOneWidget);
       expect(find.text('2 Guests • 1 Room'), findsOneWidget);
+      expect(find.text('Total Amount'), findsOneWidget);
+      expect(find.text('\$540 USD'), findsOneWidget);
 
       // Verify Action CTAs
       expect(find.text('View Check-in QR'), findsOneWidget);

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
@@ -291,6 +292,15 @@ class _ReservationDetailScreenState
                   label: 'Duration',
                   value: '${reservation.nights} night(s)',
                 ),
+                if (reservation.totalAmount != null)
+                  _InfoRow(
+                    icon: Icons.payments_outlined,
+                    label: 'Total Amount',
+                    value: PriceFormatter.formatTotal(
+                      reservation.totalAmount!,
+                      currencyCode: reservation.currencyCode,
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 20),

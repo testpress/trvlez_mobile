@@ -154,11 +154,18 @@ void main() {
     'guest_email': 'alex@example.com',
     'guest_phone': '+15551234567',
     'number_of_guests': 2,
+    'total_amount': 450.00,
+    'currency_code': 'USD',
     'rooms': [
       {
         'id': 'room-summary-1',
         'room_number': '302',
         'room_type_id': 'rt-deluxe',
+        'room_type_name': 'Deluxe Ocean Suite',
+        'price_per_night': 150.00,
+        'currency_code': 'USD',
+        'number_of_nights': 3,
+        'line_total': 450.00,
       },
     ],
     'special_requests': 'Quiet room on upper floor',
@@ -168,6 +175,7 @@ void main() {
       'city': 'Goa',
       'country_code': 'IN',
       'hero_image_url': 'https://example.com/azure.jpg',
+      'currency_code': 'USD',
       'requires_prearrival_form': false,
     },
     'created_at': '2026-09-01T10:00:00Z',
@@ -187,11 +195,18 @@ void main() {
     guestEmail: 'alex@example.com',
     guestPhone: '+15551234567',
     numberOfGuests: 2,
+    totalAmount: 450.0,
+    currencyCode: 'USD',
     rooms: const [
       RoomSummary(
         id: 'room-summary-1',
         roomNumber: '302',
         roomTypeId: 'rt-deluxe',
+        roomTypeName: 'Deluxe Ocean Suite',
+        pricePerNight: 150.0,
+        currencyCode: 'USD',
+        numberOfNights: 3,
+        lineTotal: 450.0,
       ),
     ],
     specialRequests: 'Quiet room on upper floor',
@@ -262,7 +277,14 @@ void main() {
       expect(dto.confirmationCode, 'TRV-12345678');
       expect(dto.status, 'confirmed');
       expect(dto.numberOfGuests, 2);
+      expect(dto.totalAmount, 450.0);
+      expect(dto.currencyCode, 'USD');
       expect(dto.rooms.length, 1);
+      expect(dto.rooms.first['room_type_name'], 'Deluxe Ocean Suite');
+      expect(dto.rooms.first['price_per_night'], 150.0);
+      expect(dto.rooms.first['currency_code'], 'USD');
+      expect(dto.rooms.first['number_of_nights'], 3);
+      expect(dto.rooms.first['line_total'], 450.0);
       expect(dto.propertySummary['name'], 'Azure Coastal Resort');
 
       final domain = dto.toDomain();
@@ -272,7 +294,14 @@ void main() {
       expect(domain.guestName, 'Alex Traveler');
       expect(domain.guestEmail, 'alex@example.com');
       expect(domain.guestPhone, '+15551234567');
+      expect(domain.totalAmount, 450.0);
+      expect(domain.currencyCode, 'USD');
       expect(domain.rooms.first.roomNumber, '302');
+      expect(domain.rooms.first.roomTypeName, 'Deluxe Ocean Suite');
+      expect(domain.rooms.first.pricePerNight, 150.0);
+      expect(domain.rooms.first.currencyCode, 'USD');
+      expect(domain.rooms.first.numberOfNights, 3);
+      expect(domain.rooms.first.lineTotal, 450.0);
       expect(domain.propertySummary.name, 'Azure Coastal Resort');
       expect(domain.propertySummary.locationString, 'Goa, IN');
       expect(domain.nights, 3);
@@ -301,6 +330,40 @@ void main() {
       expect(domain.propertySummary.name, '');
       expect(domain.propertySummary.locationString, '');
       expect(domain.nights, 1);
+    });
+
+    test('deserializes string-encoded total_amount and room snapshot line_total without error', () {
+      final json = {
+        'id': 'res-str',
+        'confirmation_code': 'TRV-STR',
+        'status': 'confirmed',
+        'check_in_date': '2026-10-15T14:00:00Z',
+        'check_out_date': '2026-10-18T11:00:00Z',
+        'guest_name': 'String Price User',
+        'total_amount': '6000.00',
+        'currency_code': 'USD',
+        'rooms': [
+          {
+            'id': 'room-1',
+            'room_number': '101',
+            'room_type_id': 'rt-1',
+            'room_type_name': 'Villa',
+            'price_per_night': '2000.0',
+            'currency_code': 'USD',
+            'number_of_nights': 3,
+            'line_total': '6000.00',
+          },
+        ],
+        'created_at': '2026-09-01T10:00:00Z',
+      };
+
+      final dto = ReservationDto.fromJson(json);
+      final domain = dto.toDomain();
+
+      expect(dto.totalAmount, 6000.0);
+      expect(domain.totalAmount, 6000.0);
+      expect(domain.rooms.first.pricePerNight, 2000.0);
+      expect(domain.rooms.first.lineTotal, 6000.0);
     });
 
     test('deserializes ReservationListResponseDto correctly', () {
@@ -551,6 +614,8 @@ void main() {
       expect(find.text('Confirmed'), findsOneWidget);
       expect(find.text('Alex Traveler'), findsOneWidget);
       expect(find.text('302'), findsOneWidget);
+      expect(find.text('Total Amount'), findsOneWidget);
+      expect(find.text(r'$450 USD'), findsOneWidget);
       expect(find.text('Generate QR Code'), findsOneWidget);
     });
 
@@ -689,6 +754,7 @@ void main() {
       name: 'Azure Coastal Resort',
       city: 'Goa',
       countryCode: 'IN',
+      currencyCode: 'USD',
       shortDescription: 'A serene beachside escape',
       longDescription: 'Experience luxury and tranquility with panoramic ocean views.',
       heroImageUrl: 'https://example.com/azure.jpg',
@@ -696,6 +762,8 @@ void main() {
         RoomType(
           id: 'rt-deluxe',
           name: 'Deluxe Ocean Suite',
+          pricePerNight: 150.0,
+          currencyCode: 'USD',
           maxOccupancy: 2,
           maxAdults: 2,
           maxChildren: 0,
@@ -785,6 +853,8 @@ void main() {
           RoomType(
             id: 'rt-std',
             name: 'Standard Suite',
+            pricePerNight: 120.0,
+            currencyCode: 'USD',
             maxOccupancy: 2,
             maxAdults: 2,
             maxChildren: 0,
@@ -793,6 +863,8 @@ void main() {
           RoomType(
             id: 'rt-ocean',
             name: 'Oceanfront Penthouse',
+            pricePerNight: 350.0,
+            currencyCode: 'USD',
             maxOccupancy: 4,
             maxAdults: 4,
             maxChildren: 2,
@@ -815,6 +887,60 @@ void main() {
 
       expect(find.text('Oceanfront Penthouse'), findsOneWidget);
       expect(find.text('Standard Suite'), findsOneWidget);
+    });
+
+    testWidgets('displays room rate subtitle on room selector tile',
+        (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: CreateReservationScreen(property: testProperty),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(r'$150 / night'), findsOneWidget);
+    });
+
+    testWidgets(
+        'displays "Pricing unavailable" and disables booking when room has no price',
+        (tester) async {
+      final unpricedProperty = testProperty.copyWith(
+        roomTypes: const [
+          RoomType(
+            id: 'rt-unpriced',
+            name: 'Unpriced Suite',
+            maxOccupancy: 2,
+            maxAdults: 2,
+            maxChildren: 0,
+            description: 'Room without price',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: CreateReservationScreen(property: unpricedProperty),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Pricing unavailable'), findsOneWidget);
+
+      // Warning message should be displayed about invalid pricing
+      expect(
+        find.textContaining('Pricing is unavailable for one or more selected rooms'),
+        findsOneWidget,
+      );
+
+      // Submit button must be disabled
+      final button = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Confirm Reservation'),
+      );
+      expect(button.onPressed, isNull);
     });
   });
 

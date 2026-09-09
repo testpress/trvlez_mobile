@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
@@ -479,6 +480,17 @@ class _StayDetailsCard extends StatelessWidget {
               icon: Icons.notes_outlined,
               title: 'Special Requests',
               subtitle: reservation.specialRequests!,
+            ),
+          ],
+          if (reservation.totalAmount != null) ...[
+            const Divider(height: 24),
+            _DetailRow(
+              icon: Icons.payments_outlined,
+              title: 'Total Amount',
+              subtitle: PriceFormatter.formatTotal(
+                reservation.totalAmount!,
+                currencyCode: reservation.currencyCode,
+              ),
             ),
           ],
         ],

@@ -3,19 +3,23 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CounterTile extends StatelessWidget {
   final String label;
+  final String? subtitle;
+  final Color? subtitleColor;
   final IconData icon;
   final int value;
   final ColorScheme colorScheme;
-  final VoidCallback onIncrement;
+  final VoidCallback? onIncrement;
   final VoidCallback? onDecrement;
 
   const CounterTile({
     super.key,
     required this.label,
+    this.subtitle,
+    this.subtitleColor,
     required this.icon,
     required this.value,
     required this.colorScheme,
-    required this.onIncrement,
+    this.onIncrement,
     this.onDecrement,
   });
 
@@ -35,12 +39,28 @@ class CounterTile extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: colorScheme.primary),
               const SizedBox(width: 6),
-              Text(
-                label,
-                style: GoogleFonts.nunito(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      label,
+                      style: GoogleFonts.nunito(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        style: GoogleFonts.nunito(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: subtitleColor ?? colorScheme.primary,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],

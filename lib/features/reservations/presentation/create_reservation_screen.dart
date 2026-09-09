@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
@@ -89,8 +90,48 @@ class _CreateReservationScreenState
         _selectedRoomCounts.containsKey(widget.initialRoomTypeId)) {
       _selectedRoomCounts[widget.initialRoomTypeId!] = 1;
     } else if (prop.roomTypes.isNotEmpty && _totalSelectedRooms == 0) {
-      _selectedRoomCounts[prop.roomTypes.first.id] = 1;
+      final firstPricedRoom = prop.roomTypes
+          .where((r) => r.hasValidPrice && r.isActive)
+          .firstOrNull;
+      if (firstPricedRoom != null) {
+        _selectedRoomCounts[firstPricedRoom.id] = 1;
+      } else {
+        _selectedRoomCounts[prop.roomTypes.first.id] = 1;
+      }
     }
+  }
+
+  int get _numberOfNights {
+    if (_checkInDate == null || _checkOutDate == null) return 1;
+    final diff = _checkOutDate!.difference(_checkInDate!).inDays;
+    return diff > 0 ? diff : 1;
+  }
+
+  double get _totalEstimatedAmount {
+    if (_activeProperty == null) return 0.0;
+    double total = 0.0;
+    for (final entry in _selectedRoomCounts.entries) {
+      if (entry.value <= 0) continue;
+      final rt = _activeProperty!.roomTypes
+          .where((r) => r.id == entry.key)
+          .firstOrNull;
+      if (rt != null && rt.hasValidPrice) {
+        total += rt.pricePerNight! * _numberOfNights * entry.value;
+      }
+    }
+    return total;
+  }
+
+  bool get _hasInvalidPricingSelected {
+    if (_activeProperty == null || _totalSelectedRooms == 0) return false;
+    for (final entry in _selectedRoomCounts.entries) {
+      if (entry.value <= 0) continue;
+      final rt = _activeProperty!.roomTypes
+          .where((r) => r.id == entry.key)
+          .firstOrNull;
+      if (rt == null || !rt.hasValidPrice) return true;
+    }
+    return false;
   }
 
   int get _totalSelectedRooms {
@@ -131,7 +172,8 @@ class _CreateReservationScreenState
       _checkOutDate != null &&
       _guestNameController.text.trim().isNotEmpty &&
       _totalSelectedRooms > 0 &&
-      !_isOccupancyExceeded;
+      !_isOccupancyExceeded &&
+      !_hasInvalidPricingSelected;
 
   Future<void> _selectDate({required bool isCheckIn}) async {
     final now = DateTime.now();
@@ -383,6 +425,10 @@ class _CreateReservationScreenState
             const SizedBox(height: 24),
             if (property != null)
               _buildGuestRoomSection(colorScheme, property),
+            if (property != null) ...[
+              const SizedBox(height: 24),
+              _buildPriceSummarySection(colorScheme, property),
+            ],
             const SizedBox(height: 24),
             _buildGuestInfoSection(colorScheme),
             const SizedBox(height: 24),
@@ -564,16 +610,26 @@ class _CreateReservationScreenState
         else
           ...property.roomTypes.map((roomType) {
             final currentSelected = _selectedRoomCounts[roomType.id] ?? 0;
+            final isPriced = roomType.hasValidPrice && roomType.isActive;
+            final priceSubtitle = isPriced
+                ? '${PriceFormatter.formatPrice(roomType.pricePerNight!, currencyCode: roomType.currencyCode ?? property.currencyCode)} / night'
+                : 'Pricing unavailable';
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: CounterTile(
                 label: roomType.name,
+                subtitle: priceSubtitle,
+                subtitleColor: isPriced ? colorScheme.primary : colorScheme.error,
                 icon: Icons.bed_outlined,
                 value: currentSelected,
                 colorScheme: colorScheme,
-                onIncrement: () => setState(
-                  () => _selectedRoomCounts[roomType.id] = currentSelected + 1,
-                ),
+                onIncrement: isPriced
+                    ? () => setState(
+                          () => _selectedRoomCounts[roomType.id] =
+                              currentSelected + 1,
+                        )
+                    : null,
                 onDecrement: currentSelected > 0
                     ? () => setState(
                         () => _selectedRoomCounts[roomType.id] =
@@ -614,6 +670,129 @@ class _CreateReservationScreenState
             ),
           ),
         ],
+      ],
+    );
+  }
+
+  Widget _buildPriceSummarySection(ColorScheme colorScheme, Property property) {
+    if (_totalSelectedRooms == 0) return const SizedBox.shrink();
+
+    final selectedRoomsWithCounts = property.roomTypes
+        .where((rt) => (_selectedRoomCounts[rt.id] ?? 0) > 0)
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Price Summary',
+          style: GoogleFonts.nunito(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colorScheme.outlineVariant),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...selectedRoomsWithCounts.map((rt) {
+                final count = _selectedRoomCounts[rt.id]!;
+                final isPriced = rt.hasValidPrice;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${rt.name} × $count',
+                              style: GoogleFonts.cabin(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            if (isPriced)
+                              Text(
+                                '${PriceFormatter.formatPrice(rt.pricePerNight!, currencyCode: rt.currencyCode ?? property.currencyCode)} × $_numberOfNights night(s)',
+                                style: GoogleFonts.cabin(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        isPriced
+                            ? PriceFormatter.formatPrice(
+                                rt.pricePerNight! * _numberOfNights * count,
+                                currencyCode:
+                                    rt.currencyCode ?? property.currencyCode,
+                              )
+                            : 'Unavailable',
+                        style: GoogleFonts.cabin(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: isPriced
+                              ? colorScheme.onSurface
+                              : colorScheme.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              const Divider(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total Amount',
+                    style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    PriceFormatter.formatTotal(
+                      _totalEstimatedAmount,
+                      currencyCode: property.currencyCode,
+                    ),
+                    style: GoogleFonts.nunito(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+              if (_hasInvalidPricingSelected) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'Pricing is unavailable for one or more selected rooms. Please choose a priced room type to proceed.',
+                  style: GoogleFonts.cabin(
+                    fontSize: 12,
+                    color: colorScheme.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }
