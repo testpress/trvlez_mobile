@@ -181,6 +181,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         frameWidth: frameWidth,
         frameHeight: frameHeight,
         frameCenterX: frameCenterX,
+        previewAspectRatio: controller!.value.aspectRatio,
       );
 
       // Hand off image and crop params, then transition to review screen immediately
@@ -299,8 +300,8 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     const double controlColumnWidth = 100.0;
     final availableWidth = screenSize.width - controlColumnWidth;
 
-    // Use 85 % of screen height, then cap so width stays within bounds
-    final candidateHeight = screenSize.height * 0.85;
+    // Use 70 % of screen height, then cap so width stays within bounds
+    final candidateHeight = screenSize.height * 0.70;
     final candidateWidth = candidateHeight * _passportAspectRatio;
 
     if (candidateWidth <= availableWidth * 0.95) {
