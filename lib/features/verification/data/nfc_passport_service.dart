@@ -116,8 +116,13 @@ class NfcPassportService {
         await passport.startSession(accessKey);
       } catch (e) {
         // BAC/PACE session establishment is the most common failure point.
-        // Wrong MRZ data (doc number, DOB, expiry) causes authentication to fail.
-        throw NfcError.fromException(e, readStep: 'authenticating');
+        // Wrong MRZ data (doc number, DOB, expiry) or a mismatched passport
+        // causes authentication to fail.
+        throw NfcError.fromException(
+          e,
+          fallbackType: NfcErrorType.authenticationFailed,
+          readStep: 'authenticating',
+        );
       }
 
       // 4. Read EF.COM

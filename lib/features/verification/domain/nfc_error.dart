@@ -56,6 +56,10 @@ class NfcError implements Exception {
     this.isRetryable = true,
   });
 
+  /// User-facing message when NFC passport authentication fails.
+  static const String authenticationFailedMessage =
+      'We couldn’t verify this passport. Please make sure you’re using the same passport you uploaded.';
+
   /// Factory for mapping internal exceptions to user-facing NfcErrors.
   ///
   /// Uses type-based matching first for dmrtd exceptions, then falls back to
@@ -110,7 +114,7 @@ class NfcError implements Exception {
         errorString.contains('paceresponsecheckerror')) {
       return NfcError(
         type: NfcErrorType.authenticationFailed,
-        message: 'Could not authenticate with the passport chip$stepContext.',
+        message: authenticationFailedMessage,
         userGuidance:
             'The scanned passport data may be incorrect. '
             'Please go back and retake the passport photo, ensuring the '
@@ -242,6 +246,17 @@ class NfcError implements Exception {
 
     // Fallback — include the exception type for diagnostics
     final exceptionTypeName = error.runtimeType.toString();
+    if (fallbackType == NfcErrorType.authenticationFailed) {
+      return NfcError(
+        type: NfcErrorType.authenticationFailed,
+        message: authenticationFailedMessage,
+        userGuidance:
+            'The scanned passport data may be incorrect. '
+            'Please go back and retake the passport photo.',
+        technicalDetails: '[$exceptionTypeName] ${error.toString()}',
+        isRetryable: false,
+      );
+    }
     return NfcError(
       type: fallbackType ?? NfcErrorType.unknownError,
       message: 'Something went wrong while reading the passport$stepContext.',
@@ -261,11 +276,12 @@ class NfcError implements Exception {
 
     // Check status code first for precise mapping
     if (code != null) {
-      // Security status not satisfied (0x6982) — BAC/PACE auth failed
-      if (code.sw1 == 0x69 && code.sw2 == 0x82) {
+      // Security status not satisfied (0x6982) / Authentication failed (0x6300, 0x63CF) — BAC/PACE auth failed
+      if ((code.sw1 == 0x69 && code.sw2 == 0x82) ||
+          (code.sw1 == 0x63 && (code.sw2 == 0x00 || code.sw2 == 0xCF))) {
         return NfcError(
           type: NfcErrorType.authenticationFailed,
-          message: 'Could not authenticate with the passport chip$stepContext.',
+          message: authenticationFailedMessage,
           userGuidance:
               'The scanned passport data may be incorrect. '
               'Please go back and retake the passport photo.',
@@ -352,10 +368,27 @@ class NfcError implements Exception {
 
     // Fall back to message-based matching for PassportError without status code
     if (message.contains('security status not satisfied') ||
-        message.contains('authentication')) {
+        message.contains('authentication failed') ||
+        message.contains('authentication') ||
+        message.contains('the protocol (step) failed') ||
+        message.contains('verifying mac')) {
       return NfcError(
         type: NfcErrorType.authenticationFailed,
-        message: 'Could not authenticate with the passport chip$stepContext.',
+        message: authenticationFailedMessage,
+        userGuidance:
+            'The scanned passport data may be incorrect. '
+            'Please retake the passport photo.',
+        technicalDetails: error.toString(),
+        isRetryable: false,
+      );
+    }
+
+    // A PassportError during the authentication step indicates the keys derived
+    // from the uploaded passport MRZ were rejected by the chip.
+    if (stepContext.contains('authenticating')) {
+      return NfcError(
+        type: NfcErrorType.authenticationFailed,
+        message: authenticationFailedMessage,
         userGuidance:
             'The scanned passport data may be incorrect. '
             'Please retake the passport photo.',
