@@ -44,28 +44,67 @@ class NfcResultScreen extends ConsumerWidget {
               // Success Header
               Center(
                 child: result.faceImageBytes != null
-                    ? Container(
-                        width: 120,
-                        height: 160,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: theme.colorScheme.primary,
-                            width: 4,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.colorScheme.shadow.withAlpha(20),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                    ? Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 160,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: theme.colorScheme.primary,
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.shadow.withAlpha(20),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.memory(
-                          result.faceImageBytes!,
-                          fit: BoxFit.cover,
-                        ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.memory(
+                              result.faceImageBytes!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: theme
+                                      .colorScheme.surfaceContainerHighest,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.person_rounded,
+                                      size: 56,
+                                      color:
+                                          theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Positioned(
+                            bottom: -4,
+                            right: -4,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: theme.colorScheme.surface,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ],
                       )
                     : Container(
                         width: 80,

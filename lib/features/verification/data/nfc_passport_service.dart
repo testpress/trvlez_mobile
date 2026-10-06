@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
+import 'package:trvlez_mobile/features/verification/data/nfc_image_extractor.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
@@ -208,12 +209,21 @@ class NfcPassportService {
       _nfc.setIosAlertMessage('Reading face image (this takes a moment)...');
 
       if (tags.contains(EfDG2.TAG)) {
-        final dg2 = await passport.readEfDG2();
-        rawDgBytesBase64['dg2'] = base64Encode(dg2.toBytes());
-        availableDataGroups.add('dg2');
-        // Extract raw image bytes for preview (though backend will re-parse for security)
-        // Note: dmrtd DG2 parsing is complex; usually we send the raw DG2 to the backend.
-        // We'll leave faceImageBytes null here and let the backend extract it from the raw DG2.
+        try {
+          final dg2 = await passport.readEfDG2();
+          final dg2Bytes = dg2.toBytes();
+          rawDgBytesBase64['dg2'] = base64Encode(dg2Bytes);
+          availableDataGroups.add('dg2');
+
+          faceImageBytes = NfcImageExtractor.extractFromDg2(dg2);
+          if (faceImageBytes != null) {
+            _log.info('Extracted face image (${faceImageBytes.length} bytes)');
+          } else {
+            _log.warning('No face image bytes extracted from DG2');
+          }
+        } catch (e) {
+          _log.warning('Failed to read or parse DG2: $e');
+        }
       }
 
       // 7. Read EF.DG14 (Chip Authentication Public Key)
