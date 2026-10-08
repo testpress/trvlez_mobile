@@ -4,6 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
 
@@ -86,19 +90,20 @@ class LoginScreenState extends ConsumerState<LoginScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final colors = context.colors;
 
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
           Image.asset('assets/frame.png', fit: BoxFit.cover),
-          Container(color: Colors.black.withAlpha(90)),
+          Container(color: colors.textPrimary.withAlpha(90)),
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 32,
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.xl,
                 ),
                 child: FadeTransition(
                   opacity: fadeAnimation,
@@ -106,9 +111,9 @@ class LoginScreenState extends ConsumerState<LoginScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       buildLogo(colorScheme),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lg),
                       buildFormCard(theme, colorScheme),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lg),
                       buildSignUpLink(theme, colorScheme),
                     ],
                   ),
@@ -124,6 +129,7 @@ class LoginScreenState extends ConsumerState<LoginScreen>
   // ─── Logo Section ─────────────────────────────────────────────────
 
   Widget buildLogo(ColorScheme colorScheme) {
+    final colors = context.colors;
     return Column(
       children: [
         // App icon — red rounded square with plane icon
@@ -132,7 +138,7 @@ class LoginScreenState extends ConsumerState<LoginScreen>
           height: 40,
           decoration: BoxDecoration(
             color: colorScheme.primary,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             boxShadow: [
               BoxShadow(
                 color: colorScheme.primary.withAlpha(80),
@@ -146,21 +152,21 @@ class LoginScreenState extends ConsumerState<LoginScreen>
               'assets/logo.svg',
               width: 20,
               height: 20,
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
+              colorFilter: ColorFilter.mode(
+                colors.textOnAction,
                 BlendMode.srcIn,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         // Brand name
         RichText(
           text: TextSpan(
             style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: colors.textOnAction,
             ),
             children: [
               const TextSpan(text: 'Trvl'),
@@ -178,16 +184,17 @@ class LoginScreenState extends ConsumerState<LoginScreen>
   // ─── Form Card ────────────────────────────────────────────────────
 
   Widget buildFormCard(ThemeData theme, ColorScheme colorScheme) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxWidth: 320),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(color: theme.dividerColor.withAlpha(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
+            color: colors.textPrimary.withAlpha(10),
             blurRadius: 40,
             offset: const Offset(0, 16),
           ),
@@ -241,8 +248,14 @@ class LoginScreenState extends ConsumerState<LoginScreen>
 
   Widget buildErrorBanner(ColorScheme colorScheme) {
     final error = ref.watch(loginControllerProvider).error;
-    final errorMessageText =
-        (error as ApiException?)?.message ?? error?.toString();
+    final String? errorMessageText;
+    if (error is AppException) {
+      errorMessageText = error.message;
+    } else if (error is ApiException) {
+      errorMessageText = error.message;
+    } else {
+      errorMessageText = error?.toString();
+    }
     if (errorMessageText == null) return const SizedBox.shrink();
 
     return Padding(
@@ -420,6 +433,7 @@ class LoginScreenState extends ConsumerState<LoginScreen>
   // ─── Footer Link ──────────────────────────────────────────────────
 
   Widget buildSignUpLink(ThemeData theme, ColorScheme colorScheme) {
+    final colors = context.colors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -427,7 +441,7 @@ class LoginScreenState extends ConsumerState<LoginScreen>
           'Don\'t have an account? ',
           style: GoogleFonts.cabin(
             fontSize: 15,
-            color: Colors.white.withAlpha(220),
+            color: colors.textOnAction.withAlpha(220),
           ),
         ),
         GestureDetector(

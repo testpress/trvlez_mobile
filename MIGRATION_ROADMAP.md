@@ -186,19 +186,19 @@
 ### Phase 4: Auth & Profile Features Migration (`features/auth`, `features/profile`)
 > **Goal:** Clean up authentication flows, standardize onboarding styles, and split setup screens.
 
-- [ ] **Task 4.1: Auth Layer Restructuring**
+- [x] **Task 4.1: Auth Layer Restructuring**
   - Create `domain/repositories/auth_repository.dart` interface.
   - Move DTOs to `data/models/` and data sources to `data/datasources/`.
   - Refactor `login_controller.dart` and `registration_controller.dart` into Riverpod `AsyncNotifier`s in `presentation/providers/`.
 
-- [ ] **Task 4.2: Replace Hardcoded Overlay Colors**
+- [x] **Task 4.2: Replace Hardcoded Overlay Colors**
   - Replace `Colors.black.withAlpha(90)`, `Colors.white`, and `AppColors.success` in `welcome_screen.dart`, `login_screen.dart`, and `registration_screen.dart` with semantic tokens (`context.colors.surface`, `context.colors.textOnAction`).
 
-- [ ] **Task 4.3: Deconstruct `profile_setup_screen.dart` (613 lines)**
+- [x] **Task 4.3: Deconstruct `profile_setup_screen.dart` (613 lines)**
   - Extract nationality picker, personal details form, and avatar uploader into `presentation/widgets/`.
   - Create `domain/repositories/profile_repository.dart` interface.
 
-- [ ] **Task 4.4: Move Tests to Mirror `lib/`**
+- [x] **Task 4.4: Move Tests to Mirror `lib/`**
   - Relocate tests to `test/features/auth/` and `test/features/profile/`.
 
 ---

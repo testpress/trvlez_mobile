@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -28,6 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -38,7 +42,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Image.asset('assets/Mobile-bg.png', fit: BoxFit.cover),
 
           // Subtle dark overlay to ensure text is readable over the mountain
-          Container(color: Colors.black.withAlpha(50)),
+          Container(color: colors.textPrimary.withAlpha(50)),
 
           // Splash Icons Background - Only visible on initial load!
           AnimatedOpacity(
@@ -62,7 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: TweenAnimationBuilder<Color?>(
               tween: ColorTween(
                 begin: colorScheme.primary,
-                end: _startAnimation ? Colors.white : colorScheme.primary,
+                end: _startAnimation ? colors.textOnAction : colorScheme.primary,
               ),
               duration: const Duration(milliseconds: 1000),
               curve: Curves.easeInOutCubic,
@@ -87,8 +91,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             duration: const Duration(milliseconds: 1000),
             curve: Curves.easeInOutCubic,
             bottom: _startAnimation ? 60 : -300, // Slide up from bottom
-            left: 24,
-            right: 24,
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 1000),
               opacity: _startAnimation ? 1.0 : 0.0,
@@ -101,52 +105,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 42,
                       fontWeight: FontWeight.w400,
-                      color: Colors.white,
+                      color: colors.textOnAction,
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AppSpacing.xxl),
                   Row(
                     children: [
                       Expanded(
-                        child: FilledButton(
+                        child: AppButton(
+                          label: 'Sign Up',
                           onPressed: () => context.go(AppRoutes.register),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 56),
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            'Sign Up',
-                            style: GoogleFonts.nunito(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                          height: 56,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
-                        child: FilledButton(
+                        child: AppButton(
+                          label: 'Login',
                           onPressed: () => context.go(AppRoutes.login),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 56),
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            'Login',
-                            style: GoogleFonts.nunito(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                          height: 56,
                         ),
                       ),
                     ],
