@@ -159,26 +159,26 @@
 ### Phase 3: Reservations Feature Migration (`features/reservations`)
 > **Goal:** Decouple cross-feature dependencies, split 4 massive screens, and eliminate `initState` future loading.
 
-- [ ] **Task 3.1: Decouple Cross-Feature Dependency**
+- [x] **Task 3.1: Decouple Cross-Feature Dependency**
   - Remove direct import of `properties/data/properties_repository.dart` from `create_reservation_screen.dart`.
   - Access properties data via `propertiesRepositoryProvider` interface or domain entity.
 
-- [ ] **Task 3.2: Domain & Data 3-Layer Split**
+- [x] **Task 3.2: Domain & Data 3-Layer Split**
   - Create `domain/repositories/reservation_repository.dart` interface.
   - Move DTOs to `data/models/` and remote sources to `data/datasources/`.
   - Implement `ReservationRepositoryImpl` in `data/repositories/`.
 
-- [ ] **Task 3.3: Split Oversized Screens into Sub-Widgets**
+- [x] **Task 3.3: Split Oversized Screens into Sub-Widgets**
   - **`create_reservation_screen.dart` (916 lines):** Extract guest selection, room selection, and price breakdown into `presentation/widgets/`.
   - **`qr_code_screen.dart` (893 lines):** Extract QR card, reservation overview tile, and status badge.
   - **`booking_confirmation_screen.dart` (865 lines):** Extract summary card, instructions card, and action footer.
   - **`reservation_detail_screen.dart` (832 lines):** Move data loading into `ReservationDetailNotifier` and extract UI sections.
 
-- [ ] **Task 3.4: Replace Styling with Semantic Tokens**
+- [x] **Task 3.4: Replace Styling with Semantic Tokens**
   - Remove hardcoded colors and spacing across all reservation screens.
   - Replace bespoke buttons with `AppButton`.
 
-- [ ] **Task 3.5: Move Tests to Mirror `lib/`**
+- [x] **Task 3.5: Move Tests to Mirror `lib/`**
   - Move tests to `test/features/reservations/`.
 
 ---

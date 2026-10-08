@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/reservations/data/form_repository.dart';
-import 'package:trvlez_mobile/features/reservations/domain/form.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 
 class PreArrivalFormState {
   final bool isLoading;

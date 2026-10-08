@@ -15,12 +15,11 @@ import 'package:trvlez_mobile/features/properties/data/properties_repository.dar
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
-import 'package:trvlez_mobile/features/reservations/data/reservation_repository.dart';
-import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/booking_confirmation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';

@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/features/reservations/domain/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/widgets/reservation_status_badge.dart';
 
 /// Displays the traveler's reservations organized by status tabs.
 ///
@@ -37,7 +37,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final reservationsState = ref.watch(reservationListProvider);
-    final reservations = reservationsState.value ?? [];
+    final reservations = reservationsState.valueOrNull ?? [];
 
     final upcoming = reservations.where((r) => r.status.isUpcoming).toList();
     final completed = reservations.where((r) => r.status.isCompleted).toList();
@@ -326,7 +326,7 @@ class _ReservationCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      _StatusBadge(status: reservation.status),
+                      ReservationStatusBadge(status: reservation.status),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -430,48 +430,4 @@ class _ReservationCard extends StatelessWidget {
   }
 }
 
-// ─── Status Badge ──────────────────────────────────────────────────
 
-class _StatusBadge extends StatelessWidget {
-  final ReservationStatus status;
-
-  const _StatusBadge({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final (bgColor, fgColor) = _statusColors(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        status.displayLabel,
-        style: GoogleFonts.nunito(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: fgColor,
-        ),
-      ),
-    );
-  }
-
-  (Color, Color) _statusColors(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    switch (status) {
-      case ReservationStatus.pending:
-        return (const Color(0xFFFFF3E0), const Color(0xFFE65100));
-      case ReservationStatus.confirmed:
-        return (const Color(0xFFE8F5E9), const Color(0xFF2E7D32));
-      case ReservationStatus.checkedIn:
-        return (colorScheme.primary.withAlpha(26), colorScheme.primary);
-      case ReservationStatus.checkedOut:
-        return (const Color(0xFFE3F2FD), const Color(0xFF1565C0));
-      case ReservationStatus.cancelled:
-      case ReservationStatus.noShow:
-        return (const Color(0xFFFFEBEE), const Color(0xFFC62828));
-    }
-  }
-}
