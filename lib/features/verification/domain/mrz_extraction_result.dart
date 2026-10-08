@@ -25,16 +25,16 @@ class MrzExtractionResult {
 
   factory MrzExtractionResult.fromJson(Map<String, dynamic> json) {
     return MrzExtractionResult(
-      success: json['success'] ?? false,
-      documentNumber: json['document_number'],
-      dateOfBirth: json['date_of_birth'],
-      dateOfExpiry: json['date_of_expiry'],
-      nationality: json['nationality'],
-      issuingCountry: json['issuing_country'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      sex: json['sex'],
-      errorMessage: json['error_message'],
+      success: (json['success'] as bool?) ?? false,
+      documentNumber: json['document_number'] as String?,
+      dateOfBirth: json['date_of_birth'] as String?,
+      dateOfExpiry: json['date_of_expiry'] as String?,
+      nationality: json['nationality'] as String?,
+      issuingCountry: json['issuing_country'] as String?,
+      firstName: json['first_name'] as String?,
+      lastName: json['last_name'] as String?,
+      sex: json['sex'] as String?,
+      errorMessage: json['error_message'] as String?,
     );
   }
 

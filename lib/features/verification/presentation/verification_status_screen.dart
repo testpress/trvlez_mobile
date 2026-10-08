@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
@@ -15,7 +14,6 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/step_ch
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_info_card.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_score_indicator.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_status_config.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 
 /// Displays the full verification journey with step-by-step progress.
 ///

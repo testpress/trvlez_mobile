@@ -121,7 +121,7 @@ class _StepIndicator extends StatelessWidget {
           child: isCompleted
               ? const Icon(Icons.check, color: Colors.white, size: 14)
               : isActive
-              ? Icon(Icons.circle, color: Colors.white, size: 8)
+              ? const Icon(Icons.circle, color: Colors.white, size: 8)
               : null,
         ),
         const SizedBox(height: 6),

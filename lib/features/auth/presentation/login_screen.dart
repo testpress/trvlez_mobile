@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/login_controller.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 
 /// Traveler login screen.
 class LoginScreen extends ConsumerStatefulWidget {

@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:trvlez_mobile/core/network/dio_provider.dart';
-
 import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/quality_check_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';

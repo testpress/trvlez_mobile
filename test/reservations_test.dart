@@ -749,7 +749,7 @@ void main() {
   });
 
   group('CreateReservationScreen Widget Tests', () {
-    final testProperty = Property(
+    final testProperty = const Property(
       id: 'prop-azure-1',
       name: 'Azure Coastal Resort',
       city: 'Goa',
@@ -758,7 +758,7 @@ void main() {
       shortDescription: 'A serene beachside escape',
       longDescription: 'Experience luxury and tranquility with panoramic ocean views.',
       heroImageUrl: 'https://example.com/azure.jpg',
-      roomTypes: const [
+      roomTypes: [
         RoomType(
           id: 'rt-deluxe',
           name: 'Deluxe Ocean Suite',

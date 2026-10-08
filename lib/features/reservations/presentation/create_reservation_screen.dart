@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
 import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
@@ -12,7 +11,6 @@ import 'package:trvlez_mobile/features/properties/domain/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/date_picker_tile.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 
 /// Screen for creating a reservation at a property.
 ///

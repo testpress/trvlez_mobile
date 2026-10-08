@@ -1,7 +1,8 @@
 import 'dart:io';
+
 import 'package:camera/camera.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// A shared service for camera and image picking capabilities.
 class CameraService {

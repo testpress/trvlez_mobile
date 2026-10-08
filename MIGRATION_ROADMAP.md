@@ -88,32 +88,32 @@
 ### Phase 1: Foundation (Theme, Core, Errors & Linter)
 > **Goal:** Build the bedrock so features have the tokens, shared widgets, and error structures to migrate into without breaking existing flows.
 
-- [ ] **Task 1.1: Enable Strict Analysis Rules**
+- [x] **Task 1.1: Enable Strict Analysis Rules**
   - Update `analysis_options.yaml` to enforce `prefer_const_constructors: true`, `avoid_print: true`, `directives_ordering: true`, and strict casts.
   - Verify `flutter analyze` passes.
 
-- [ ] **Task 1.2: App Shell & Router Organization**
+- [x] **Task 1.2: App Shell & Router Organization**
   - Move `TrvlEzApp` from `lib/main.dart` to `lib/app/app.dart`.
   - Move router files to `lib/app/router/app_router.dart` and `lib/app/router/routes.dart`.
   - Keep `lib/main.dart` strictly for initialization and `runApp`.
 
-- [ ] **Task 1.3: Design System Tokens Implementation**
+- [x] **Task 1.3: Design System Tokens Implementation**
   - Create `lib/app/theme/tokens/primitives/palette.dart` (raw hex colors).
   - Convert `AppColors` into a Flutter `ThemeExtension<AppColors>` in `lib/app/theme/tokens/app_colors.dart` with light and dark palettes.
   - Implement `lib/app/theme/tokens/app_spacing.dart` (4-pt grid and semantic aliases like `screenPadding`, `cardPadding`).
   - Implement `lib/app/theme/tokens/app_radius.dart` and `lib/app/theme/tokens/app_motion.dart`.
   - Implement `lib/app/theme/theme_extensions.dart` providing `context.colors` and `context.text`.
 
-- [ ] **Task 1.4: Update ThemeData & Component Themes**
+- [x] **Task 1.4: Update ThemeData & Component Themes**
   - Register `AppColors` in `ThemeData.extensions`.
   - Create component themes in `lib/app/theme/component_themes/` (`button_theme.dart`, `input_theme.dart`, `card_theme.dart`).
 
-- [ ] **Task 1.5: Core Shared Widgets (`lib/core/widgets/`)**
+- [x] **Task 1.5: Core Shared Widgets (`lib/core/widgets/`)**
   - Create `AppButton` (with variants: primary, secondary, destructive, and loading state).
   - Create `AppTextField` with standardized border and typography.
   - Create `AppCard`, `LoadingView`, and `ErrorView` (with retry callback).
 
-- [ ] **Task 1.6: Core Error Hierarchy**
+- [x] **Task 1.6: Core Error Hierarchy**
   - Create `lib/core/errors/app_exception.dart` with sealed classes (`AppException`, `NetworkException`, `UnauthorizedException`, `ServerException`, `ValidationException`).
   - Add `mapDioException(DioException e)` helper in `core/network/`.
 

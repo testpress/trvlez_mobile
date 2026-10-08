@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/constants/nationalities.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
-import 'package:trvlez_mobile/app/routes.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});

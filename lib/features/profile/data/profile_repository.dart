@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:trvlez_mobile/features/profile/domain/profile.dart';
 import 'package:trvlez_mobile/features/profile/data/profile_remote_data_source.dart';
+import 'package:trvlez_mobile/features/profile/domain/profile.dart';
 
 class ProfileRepository {
   final ProfileRemoteDataSource remoteDataSource;

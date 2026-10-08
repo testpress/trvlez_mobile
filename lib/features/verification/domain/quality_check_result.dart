@@ -42,12 +42,12 @@ class ImageQualityResult {
         .toList();
 
     return ImageQualityResult(
-      success: json['success'] ?? false,
+      success: (json['success'] as bool?) ?? false,
       status: json['status']?.toString() ?? 'passed',
-      isAcceptable: json['is_acceptable'] ?? (json['status'] == 'passed'),
+      isAcceptable: (json['is_acceptable'] as bool?) ?? (json['status'] == 'passed'),
       failureReasons: parsedReasons,
-      message: json['message'],
-      uiGuidance: json['ui_guidance'],
+      message: json['message'] as String?,
+      uiGuidance: json['ui_guidance'] as String?,
       checks: json['checks'] as Map<String, dynamic>?,
     );
   }
@@ -80,12 +80,12 @@ class VideoQualityResult {
         .toList();
 
     return VideoQualityResult(
-      success: json['success'] ?? false,
+      success: (json['success'] as bool?) ?? false,
       status: json['status']?.toString() ?? 'passed',
-      isAcceptable: json['is_acceptable'] ?? (json['status'] == 'passed'),
+      isAcceptable: (json['is_acceptable'] as bool?) ?? (json['status'] == 'passed'),
       failureReasons: parsedReasons,
-      message: json['message'],
-      uiGuidance: json['ui_guidance'],
+      message: json['message'] as String?,
+      uiGuidance: json['ui_guidance'] as String?,
       checks: json['checks'] as Map<String, dynamic>?,
     );
   }

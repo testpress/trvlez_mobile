@@ -6,16 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/domain/quality_check_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart'
     as domain;
-import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
-import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
+import 'package:trvlez_mobile/features/verification/domain/verification_submit_result.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 /// Tracks the current phase of the verification flow in the UI.

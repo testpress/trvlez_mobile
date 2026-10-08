@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/constants/app_config.dart';
 import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
-import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/network/error_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
+
+export 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
 
 /// Provides the app-wide [TokenStorage] instance.
 final tokenStorageProvider = Provider<TokenStorage>((ref) {
