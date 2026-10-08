@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 
+/// Reusable property card with horizontal (popular) and vertical (recommended) variants.
 class PropertyCard extends StatelessWidget {
   final Property property;
   final VoidCallback onTap;
@@ -24,8 +29,7 @@ class PropertyCard extends StatelessWidget {
   }
 
   Widget _buildPopularCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = context.colors;
 
     final badgeLabel = (property.propertyType != null &&
             property.propertyType!.isNotEmpty)
@@ -38,36 +42,36 @@ class PropertyCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 240.0,
-        margin: const EdgeInsets.only(right: 16),
+        margin: const EdgeInsets.only(right: AppSpacing.md),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: colorScheme.surfaceContainerHighest,
+          borderRadius: AppRadius.card,
+          color: colors.surfaceSubtle,
         ),
         child: Stack(
           children: [
             // Image with fallback
             Positioned.fill(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: AppRadius.card,
                 child: property.heroImageUrl.isNotEmpty
                     ? Image.network(
                         property.heroImageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
-                            _buildFallbackImage(colorScheme),
+                            _buildFallbackImage(colors),
                       )
-                    : _buildFallbackImage(colorScheme),
+                    : _buildFallbackImage(colors),
               ),
             ),
             // Gradient overlay
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: AppRadius.card,
                   gradient: LinearGradient(
                     colors: [
                       Colors.transparent,
-                      colorScheme.scrim.withAlpha(180),
+                      colors.textPrimary.withValues(alpha: 0.75),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -77,21 +81,21 @@ class PropertyCard extends StatelessWidget {
             ),
             // Badge (Property Type / Amenity)
             Positioned(
-              top: 16,
-              left: 16,
+              top: AppSpacing.md,
+              left: AppSpacing.md,
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  borderRadius: BorderRadius.circular(12),
+                  color: colors.actionPrimary,
+                  borderRadius: AppRadius.input,
                 ),
                 child: Text(
                   badgeLabel,
-                  style: GoogleFonts.inter(
-                    color: colorScheme.onPrimary,
+                  style: GoogleFonts.nunito(
+                    color: colors.textOnAction,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
@@ -101,18 +105,18 @@ class PropertyCard extends StatelessWidget {
             ),
             // Content
             Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
+              bottom: AppSpacing.md,
+              left: AppSpacing.md,
+              right: AppSpacing.md,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     property.name,
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
+                    style: GoogleFonts.nunito(
+                      color: colors.textOnAction,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -122,7 +126,7 @@ class PropertyCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.location_on,
-                        color: Colors.white.withAlpha(200),
+                        color: colors.textOnAction.withValues(alpha: 0.8),
                         size: 15,
                       ),
                       const SizedBox(width: 4),
@@ -131,8 +135,8 @@ class PropertyCard extends StatelessWidget {
                           property.locationString.isNotEmpty
                               ? property.locationString
                               : 'Location available on detail',
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withAlpha(200),
+                          style: GoogleFonts.cabin(
+                            color: colors.textOnAction.withValues(alpha: 0.85),
                             fontSize: 12,
                           ),
                           maxLines: 1,
@@ -145,8 +149,8 @@ class PropertyCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       property.amenities.take(2).join(' • '),
-                      style: GoogleFonts.inter(
-                        color: colorScheme.primaryContainer,
+                      style: GoogleFonts.cabin(
+                        color: colors.textOnAction.withValues(alpha: 0.9),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -158,8 +162,8 @@ class PropertyCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       '\$${property.pricePerNight!.toInt()} / night',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
+                      style: GoogleFonts.nunito(
+                        color: colors.textOnAction,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -175,20 +179,20 @@ class PropertyCard extends StatelessWidget {
   }
 
   Widget _buildRecommendedCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = context.colors;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 110.0,
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: AppSpacing.md),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: colorScheme.surface,
+          color: colors.surface,
+          border: Border.all(color: colors.borderSubtle),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withAlpha(13),
+              color: colors.textPrimary.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -202,15 +206,15 @@ class PropertyCard extends StatelessWidget {
               height: 90,
               margin: const EdgeInsets.all(10),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: AppRadius.cardSm,
                 child: property.heroImageUrl.isNotEmpty
                     ? Image.network(
                         property.heroImageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
-                            _buildFallbackImage(colorScheme),
+                            _buildFallbackImage(colors),
                       )
-                    : _buildFallbackImage(colorScheme),
+                    : _buildFallbackImage(colors),
               ),
             ),
             // Property details
@@ -226,10 +230,10 @@ class PropertyCard extends StatelessWidget {
                   children: [
                     Text(
                       property.name,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.nunito(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: colorScheme.onSurface,
+                        color: colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -239,9 +243,9 @@ class PropertyCard extends StatelessWidget {
                       property.locationString.isNotEmpty
                           ? property.locationString
                           : 'Location available on detail',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.cabin(
                         fontSize: 12,
-                        color: colorScheme.onSurfaceVariant,
+                        color: colors.textSecondary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -253,10 +257,10 @@ class PropertyCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               property.amenities.take(2).join(' • '),
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.cabin(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: colorScheme.primary,
+                                color: colors.actionPrimary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -266,9 +270,9 @@ class PropertyCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               property.shortDescription,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.cabin(
                                 fontSize: 11,
-                                color: colorScheme.onSurfaceVariant,
+                                color: colors.textSecondary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -280,10 +284,10 @@ class PropertyCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             '\$${property.pricePerNight!.toInt()}/nt',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.nunito(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: colorScheme.primary,
+                              color: colors.actionPrimary,
                             ),
                           ),
                         ],
@@ -299,13 +303,13 @@ class PropertyCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
+                  color: colors.surfaceSubtle,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.arrow_forward_ios,
                   size: 14,
-                  color: colorScheme.primary,
+                  color: colors.actionPrimary,
                 ),
               ),
             ),
@@ -315,15 +319,15 @@ class PropertyCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFallbackImage(ColorScheme colorScheme) {
+  Widget _buildFallbackImage(AppColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
+        color: colors.surfaceSubtle,
       ),
       child: Center(
         child: Icon(
           Icons.hotel_outlined,
-          color: colorScheme.primary,
+          color: colors.actionPrimary,
           size: 32,
         ),
       ),

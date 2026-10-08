@@ -122,22 +122,22 @@
 ### Phase 2: Pilot Feature Migration (`features/properties`)
 > **Goal:** Fully migrate one complete feature to serve as the reference standard for the codebase.
 
-- [ ] **Task 2.1: Domain Layer Extraction**
+- [x] **Task 2.1: Domain Layer Extraction**
   - Move entities into `lib/features/properties/domain/entities/property.dart`.
   - Define `abstract interface class PropertiesRepository` in `lib/features/properties/domain/repositories/properties_repository.dart`.
 
-- [ ] **Task 2.2: Data Layer Restructuring**
+- [x] **Task 2.2: Data Layer Restructuring**
   - Move DTOs to `lib/features/properties/data/models/property_dto.dart`.
   - Move remote data source to `lib/features/properties/data/datasources/properties_remote_data_source.dart`.
   - Implement `PropertiesRepositoryImpl` in `lib/features/properties/data/repositories/properties_repository_impl.dart`, mapping Dio exceptions to `AppException`.
 
-- [ ] **Task 2.3: Dependency Wiring & Presentation State**
+- [x] **Task 2.3: Dependency Wiring & Presentation State**
   - Wire providers in `lib/features/properties/presentation/providers/properties_providers.dart`:
     - `propertiesRemoteDataSourceProvider`
     - `propertiesRepositoryProvider` (typed as the domain interface)
   - Create `PropertyDetailNotifier` (`AsyncNotifier<Property>`) to replace the `FutureBuilder` inside the screen.
 
-- [ ] **Task 2.4: Deconstruct `property_detail_screen.dart` (1,218 Lines)**
+- [x] **Task 2.4: Deconstruct `property_detail_screen.dart` (1,218 Lines)**
   - Extract private widgets into dedicated files under `lib/features/properties/presentation/widgets/`:
     - `property_header_image.dart`
     - `property_top_bar.dart`
@@ -146,11 +146,11 @@
     - `property_amenities_section.dart`
   - Reduce `property_detail_screen.dart` to a clean `ConsumerWidget` under 150 lines.
 
-- [ ] **Task 2.5: Replace Inline Styles with Tokens**
+- [x] **Task 2.5: Replace Inline Styles with Tokens**
   - Remove all inline `Color(0x...)`, `Colors.*`, and raw `TextStyle` in the properties feature.
   - Use `context.colors`, `context.text`, and `AppSpacing`.
 
-- [ ] **Task 2.6: Test Alignment**
+- [x] **Task 2.6: Test Alignment**
   - Move and update property tests to `test/features/properties/presentation/` and `test/features/properties/data/`.
   - Ensure all tests pass.
 
