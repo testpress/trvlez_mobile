@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// Shared scaffold for passport and video review screens.
 ///
@@ -106,7 +107,7 @@ class SharedReviewScaffold extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.sm10Radius,
         boxShadow: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -147,10 +148,10 @@ class SharedReviewScaffold extends StatelessWidget {
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: AppRadius.sm10Radius,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(9),
+              borderRadius: AppRadius.sm10Radius,
               child: mediaChild,
             ),
           ),
@@ -174,7 +175,7 @@ class SharedReviewScaffold extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.smRadius,
       ),
       child: Row(
         children: [
@@ -204,9 +205,7 @@ class SharedReviewScaffold extends StatelessWidget {
               foregroundColor: colorScheme.onSurface,
               side: BorderSide(color: colorScheme.outline),
               minimumSize: const Size(double.infinity, 44),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(22),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
             ),
             child: Text(
               'Retake',
@@ -225,9 +224,7 @@ class SharedReviewScaffold extends StatelessWidget {
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
               minimumSize: const Size(double.infinity, 44),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(22),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
               elevation: 0,
             ),
             child: Text(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
@@ -12,10 +11,11 @@ import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/widgets/date_picker_tile.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/widgets/booking_property_header_card.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/guest_selection_section.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/price_breakdown_section.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/room_selection_section.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/widgets/stay_dates_section.dart';
 
 /// Screen for creating a reservation at a property.
 class CreateReservationScreen extends ConsumerStatefulWidget {
@@ -322,9 +322,14 @@ class _CreateReservationScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (property != null) _buildPropertyCard(property),
+            if (property != null) BookingPropertyHeaderCard(property: property),
             const SizedBox(height: AppSpacing.lg),
-            _buildDateSection(),
+            StayDatesSection(
+              checkInDate: _checkInDate,
+              checkOutDate: _checkOutDate,
+              onSelectCheckIn: () => _selectDate(isCheckIn: true),
+              onSelectCheckOut: () => _selectDate(isCheckIn: false),
+            ),
             const SizedBox(height: AppSpacing.lg),
             if (property != null) ...[
               RoomSelectionSection(
@@ -372,7 +377,7 @@ class _CreateReservationScreenState
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
                   color: colors.feedbackError.withAlpha(20),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  borderRadius: AppRadius.mdRadius,
                   border: Border.all(color: colors.feedbackError),
                 ),
                 child: Text(
@@ -396,127 +401,6 @@ class _CreateReservationScreenState
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildPropertyCard(Property property) {
-    final colors = context.colors;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: colors.surfaceSubtle,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: colors.borderSubtle),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            child: property.heroImageUrl.isNotEmpty
-                ? Image.network(
-                    property.heroImageUrl,
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 64,
-                      height: 64,
-                      color: colors.surfaceSubtle,
-                      child: Icon(Icons.hotel, color: colors.textSecondary),
-                    ),
-                  )
-                : Container(
-                    width: 64,
-                    height: 64,
-                    color: colors.surfaceSubtle,
-                    child: Icon(Icons.hotel, color: colors.textSecondary),
-                  ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  property.name,
-                  style: GoogleFonts.nunito(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  property.locationString,
-                  style: GoogleFonts.cabin(
-                    fontSize: 13,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateSection() {
-    final colors = context.colors;
-    final dateFormat = DateFormat('EEE, MMM d, yyyy');
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Stay Dates',
-          style: GoogleFonts.nunito(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: colors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: DatePickerTile(
-                label: 'Check-in',
-                value: _checkInDate != null
-                    ? dateFormat.format(_checkInDate!)
-                    : 'Select date',
-                icon: Icons.calendar_today_outlined,
-                colorScheme: Theme.of(context).colorScheme,
-                onTap: () => _selectDate(isCheckIn: true),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: DatePickerTile(
-                label: 'Check-out',
-                value: _checkOutDate != null
-                    ? dateFormat.format(_checkOutDate!)
-                    : 'Select date',
-                icon: Icons.calendar_today_outlined,
-                colorScheme: Theme.of(context).colorScheme,
-                onTap: () => _selectDate(isCheckIn: false),
-              ),
-            ),
-          ],
-        ),
-        if (_checkInDate != null && _checkOutDate != null) ...[
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            '${_checkOutDate!.difference(_checkInDate!).inDays} night(s)',
-            style: GoogleFonts.cabin(
-              fontSize: 13,
-              color: colors.actionPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ],
     );
   }
 }

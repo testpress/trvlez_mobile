@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -268,7 +269,7 @@ class _VerificationProcessingScreenState
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.sm10Radius,
         boxShadow: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -366,7 +367,7 @@ class _VerificationProcessingScreenState
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         minimumSize: const Size(double.infinity, 44),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
         elevation: 0,
       ),
       child: Text(

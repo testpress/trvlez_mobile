@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/face_guide_painter.dart';
@@ -205,7 +206,9 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
             children: [
               Text(
                 errorMsg ?? '',
-                style: TextStyle(color: context.colors.feedbackError),
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.feedbackError,
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -259,18 +262,17 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
   }
 
   Widget _buildInstructionsOverlay() {
-    return const Positioned(
+    return Positioned(
       top: 64,
       left: 24,
       right: 24,
       child: Text(
         'Please look directly into the camera',
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: context.text.titleMedium?.copyWith(
           color: Colors.white,
-          fontSize: 18,
           fontWeight: FontWeight.bold,
-          shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+          shadows: const [Shadow(blurRadius: 4, color: Colors.black54)],
         ),
       ),
     );
@@ -286,13 +288,12 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: Colors.black54,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: AppRadius.lg20Radius,
           ),
           child: Text(
             '00:${recordedSeconds.toString().padLeft(2, '0')}',
-            style: TextStyle(
+            style: context.text.titleSmall?.copyWith(
               color: context.colors.feedbackError,
-              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),

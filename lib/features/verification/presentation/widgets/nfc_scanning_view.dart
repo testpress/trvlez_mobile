@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 
 /// Active scanning view with contactless pulse animation and progress indicator.
@@ -62,19 +64,21 @@ class NfcScanningView extends StatelessWidget {
         LinearProgressIndicator(
           value: progress > 0 ? progress : null,
           minHeight: 8,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: AppRadius.xsRadius,
         ),
         const SizedBox(height: 16),
         Text(
           'Keep your phone steady against the passport',
-          style: TextStyle(color: theme.colorScheme.onSurface.withAlpha(150)),
+          style: context.text.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withAlpha(150),
+          ),
         ),
         const SizedBox(height: 32),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme.colorScheme.secondaryContainer.withAlpha(100),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.mdRadius,
           ),
           child: Row(
             children: [
@@ -90,9 +94,8 @@ class NfcScanningView extends StatelessWidget {
                   Platform.isIOS
                       ? 'Rest the top edge of your iPhone on the inside back cover of the passport.'
                       : 'Place the middle/top of your phone flat against the passport data page.',
-                  style: TextStyle(
+                  style: context.text.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSecondaryContainer,
-                    fontSize: 14,
                   ),
                 ),
               ),

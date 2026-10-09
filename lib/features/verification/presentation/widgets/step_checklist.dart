@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
@@ -59,7 +60,7 @@ class StepChecklist extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lg20Radius,
         border: Border.all(
           color: theme.colorScheme.outlineVariant.withAlpha(80),
         ),
@@ -141,7 +142,7 @@ class StepRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: color.withAlpha(20),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.smRadius,
             ),
             child: Text(
               statusLabel,

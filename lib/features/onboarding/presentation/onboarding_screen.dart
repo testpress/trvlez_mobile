@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/widgets/onboarding_stepper.dart';
@@ -110,7 +111,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: AppRadius.sm10Radius,
                           boxShadow: [
                             BoxShadow(
                               color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -168,7 +169,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   foregroundColor: colorScheme.surface,
                                   minimumSize: const Size(double.infinity, 44),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
+                                    borderRadius: AppRadius.xl22Radius,
                                   ),
                                   elevation: 0,
                                 ),
@@ -256,7 +257,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
         const SizedBox(height: 8),
         ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: AppRadius.xsRadius,
           child: LinearProgressIndicator(
             value: progressValue,
             minHeight: 6,
@@ -274,7 +275,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         border: Border.all(color: colorScheme.outlineVariant, width: 0.8),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.sm10Radius,
       ),
       child: Row(
         children: [

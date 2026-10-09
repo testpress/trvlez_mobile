@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/reservation_status_badge.dart';
 
@@ -220,9 +222,11 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
               FilledButton.icon(
                 onPressed: () => context.go(AppRoutes.home),
                 icon: const Icon(Icons.search, size: 18),
-                label: const Text(
+                label: Text(
                   'Explore Properties',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: context.text.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -287,7 +291,7 @@ class _ReservationCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: AppRadius.lg20Radius,
           border: Border.all(color: colorScheme.outlineVariant),
           boxShadow: [
             BoxShadow(

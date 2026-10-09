@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
@@ -52,7 +53,7 @@ class NfcIntroScreen extends ConsumerWidget {
                 ),
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.sm10Radius,
                   boxShadow: [
                     BoxShadow(
                       color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -133,7 +134,7 @@ class NfcIntroScreen extends ConsumerWidget {
                         color: colorScheme.surfaceContainerHighest.withValues(
                           alpha: 0.3,
                         ),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: AppRadius.sm10Radius,
                         border: Border.all(
                           color: colorScheme.outlineVariant,
                           width: 0.8,
@@ -177,7 +178,7 @@ class NfcIntroScreen extends ConsumerWidget {
                         foregroundColor: colorScheme.surface,
                         minimumSize: const Size(double.infinity, 44),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
+                          borderRadius: AppRadius.xl22Radius,
                         ),
                         elevation: 0,
                       ),

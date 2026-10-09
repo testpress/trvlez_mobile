@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/profile/data/models/profile_dto.dart';
 
@@ -15,7 +16,11 @@ class ProfileRemoteDataSource {
   /// Fetches the current traveler profile.
   Future<ProfileDto> getProfile() async {
     final response = await dio.get<Map<String, dynamic>>('/traveler/profile');
-    return ProfileDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException('Empty response received from getProfile');
+    }
+    return ProfileDto.fromJson(data);
   }
 
   Future<ProfileDto> updateProfile({
@@ -38,7 +43,11 @@ class ProfileRemoteDataSource {
       },
     );
 
-    return ProfileDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException('Empty response received from updateProfile');
+    }
+    return ProfileDto.fromJson(data);
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 enum OnboardingStepState { completed, active, upcoming }
 
@@ -68,14 +69,14 @@ class OnboardingStepper extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: step.onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.mdRadius,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               color: isActive
                   ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
                   : colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadius.mdRadius,
               border: Border.all(
                 color: isActive
                     ? colorScheme.primary

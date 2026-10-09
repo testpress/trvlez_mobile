@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Screen summarizing the successful read of the NFC passport chip.
@@ -51,7 +52,7 @@ class NfcResultScreen extends ConsumerWidget {
                             width: 120,
                             height: 160,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: AppRadius.mdRadius,
                               border: Border.all(
                                 color: theme.colorScheme.primary,
                                 width: 3,
@@ -132,8 +133,7 @@ class NfcResultScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 'Your passport\'s digital signature is valid.',
-                style: TextStyle(
-                  fontSize: 16,
+                style: context.text.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withAlpha(180),
                 ),
                 textAlign: TextAlign.center,
@@ -147,7 +147,7 @@ class NfcResultScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerHighest
                           .withAlpha(100),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: AppRadius.lgRadius,
                       border: Border.all(
                         color: theme.colorScheme.outlineVariant.withAlpha(80),
                       ),
@@ -199,7 +199,7 @@ class NfcResultScreen extends ConsumerWidget {
                             color: theme.colorScheme.primaryContainer.withAlpha(
                               100,
                             ),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: AppRadius.smRadius,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +240,7 @@ class NfcResultScreen extends ConsumerWidget {
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: AppRadius.lgRadius,
                   ),
                 ),
                 child: const Text('Submit Verification'),
@@ -261,8 +261,7 @@ class NfcResultScreen extends ConsumerWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: 13,
+            style: context.text.labelMedium?.copyWith(
               color: theme.colorScheme.onSurface.withAlpha(150),
               fontWeight: FontWeight.w600,
             ),
@@ -288,15 +287,13 @@ class NfcResultScreen extends ConsumerWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
+          style: context.text.bodySmall?.copyWith(
             color: theme.colorScheme.onPrimaryContainer,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 12,
+          style: context.text.bodySmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onPrimaryContainer,
           ),

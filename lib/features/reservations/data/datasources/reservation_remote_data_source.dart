@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/reservations/data/models/reservation_dto.dart';
 
@@ -20,7 +21,13 @@ class ReservationRemoteDataSource {
       '/traveler/reservations',
       data: body,
     );
-    return ReservationDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from reservation creation',
+      );
+    }
+    return ReservationDto.fromJson(data);
   }
 
   /// GET /traveler/reservations
@@ -38,7 +45,13 @@ class ReservationRemoteDataSource {
       '/traveler/reservations',
       queryParameters: queryParameters,
     );
-    return ReservationListResponseDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from reservations list',
+      );
+    }
+    return ReservationListResponseDto.fromJson(data);
   }
 
   /// GET /traveler/reservations/{id}
@@ -46,7 +59,13 @@ class ReservationRemoteDataSource {
     final response = await dio.get<Map<String, dynamic>>(
       '/traveler/reservations/$id',
     );
-    return ReservationDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from reservation detail',
+      );
+    }
+    return ReservationDto.fromJson(data);
   }
 
   /// DELETE /traveler/reservations/{id}
@@ -54,7 +73,13 @@ class ReservationRemoteDataSource {
     final response = await dio.delete<Map<String, dynamic>>(
       '/traveler/reservations/$id',
     );
-    return ReservationDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from reservation cancellation',
+      );
+    }
+    return ReservationDto.fromJson(data);
   }
 
   /// POST /traveler/reservations/{id}/checkin-token
@@ -63,7 +88,11 @@ class ReservationRemoteDataSource {
       '/traveler/reservations/$reservationId/checkin-token',
       data: {},
     );
-    return CheckInTokenDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException('Empty response received from checkin token');
+    }
+    return CheckInTokenDto.fromJson(data);
   }
 }
 

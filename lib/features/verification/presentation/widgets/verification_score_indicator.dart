@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 class VerificationScoreIndicator extends StatelessWidget {
   final double score;
@@ -23,7 +24,7 @@ class VerificationScoreIndicator extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: color.withAlpha(15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.mdRadius,
         border: Border.all(color: color.withAlpha(40)),
       ),
       child: Row(

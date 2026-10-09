@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 
 /// Instruction screen shown before passport camera capture.
@@ -57,7 +58,7 @@ class PassportInstructionScreen extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.sm10Radius,
                   boxShadow: [
                     BoxShadow(
                       color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -102,7 +103,7 @@ class PassportInstructionScreen extends StatelessWidget {
                         color: colorScheme.surfaceContainerHighest.withValues(
                           alpha: 0.3,
                         ),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: AppRadius.sm10Radius,
                         border: Border.all(
                           color: colorScheme.outlineVariant,
                           width: 0.8,
@@ -157,7 +158,7 @@ class PassportInstructionScreen extends StatelessWidget {
                         foregroundColor: colorScheme.surface,
                         minimumSize: const Size(double.infinity, 44),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
+                          borderRadius: AppRadius.xl22Radius,
                         ),
                         elevation: 0,
                       ),
@@ -219,7 +220,7 @@ class PassportInstructionScreen extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.smRadius,
         border: Border.all(
           color: colorScheme.primary.withValues(alpha: 0.3),
           width: 1.2,
@@ -239,7 +240,7 @@ class PassportInstructionScreen extends StatelessWidget {
                   height: 46,
                   decoration: BoxDecoration(
                     color: colorScheme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: AppRadius.xsRadius,
                     border: Border.all(
                       color: colorScheme.primary.withValues(alpha: 0.3),
                       width: 0.8,
@@ -263,7 +264,7 @@ class PassportInstructionScreen extends StatelessWidget {
                         width: 70,
                         decoration: BoxDecoration(
                           color: colorScheme.onSurface.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: AppRadius.xxsRadius,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -272,7 +273,7 @@ class PassportInstructionScreen extends StatelessWidget {
                         width: 50,
                         decoration: BoxDecoration(
                           color: colorScheme.onSurface.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: AppRadius.xxsRadius,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -281,7 +282,7 @@ class PassportInstructionScreen extends StatelessWidget {
                         width: 60,
                         decoration: BoxDecoration(
                           color: colorScheme.onSurface.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: AppRadius.xxsRadius,
                         ),
                       ),
                     ],
@@ -296,7 +297,7 @@ class PassportInstructionScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
             decoration: BoxDecoration(
               color: colorScheme.primary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: AppRadius.xsRadius,
               border: Border.all(
                 color: colorScheme.primary.withValues(alpha: 0.5),
                 width: 0.8,

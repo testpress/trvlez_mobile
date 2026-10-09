@@ -1,5 +1,6 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Informational view shown when NFC hardware is either disabled or unsupported.
 class NfcStatusView extends StatelessWidget {
@@ -37,8 +38,7 @@ class NfcStatusView extends StatelessWidget {
               ? 'Please enable NFC in your device settings to scan your passport. We will automatically resume once it is enabled.'
               : 'Your device either does not support NFC or it is currently disabled. You can continue verification without NFC.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
+          style: context.text.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withAlpha(180),
             height: 1.5,
           ),

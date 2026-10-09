@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 class CounterTile extends StatelessWidget {
   final String label;
@@ -29,7 +30,7 @@ class CounterTile extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.mdRadius,
         border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Column(
@@ -104,7 +105,7 @@ class CounterTile extends StatelessWidget {
           color: isEnabled
               ? colorScheme.primary.withAlpha(26)
               : colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.smRadius,
         ),
         child: Icon(
           icon,

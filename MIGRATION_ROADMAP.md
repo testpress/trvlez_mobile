@@ -299,6 +299,24 @@
 
 ---
 
+### Phase 9: Design System & Code Standards Enforcement
+> **Goal:** Eliminate inline text styles, magic radius/spacing numbers, unsafe null-unwraps, and modularize oversized screen widgets to comply with `DESIGN_SYSTEM.md` and `CODE_STANDARDS.md`.
+
+- [x] **Task 9.1: Typography & Design System Token Enforcement**
+  - Replace all 20 inline `TextStyle(` instances in `lib/features/` with semantic text tokens (`context.text.*?.copyWith(...)`).
+  - Migrate literal `BorderRadius.circular(...)` to `AppRadius.*` tokens.
+
+- [x] **Task 9.2: Data Layer Null-Safety Hardening**
+  - Replace all 13 `response.data!` force-unwraps in remote data sources with safe null assertions and `ServerException` mapping.
+
+- [x] **Task 9.3: Screen Deconstruction & Extraction of Private Helpers**
+  - Deconstruct oversized screen widgets and convert `_buildX` helper methods to dedicated `StatelessWidget`/`ConsumerWidget` classes in `presentation/widgets/`.
+
+- [x] **Task 9.4: Verification & Quality Gates**
+  - Run `./scripts/quality_gates.sh` ensuring 0 analyzer diagnostics, clean formatting, and 100% test pass rate.
+
+---
+
 ## 4. Definition of Done for Each Migrated Feature
 
 Every feature migration is considered complete only when:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// A subtle horizontal step indicator for verification processing stages.
 ///
@@ -53,7 +54,7 @@ class ProcessingStepIndicator extends StatelessWidget {
               color: isConnected
                   ? successColor.withValues(alpha: 0.6)
                   : colorScheme.onSurface.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(1),
+              borderRadius: AppRadius.xxsRadius,
             ),
           );
         }

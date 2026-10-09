@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/properties/data/models/property_dto.dart';
 
@@ -34,14 +35,26 @@ class PropertiesRemoteDataSource {
       '/properties/listing',
       queryParameters: queryParams,
     );
-    return PropertyListingResponseDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from properties listing',
+      );
+    }
+    return PropertyListingResponseDto.fromJson(data);
   }
 
   Future<PropertyDto> getPropertyDetail(String id) async {
     final response = await dio.get<Map<String, dynamic>>(
       '/properties/$id/public',
     );
-    return PropertyDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from property detail',
+      );
+    }
+    return PropertyDto.fromJson(data);
   }
 }
 

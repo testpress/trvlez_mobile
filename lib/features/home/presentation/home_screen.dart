@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/widgets/app_brand_logo.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
 
 /// The primary landing screen for all authenticated travelers.
@@ -41,7 +42,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       SnackBar(
         content: Text('$featureName — coming soon!'),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -49,55 +50,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     final verificationState = ref.watch(travelerVerificationStateProvider);
     final shouldShowBanner = verificationState.shouldShowBanner;
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/logo.svg',
-                  width: 18,
-                  height: 18,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text.rich(
-              TextSpan(
-                text: 'Trvl',
-                style: GoogleFonts.inter(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: colorScheme.onSurface,
-                  letterSpacing: -0.5,
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Ez',
-                    style: TextStyle(color: colorScheme.primary),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        title: const AppBrandLogo(),
         centerTitle: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -322,14 +280,14 @@ class FeatureCard extends StatelessWidget {
 
     return Material(
       color: theme.colorScheme.surface,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadius.lg20Radius,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lg20Radius,
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: AppRadius.lg20Radius,
             border: Border.all(
               color: theme.colorScheme.outlineVariant.withAlpha(80),
             ),
@@ -347,7 +305,7 @@ class FeatureCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: AppRadius.md14Radius,
                 ),
                 child: Icon(feature.icon, color: Colors.white, size: 26),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
@@ -80,7 +81,7 @@ class MrzReviewScreen extends ConsumerWidget {
                   ),
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: AppRadius.sm10Radius,
                     boxShadow: [
                       BoxShadow(
                         color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -149,7 +150,7 @@ class MrzReviewScreen extends ConsumerWidget {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: colorScheme.error.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: AppRadius.sm10Radius,
                             border: Border.all(
                               color: colorScheme.error.withValues(alpha: 0.2),
                             ),
@@ -196,7 +197,7 @@ class MrzReviewScreen extends ConsumerWidget {
                           foregroundColor: colorScheme.onPrimary,
                           minimumSize: const Size(double.infinity, 48),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: AppRadius.xlRadius,
                           ),
                           elevation: 0,
                         ),
@@ -233,7 +234,7 @@ class MrzReviewScreen extends ConsumerWidget {
                           side: BorderSide(color: colorScheme.primary),
                           minimumSize: const Size(double.infinity, 44),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(22),
+                            borderRadius: AppRadius.xl22Radius,
                           ),
                         ),
                         child: Text(

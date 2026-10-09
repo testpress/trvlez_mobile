@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 
 /// Error state view for NFC reading failures with user guidance and recovery actions.
@@ -41,8 +43,7 @@ class NfcErrorView extends StatelessWidget {
         Text(
           error.message,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
+          style: context.text.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withAlpha(180),
             height: 1.5,
           ),
@@ -53,7 +54,7 @@ class NfcErrorView extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: theme.colorScheme.secondaryContainer.withAlpha(80),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.smRadius,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,8 +68,7 @@ class NfcErrorView extends StatelessWidget {
                 Expanded(
                   child: Text(
                     userGuidance,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: context.text.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSecondaryContainer,
                       height: 1.4,
                     ),
@@ -86,8 +86,7 @@ class NfcErrorView extends StatelessWidget {
               tilePadding: EdgeInsets.zero,
               title: Text(
                 'Technical Details',
-                style: TextStyle(
-                  fontSize: 12,
+                style: context.text.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withAlpha(100),
                 ),
               ),
@@ -99,12 +98,11 @@ class NfcErrorView extends StatelessWidget {
                     color: theme.colorScheme.surfaceContainerHighest.withAlpha(
                       100,
                     ),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: AppRadius.xsRadius,
                   ),
                   child: SelectableText(
                     technicalDetails,
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: context.text.labelSmall?.copyWith(
                       fontFamily: 'monospace',
                       color: theme.colorScheme.onSurface.withAlpha(120),
                     ),

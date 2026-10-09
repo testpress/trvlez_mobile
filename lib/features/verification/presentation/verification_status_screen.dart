@@ -6,13 +6,16 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/step_checklist.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_info_card.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_score_indicator.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_status_actions.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_status_config.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_status_icon.dart';
 
 /// Displays the full verification journey with step-by-step progress.
 ///
@@ -163,7 +166,7 @@ class VerificationStatusScreenState
                       ),
                       decoration: BoxDecoration(
                         color: colorScheme.surface,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: AppRadius.sm10Radius,
                         boxShadow: [
                           BoxShadow(
                             color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -176,7 +179,13 @@ class VerificationStatusScreenState
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // ── Status Icon ────────────────────────────────
-                          Center(child: buildStatusIcon(config, state)),
+                          Center(
+                            child: VerificationStatusIcon(
+                              config: config,
+                              state: state,
+                              pulseAnimation: pulseAnimation,
+                            ),
+                          ),
                           const SizedBox(height: 24),
                           // ── Title & Subtitle ──────────────────────────
                           Text(
@@ -232,85 +241,7 @@ class VerificationStatusScreenState
                           ),
                           const SizedBox(height: 24),
                           // ── Actions ───────────────────────────────────
-                          if (state.isFailed) ...[
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                ref
-                                    .read(verificationNotifierProvider.notifier)
-                                    .reset();
-                                context.go(AppRoutes.passportCapture);
-                              },
-                              icon: const Icon(Icons.refresh_rounded),
-                              label: Text(
-                                'Re-submit Documents',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorScheme.onSurface,
-                                foregroundColor: colorScheme.surface,
-                                minimumSize: const Size(double.infinity, 44),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                                elevation: 0,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            TextButton.icon(
-                              onPressed: () {
-                                // Future: open support chat/email
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text(
-                                      'Support — coming soon!',
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.support_agent_rounded),
-                              label: Text(
-                                'Contact Support',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              style: TextButton.styleFrom(
-                                foregroundColor: colorScheme.onSurface
-                                    .withValues(alpha: 0.7),
-                                minimumSize: const Size(double.infinity, 44),
-                              ),
-                            ),
-                          ],
-                          if (state.isVerified) ...[
-                            ElevatedButton.icon(
-                              onPressed: () => context.go(AppRoutes.home),
-                              icon: const Icon(Icons.explore_rounded),
-                              label: Text(
-                                'Start Exploring',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorScheme.onSurface,
-                                foregroundColor: colorScheme.surface,
-                                minimumSize: const Size(double.infinity, 44),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                                elevation: 0,
-                              ),
-                            ),
-                          ],
+                          VerificationStatusActions(state: state),
                         ],
                       ),
                     ),
@@ -351,41 +282,5 @@ class VerificationStatusScreenState
               ),
             ),
     );
-  }
-
-  Widget buildStatusIcon(StatusConfig config, TravelerVerificationState state) {
-    final icon = Container(
-      width: 96,
-      height: 96,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: config.iconGradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: config.iconGradient.first.withAlpha(60),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Icon(config.icon, color: context.colors.textOnAction, size: 44),
-    );
-
-    // Only pulse the icon when processing
-    if (state.isProcessing) {
-      return AnimatedBuilder(
-        animation: pulseAnimation,
-        builder: (context, child) {
-          return Transform.scale(scale: pulseAnimation.value, child: child);
-        },
-        child: icon,
-      );
-    }
-
-    return icon;
   }
 }

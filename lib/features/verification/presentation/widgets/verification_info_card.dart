@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
@@ -36,7 +37,7 @@ class InfoCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.colorScheme.error.withAlpha(15),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.lgRadius,
           border: Border.all(color: theme.colorScheme.error.withAlpha(40)),
         ),
         child: Column(
@@ -87,7 +88,7 @@ class InfoCard extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.smRadius,
                   border: Border.all(
                     color: theme.colorScheme.error.withAlpha(40),
                   ),
@@ -143,7 +144,7 @@ class InfoCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withAlpha(15),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lgRadius,
         border: Border.all(color: color.withAlpha(40)),
       ),
       child: Row(

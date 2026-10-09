@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+# Ensure script runs from project root regardless of where it is invoked from
+cd "$(dirname "$0")/.."
+
 echo "=============================================="
 echo "Running Architecture Quality Gates & CI Checks"
 echo "=============================================="
 
 # 1. Automated Style Guard
 echo ""
-echo "1/5 Checking Style Guard (disallow raw color references in lib/features/)..."
+echo "1/7 Checking Style Guard (disallow raw color references in lib/features/)..."
 if grep -rnE "Color\(0x|Colors\.(red|blue|green|grey)" lib/features/; then
   echo "FAILED: Raw color references found in lib/features/. Use design system tokens (context.colors.*)." >&2
   exit 1

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/auth/data/models/login_response_dto.dart';
 import 'package:trvlez_mobile/features/auth/data/models/traveler_signup_dto.dart';
@@ -27,7 +28,13 @@ class AuthRemoteDataSource {
       data: {'email': email, 'password': password},
     );
 
-    return TravelerSignupResponseDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from signup endpoint',
+      );
+    }
+    return TravelerSignupResponseDto.fromJson(data);
   }
 
   /// Logs in an existing traveler.
@@ -47,7 +54,13 @@ class AuthRemoteDataSource {
       options: Options(contentType: Headers.formUrlEncodedContentType),
     );
 
-    return LoginResponseDto.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw const ServerException(
+        'Empty response received from login endpoint',
+      );
+    }
+    return LoginResponseDto.fromJson(data);
   }
 }
 

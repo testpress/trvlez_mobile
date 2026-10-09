@@ -215,9 +215,11 @@ class PropertyRoomTypeCard extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: onBookNow,
                   icon: const Icon(Icons.arrow_forward, size: 16),
-                  label: const Text(
+                  label: Text(
                     'Book This Room',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: context.text.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: colors.actionPrimary,

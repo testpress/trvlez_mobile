@@ -1,0 +1,94 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+
+/// Primary action buttons on the verification status screen.
+class VerificationStatusActions extends ConsumerWidget {
+  final TravelerVerificationState state;
+
+  const VerificationStatusActions({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (state.isFailed) {
+      return Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: () {
+              ref.read(verificationNotifierProvider.notifier).reset();
+              context.go(AppRoutes.passportCapture);
+            },
+            icon: const Icon(Icons.refresh_rounded),
+            label: Text(
+              'Re-submit Documents',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.onSurface,
+              foregroundColor: colorScheme.surface,
+              minimumSize: const Size(double.infinity, 44),
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
+              elevation: 0,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Support — coming soon!'),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.mdRadius,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.support_agent_rounded),
+            label: Text(
+              'Contact Support',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+            style: TextButton.styleFrom(
+              foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),
+              minimumSize: const Size(double.infinity, 44),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (state.isVerified) {
+      return ElevatedButton.icon(
+        onPressed: () => context.go(AppRoutes.home),
+        icon: const Icon(Icons.explore_rounded),
+        label: Text(
+          'Start Exploring',
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.onSurface,
+          foregroundColor: colorScheme.surface,
+          minimumSize: const Size(double.infinity, 44),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
+          elevation: 0,
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// Top bar overlay displaying close button and flash cycle toggle.
 class PassportTopBar extends StatelessWidget {
@@ -49,7 +50,7 @@ class PassportTopBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.black.withAlpha(100),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: AppRadius.lg20Radius,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// Step state for the verification progress bar.
 enum VerificationStepState { completed, active, upcoming }
@@ -62,7 +63,7 @@ class VerificationProgressBar extends StatelessWidget {
                   color: isConnected
                       ? context.colors.feedbackSuccess
                       : colorScheme.onSurface.withAlpha(40),
-                  borderRadius: BorderRadius.circular(1),
+                  borderRadius: AppRadius.xxsRadius,
                 ),
               ),
             );

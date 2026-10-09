@@ -187,7 +187,7 @@ class PropertyCard extends StatelessWidget {
         height: 110.0,
         margin: const EdgeInsets.only(bottom: AppSpacing.md),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: AppRadius.lg20Radius,
           color: colors.surface,
           border: Border.all(color: colors.borderSubtle),
           boxShadow: [

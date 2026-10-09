@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 class MainScaffold extends StatelessWidget {
   final Widget child;
@@ -109,7 +110,7 @@ class MainScaffold extends StatelessWidget {
           color: isActive
               ? theme.colorScheme.primary.withAlpha(26)
               : Colors.transparent, // 0.1 * 255
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.lgRadius,
         ),
         child: Icon(
           isActive ? activeIcon : inactiveIcon,
