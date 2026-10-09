@@ -10,9 +10,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/date_picker_tile.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/guest_selection_section.dart';
@@ -24,12 +22,16 @@ class CreateReservationScreen extends ConsumerStatefulWidget {
   final Property? property;
   final String? propertyId;
   final String? initialRoomTypeId;
+  final Future<Property> Function(String propertyId)? propertyLoader;
+  final String? initialPhone;
 
   const CreateReservationScreen({
     super.key,
     this.property,
     this.propertyId,
     this.initialRoomTypeId,
+    this.propertyLoader,
+    this.initialPhone,
   });
 
   @override
@@ -62,25 +64,19 @@ class _CreateReservationScreenState
       _loadProperty();
     }
 
-    // Auto-prefill traveler phone from profile if available
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final profile = ref.read(currentProfileProvider).valueOrNull;
-      if (profile?.phone != null &&
-          profile!.phone!.isNotEmpty &&
-          _phoneController.text.isEmpty) {
-        _phoneController.text = profile.phone!;
-      }
-    });
+    // Auto-prefill traveler phone if provided
+    if (widget.initialPhone != null &&
+        widget.initialPhone!.isNotEmpty &&
+        _phoneController.text.isEmpty) {
+      _phoneController.text = widget.initialPhone!;
+    }
   }
 
   void _loadProperty() {
     final propId = widget.property?.id ?? widget.propertyId ?? '';
-    if (propId.isNotEmpty) {
+    if (propId.isNotEmpty && widget.propertyLoader != null) {
       setState(() {
-        _propertyFuture = ref
-            .read(propertiesRepositoryProvider)
-            .getPropertyDetail(propId);
+        _propertyFuture = widget.propertyLoader!(propId);
       });
     }
   }

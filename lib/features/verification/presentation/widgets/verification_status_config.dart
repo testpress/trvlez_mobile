@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 class StatusConfig {
   final IconData icon;

@@ -132,7 +132,10 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
         if (e is NfcError) {
           _error = e;
         } else {
-          _error = NfcError.fromException(e);
+          _error = NfcError(
+            type: NfcErrorType.unknownError,
+            message: e.toString(),
+          );
         }
       });
     }

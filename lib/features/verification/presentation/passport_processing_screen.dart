@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
-import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/document_processing_visual.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 
 /// Intermediate screen displayed immediately after camera capture.
 ///

@@ -272,6 +272,33 @@
 
 ---
 
+### Phase 8: Architecture & Boundary Decoupling
+> **Goal:** Strictly enforce domain purity and cross-feature encapsulation in accordance with `ARCHITECTURE.md`.
+
+- [x] **Task 8.1: Domain Layer Purity in Verification**
+  - Extract `NfcError` mapper from `features/verification/domain/nfc_error.dart` to `features/verification/data/services/nfc_error_mapper.dart`.
+  - Remove `package:flutter/services.dart` and `package:dmrtd/dmrtd.dart` from `nfc_error.dart` to make domain pure Dart.
+  - Relocate UI presentation model `processing_stage.dart` from `domain/` to `features/verification/presentation/models/processing_stage.dart`.
+  - Update all verification screens, services, and tests.
+
+- [x] **Task 8.2: Promote Shared KYC Stepper to Core**
+  - Move `features/verification/presentation/widgets/kyc_progress_stepper.dart` to `lib/core/widgets/kyc_progress_stepper.dart`.
+  - Update all references in `onboarding`, `verification`, and tests.
+
+- [x] **Task 8.3: Promote Traveler Verification State & Providers to Core**
+  - Promote `TravelerVerificationState` to `lib/core/domain/traveler_verification_state.dart`.
+  - Relocate `travelerVerificationStateProvider` and `isKycVerifiedProvider` to `lib/core/auth/auth_notifier.dart`.
+  - Decouple `reservations`, `home`, and `verification` screens/providers to consume core auth/domain providers.
+
+- [x] **Task 8.4: Decouple Cross-Feature Presentation Imports in Home & Reservations**
+  - Remove direct cross-feature presentation imports between `reservations` and `properties`/`profile`.
+  - Ensure all features interact exclusively through `core/` or domain interfaces.
+
+- [x] **Task 8.5: Verification & Quality Gates**
+  - Run `./scripts/quality_gates.sh` to ensure all quality gates, analyzer diagnostics, formatting, and unit/widget tests pass with 0 errors.
+
+---
+
 ## 4. Definition of Done for Each Migrated Feature
 
 Every feature migration is considered complete only when:

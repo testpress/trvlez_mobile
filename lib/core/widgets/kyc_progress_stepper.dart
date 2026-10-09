@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// A shared horizontal stepper for the KYC verification flow.
 ///
-/// Displays 4 steps: Passport, Passport Review, Selfie, NFC.
+/// Displays 4 steps: Passport, Profile Review, Selfie, NFC.
 /// Indicates active, completed, and upcoming steps based on [progressIndex].
 class KycProgressStepper extends StatelessWidget {
   final int progressIndex;

@@ -5,6 +5,10 @@ import 'package:trvlez_mobile/features/properties/presentation/properties_notifi
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
+export 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
+export 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart'
+    show currentProfileProvider, profileRepositoryProvider;
+
 class AuthState {
   final bool isAuthenticated;
   final TravelerVerificationState verificationState;
@@ -81,3 +85,29 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     ref.invalidate(verificationNotifierProvider);
   }
 }
+
+/// Computes the active traveler verification state.
+///
+/// Combines the profile's onboarding step with the verification session status
+/// so that a submitted session marked as failed in the verification service
+/// transitions the state to [TravelerVerificationState.failed].
+final travelerVerificationStateProvider = Provider<TravelerVerificationState>((
+  ref,
+) {
+  final profileState = ref.watch(currentProfileProvider);
+  final profile = profileState.value;
+  final verificationStatus = ref.watch(verificationStatusProvider).value;
+
+  TravelerVerificationState state =
+      profile?.verificationState ?? TravelerVerificationState.profilePending;
+  if (state == TravelerVerificationState.submitted &&
+      verificationStatus?.isFailed == true) {
+    state = TravelerVerificationState.failed;
+  }
+  return state;
+});
+
+/// Indicates whether the traveler has completed KYC verification and is approved.
+final isKycVerifiedProvider = Provider<bool>((ref) {
+  return ref.watch(travelerVerificationStateProvider).isVerified;
+});

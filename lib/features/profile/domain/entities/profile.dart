@@ -1,4 +1,4 @@
-import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 /// Domain entity representing a traveler's profile.
 class Profile {

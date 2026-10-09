@@ -16,28 +16,71 @@ echo "PASSED: Style Guard - Zero raw colors in lib/features/."
 
 # 2. Automated Layer Import Guard
 echo ""
-echo "2/5 Checking Layer Import Guard (disallow data imports in presentation UI)..."
+echo "2/7 Checking Layer Import Guard (disallow data imports in presentation UI)..."
 if grep -rnE "import .*/data/" lib/features/*/presentation/ --exclude-dir=providers; then
   echo "FAILED: UI screens and widgets in presentation/ must not import data layer directly." >&2
   exit 1
 fi
 echo "PASSED: Layer Import Guard - Zero data imports in presentation UI screens and widgets."
 
-# 3. Formatting Check
+# 3. Automated Domain Purity Guard
 echo ""
-echo "3/5 Checking Dart formatting..."
+echo "3/7 Checking Domain Purity Guard (disallow Flutter/Dio/platform imports in domain)..."
+if grep -rnE "import '(package:flutter|package:dio|package:dmrtd)" lib/features/*/domain/; then
+  echo "FAILED: Domain layer must be pure Dart. No Flutter, Dio, or platform packages." >&2
+  exit 1
+fi
+echo "PASSED: Domain Purity Guard - 100% pure Dart domain layer."
+
+# 4. Automated Cross-Feature Encapsulation Guard
+echo ""
+echo "4/7 Checking Feature Encapsulation Guard (disallow cross-feature presentation/data imports)..."
+python3 -c "
+import os, re, sys
+
+feature_pattern = re.compile(r'lib/features/([^/]+)/')
+import_pattern = re.compile(r\"import\s+['\\\"]package:trvlez_mobile/features/([^/]+)/(presentation|data)/\")
+
+violations = []
+for root, dirs, files in os.walk('lib/features'):
+    for f in files:
+        if f.endswith('.dart'):
+            filepath = os.path.join(root, f)
+            m_feat = feature_pattern.search(filepath)
+            if not m_feat:
+                continue
+            cur_feature = m_feat.group(1)
+            with open(filepath) as fp:
+                for line_no, line in enumerate(fp, 1):
+                    m_imp = import_pattern.search(line)
+                    if m_imp:
+                        imp_feature = m_imp.group(1)
+                        if cur_feature != imp_feature:
+                            violations.append(f'{filepath}:{line_no} ({cur_feature}) -> imports ({imp_feature}): {line.strip()}')
+
+if violations:
+    print('FAILED: Cross-feature presentation/data imports found:')
+    for v in violations:
+        print(v)
+    sys.exit(1)
+"
+echo "PASSED: Feature Encapsulation Guard - Zero cross-feature presentation or data imports."
+
+# 5. Formatting Check
+echo ""
+echo "5/7 Checking Dart formatting..."
 dart format --output=none --set-exit-if-changed .
 echo "PASSED: Dart formatting is clean."
 
-# 4. Static Analysis with Fatal Infos
+# 6. Static Analysis with Fatal Infos
 echo ""
-echo "4/5 Running Flutter analyze (--fatal-infos)..."
+echo "6/7 Running Flutter analyze (--fatal-infos)..."
 flutter analyze --fatal-infos
 echo "PASSED: Flutter analyze reported 0 issues."
 
-# 5. Full Test Suite
+# 7. Full Test Suite
 echo ""
-echo "5/5 Running Flutter test suite..."
+echo "7/7 Running Flutter test suite..."
 flutter test
 echo "PASSED: All Flutter tests passed successfully."
 

@@ -8,8 +8,6 @@ import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// The primary landing screen for all authenticated travelers.
 ///
@@ -25,8 +23,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> handleRefresh() async {
-    ref.invalidate(currentProfileProvider);
-    ref.invalidate(verificationStatusProvider);
     await ref.read(authNotifierProvider.notifier).refreshVerificationState();
   }
 
@@ -56,18 +52,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final profileAsync = ref.watch(currentProfileProvider);
-    final profile = profileAsync.value;
-    final verificationStatusAsync = ref.watch(verificationStatusProvider);
-    final verificationStatus = verificationStatusAsync.value;
-
-    TravelerVerificationState verificationState =
-        profile?.verificationState ?? TravelerVerificationState.profilePending;
-    if (verificationState == TravelerVerificationState.submitted &&
-        verificationStatus?.isFailed == true) {
-      verificationState = TravelerVerificationState.failed;
-    }
-
+    final verificationState = ref.watch(travelerVerificationStateProvider);
     final shouldShowBanner = verificationState.shouldShowBanner;
 
     return Scaffold(
@@ -172,7 +157,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: profileAsync.isLoading && profile == null
+      body:
+          ref.watch(authNotifierProvider).isLoading &&
+              ref.watch(authNotifierProvider).valueOrNull == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: handleRefresh,

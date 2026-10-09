@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
 import 'package:trvlez_mobile/features/verification/data/nfc_image_extractor.dart';
+import 'package:trvlez_mobile/features/verification/data/services/nfc_error_mapper.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
@@ -71,7 +72,10 @@ class NfcPassportServiceImpl implements NfcPassportService {
           iosAlertMessage: 'Hold your iPhone near the biometric passport.',
         );
       } catch (e) {
-        throw NfcError.fromException(e, readStep: 'connecting to passport');
+        throw NfcErrorMapper.fromException(
+          e,
+          readStep: 'connecting to passport',
+        );
       }
 
       final passport = Passport(_nfc);
@@ -119,7 +123,7 @@ class NfcPassportServiceImpl implements NfcPassportService {
         // BAC/PACE session establishment is the most common failure point.
         // Wrong MRZ data (doc number, DOB, expiry) or a mismatched passport
         // causes authentication to fail.
-        throw NfcError.fromException(
+        throw NfcErrorMapper.fromException(
           e,
           fallbackType: NfcErrorType.authenticationFailed,
           readStep: 'authenticating',
@@ -317,7 +321,7 @@ class NfcPassportServiceImpl implements NfcPassportService {
       // If already an NfcError (from step-specific catch blocks), preserve it
       final nfcError = e is NfcError
           ? e
-          : NfcError.fromException(e, readStep: currentReadStep);
+          : NfcErrorMapper.fromException(e, readStep: currentReadStep);
 
       // Try to disconnect cleanly on error
       try {

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 
 /// Instruction screen shown before passport camera capture.
 ///

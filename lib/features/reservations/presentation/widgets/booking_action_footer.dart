@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
-import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 /// Primary action buttons at the bottom of the confirmation screen.

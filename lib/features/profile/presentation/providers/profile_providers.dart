@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:trvlez_mobile/features/profile/domain/entities/profile.dart';
 
+export 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 export 'package:trvlez_mobile/features/profile/data/repositories/profile_repository_impl.dart'
     show profileRepositoryProvider;
 export 'package:trvlez_mobile/features/profile/domain/entities/profile.dart';
 export 'package:trvlez_mobile/features/profile/domain/repositories/profile_repository.dart';
-export 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 
 /// Provider for current traveler profile state.
 final currentProfileProvider = AsyncNotifierProvider<ProfileNotifier, Profile>(

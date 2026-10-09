@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/passport_instruction_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 
 void main() {
   Widget createTestWidget({GoRouter? router}) {

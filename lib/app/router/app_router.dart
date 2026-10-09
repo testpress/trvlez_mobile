@@ -24,7 +24,7 @@ import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.
 import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
-import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/mrz_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_intro_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
@@ -158,10 +158,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           if (property == null && propertyId.isEmpty) {
             return const PropertiesListingScreen();
           }
-          return CreateReservationScreen(
-            property: property,
-            propertyId: propertyId.isNotEmpty ? propertyId : null,
-            initialRoomTypeId: selectedRoomTypeId,
+          return Consumer(
+            builder: (context, ref, _) {
+              final phone = ref
+                  .watch(currentProfileProvider)
+                  .valueOrNull
+                  ?.phone;
+              return CreateReservationScreen(
+                property: property,
+                propertyId: propertyId.isNotEmpty ? propertyId : null,
+                initialRoomTypeId: selectedRoomTypeId,
+                propertyLoader: (id) => ref
+                    .read(propertiesRepositoryProvider)
+                    .getPropertyDetail(id),
+                initialPhone: phone,
+              );
+            },
           );
         },
       ),

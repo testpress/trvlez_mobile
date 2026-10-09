@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/domain/entities/profile.dart';
-import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 
 void main() {
   group('Profile Entity Tests', () {

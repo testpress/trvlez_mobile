@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 /// Instructions and verification guidance card shown upon reservation confirmation.
 class BookingInstructionsCard extends StatelessWidget {
