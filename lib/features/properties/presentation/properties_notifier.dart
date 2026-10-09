@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 
 final propertiesProvider =

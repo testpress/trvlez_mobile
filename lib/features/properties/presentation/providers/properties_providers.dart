@@ -7,7 +7,6 @@ import 'package:trvlez_mobile/features/properties/domain/entities/property.dart'
 import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 
-export 'package:trvlez_mobile/features/properties/data/datasources/properties_remote_data_source.dart';
 export 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 
 /// Provider for the domain [PropertiesRepository] interface.

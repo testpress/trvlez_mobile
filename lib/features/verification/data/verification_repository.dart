@@ -5,11 +5,6 @@ import 'package:trvlez_mobile/features/verification/data/datasources/verificatio
 import 'package:trvlez_mobile/features/verification/data/repositories/verification_repository_impl.dart';
 import 'package:trvlez_mobile/features/verification/domain/repositories/verification_repository.dart';
 
-export 'package:trvlez_mobile/features/verification/data/datasources/s3_upload_client.dart';
-export 'package:trvlez_mobile/features/verification/data/datasources/verification_remote_data_source.dart';
-export 'package:trvlez_mobile/features/verification/data/repositories/verification_repository_impl.dart';
-export 'package:trvlez_mobile/features/verification/domain/repositories/verification_repository.dart';
-
 /// Provider for [S3UploadClient].
 final s3UploadClientProvider = Provider<S3UploadClient>((ref) {
   return const S3UploadClient();

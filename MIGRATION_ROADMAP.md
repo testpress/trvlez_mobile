@@ -248,6 +248,30 @@
 
 ---
 
+### Phase 7: Elimination of Legacy Re-Export Shims & Dead Exports
+> **Goal:** Remove all backward-compatibility shim files and obsolete re-exports, updating all callers to direct canonical paths.
+
+- [x] **Task 7.1: Eliminate App & Core Re-Export Shims**
+  - Delete `lib/app/colors.dart`, `lib/app/router.dart`, `lib/app/routes.dart`, `lib/app/theme.dart`, and `lib/core/widgets/widgets.dart`.
+  - Update all imports across `lib/` and `test/` to direct canonical paths (`app_colors.dart`, `app_router.dart`, `routes.dart`, `app_theme.dart`).
+
+- [x] **Task 7.2: Eliminate Auth & Profile Re-Export Shims**
+  - Delete `features/auth/data/` shims (`auth_remote_data_source.dart`, `auth_repository.dart`, `login_response_dto.dart`, `traveler_signup_dto.dart`), `domain/signup_result.dart`, and `presentation/` controllers (`login_controller.dart`, `registration_controller.dart`).
+  - Delete `features/profile/data/` shims (`profile_dto.dart`, `profile_remote_data_source.dart`, `profile_repository.dart`), `domain/profile.dart`, and `presentation/profile_notifier.dart`.
+  - Update all callers across `lib/` and `test/` to direct canonical file locations.
+
+- [x] **Task 7.3: Eliminate Properties, Reservations & Verification Re-Export Shims**
+  - Delete `features/properties/` shims (`properties_remote_data_source.dart`, `properties_repository.dart`, `property_dto.dart`, `domain/property.dart`).
+  - Delete `features/reservations/` shims (`form_dto.dart`, `form_remote_data_source.dart`, `form_repository.dart`, `reservation_dto.dart`, `reservation_remote_data_source.dart`, `reservation_repository.dart`, `domain/form.dart`, `domain/reservation.dart`, `presentation/reservations_notifier.dart`).
+  - Delete `features/verification/presentation/verification_providers.dart` shim.
+  - Update all callers across `lib/` and `test/` to direct canonical file locations.
+
+- [x] **Task 7.4: Clean Up Transitive Exports & Run Quality Gates**
+  - Audit and eliminate unnecessary pass-through `export` statements in providers and repositories that leak layer dependencies.
+  - Run `./scripts/quality_gates.sh` (Style guard, Layer import guard, `dart format`, `flutter analyze --fatal-infos`, and `flutter test`).
+
+---
+
 ## 4. Definition of Done for Each Migrated Feature
 
 Every feature migration is considered complete only when:

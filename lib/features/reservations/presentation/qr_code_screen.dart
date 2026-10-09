@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
@@ -15,7 +15,7 @@ import 'package:trvlez_mobile/features/profile/domain/traveler_verification_stat
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/qr_code_card.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/reservation_overview_tile.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Screen displaying the traveler's dynamic QR check-in token pass.
 class QrCodeScreen extends StatelessWidget {

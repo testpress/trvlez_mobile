@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
+import 'package:trvlez_mobile/features/verification/presentation/models/verification_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
 export 'package:trvlez_mobile/features/verification/data/verification_repository.dart'
@@ -10,6 +11,7 @@ export 'package:trvlez_mobile/features/verification/domain/entities/confirm_mrz_
 export 'package:trvlez_mobile/features/verification/domain/entities/verification_challenge.dart';
 export 'package:trvlez_mobile/features/verification/domain/repositories/verification_repository.dart';
 export 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
+export 'package:trvlez_mobile/features/verification/presentation/models/verification_state.dart';
 export 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 
 /// Notifier provider managing multi-step verification state machine.

@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';

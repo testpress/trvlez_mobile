@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/core/network/dio_provider.dart';
+import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
 import 'package:trvlez_mobile/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:trvlez_mobile/features/profile/domain/entities/profile.dart';
 import 'package:trvlez_mobile/features/profile/domain/repositories/profile_repository.dart';

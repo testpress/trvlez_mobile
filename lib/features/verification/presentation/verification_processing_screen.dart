@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/app/colors.dart';
-import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/document_processing_visual.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/processing_step_indicator.dart';

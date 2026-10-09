@@ -9,10 +9,8 @@ import 'package:trvlez_mobile/features/reservations/data/repositories/reservatio
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 import 'package:trvlez_mobile/features/reservations/domain/repositories/form_repository.dart';
 import 'package:trvlez_mobile/features/reservations/domain/repositories/reservation_repository.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
-export 'package:trvlez_mobile/features/reservations/data/datasources/form_remote_data_source.dart';
-export 'package:trvlez_mobile/features/reservations/data/datasources/reservation_remote_data_source.dart';
 export 'package:trvlez_mobile/features/reservations/domain/entities/form.dart';
 export 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 export 'package:trvlez_mobile/features/reservations/domain/repositories/form_repository.dart';

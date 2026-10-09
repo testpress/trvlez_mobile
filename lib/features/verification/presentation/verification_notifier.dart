@@ -14,8 +14,6 @@ import 'package:trvlez_mobile/features/verification/presentation/models/verifica
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart'
     show verificationRepositoryProvider;
 
-export 'package:trvlez_mobile/features/verification/presentation/models/verification_state.dart';
-
 class VerificationNotifier extends Notifier<VerificationState> {
   late final VerificationPollingService _pollingService;
 

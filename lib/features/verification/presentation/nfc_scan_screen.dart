@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 import 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart';

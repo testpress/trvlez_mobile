@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/router/app_router.dart';
-import 'package:trvlez_mobile/app/theme.dart';
+import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Root application widget for TrvlEz.
 class TrvlEzApp extends ConsumerStatefulWidget {

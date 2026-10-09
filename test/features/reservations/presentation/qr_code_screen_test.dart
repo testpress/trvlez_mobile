@@ -8,7 +8,7 @@ import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/qr_code_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {
   Reservation? reservationToReturn;

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/router.dart';
-import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/router/app_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';
-import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 
 // In-memory fake secure storage for test isolation

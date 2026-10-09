@@ -1,4 +1,4 @@
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
+import 'package:trvlez_mobile/features/verification/presentation/models/verification_state.dart';
 
 /// The type of processing being performed.
 enum ProcessingType { passport, video }

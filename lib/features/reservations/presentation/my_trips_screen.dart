@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/reservations_notifier.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/reservation_status_badge.dart';
 
 /// Displays the traveler's reservations organized by status tabs.

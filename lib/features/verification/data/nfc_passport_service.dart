@@ -11,8 +11,6 @@ import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.d
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 import 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart';
 
-export 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart';
-
 /// Service responsible for orchestrating the NFC communication with the passport chip.
 ///
 /// Wraps the lower-level `dmrtd` library and maps its specialized exceptions

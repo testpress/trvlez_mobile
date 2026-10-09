@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {
   List<Reservation> reservationsToReturn = [];

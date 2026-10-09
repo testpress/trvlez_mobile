@@ -7,8 +7,6 @@ import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
 import 'package:trvlez_mobile/core/network/error_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 
-export 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
-
 /// Provides the app-wide [TokenStorage] instance.
 final tokenStorageProvider = Provider<TokenStorage>((ref) {
   return TokenStorage();

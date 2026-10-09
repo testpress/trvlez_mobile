@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/data/datasources/auth_remote_data_source.dart';

@@ -6,8 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/widgets/property_card.dart';
 

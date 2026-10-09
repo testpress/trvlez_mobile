@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
@@ -12,7 +12,7 @@ import 'package:trvlez_mobile/features/reservations/presentation/providers/reser
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/booking_action_footer.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/booking_instructions_card.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/booking_summary_card.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Screen displayed immediately after a successful reservation creation.
 class BookingConfirmationScreen extends StatelessWidget {
