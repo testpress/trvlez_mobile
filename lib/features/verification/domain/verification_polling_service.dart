@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:trvlez_mobile/features/verification/data/verification_repository.dart';
+import 'package:trvlez_mobile/features/verification/domain/repositories/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 

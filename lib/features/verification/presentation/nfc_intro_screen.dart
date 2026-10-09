@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 

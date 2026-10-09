@@ -9,19 +9,20 @@ import 'package:trvlez_mobile/features/verification/data/nfc_image_extractor.dar
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
+import 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart';
 
-/// Status of NFC on the device
-enum NfcDeviceStatus { available, disabled, unsupported }
+export 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart';
 
 /// Service responsible for orchestrating the NFC communication with the passport chip.
 ///
 /// Wraps the lower-level `dmrtd` library and maps its specialized exceptions
 /// to user-friendly `NfcError` models, while reporting progress to the UI.
-class NfcPassportService {
+class NfcPassportServiceImpl implements NfcPassportService {
   final _log = Logger('NfcPassportService');
   final NfcProvider _nfc = NfcProvider();
 
   /// Checks if the current device has NFC hardware and if it is enabled.
+  @override
   Future<NfcDeviceStatus> getNfcStatus() async {
     try {
       final status = await NfcProvider.nfcStatus;
@@ -47,6 +48,7 @@ class NfcPassportService {
   /// establish the BAC (Basic Access Control) or PACE session.
   ///
   /// Progress is reported via the [onProgress] callback.
+  @override
   Future<NfcPassportResult> readPassport({
     required String documentNumber,
     required DateTime dateOfBirth,
@@ -331,5 +333,5 @@ class NfcPassportService {
 
 /// Provider for the [NfcPassportService].
 final nfcPassportServiceProvider = Provider<NfcPassportService>((ref) {
-  return NfcPassportService();
+  return NfcPassportServiceImpl();
 });

@@ -15,8 +15,9 @@ class NfcImageExtractor {
   /// Checks [EfDG2.imageData] first, and falls back to scanning the entire
   /// raw DG2 payload if [EfDG2.imageData] is null or unparsed.
   static Uint8List? extractFromDg2(EfDG2 dg2) {
-    if (dg2.imageData != null && dg2.imageData!.isNotEmpty) {
-      final sanitized = sanitizeImageBytes(dg2.imageData!);
+    final imageData = dg2.imageData;
+    if (imageData != null && imageData.isNotEmpty) {
+      final sanitized = sanitizeImageBytes(imageData);
       if (sanitized != null) {
         return sanitized;
       }

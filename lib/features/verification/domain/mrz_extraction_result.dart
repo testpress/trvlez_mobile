@@ -1,3 +1,5 @@
+import 'package:trvlez_mobile/features/verification/domain/entities/confirm_mrz_payload.dart';
+
 class MrzExtractionResult {
   final bool success;
   final String? documentNumber;
@@ -39,16 +41,16 @@ class MrzExtractionResult {
   }
 
   /// Builds the request payload for the confirm-mrz endpoint.
-  Map<String, dynamic> toConfirmPayload() {
-    return {
-      'first_name': firstName ?? '',
-      'last_name': lastName ?? '',
-      'passport_number': documentNumber ?? '',
-      'nationality': nationality ?? '',
-      'date_of_birth': dateOfBirth ?? '',
-      'date_of_expiry': dateOfExpiry ?? '',
-      'sex': sex,
-      'issuing_country': issuingCountry,
-    };
+  ConfirmMrzPayload toConfirmPayload() {
+    return ConfirmMrzPayload(
+      firstName: firstName ?? '',
+      lastName: lastName ?? '',
+      passportNumber: documentNumber ?? '',
+      nationality: nationality ?? '',
+      dateOfBirth: dateOfBirth ?? '',
+      dateOfExpiry: dateOfExpiry ?? '',
+      sex: sex,
+      issuingCountry: issuingCountry,
+    );
   }
 }

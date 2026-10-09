@@ -99,7 +99,7 @@ class NfcPassportResult {
         if (sodBytesBase64 != null) 'sod': sodBytesBase64,
         ...rawDgBytesBase64,
       },
-      if (parsedMrz != null) 'parsed_mrz': parsedMrz!.toJson(),
+      if (parsedMrz case final mrz?) 'parsed_mrz': mrz.toJson(),
       if (activeAuthSignatureBase64 != null)
         'active_auth_signature': activeAuthSignatureBase64,
       'available_data_groups': availableDataGroups,

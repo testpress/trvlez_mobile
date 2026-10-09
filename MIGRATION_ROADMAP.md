@@ -206,22 +206,22 @@
 ### Phase 5: Identity & Verification Migration (`features/verification`)
 > **Goal:** Extract API client from repository, type raw Maps, eliminate force unwraps, and modularize camera/NFC screens.
 
-- [ ] **Task 5.1: Create Remote Data Source**
+- [x] **Task 5.1: Create Remote Data Source**
   - Extract raw `Dio` calls from `VerificationRepository` into `VerificationRemoteDataSource`.
   - Separate S3 pre-signed upload handling into a dedicated network utility.
 
-- [ ] **Task 5.2: Eliminate Raw `Map<String, dynamic>` API Responses**
+- [x] **Task 5.2: Eliminate Raw `Map<String, dynamic>` API Responses**
   - Replace `Future<Map<String, dynamic>> getVerificationChallenge()` with a typed `VerificationChallengeDto` / domain model.
   - Replace `confirmMrz(Map<String, dynamic>)` with a typed payload class.
 
-- [ ] **Task 5.3: Eliminate Force-Unwraps (`!`)**
+- [x] **Task 5.3: Eliminate Force-Unwraps (`!`)**
   - Audit and replace all bang operators (`!`) in MRZ extraction and passport parser logic with safe null promotion or default fallbacks.
 
-- [ ] **Task 5.4: Modularize Capture & Instruction Screens**
+- [x] **Task 5.4: Modularize Capture & Instruction Screens**
   - Split `nfc_scan_screen.dart` (493 lines), `passport_capture_screen.dart` (483 lines), and `verification_notifier.dart` (678 lines) into smaller sub-components.
   - Replace raw color badges in `verification_banner.dart` with `context.colors.feedback*`.
 
-- [ ] **Task 5.5: Move Tests to Mirror `lib/`**
+- [x] **Task 5.5: Move Tests to Mirror `lib/`**
   - Relocate verification tests to `test/features/verification/`.
 
 ---

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 
 /// A context-aware banner that displays the current verification status.
@@ -18,10 +21,14 @@ class VerificationBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!state.shouldShowBanner) return const SizedBox.shrink();
 
-    final config = BannerConfig.from(state);
+    final colors = context.colors;
+    final config = BannerConfig.from(state, colors: colors);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -31,7 +38,7 @@ class VerificationBanner extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: [
           BoxShadow(
             color: config.backgroundColor.withAlpha(60),
@@ -44,13 +51,13 @@ class VerificationBanner extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onActionTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.md),
             child: Row(
               children: [
                 buildIcon(config),
-                const SizedBox(width: 14),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +70,7 @@ class VerificationBanner extends StatelessWidget {
                           color: config.foregroundColor,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Text(
                         config.subtitle,
                         style: GoogleFonts.cabin(
@@ -75,15 +82,15 @@ class VerificationBanner extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
                   ),
                   decoration: BoxDecoration(
                     color: config.foregroundColor.withAlpha(25),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -96,7 +103,7 @@ class VerificationBanner extends StatelessWidget {
                           color: config.foregroundColor,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Icon(
                         Icons.arrow_forward_rounded,
                         color: config.foregroundColor,
@@ -119,7 +126,7 @@ class VerificationBanner extends StatelessWidget {
       height: 44,
       decoration: BoxDecoration(
         color: config.foregroundColor.withAlpha(30),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Icon(config.icon, color: config.foregroundColor, size: 24),
     );
@@ -144,70 +151,73 @@ class BannerConfig {
     required this.actionLabel,
   });
 
-  factory BannerConfig.from(TravelerVerificationState state) {
+  factory BannerConfig.from(
+    TravelerVerificationState state, {
+    required AppColors colors,
+  }) {
     return switch (state) {
       // ── Pre-submission states (link to /onboarding) ────────────
-      TravelerVerificationState.profilePending => const BannerConfig(
-        backgroundColor: Color(0xFFE3F2FD),
-        foregroundColor: Color(0xFF1565C0),
+      TravelerVerificationState.profilePending => BannerConfig(
+        backgroundColor: colors.feedbackInfo.withAlpha(30),
+        foregroundColor: colors.feedbackInfo,
         icon: Icons.verified_user_outlined,
         title: 'Verify Your Identity',
         subtitle: 'Upload your passport to get started with TrvlEz.',
         actionLabel: 'Start',
       ),
-      TravelerVerificationState.profileComplete => const BannerConfig(
-        backgroundColor: Color(0xFFE3F2FD),
-        foregroundColor: Color(0xFF1565C0),
+      TravelerVerificationState.profileComplete => BannerConfig(
+        backgroundColor: colors.feedbackInfo.withAlpha(30),
+        foregroundColor: colors.feedbackInfo,
         icon: Icons.upload_file_rounded,
         title: 'Upload Your Documents',
         subtitle: 'Passport and selfie video are required for verification.',
         actionLabel: 'Start',
       ),
-      TravelerVerificationState.verificationStarted => const BannerConfig(
-        backgroundColor: Color(0xFFE3F2FD),
-        foregroundColor: Color(0xFF1565C0),
+      TravelerVerificationState.verificationStarted => BannerConfig(
+        backgroundColor: colors.feedbackInfo.withAlpha(30),
+        foregroundColor: colors.feedbackInfo,
         icon: Icons.upload_file_rounded,
         title: 'Continue Document Upload',
         subtitle: 'You have pending document uploads to complete.',
         actionLabel: 'Continue',
       ),
-      TravelerVerificationState.passportReviewed => const BannerConfig(
-        backgroundColor: Color(0xFFE3F2FD),
-        foregroundColor: Color(0xFF1565C0),
+      TravelerVerificationState.passportReviewed => BannerConfig(
+        backgroundColor: colors.feedbackInfo.withAlpha(30),
+        foregroundColor: colors.feedbackInfo,
         icon: Icons.videocam_rounded,
         title: 'Record Selfie Video',
         subtitle: 'Your passport is verified. Now record a short selfie.',
         actionLabel: 'Continue',
       ),
-      TravelerVerificationState.documentsUploaded => const BannerConfig(
-        backgroundColor: Color(0xFFE8F5E9),
-        foregroundColor: Color(0xFF2E7D32),
+      TravelerVerificationState.documentsUploaded => BannerConfig(
+        backgroundColor: colors.feedbackSuccess.withAlpha(30),
+        foregroundColor: colors.feedbackSuccess,
         icon: Icons.send_rounded,
         title: 'Ready to Submit',
         subtitle: 'Your documents are uploaded. Submit them for verification.',
         actionLabel: 'Submit',
       ),
       // ── Post-submission states (link to /verification/status) ──
-      TravelerVerificationState.submitted => const BannerConfig(
-        backgroundColor: Color(0xFFFFF3E0),
-        foregroundColor: Color(0xFFE65100),
+      TravelerVerificationState.submitted => BannerConfig(
+        backgroundColor: colors.feedbackWarning.withAlpha(30),
+        foregroundColor: colors.feedbackWarning,
         icon: Icons.hourglass_top_rounded,
         title: 'Verification In Progress',
         subtitle: 'Your documents are being reviewed. Usually 1–2 days.',
         actionLabel: 'Details',
       ),
-      TravelerVerificationState.failed => const BannerConfig(
-        backgroundColor: Color(0xFFFFEBEE),
-        foregroundColor: Color(0xFFC62828),
+      TravelerVerificationState.failed => BannerConfig(
+        backgroundColor: colors.feedbackError.withAlpha(30),
+        foregroundColor: colors.feedbackError,
         icon: Icons.error_outline_rounded,
         title: 'Verification Unsuccessful',
         subtitle: 'Please re-submit your documents to try again.',
         actionLabel: 'Fix Now',
       ),
       // Verified — should not render, but included for exhaustiveness
-      TravelerVerificationState.verified => const BannerConfig(
-        backgroundColor: Color(0xFFE8F5E9),
-        foregroundColor: Color(0xFF2E7D32),
+      TravelerVerificationState.verified => BannerConfig(
+        backgroundColor: colors.feedbackSuccess.withAlpha(30),
+        foregroundColor: colors.feedbackSuccess,
         icon: Icons.check_circle_outline_rounded,
         title: 'Verified',
         subtitle: 'You have full access.',

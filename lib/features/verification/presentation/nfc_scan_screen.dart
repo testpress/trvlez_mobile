@@ -1,16 +1,16 @@
-import 'dart:io';
-
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/routes.dart';
-import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/nfc_error_view.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/nfc_scanning_view.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/nfc_status_view.dart';
 
-/// Active scanning screen that handles the real-time interaction with the NFC service.
+/// Active scanning screen that handles real-time interaction with the NFC service.
 class NfcScanScreen extends ConsumerStatefulWidget {
   final NfcPassportService nfcService;
 
@@ -147,6 +147,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final error = _error;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -154,13 +155,11 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
         title: const Text('Scanning Passport'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading:
-            false, // Prevent backing out during active scan easily
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.close_rounded),
             onPressed: () {
-              // Should potentially cancel active scan if possible, then pop
               if (context.canPop()) {
                 context.pop();
               }
@@ -178,315 +177,31 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
               if (_isCheckingAvailability)
                 const Center(child: CircularProgressIndicator())
               else if (_nfcStatus == NfcDeviceStatus.disabled)
-                _buildNfcDisabledView(theme)
+                NfcStatusView(
+                  isDisabled: true,
+                  onSkipNfc: _skipNfc,
+                )
               else if (_nfcStatus == NfcDeviceStatus.unsupported)
-                _buildNfcUnavailableView(theme)
-              else if (_error != null)
-                _buildErrorView(theme)
+                NfcStatusView(
+                  isDisabled: false,
+                  onSkipNfc: _skipNfc,
+                )
+              else if (error != null)
+                NfcErrorView(
+                  error: error,
+                  onRetry: _startScan,
+                  onRescanPassport: () => context.go(AppRoutes.passportCapture),
+                  onSkipNfc: _skipNfc,
+                )
               else
-                _buildScanningView(theme),
+                NfcScanningView(
+                  pulseAnimation: _pulseAnimation,
+                  currentProgress: _currentProgress,
+                ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildScanningView(ThemeData theme) {
-    final progress = _currentProgress?.percentage ?? 0.0;
-    final description = _currentProgress?.description ?? 'Preparing...';
-
-    return Column(
-      children: [
-        AnimatedBuilder(
-          animation: _pulseAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _pulseAnimation.value,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: theme.colorScheme.primaryContainer,
-                  border: Border.all(
-                    color: theme.colorScheme.primary.withAlpha(50),
-                    width: 8,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.contactless_rounded,
-                    size: 80,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 48),
-        Text(
-          description,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
-        LinearProgressIndicator(
-          value: progress > 0 ? progress : null, // Null means indeterminate
-          minHeight: 8,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Keep your phone steady against the passport',
-          style: TextStyle(color: theme.colorScheme.onSurface.withAlpha(150)),
-        ),
-        // Platform specific guide
-        const SizedBox(height: 32),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.secondaryContainer.withAlpha(100),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Platform.isIOS
-                    ? Icons.phone_iphone_rounded
-                    : Icons.android_rounded,
-                color: theme.colorScheme.onSecondaryContainer,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  Platform.isIOS
-                      ? 'Rest the top edge of your iPhone on the inside back cover of the passport.'
-                      : 'Place the middle/top of your phone flat against the passport data page.',
-                  style: TextStyle(
-                    color: theme.colorScheme.onSecondaryContainer,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildErrorView(ThemeData theme) {
-    return Column(
-      children: [
-        Icon(
-          Icons.error_outline_rounded,
-          size: 80,
-          color: theme.colorScheme.error,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Scan Failed',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          _error!.message,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: theme.colorScheme.onSurface.withAlpha(180),
-            height: 1.5,
-          ),
-        ),
-        // Recovery guidance
-        if (_error!.userGuidance != null) ...[
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.secondaryContainer.withAlpha(80),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.lightbulb_outline_rounded,
-                  size: 20,
-                  color: theme.colorScheme.onSecondaryContainer,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    _error!.userGuidance!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: theme.colorScheme.onSecondaryContainer,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-        // Collapsible technical details for debugging
-        if (_error!.technicalDetails != null) ...[
-          const SizedBox(height: 8),
-          Theme(
-            data: theme.copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              title: Text(
-                'Technical Details',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: theme.colorScheme.onSurface.withAlpha(100),
-                ),
-              ),
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withAlpha(
-                      100,
-                    ),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: SelectableText(
-                    _error!.technicalDetails!,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'monospace',
-                      color: theme.colorScheme.onSurface.withAlpha(120),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-        const SizedBox(height: 32),
-        if (_error!.isRetryable)
-          FilledButton.icon(
-            onPressed: _startScan,
-            icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Try Again'),
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(double.infinity, 56),
-            ),
-          )
-        else if (_error!.type == NfcErrorType.authenticationFailed ||
-            _error!.type == NfcErrorType.invalidMrzData)
-          FilledButton.icon(
-            onPressed: () {
-              // Go back to OCR to re-capture MRZ
-              context.go(AppRoutes.passportCapture);
-            },
-            icon: const Icon(Icons.document_scanner_rounded),
-            label: const Text('Re-scan Passport Photo'),
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(double.infinity, 56),
-            ),
-          ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: _skipNfc,
-          child: const Text('Skip NFC Verification'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNfcDisabledView(ThemeData theme) {
-    return Column(
-      children: [
-        Icon(
-          Icons.nfc_rounded,
-          size: 80,
-          color: theme.colorScheme.onSurface.withAlpha(100),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'NFC is Disabled',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Please enable NFC in your device settings to scan your passport. We will automatically resume once it is enabled.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: theme.colorScheme.onSurface.withAlpha(180),
-            height: 1.5,
-          ),
-        ),
-        const SizedBox(height: 48),
-        FilledButton(
-          onPressed: () {
-            AppSettings.openAppSettings(type: AppSettingsType.nfc);
-          },
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(double.infinity, 56),
-          ),
-          child: const Text('Enable NFC'),
-        ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: _skipNfc,
-          child: const Text('Continue Without NFC'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNfcUnavailableView(ThemeData theme) {
-    return Column(
-      children: [
-        Icon(
-          Icons.nfc_rounded,
-          size: 80,
-          color: theme.colorScheme.onSurface.withAlpha(100),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'NFC Not Available',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Your device either does not support NFC or it is currently disabled. You can continue verification without NFC.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: theme.colorScheme.onSurface.withAlpha(180),
-            height: 1.5,
-          ),
-        ),
-        const SizedBox(height: 48),
-        FilledButton(
-          onPressed: _skipNfc,
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(double.infinity, 56),
-          ),
-          child: const Text('Continue Without NFC'),
-        ),
-      ],
     );
   }
 }

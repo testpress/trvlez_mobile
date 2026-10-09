@@ -10,8 +10,11 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:trvlez_mobile/app/routes.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
-import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/camera_overlay_painter.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_capture_controls.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_guidance_bar.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_top_bar.dart';
 
 class PassportCaptureScreen extends ConsumerStatefulWidget {
   final CameraService cameraService;
@@ -56,9 +59,10 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         enableAudio: false,
       );
 
-      if (controller != null) {
+      final cam = controller;
+      if (cam != null) {
         // Configure autofocus and exposure for document capture
-        await _configureCameraForDocumentCapture();
+        await _configureCameraForDocumentCapture(cam);
 
         if (mounted) {
           setState(() {
@@ -75,25 +79,21 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     }
   }
 
-  /// Configures camera settings optimised for document / passport capture.
-  ///
-  /// Enables continuous autofocus and auto exposure. Calls are wrapped in
-  /// try/catch because not all devices support every focus/exposure mode.
-  Future<void> _configureCameraForDocumentCapture() async {
+  Future<void> _configureCameraForDocumentCapture(CameraController cam) async {
     try {
-      await controller!.setFocusMode(FocusMode.auto);
+      await cam.setFocusMode(FocusMode.auto);
     } catch (_) {
       // Device may not support settable focus modes
     }
 
     try {
-      await controller!.setExposureMode(ExposureMode.auto);
+      await cam.setExposureMode(ExposureMode.auto);
     } catch (_) {
       // Device may not support settable exposure modes
     }
 
     try {
-      await controller!.setFlashMode(FlashMode.off);
+      await cam.setFlashMode(FlashMode.off);
     } catch (_) {
       // Flash may not be available
     }
@@ -109,16 +109,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     super.dispose();
   }
 
-  // ---------------------------------------------------------------------------
-  // Flash control
-  // ---------------------------------------------------------------------------
-
-  /// Cycles flash mode: off → auto → torch → off.
-  ///
-  /// Torch mode provides continuous illumination which is preferable for
-  /// document capture — the user can see the lighting effect before capturing.
   Future<void> _toggleFlash() async {
-    if (controller == null || !controller!.value.isInitialized) return;
+    final cam = controller;
+    if (cam == null || !cam.value.isInitialized) return;
 
     final nextMode = switch (currentFlashMode) {
       FlashMode.off => FlashMode.auto,
@@ -127,7 +120,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     };
 
     try {
-      await controller!.setFlashMode(nextMode);
+      await cam.setFlashMode(nextMode);
       setState(() {
         currentFlashMode = nextMode;
       });
@@ -136,24 +129,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     }
   }
 
-  IconData get _flashIcon => switch (currentFlashMode) {
-    FlashMode.off => Icons.flash_off,
-    FlashMode.auto => Icons.flash_auto,
-    FlashMode.torch || FlashMode.always => Icons.flash_on,
-  };
-
-  String get _flashLabel => switch (currentFlashMode) {
-    FlashMode.off => 'Off',
-    FlashMode.auto => 'Auto',
-    FlashMode.torch || FlashMode.always => 'On',
-  };
-
-  // ---------------------------------------------------------------------------
-  // Capture
-  // ---------------------------------------------------------------------------
-
   Future<void> capturePassport() async {
-    if (controller == null || !controller!.value.isInitialized || isCapturing) {
+    final cam = controller;
+    if (cam == null || !cam.value.isInitialized || isCapturing) {
       return;
     }
 
@@ -169,10 +147,10 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
 
     try {
-      final XFile file = await controller!.takePicture();
+      final XFile file = await cam.takePicture();
 
       // Immediately freeze/stop the camera preview
-      await controller?.pausePreview();
+      await cam.pausePreview();
 
       final cropParams = PassportCropParams(
         imagePath: file.path,
@@ -181,7 +159,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         frameWidth: frameWidth,
         frameHeight: frameHeight,
         frameCenterX: frameCenterX,
-        previewAspectRatio: controller!.value.aspectRatio,
+        previewAspectRatio: cam.value.aspectRatio,
       );
 
       // Hand off image and crop params, then transition to review screen immediately
@@ -211,7 +189,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         );
       }
       try {
-        await controller?.resumePreview();
+        await cam.resumePreview();
       } catch (_) {}
       if (mounted) {
         setState(() {
@@ -220,10 +198,6 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       }
     }
   }
-
-  // ---------------------------------------------------------------------------
-  // Gallery picker
-  // ---------------------------------------------------------------------------
 
   Future<void> pickPassportFromGallery() async {
     if (isCapturing) return;
@@ -286,21 +260,10 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Frame dimensions
-  // ---------------------------------------------------------------------------
-
-  /// Computes the passport overlay frame dimensions for landscape mode.
-  ///
-  /// The frame is a horizontal rectangle matching the ICAO 9303 TD3 passport
-  /// aspect ratio (125 mm × 88 mm ≈ 1.42 : 1). Sized to fill most of the
-  /// screen while leaving a right-side column for the capture button.
   (double width, double height) _computeFrameDimensions(Size screenSize) {
-    // Reserve right column for controls (capture + gallery buttons)
     const double controlColumnWidth = 100.0;
     final availableWidth = screenSize.width - controlColumnWidth;
 
-    // Use 70 % of screen height, then cap so width stays within bounds
     final candidateHeight = screenSize.height * 0.70;
     final candidateWidth = candidateHeight * _passportAspectRatio;
 
@@ -308,31 +271,25 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       return (candidateWidth, candidateHeight);
     }
 
-    // Width-constrained — fit to available width instead
     final constrainedWidth = availableWidth * 0.95;
     final constrainedHeight = constrainedWidth / _passportAspectRatio;
     return (constrainedWidth, constrainedHeight);
   }
 
-  // ---------------------------------------------------------------------------
-  // Build
-  // ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
-    if (!isCameraInitialized || controller == null) {
+    final cam = controller;
+    if (!isCameraInitialized || cam == null) {
       return const Scaffold(
         backgroundColor: Colors.black,
         body: Center(child: CircularProgressIndicator(color: Colors.white)),
       );
     }
 
-    final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final padding = MediaQuery.paddingOf(context);
     final (frameWidth, frameHeight) = _computeFrameDimensions(screenSize);
 
-    // Offset frame slightly left to make room for the right-side controls
     const double controlColumnWidth = 100.0;
     final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
     final cutoutRect = Rect.fromCenter(
@@ -349,9 +306,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           FittedBox(
             fit: BoxFit.cover,
             child: SizedBox(
-              width: controller!.value.aspectRatio,
+              width: cam.value.aspectRatio,
               height: 1,
-              child: CameraPreview(controller!),
+              child: CameraPreview(cam),
             ),
           ),
           CustomPaint(
@@ -362,25 +319,8 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
               radius: 16.0,
             ),
           ),
-          _buildTopBar(theme, padding),
-          _buildGuidanceText(theme, cutoutRect, screenSize),
-          _buildControls(padding),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopBar(ThemeData theme, EdgeInsets padding) {
-    return Positioned(
-      top: padding.top + 8,
-      left: 16,
-      right: 16,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.close, color: Colors.white),
-            onPressed: () {
+          PassportTopBar(
+            onClose: () {
               SystemChrome.setPreferredOrientations([
                 DeviceOrientation.portraitUp,
               ]);
@@ -390,93 +330,21 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
                 context.go(AppRoutes.passportInstructions);
               }
             },
+            onToggleFlash: _toggleFlash,
+            flashMode: currentFlashMode,
+            padding: padding,
           ),
-          GestureDetector(
-            onTap: _toggleFlash,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.black.withAlpha(100),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(_flashIcon, color: Colors.white, size: 20),
-                  const SizedBox(width: 4),
-                  Text(
-                    _flashLabel,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          PassportGuidanceBar(
+            cutoutRect: cutoutRect,
+            screenSize: screenSize,
+          ),
+          PassportCaptureControls(
+            isCapturing: isCapturing,
+            onCapture: capturePassport,
+            onPickGallery: pickPassportFromGallery,
+            padding: padding,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGuidanceText(ThemeData theme, Rect cutoutRect, Size screenSize) {
-    return Positioned(
-      top: cutoutRect.bottom + 8,
-      left: cutoutRect.left,
-      right: screenSize.width - cutoutRect.right,
-      child: Text(
-        'Hold steady • ~20 cm away • Keep bottom 2 lines in frame',
-        textAlign: TextAlign.center,
-        style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
-      ),
-    );
-  }
-
-  Widget _buildControls(EdgeInsets padding) {
-    return Positioned(
-      right: padding.right + 16,
-      top: 0,
-      bottom: 0,
-      child: SizedBox(
-        width: 80,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: isCapturing ? null : capturePassport,
-              child: Opacity(
-                opacity: isCapturing ? 0.5 : 1.0,
-                child: Container(
-                  height: 72,
-                  width: 72,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 4),
-                  ),
-                  child: Center(
-                    child: Container(
-                      height: 56,
-                      width: 56,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            IconButton(
-              iconSize: 28,
-              onPressed: isCapturing ? null : pickPassportFromGallery,
-              icon: Icon(
-                Icons.photo_library,
-                color: isCapturing ? Colors.white38 : Colors.white,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
