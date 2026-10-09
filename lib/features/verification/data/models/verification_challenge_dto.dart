@@ -18,8 +18,11 @@ class VerificationChallengeDto {
 
   factory VerificationChallengeDto.fromJson(Map<String, dynamic> json) {
     return VerificationChallengeDto(
-      challengeId: (json['challenge_id'] ?? json['id'] ?? json['session_id'] ?? '') as String,
-      challengeType: (json['challenge_type'] ?? json['type'] ?? 'default') as String,
+      challengeId:
+          (json['challenge_id'] ?? json['id'] ?? json['session_id'] ?? '')
+              as String,
+      challengeType:
+          (json['challenge_type'] ?? json['type'] ?? 'default') as String,
       instructions: json['instructions'] as String?,
       timeoutSeconds: json['timeout_seconds'] as int?,
       metadata: (json['metadata'] as Map<String, dynamic>?) ?? {},

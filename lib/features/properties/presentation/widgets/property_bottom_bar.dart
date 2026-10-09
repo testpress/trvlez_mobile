@@ -27,8 +27,8 @@ class PropertyBottomBar extends StatelessWidget {
 
     final RoomType? selectedRoom = selectedRoomTypeId != null
         ? property.roomTypes
-            .where((r) => r.id == selectedRoomTypeId)
-            .firstOrNull
+              .where((r) => r.id == selectedRoomTypeId)
+              .firstOrNull
         : null;
 
     final String priceLabel;
@@ -57,7 +57,8 @@ class PropertyBottomBar extends StatelessWidget {
         priceDisplay =
             'From ${PriceFormatter.formatPrice(minPrice, currencyCode: property.currencyCode)} / night';
         canBook = !isLoading;
-      } else if (property.pricePerNight != null && property.pricePerNight! > 0) {
+      } else if (property.pricePerNight != null &&
+          property.pricePerNight! > 0) {
         priceDisplay =
             '${PriceFormatter.formatPrice(property.pricePerNight!, currencyCode: property.currencyCode)} / night';
         canBook = !isLoading;
@@ -107,7 +108,9 @@ class PropertyBottomBar extends StatelessWidget {
                     style: GoogleFonts.nunito(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: canBook ? colors.actionPrimary : colors.feedbackError,
+                      color: canBook
+                          ? colors.actionPrimary
+                          : colors.feedbackError,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -154,9 +157,7 @@ class PropertyBottomBar extends StatelessWidget {
                   horizontal: 20,
                   vertical: 14,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: AppRadius.button,
-                ),
+                shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
               ),
             ),
           ],

@@ -25,10 +25,6 @@ class VerificationChallenge {
   }
 
   @override
-  int get hashCode => Object.hash(
-    challengeId,
-    challengeType,
-    instructions,
-    timeoutSeconds,
-  );
+  int get hashCode =>
+      Object.hash(challengeId, challengeType, instructions, timeoutSeconds);
 }

@@ -153,46 +153,40 @@ void main() {
       await tester.tap(copyBtn);
       await tester.pump();
 
-      expect(
-        find.text('Confirmation code copied!'),
-        findsOneWidget,
-      );
+      expect(find.text('Confirmation code copied!'), findsOneWidget);
       expect(copiedText, 'TRV-88219042');
     });
 
-    testWidgets(
-      'fetches reservation by ID when deep-linked',
-      (tester) async {
-        final mockRepo = MockReservationRepository();
-        mockRepo.reservationToReturn = testReservation;
+    testWidgets('fetches reservation by ID when deep-linked', (tester) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.reservationToReturn = testReservation;
 
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              isKycVerifiedProvider.overrideWithValue(true),
-              travelerVerificationStateProvider.overrideWithValue(
-                TravelerVerificationState.verified,
-              ),
-              reservationRepositoryProvider.overrideWithValue(mockRepo),
-            ],
-            child: MaterialApp(
-              home: BookingConfirmationScreen(
-                reservationId: 'res-101',
-                repository: mockRepo,
-                isKycVerified: true,
-                verificationState: TravelerVerificationState.verified,
-              ),
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+            reservationRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+          child: MaterialApp(
+            home: BookingConfirmationScreen(
+              reservationId: 'res-101',
+              repository: mockRepo,
+              isKycVerified: true,
+              verificationState: TravelerVerificationState.verified,
             ),
           ),
-        );
+        ),
+      );
 
-        await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-        expect(mockRepo.lastFetchedId, 'res-101');
-        expect(find.text('TRV-88219042'), findsOneWidget);
-        expect(find.text('Azure Coastlines Beach Resort'), findsOneWidget);
-      },
-    );
+      expect(mockRepo.lastFetchedId, 'res-101');
+      expect(find.text('TRV-88219042'), findsOneWidget);
+      expect(find.text('Azure Coastlines Beach Resort'), findsOneWidget);
+    });
 
     testWidgets(
       'renders error view with retry button when deep link fetch fails',

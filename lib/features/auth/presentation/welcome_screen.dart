@@ -66,7 +66,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: TweenAnimationBuilder<Color?>(
               tween: ColorTween(
                 begin: colorScheme.primary,
-                end: _startAnimation ? colors.textOnAction : colorScheme.primary,
+                end: _startAnimation
+                    ? colors.textOnAction
+                    : colorScheme.primary,
               ),
               duration: const Duration(milliseconds: 1000),
               curve: Curves.easeInOutCubic,

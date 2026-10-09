@@ -63,40 +63,33 @@ void main() {
       mockRepo = MockProfileRepository();
     });
 
-    testWidgets('renders avatar uploader, personal details form, and submit button', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            profileRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: ProfileSetupScreen(),
+    testWidgets(
+      'renders avatar uploader, personal details form, and submit button',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
+            child: const MaterialApp(home: ProfileSetupScreen()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Profile Setup'), findsOneWidget);
-      expect(find.byType(ProfileAvatarUploader), findsOneWidget);
-      expect(find.byType(PersonalDetailsForm), findsOneWidget);
-      expect(find.byType(NationalityPickerField), findsOneWidget);
-      expect(find.text('Complete Profile'), findsOneWidget);
-      expect(find.byType(AppButton), findsOneWidget);
-    });
+        expect(find.text('Profile Setup'), findsOneWidget);
+        expect(find.byType(ProfileAvatarUploader), findsOneWidget);
+        expect(find.byType(PersonalDetailsForm), findsOneWidget);
+        expect(find.byType(NationalityPickerField), findsOneWidget);
+        expect(find.text('Complete Profile'), findsOneWidget);
+        expect(find.byType(AppButton), findsOneWidget);
+      },
+    );
 
     testWidgets('pre-populates form fields from loaded profile state', (
       tester,
     ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            profileRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: ProfileSetupScreen(),
-          ),
+          overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: ProfileSetupScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -115,12 +108,8 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            profileRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: ProfileSetupScreen(),
-          ),
+          overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: ProfileSetupScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -135,12 +124,8 @@ void main() {
     testWidgets('submits modified profile to repository', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            profileRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: ProfileSetupScreen(),
-          ),
+          overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: ProfileSetupScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -161,12 +146,8 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            profileRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: ProfileSetupScreen(),
-          ),
+          overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: ProfileSetupScreen()),
         ),
       );
       await tester.pumpAndSettle();

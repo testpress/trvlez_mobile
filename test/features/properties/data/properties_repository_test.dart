@@ -70,33 +70,35 @@ void main() {
       repository = PropertiesRepositoryImpl(remoteDataSource: fakeDataSource);
     });
 
-    test('getProperties returns mapped domain entities and forwards params',
-        () async {
-      fakeDataSource.listingResponse = PropertyListingResponseDto(
-        items: [sampleDto],
-        total: 1,
-        skip: 10,
-        limit: 20,
-      );
+    test(
+      'getProperties returns mapped domain entities and forwards params',
+      () async {
+        fakeDataSource.listingResponse = PropertyListingResponseDto(
+          items: [sampleDto],
+          total: 1,
+          skip: 10,
+          limit: 20,
+        );
 
-      final result = await repository.getProperties(
-        skip: 10,
-        limit: 20,
-        search: 'Azure',
-        city: 'Goa',
-        propertyType: 'resort',
-      );
+        final result = await repository.getProperties(
+          skip: 10,
+          limit: 20,
+          search: 'Azure',
+          city: 'Goa',
+          propertyType: 'resort',
+        );
 
-      expect(result.length, 1);
-      expect(result.first.id, 'prop-1');
-      expect(result.first.name, 'Azure Coastal Resort');
-      expect(result.first.pricePerNight, 150.0);
-      expect(fakeDataSource.lastSkip, 10);
-      expect(fakeDataSource.lastLimit, 20);
-      expect(fakeDataSource.lastSearch, 'Azure');
-      expect(fakeDataSource.lastCity, 'Goa');
-      expect(fakeDataSource.lastPropertyType, 'resort');
-    });
+        expect(result.length, 1);
+        expect(result.first.id, 'prop-1');
+        expect(result.first.name, 'Azure Coastal Resort');
+        expect(result.first.pricePerNight, 150.0);
+        expect(fakeDataSource.lastSkip, 10);
+        expect(fakeDataSource.lastLimit, 20);
+        expect(fakeDataSource.lastSearch, 'Azure');
+        expect(fakeDataSource.lastCity, 'Goa');
+        expect(fakeDataSource.lastPropertyType, 'resort');
+      },
+    );
 
     test('getProperties maps DioException into AppException', () async {
       fakeDataSource.exceptionToThrow = DioException(

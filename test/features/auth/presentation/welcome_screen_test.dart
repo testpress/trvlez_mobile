@@ -6,11 +6,7 @@ import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';
 void main() {
   group('WelcomeScreen Widget Tests', () {
     testWidgets('renders title and buttons correctly', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: WelcomeScreen()));
 
       expect(find.text('TrvlEz'), findsOneWidget);
       expect(find.byType(WelcomeScreen), findsOneWidget);

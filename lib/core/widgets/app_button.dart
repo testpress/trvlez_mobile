@@ -5,11 +5,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Style variants for [AppButton].
-enum AppButtonVariant {
-  primary,
-  secondary,
-  destructive,
-}
+enum AppButtonVariant { primary, secondary, destructive }
 
 /// Standard reusable button adhering to design system tokens.
 ///

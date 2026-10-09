@@ -5,7 +5,8 @@ import 'package:trvlez_mobile/features/profile/data/datasources/profile_remote_d
 import 'package:trvlez_mobile/features/profile/data/models/profile_dto.dart';
 import 'package:trvlez_mobile/features/profile/data/repositories/profile_repository_impl.dart';
 
-class MockProfileRemoteDataSource extends Fake implements ProfileRemoteDataSource {
+class MockProfileRemoteDataSource extends Fake
+    implements ProfileRemoteDataSource {
   bool shouldThrow = false;
   int statusCode = 500;
   String? lastUpdatePhone;
@@ -95,31 +96,31 @@ void main() {
       mockRemote.shouldThrow = true;
       mockRemote.statusCode = 404;
 
-      expect(
-        () => repository.getProfile(),
-        throwsA(isA<AppException>()),
-      );
+      expect(() => repository.getProfile(), throwsA(isA<AppException>()));
     });
 
-    test('updateProfile formats dates and returns updated domain Profile', () async {
-      final dob = DateTime.utc(1993, 10, 25);
-      final expiry = DateTime.utc(2033, 10, 25);
+    test(
+      'updateProfile formats dates and returns updated domain Profile',
+      () async {
+        final dob = DateTime.utc(1993, 10, 25);
+        final expiry = DateTime.utc(2033, 10, 25);
 
-      final updated = await repository.updateProfile(
-        phone: '+919999988888',
-        nationality: 'India',
-        gender: 'female',
-        dateOfBirth: dob,
-        passportNumber: 'IND112233',
-        passportExpiry: expiry,
-      );
+        final updated = await repository.updateProfile(
+          phone: '+919999988888',
+          nationality: 'India',
+          gender: 'female',
+          dateOfBirth: dob,
+          passportNumber: 'IND112233',
+          passportExpiry: expiry,
+        );
 
-      expect(mockRemote.lastUpdatePhone, '+919999988888');
-      expect(mockRemote.lastUpdateNationality, 'India');
-      expect(mockRemote.lastUpdateDob, '1993-10-25');
-      expect(updated.nationality, 'India');
-      expect(updated.passportNumber, 'IND112233');
-    });
+        expect(mockRemote.lastUpdatePhone, '+919999988888');
+        expect(mockRemote.lastUpdateNationality, 'India');
+        expect(mockRemote.lastUpdateDob, '1993-10-25');
+        expect(updated.nationality, 'India');
+        expect(updated.passportNumber, 'IND112233');
+      },
+    );
 
     test('updateProfile maps DioException to AppException', () async {
       mockRemote.shouldThrow = true;

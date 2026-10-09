@@ -127,16 +127,31 @@ void main() {
         final stage = ProcessingStage.forPassport(phase);
         final allText = '${stage.title} ${stage.subtitle}'.toLowerCase();
 
-        expect(allText, isNot(contains('mrz')),
-            reason: 'Phase $phase should not expose MRZ terminology');
-        expect(allText, isNot(contains('ocr')),
-            reason: 'Phase $phase should not expose OCR terminology');
-        expect(allText, isNot(contains('api')),
-            reason: 'Phase $phase should not expose API terminology');
-        expect(allText, isNot(contains('s3')),
-            reason: 'Phase $phase should not expose S3 terminology');
-        expect(allText, isNot(contains('quality gate')),
-            reason: 'Phase $phase should not expose quality gate terminology');
+        expect(
+          allText,
+          isNot(contains('mrz')),
+          reason: 'Phase $phase should not expose MRZ terminology',
+        );
+        expect(
+          allText,
+          isNot(contains('ocr')),
+          reason: 'Phase $phase should not expose OCR terminology',
+        );
+        expect(
+          allText,
+          isNot(contains('api')),
+          reason: 'Phase $phase should not expose API terminology',
+        );
+        expect(
+          allText,
+          isNot(contains('s3')),
+          reason: 'Phase $phase should not expose S3 terminology',
+        );
+        expect(
+          allText,
+          isNot(contains('quality gate')),
+          reason: 'Phase $phase should not expose quality gate terminology',
+        );
       }
     });
   });
@@ -161,9 +176,7 @@ void main() {
     });
 
     test('uploadSuccess phase maps to completed stage', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.uploadSuccess,
-      );
+      final stage = ProcessingStage.forVideo(VerificationPhase.uploadSuccess);
 
       expect(stage.type, ProcessingStageType.completed);
       expect(stage.title, 'Video is ready');
@@ -214,12 +227,21 @@ void main() {
         final stage = ProcessingStage.forVideo(phase);
         final allText = '${stage.title} ${stage.subtitle}'.toLowerCase();
 
-        expect(allText, isNot(contains('anti-spoofing')),
-            reason: 'Phase $phase should not expose anti-spoofing terminology');
-        expect(allText, isNot(contains('face detection')),
-            reason: 'Phase $phase should not expose face detection terminology');
-        expect(allText, isNot(contains('api')),
-            reason: 'Phase $phase should not expose API terminology');
+        expect(
+          allText,
+          isNot(contains('anti-spoofing')),
+          reason: 'Phase $phase should not expose anti-spoofing terminology',
+        );
+        expect(
+          allText,
+          isNot(contains('face detection')),
+          reason: 'Phase $phase should not expose face detection terminology',
+        );
+        expect(
+          allText,
+          isNot(contains('api')),
+          reason: 'Phase $phase should not expose API terminology',
+        );
       }
     });
   });
@@ -322,9 +344,7 @@ void main() {
     });
 
     test('video completed stage is at last index', () {
-      final stage = ProcessingStage.forVideo(
-        VerificationPhase.uploadSuccess,
-      );
+      final stage = ProcessingStage.forVideo(VerificationPhase.uploadSuccess);
       expect(stage.stepIndex(ProcessingType.video), 1);
     });
   });

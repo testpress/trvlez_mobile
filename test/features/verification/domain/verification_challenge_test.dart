@@ -29,10 +29,7 @@ void main() {
     });
 
     test('parses fallback keys for challenge_id and type', () {
-      final json = {
-        'id': 'fallback-id',
-        'type': 'blink',
-      };
+      final json = {'id': 'fallback-id', 'type': 'blink'};
 
       final dto = VerificationChallengeDto.fromJson(json);
       expect(dto.challengeId, 'fallback-id');

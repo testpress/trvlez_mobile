@@ -29,10 +29,7 @@ class MockAuthRepository extends Fake implements AuthRepository {
   }
 
   @override
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {}
+  Future<void> login({required String email, required String password}) async {}
 }
 
 void main() {
@@ -46,12 +43,8 @@ void main() {
     testWidgets('renders registration form components', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: RegistrationScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: RegistrationScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -65,12 +58,8 @@ void main() {
     testWidgets('validates required fields on empty submit', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: RegistrationScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: RegistrationScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -86,12 +75,8 @@ void main() {
     testWidgets('submits valid inputs to repository', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: RegistrationScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: RegistrationScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -111,17 +96,15 @@ void main() {
       expect(mockRepo.passwordCalled, 'Password123!');
     });
 
-    testWidgets('displays error banner when registration fails', (tester) async {
+    testWidgets('displays error banner when registration fails', (
+      tester,
+    ) async {
       mockRepo.shouldThrow = true;
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: RegistrationScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: RegistrationScreen()),
         ),
       );
       await tester.pumpAndSettle();

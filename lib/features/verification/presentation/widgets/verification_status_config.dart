@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 
 class StatusConfig {
@@ -15,31 +15,44 @@ class StatusConfig {
     required this.subtitle,
   });
 
-  factory StatusConfig.from(TravelerVerificationState state) {
+  factory StatusConfig.from(
+    TravelerVerificationState state,
+    BuildContext context,
+  ) {
+    final colors = context.colors;
     return switch (state) {
-      TravelerVerificationState.submitted => const StatusConfig(
+      TravelerVerificationState.submitted => StatusConfig(
         icon: Icons.hourglass_top_rounded,
-        iconGradient: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+        iconGradient: [
+          colors.feedbackWarning,
+          colors.feedbackWarning.withAlpha(200),
+        ],
         title: 'Verifying Your Identity',
         subtitle:
             'Our system is reviewing your documents. This usually takes less than a minute.',
       ),
-      TravelerVerificationState.verified => const StatusConfig(
+      TravelerVerificationState.verified => StatusConfig(
         icon: Icons.verified_rounded,
-        iconGradient: [Color(0xFF10B981), Color(0xFF34D399)],
+        iconGradient: [
+          colors.feedbackSuccess,
+          colors.feedbackSuccess.withAlpha(200),
+        ],
         title: 'You\'re Verified!',
         subtitle: 'Your identity has been successfully verified.',
       ),
-      TravelerVerificationState.failed => const StatusConfig(
+      TravelerVerificationState.failed => StatusConfig(
         icon: Icons.error_outline_rounded,
-        iconGradient: [Color(0xFFEF4444), Color(0xFFF87171)],
+        iconGradient: [
+          colors.feedbackError,
+          colors.feedbackError.withAlpha(200),
+        ],
         title: 'Verification Failed',
         subtitle:
             'Unfortunately, we were unable to verify your identity. Please review and re-submit.',
       ),
-      _ => const StatusConfig(
+      _ => StatusConfig(
         icon: Icons.pending_rounded,
-        iconGradient: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+        iconGradient: [colors.feedbackInfo, colors.feedbackInfo.withAlpha(200)],
         title: 'Verification Status',
         subtitle: 'Your current verification progress.',
       ),

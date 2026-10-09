@@ -53,9 +53,7 @@ void main() {
     setUp(() {
       mockRepo = MockProfileRepository();
       container = ProviderContainer(
-        overrides: [
-          profileRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -84,22 +82,25 @@ void main() {
       expect(updated?.phone, '+819012345678');
     });
 
-    test('updateProfile sets AsyncError and returns false on failure', () async {
-      await container.read(currentProfileProvider.future);
+    test(
+      'updateProfile sets AsyncError and returns false on failure',
+      () async {
+        await container.read(currentProfileProvider.future);
 
-      mockRepo.shouldThrow = true;
-      final success = await container
-          .read(currentProfileProvider.notifier)
-          .updateProfile(nationality: 'Invalid');
+        mockRepo.shouldThrow = true;
+        final success = await container
+            .read(currentProfileProvider.notifier)
+            .updateProfile(nationality: 'Invalid');
 
-      expect(success, isFalse);
-      final state = container.read(currentProfileProvider);
-      expect(state.hasError, isTrue);
-      expect(state.error, isA<ValidationException>());
+        expect(success, isFalse);
+        final state = container.read(currentProfileProvider);
+        expect(state.hasError, isTrue);
+        expect(state.error, isA<ValidationException>());
 
-      // clearError resets error state
-      container.read(currentProfileProvider.notifier).clearError();
-      expect(container.read(currentProfileProvider).hasError, isFalse);
-    });
+        // clearError resets error state
+        container.read(currentProfileProvider.notifier).clearError();
+        expect(container.read(currentProfileProvider).hasError, isFalse);
+      },
+    );
   });
 }

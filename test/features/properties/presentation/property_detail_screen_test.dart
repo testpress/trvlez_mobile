@@ -71,8 +71,9 @@ void main() {
       ],
     );
 
-    testWidgets('renders full property details, facilities, and room types',
-        (tester) async {
+    testWidgets('renders full property details, facilities, and room types', (
+      tester,
+    ) async {
       final mockRepo = MockPropertiesRepository();
       mockRepo.propertiesToReturn = [detailProperty];
 
@@ -116,8 +117,9 @@ void main() {
       expect(find.text('From \$180 / night'), findsOneWidget);
     });
 
-    testWidgets('expands and collapses description when Read more is tapped',
-        (tester) async {
+    testWidgets('expands and collapses description when Read more is tapped', (
+      tester,
+    ) async {
       final mockRepo = MockPropertiesRepository();
       mockRepo.propertiesToReturn = [detailProperty];
 
@@ -142,8 +144,9 @@ void main() {
       expect(find.text('Read more'), findsOneWidget);
     });
 
-    testWidgets('supports deep linking by ID when initial property is null',
-        (tester) async {
+    testWidgets('supports deep linking by ID when initial property is null', (
+      tester,
+    ) async {
       final mockRepo = MockPropertiesRepository();
       mockRepo.propertiesToReturn = [detailProperty];
 
@@ -165,8 +168,9 @@ void main() {
       expect(find.text('Deluxe King Harbour View'), findsOneWidget);
     });
 
-    testWidgets('shows error state with retry when deep link fetch fails',
-        (tester) async {
+    testWidgets('shows error state with retry when deep link fetch fails', (
+      tester,
+    ) async {
       final mockRepo = MockPropertiesRepository();
       mockRepo.shouldThrow = true;
 
@@ -184,79 +188,88 @@ void main() {
       expect(find.text('Try Again'), findsOneWidget);
     });
 
-    testWidgets('highlights tapped room type card and updates selection state',
-        (tester) async {
-      final mockRepo = MockPropertiesRepository();
-      mockRepo.propertiesToReturn = [detailProperty];
+    testWidgets(
+      'highlights tapped room type card and updates selection state',
+      (tester) async {
+        final mockRepo = MockPropertiesRepository();
+        mockRepo.propertiesToReturn = [detailProperty];
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: PropertyDetailScreen(
-            property: detailProperty,
-            repository: mockRepo,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: PropertyDetailScreen(
+              property: detailProperty,
+              repository: mockRepo,
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Tap to select'), findsNWidgets(2));
-      expect(find.text('Selected'), findsNothing);
+        expect(find.text('Tap to select'), findsNWidgets(2));
+        expect(find.text('Selected'), findsNothing);
 
-      await tester.ensureVisible(find.text('Deluxe King Harbour View'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Deluxe King Harbour View'));
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Deluxe King Harbour View'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Deluxe King Harbour View'));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Selected'), findsOneWidget);
-      expect(find.text('Tap to select'), findsOneWidget);
-      // Bottom bar updates from starting price to selected room type price
-      expect(find.text('Selected Room'), findsOneWidget);
-      expect(find.text('\$180 / night'), findsNWidgets(2)); // Card and bottom bar
-    });
+        expect(find.text('Selected'), findsOneWidget);
+        expect(find.text('Tap to select'), findsOneWidget);
+        // Bottom bar updates from starting price to selected room type price
+        expect(find.text('Selected Room'), findsOneWidget);
+        expect(
+          find.text('\$180 / night'),
+          findsNWidgets(2),
+        ); // Card and bottom bar
+      },
+    );
 
     testWidgets(
-        'renders pricing unavailable and disables book now when room types are unpriced',
-        (tester) async {
-      const unpricedProperty = Property(
-        id: 'prop-unpriced',
-        name: 'Unpriced Inn',
-        city: 'Shimla',
-        countryCode: 'IN',
-        shortDescription: 'Basic lodge',
-        longDescription: 'Basic lodge without rates set',
-        heroImageUrl: '',
-        roomTypes: [
-          RoomType(
-            id: 'rt-unpriced',
-            name: 'Dorm Bed',
-            maxOccupancy: 1,
-            maxAdults: 1,
-            maxChildren: 0,
-            description: 'Shared dorm',
+      'renders pricing unavailable and disables book now when room types are unpriced',
+      (tester) async {
+        const unpricedProperty = Property(
+          id: 'prop-unpriced',
+          name: 'Unpriced Inn',
+          city: 'Shimla',
+          countryCode: 'IN',
+          shortDescription: 'Basic lodge',
+          longDescription: 'Basic lodge without rates set',
+          heroImageUrl: '',
+          roomTypes: [
+            RoomType(
+              id: 'rt-unpriced',
+              name: 'Dorm Bed',
+              maxOccupancy: 1,
+              maxAdults: 1,
+              maxChildren: 0,
+              description: 'Shared dorm',
+            ),
+          ],
+        );
+
+        final mockRepo = MockPropertiesRepository();
+        mockRepo.propertiesToReturn = [unpricedProperty];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: PropertyDetailScreen(
+              property: unpricedProperty,
+              repository: mockRepo,
+            ),
           ),
-        ],
-      );
+        );
+        await tester.pumpAndSettle();
 
-      final mockRepo = MockPropertiesRepository();
-      mockRepo.propertiesToReturn = [unpricedProperty];
+        expect(
+          find.text('Pricing unavailable'),
+          findsNWidgets(2),
+        ); // Card and bottom bar
+        expect(find.text('Unavailable'), findsOneWidget);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: PropertyDetailScreen(
-            property: unpricedProperty,
-            repository: mockRepo,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Pricing unavailable'), findsNWidgets(2)); // Card and bottom bar
-      expect(find.text('Unavailable'), findsOneWidget);
-
-      final bookNowButton = tester.widget<FilledButton>(
-        find.widgetWithText(FilledButton, 'Book Now'),
-      );
-      expect(bookNowButton.onPressed, isNull);
-    });
+        final bookNowButton = tester.widget<FilledButton>(
+          find.widgetWithText(FilledButton, 'Book Now'),
+        );
+        expect(bookNowButton.onPressed, isNull);
+      },
+    );
   });
 }

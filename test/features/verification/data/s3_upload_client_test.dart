@@ -24,15 +24,14 @@ void main() {
       final dio = Dio();
       RequestOptions? recordedOptions;
 
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          recordedOptions = options;
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            recordedOptions = options;
+            handler.resolve(Response(requestOptions: options, statusCode: 200));
+          },
+        ),
+      );
 
       final client = S3UploadClient(dioFactory: () => dio);
 
@@ -51,14 +50,13 @@ void main() {
 
     test('throws ApiException on HTTP error status code', () async {
       final dio = Dio();
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 403,
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(Response(requestOptions: options, statusCode: 403));
+          },
+        ),
+      );
 
       final client = S3UploadClient(dioFactory: () => dio);
 
@@ -76,15 +74,19 @@ void main() {
 
     test('throws ApiException on DioException', () async {
       final dio = Dio();
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.reject(DioException(
-            requestOptions: options,
-            type: DioExceptionType.connectionTimeout,
-            message: 'Timed out',
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.reject(
+              DioException(
+                requestOptions: options,
+                type: DioExceptionType.connectionTimeout,
+                message: 'Timed out',
+              ),
+            );
+          },
+        ),
+      );
 
       final client = S3UploadClient(dioFactory: () => dio);
 

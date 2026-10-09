@@ -43,18 +43,20 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
   Future<void> _loadForm() async {
     try {
       final response = await repository.getReservationForm(reservationId);
-      
+
       // Initialize responses with submission data OR pre_fill_data
       final initialResponses = <String, dynamic>{};
-      
+
       if (response.submission != null) {
         initialResponses.addAll(response.submission!.responses);
       } else {
         // Pre-fill from alias mapping
         for (final section in response.template.formDefinition.sections) {
           for (final field in section.fields) {
-            if (field.preFillAlias != null && response.preFillData.containsKey(field.preFillAlias)) {
-              initialResponses[field.id] = response.preFillData[field.preFillAlias];
+            if (field.preFillAlias != null &&
+                response.preFillData.containsKey(field.preFillAlias)) {
+              initialResponses[field.id] =
+                  response.preFillData[field.preFillAlias];
             }
           }
         }
@@ -96,17 +98,14 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
         responses: state.currentResponses,
         isSubmit: isSubmit,
       );
-      
+
       final updatedResponse = ReservationFormResponse(
         template: state.formResponse!.template,
         submission: submission,
         preFillData: state.formResponse!.preFillData,
       );
 
-      state = state.copyWith(
-        isLoading: false,
-        formResponse: updatedResponse,
-      );
+      state = state.copyWith(isLoading: false, formResponse: updatedResponse);
       return true;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -115,9 +114,14 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
   }
 }
 
-final preArrivalFormProvider = StateNotifierProvider.family<PreArrivalFormNotifier, PreArrivalFormState, String>((ref, reservationId) {
-  return PreArrivalFormNotifier(
-    reservationId: reservationId,
-    repository: ref.watch(formRepositoryProvider),
-  );
-});
+final preArrivalFormProvider =
+    StateNotifierProvider.family<
+      PreArrivalFormNotifier,
+      PreArrivalFormState,
+      String
+    >((ref, reservationId) {
+      return PreArrivalFormNotifier(
+        reservationId: reservationId,
+        repository: ref.watch(formRepositoryProvider),
+      );
+    });

@@ -38,8 +38,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
   /// Computes the effective verification state for the UI.
   TravelerVerificationState effectiveState(
     TravelerVerificationState profileState,
-  ) =>
-      state.effectiveState(profileState);
+  ) => state.effectiveState(profileState);
 
   // ─── Backend Reconciliation ──────────────────────────────────────
 
@@ -242,7 +241,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
       state = state.copyWith(imageQualityResult: qualityResult);
 
       if (!qualityResult.isAcceptable) {
-        final errorMsg = qualityResult.uiGuidance ??
+        final errorMsg =
+            qualityResult.uiGuidance ??
             qualityResult.message ??
             'Passport photo quality is insufficient. Please retake the photo.';
         state = state.copyWith(
@@ -325,9 +325,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
     try {
       final repository = ref.read(verificationRepositoryProvider);
-      await repository.confirmMrz(
-        mrzResult.toConfirmPayload(),
-      );
+      await repository.confirmMrz(mrzResult.toConfirmPayload());
       state = state.copyWith(phase: VerificationPhase.mrzReviewed);
     } catch (e) {
       final apiException = ApiException.from(e);
@@ -373,7 +371,8 @@ class VerificationNotifier extends Notifier<VerificationState> {
       state = state.copyWith(videoQualityResult: qualityResult);
 
       if (!qualityResult.isAcceptable) {
-        final errorMsg = qualityResult.uiGuidance ??
+        final errorMsg =
+            qualityResult.uiGuidance ??
             qualityResult.message ??
             'Selfie video quality is insufficient. Please re-record your video.';
         state = state.copyWith(

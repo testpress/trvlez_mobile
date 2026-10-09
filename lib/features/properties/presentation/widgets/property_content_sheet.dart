@@ -74,9 +74,7 @@ class PropertyContentSheet extends StatelessWidget {
                     ),
                     if (property.amenities.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.lg),
-                      PropertyAmenitiesSection(
-                        facilities: property.amenities,
-                      ),
+                      PropertyAmenitiesSection(facilities: property.amenities),
                     ],
                     const SizedBox(height: AppSpacing.lg),
                     PropertyRoomTypesSection(

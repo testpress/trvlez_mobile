@@ -81,7 +81,8 @@ class SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
     final notifier = ref.watch(verificationNotifierProvider.notifier);
     final phase = state.phase;
 
-    final hasError = phase == VerificationPhase.error ||
+    final hasError =
+        phase == VerificationPhase.error ||
         phase == VerificationPhase.videoQualityFailed;
 
     return SharedReviewScaffold(

@@ -86,14 +86,8 @@ class AppColors extends ThemeExtension<AppColors> {
     Palette.indigo500,
     Palette.purple500,
   ];
-  static const List<Color> tripsGradient = [
-    Palette.sky500,
-    Palette.blue400,
-  ];
-  static const List<Color> dealsGradient = [
-    Palette.amber500,
-    Palette.amber400,
-  ];
+  static const List<Color> tripsGradient = [Palette.sky500, Palette.blue400];
+  static const List<Color> dealsGradient = [Palette.amber500, Palette.amber400];
   static const List<Color> supportGradient = [
     Palette.emerald500,
     Palette.emerald400,
@@ -191,8 +185,7 @@ class AppColors extends ThemeExtension<AppColors> {
           Color.lerp(surfaceRaised, other.surfaceRaised, t) ?? surfaceRaised,
       surfaceSubtle:
           Color.lerp(surfaceSubtle, other.surfaceSubtle, t) ?? surfaceSubtle,
-      textPrimary:
-          Color.lerp(textPrimary, other.textPrimary, t) ?? textPrimary,
+      textPrimary: Color.lerp(textPrimary, other.textPrimary, t) ?? textPrimary,
       textSecondary:
           Color.lerp(textSecondary, other.textSecondary, t) ?? textSecondary,
       textDisabled:
@@ -207,13 +200,16 @@ class AppColors extends ThemeExtension<AppColors> {
           Color.lerp(borderSubtle, other.borderSubtle, t) ?? borderSubtle,
       actionPrimary:
           Color.lerp(actionPrimary, other.actionPrimary, t) ?? actionPrimary,
-      actionSecondary: Color.lerp(actionSecondary, other.actionSecondary, t) ??
+      actionSecondary:
+          Color.lerp(actionSecondary, other.actionSecondary, t) ??
           actionSecondary,
-      feedbackSuccess: Color.lerp(feedbackSuccess, other.feedbackSuccess, t) ??
+      feedbackSuccess:
+          Color.lerp(feedbackSuccess, other.feedbackSuccess, t) ??
           feedbackSuccess,
       feedbackError:
           Color.lerp(feedbackError, other.feedbackError, t) ?? feedbackError,
-      feedbackWarning: Color.lerp(feedbackWarning, other.feedbackWarning, t) ??
+      feedbackWarning:
+          Color.lerp(feedbackWarning, other.feedbackWarning, t) ??
           feedbackWarning,
       feedbackInfo:
           Color.lerp(feedbackInfo, other.feedbackInfo, t) ?? feedbackInfo,

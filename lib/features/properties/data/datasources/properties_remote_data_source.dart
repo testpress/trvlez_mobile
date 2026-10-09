@@ -19,10 +19,7 @@ class PropertiesRemoteDataSource {
     String? city,
     String? propertyType,
   }) async {
-    final queryParams = <String, dynamic>{
-      'skip': skip,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'skip': skip, 'limit': limit};
     if (search != null && search.trim().length >= 2) {
       queryParams['search'] = search.trim();
     }
@@ -49,7 +46,8 @@ class PropertiesRemoteDataSource {
 }
 
 /// Provider for the [PropertiesRemoteDataSource].
-final propertiesRemoteDataSourceProvider =
-    Provider<PropertiesRemoteDataSource>((ref) {
-  return PropertiesRemoteDataSource(dio: ref.watch(dioProvider));
-});
+final propertiesRemoteDataSourceProvider = Provider<PropertiesRemoteDataSource>(
+  (ref) {
+    return PropertiesRemoteDataSource(dio: ref.watch(dioProvider));
+  },
+);

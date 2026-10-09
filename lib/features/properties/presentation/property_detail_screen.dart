@@ -48,10 +48,7 @@ class _PropertyDetailView extends ConsumerStatefulWidget {
   final String propertyId;
   final Property? initialProperty;
 
-  const _PropertyDetailView({
-    required this.propertyId,
-    this.initialProperty,
-  });
+  const _PropertyDetailView({required this.propertyId, this.initialProperty});
 
   @override
   ConsumerState<_PropertyDetailView> createState() =>
@@ -71,16 +68,18 @@ class _PropertyDetailViewState extends ConsumerState<_PropertyDetailView> {
 
   void _onRoomTypeSelected(String roomTypeId) {
     setState(() {
-      _selectedRoomTypeId =
-          (_selectedRoomTypeId == roomTypeId) ? null : roomTypeId;
+      _selectedRoomTypeId = (_selectedRoomTypeId == roomTypeId)
+          ? null
+          : roomTypeId;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final asyncProperty =
-        ref.watch(propertyDetailNotifierProvider(widget.propertyId));
+    final asyncProperty = ref.watch(
+      propertyDetailNotifierProvider(widget.propertyId),
+    );
 
     final displayProperty = asyncProperty.valueOrNull ?? widget.initialProperty;
 

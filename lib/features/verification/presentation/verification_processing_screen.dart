@@ -65,9 +65,7 @@ class _VerificationProcessingScreenState
   @override
   void initState() {
     super.initState();
-    _displayedStage = _resolveStage(
-      ref.read(verificationNotifierProvider),
-    );
+    _displayedStage = _resolveStage(ref.read(verificationNotifierProvider));
     _stageShownAt = DateTime.now();
   }
 
@@ -104,8 +102,8 @@ class _VerificationProcessingScreenState
     // Insert quality-passed intermediate when transitioning from checking
     final isQualityCheckSuccess =
         effectiveCurrent.type == ProcessingStageType.checking &&
-            (newStage.type == ProcessingStageType.reading ||
-                newStage.type == ProcessingStageType.completed);
+        (newStage.type == ProcessingStageType.reading ||
+            newStage.type == ProcessingStageType.completed);
 
     if (isQualityCheckSuccess) {
       final qualityPassed = widget.type == ProcessingType.passport
@@ -196,13 +194,13 @@ class _VerificationProcessingScreenState
     final colorScheme = theme.colorScheme;
 
     // Listen to backend state changes and enqueue stages
-    ref.listen<VerificationState>(
-      verificationNotifierProvider,
-      (previous, next) {
-        final newStage = _resolveStage(next);
-        _enqueueStage(newStage);
-      },
-    );
+    ref.listen<VerificationState>(verificationNotifierProvider, (
+      previous,
+      next,
+    ) {
+      final newStage = _resolveStage(next);
+      _enqueueStage(newStage);
+    });
 
     final stage = _displayedStage;
     final stepLabels = ProcessingStage.stepLabels(widget.type);
@@ -354,12 +352,7 @@ class _VerificationProcessingScreenState
           ),
         );
       },
-      child: Text(
-        text,
-        key: key,
-        textAlign: TextAlign.center,
-        style: style,
-      ),
+      child: Text(text, key: key, textAlign: TextAlign.center, style: style),
     );
   }
 
@@ -374,9 +367,7 @@ class _VerificationProcessingScreenState
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         minimumSize: const Size(double.infinity, 44),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
         elevation: 0,
       ),
       child: Text(

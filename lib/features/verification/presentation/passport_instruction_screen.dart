@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_progress_stepper.dart';
 
 /// Instruction screen shown before passport camera capture.
@@ -70,9 +71,7 @@ class PassportInstructionScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Passport Visual Graphic
-                    Center(
-                      child: _buildPassportVisual(colorScheme),
-                    ),
+                    Center(child: _buildPassportVisual(colorScheme)),
                     const SizedBox(height: 20),
 
                     Text(
@@ -195,7 +194,7 @@ class PassportInstructionScreen extends StatelessWidget {
                           text: 'Whatsapp',
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF25D366),
+                            color: context.colors.feedbackSuccess,
                           ),
                         ),
                       ],

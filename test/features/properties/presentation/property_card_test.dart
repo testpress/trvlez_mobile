@@ -18,8 +18,9 @@ void main() {
       amenities: ['wifi', 'spa', 'mountain view'],
     );
 
-    testWidgets('renders recommended card without hardcoded fake data',
-        (tester) async {
+    testWidgets('renders recommended card without hardcoded fake data', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -46,35 +47,37 @@ void main() {
     });
 
     testWidgets(
-        'renders popular card with property type badge and without fake data',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: PropertyCard(
-              property: property,
-              isHorizontal: true,
-              onTap: () {},
+      'renders popular card with property type badge and without fake data',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: PropertyCard(
+                property: property,
+                isHorizontal: true,
+                onTap: () {},
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Verify name and location
-      expect(find.text('Hilltop Sanctuary Resort'), findsOneWidget);
-      expect(find.text('Ooty, Tamil Nadu, India'), findsOneWidget);
+        // Verify name and location
+        expect(find.text('Hilltop Sanctuary Resort'), findsOneWidget);
+        expect(find.text('Ooty, Tamil Nadu, India'), findsOneWidget);
 
-      // Verify property type badge
-      expect(find.text('RESORT'), findsOneWidget);
+        // Verify property type badge
+        expect(find.text('RESORT'), findsOneWidget);
 
-      // Verify no fake hardcoded price or ratings
-      expect(find.text('\$199'), findsNothing);
-      expect(find.text('4N/5D'), findsNothing);
-      expect(find.text('355 reviews'), findsNothing);
-    });
+        // Verify no fake hardcoded price or ratings
+        expect(find.text('\$199'), findsNothing);
+        expect(find.text('4N/5D'), findsNothing);
+        expect(find.text('355 reviews'), findsNothing);
+      },
+    );
 
-    testWidgets('renders price per night on horizontal card when present',
-        (tester) async {
+    testWidgets('renders price per night on horizontal card when present', (
+      tester,
+    ) async {
       const propertyWithPrice = Property(
         id: 'prop-price',
         name: 'Sunny Bay Villa',
@@ -101,8 +104,9 @@ void main() {
       expect(find.text('\$249 / night'), findsOneWidget);
     });
 
-    testWidgets('renders price per night on recommended card when present',
-        (tester) async {
+    testWidgets('renders price per night on recommended card when present', (
+      tester,
+    ) async {
       const propertyWithPrice = Property(
         id: 'prop-price',
         name: 'Sunny Bay Villa',

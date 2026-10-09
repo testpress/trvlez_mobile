@@ -24,8 +24,9 @@ class FormFieldDefinitionDto {
       label: json['label'] as String,
       isRequired: json['required'] as bool? ?? false,
       preFillAlias: json['pre_fill_alias'] as String?,
-      options:
-          (json['options'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
   }
 
@@ -80,10 +81,7 @@ class FormDefinitionDto {
   final int version;
   final List<FormSectionDto> sections;
 
-  const FormDefinitionDto({
-    required this.version,
-    required this.sections,
-  });
+  const FormDefinitionDto({required this.version, required this.sections});
 
   factory FormDefinitionDto.fromJson(Map<String, dynamic> json) {
     return FormDefinitionDto(
@@ -182,12 +180,11 @@ class ReservationFormResponseDto {
       template: FormTemplateDto.fromJson(
         json['template'] as Map<String, dynamic>,
       ),
-      submission:
-          json['submission'] != null
-              ? FormSubmissionDto.fromJson(
-                json['submission'] as Map<String, dynamic>,
-              )
-              : null,
+      submission: json['submission'] != null
+          ? FormSubmissionDto.fromJson(
+              json['submission'] as Map<String, dynamic>,
+            )
+          : null,
       preFillData: json['pre_fill_data'] as Map<String, dynamic>? ?? {},
     );
   }

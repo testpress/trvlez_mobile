@@ -69,7 +69,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response when initializing passport upload');
+      throw const ServerException(
+        'Empty response when initializing passport upload',
+      );
     }
 
     final uploadUrl = data['upload_url'] as String? ?? '';
@@ -94,7 +96,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response when initializing selfie upload');
+      throw const ServerException(
+        'Empty response when initializing selfie upload',
+      );
     }
 
     final uploadUrl = data['upload_url'] as String? ?? '';
@@ -181,7 +185,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response from verification submission');
+      throw const ServerException(
+        'Empty response from verification submission',
+      );
     }
     return VerificationSubmitResult.fromJson(data);
   }
@@ -194,7 +200,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response from verification status endpoint');
+      throw const ServerException(
+        'Empty response from verification status endpoint',
+      );
     }
     return VerificationStatus.fromJson(data);
   }
@@ -207,7 +215,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response from verification job endpoint');
+      throw const ServerException(
+        'Empty response from verification job endpoint',
+      );
     }
     return VerificationJobResult.fromJson(data);
   }
@@ -220,7 +230,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response from verification challenge endpoint');
+      throw const ServerException(
+        'Empty response from verification challenge endpoint',
+      );
     }
     return VerificationChallengeDto.fromJson(data);
   }
@@ -234,7 +246,9 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response from MRZ confirmation endpoint');
+      throw const ServerException(
+        'Empty response from MRZ confirmation endpoint',
+      );
     }
     return data;
   }

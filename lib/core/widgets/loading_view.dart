@@ -5,10 +5,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Full-screen or centered loading state indicator.
 class LoadingView extends StatelessWidget {
-  const LoadingView({
-    this.message,
-    super.key,
-  });
+  const LoadingView({this.message, super.key});
 
   final String? message;
 

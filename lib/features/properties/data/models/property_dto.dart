@@ -66,7 +66,8 @@ class PropertyDto {
     }
 
     String? heroImageUrl = json['hero_image_url'] as String?;
-    if ((heroImageUrl == null || heroImageUrl.isEmpty) && json['images'] is List) {
+    if ((heroImageUrl == null || heroImageUrl.isEmpty) &&
+        json['images'] is List) {
       final imgList = json['images'] as List;
       for (final img in imgList) {
         if (img is Map<String, dynamic>) {
@@ -76,7 +77,8 @@ class PropertyDto {
           }
         }
       }
-      if ((heroImageUrl == null || heroImageUrl.isEmpty) && imgList.isNotEmpty) {
+      if ((heroImageUrl == null || heroImageUrl.isEmpty) &&
+          imgList.isNotEmpty) {
         final firstImg = imgList.first;
         if (firstImg is String) {
           heroImageUrl = firstImg;
@@ -93,10 +95,13 @@ class PropertyDto {
       stateRegion: json['state_region'] as String?,
       countryCode: json['country_code'] as String?,
       propertyType: json['property_type'] as String?,
-      shortDescription: (json['short_description'] ?? json['description']) as String?,
-      longDescription: (json['long_description'] ??
-              json['description'] ??
-              json['short_description']) as String?,
+      shortDescription:
+          (json['short_description'] ?? json['description']) as String?,
+      longDescription:
+          (json['long_description'] ??
+                  json['description'] ??
+                  json['short_description'])
+              as String?,
       heroImageUrl: heroImageUrl,
       latitude: PriceFormatter.parsePrice(json['latitude']),
       longitude: PriceFormatter.parsePrice(json['longitude']),
@@ -144,8 +149,7 @@ class PropertyDto {
           .map((rt) => rt.pricePerNight!)
           .toList();
       if (validPrices.isNotEmpty) {
-        resolvedPricePerNight =
-            validPrices.reduce((a, b) => a < b ? a : b);
+        resolvedPricePerNight = validPrices.reduce((a, b) => a < b ? a : b);
       }
     }
 

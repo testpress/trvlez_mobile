@@ -38,8 +38,9 @@ class MockReservationRemoteDataSource extends Fake
     }
     return listResponseToReturn ??
         ReservationListResponseDto(
-          items:
-              reservationDtoToReturn != null ? [reservationDtoToReturn!] : [],
+          items: reservationDtoToReturn != null
+              ? [reservationDtoToReturn!]
+              : [],
           total: reservationDtoToReturn != null ? 1 : 0,
         );
   }
@@ -72,8 +73,9 @@ class MockReservationRemoteDataSource extends Fake
         CheckInTokenDto(
           token: 'mock-qr-token',
           reservationId: reservationId,
-          expiresAt:
-              DateTime.now().add(const Duration(minutes: 10)).toIso8601String(),
+          expiresAt: DateTime.now()
+              .add(const Duration(minutes: 10))
+              .toIso8601String(),
         );
   }
 }
@@ -182,11 +184,14 @@ void main() {
       expect(mockRemote.lastFetchedId, 'res-101');
     });
 
-    test('cancelReservation calls remote and returns updated reservation', () async {
-      final res = await repository.cancelReservation('res-101');
-      expect(res.id, 'res-101');
-      expect(mockRemote.lastCancelledId, 'res-101');
-    });
+    test(
+      'cancelReservation calls remote and returns updated reservation',
+      () async {
+        final res = await repository.cancelReservation('res-101');
+        expect(res.id, 'res-101');
+        expect(mockRemote.lastCancelledId, 'res-101');
+      },
+    );
 
     test('generateCheckInToken returns mapped check-in token', () async {
       final token = await repository.generateCheckInToken('res-101');

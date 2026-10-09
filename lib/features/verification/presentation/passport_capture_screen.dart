@@ -102,9 +102,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   @override
   void dispose() {
     // Restore portrait orientation so subsequent screens render in portrait
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     controller?.dispose();
     super.dispose();
   }
@@ -163,10 +161,9 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       );
 
       // Hand off image and crop params, then transition to review screen immediately
-      ref.read(verificationNotifierProvider.notifier).setImage(
-        File(file.path),
-        cropParams: cropParams,
-      );
+      ref
+          .read(verificationNotifierProvider.notifier)
+          .setImage(File(file.path), cropParams: cropParams);
 
       if (mounted) {
         // Restore portrait before leaving so the processing screen renders correctly
@@ -334,10 +331,7 @@ class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
             flashMode: currentFlashMode,
             padding: padding,
           ),
-          PassportGuidanceBar(
-            cutoutRect: cutoutRect,
-            screenSize: screenSize,
-          ),
+          PassportGuidanceBar(cutoutRect: cutoutRect, screenSize: screenSize),
           PassportCaptureControls(
             isCapturing: isCapturing,
             onCapture: capturePassport,

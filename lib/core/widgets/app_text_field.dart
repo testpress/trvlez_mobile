@@ -60,16 +60,10 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       maxLines: maxLines,
       onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.cabin(
-        fontSize: 15,
-        color: colors.textPrimary,
-      ),
+      style: GoogleFonts.cabin(fontSize: 15, color: colors.textPrimary),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.cabin(
-          fontSize: 15,
-          color: colors.textDisabled,
-        ),
+        hintStyle: GoogleFonts.cabin(fontSize: 15, color: colors.textDisabled),
         filled: true,
         fillColor: colors.surfaceSubtle,
         contentPadding: const EdgeInsets.symmetric(

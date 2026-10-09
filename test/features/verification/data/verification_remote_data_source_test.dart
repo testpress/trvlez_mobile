@@ -16,30 +16,38 @@ void main() {
 
     test('startVerification posts to /traveler/verification/start', () async {
       RequestOptions? recordedOptions;
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          recordedOptions = options;
-          handler.resolve(Response(requestOptions: options, statusCode: 200, data: {}));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            recordedOptions = options;
+            handler.resolve(
+              Response(requestOptions: options, statusCode: 200, data: {}),
+            );
+          },
+        ),
+      );
 
       await dataSource.startVerification();
       expect(recordedOptions?.path, '/traveler/verification/start');
     });
 
     test('initPassportUpload returns uploadUrl and fileId', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'upload_url': 'https://s3.example.com/put',
-              'file_id': 'pass-uuid',
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'upload_url': 'https://s3.example.com/put',
+                  'file_id': 'pass-uuid',
+                },
+              ),
+            );
+          },
+        ),
+      );
 
       final res = await dataSource.initPassportUpload(
         mimeType: 'image/jpeg',
@@ -51,26 +59,37 @@ void main() {
     });
 
     test('initPassportUpload throws ServerException on null data', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(requestOptions: options, statusCode: 200, data: null));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(requestOptions: options, statusCode: 200, data: null),
+            );
+          },
+        ),
+      );
 
       expect(
-        () => dataSource.initPassportUpload(mimeType: 'image/jpeg', fileSizeBytes: 1024),
+        () => dataSource.initPassportUpload(
+          mimeType: 'image/jpeg',
+          fileSizeBytes: 1024,
+        ),
         throwsA(isA<ServerException>()),
       );
     });
 
     test('completePassportUpload posts fileId', () async {
       RequestOptions? recordedOptions;
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          recordedOptions = options;
-          handler.resolve(Response(requestOptions: options, statusCode: 200, data: {}));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            recordedOptions = options;
+            handler.resolve(
+              Response(requestOptions: options, statusCode: 200, data: {}),
+            );
+          },
+        ),
+      );
 
       await dataSource.completePassportUpload('pass-uuid');
       expect(recordedOptions?.path, '/upload/passport/complete');
@@ -78,36 +97,56 @@ void main() {
     });
 
     test('initSelfieUpload and completeSelfieUpload', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          if (options.path == '/upload/video/init') {
-            handler.resolve(Response(
-              requestOptions: options,
-              statusCode: 200,
-              data: {'upload_url': 'https://s3.example.com/selfie', 'file_id': 'vid-1'},
-            ));
-          } else {
-            handler.resolve(Response(requestOptions: options, statusCode: 200, data: {}));
-          }
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (options.path == '/upload/video/init') {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {
+                    'upload_url': 'https://s3.example.com/selfie',
+                    'file_id': 'vid-1',
+                  },
+                ),
+              );
+            } else {
+              handler.resolve(
+                Response(requestOptions: options, statusCode: 200, data: {}),
+              );
+            }
+          },
+        ),
+      );
 
-      final init = await dataSource.initSelfieUpload(mimeType: 'video/mp4', fileSizeBytes: 2048);
+      final init = await dataSource.initSelfieUpload(
+        mimeType: 'video/mp4',
+        fileSizeBytes: 2048,
+      );
       expect(init.fileId, 'vid-1');
 
       await dataSource.completeSelfieUpload('vid-1');
     });
 
     test('checkImageQuality parses response correctly', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {'success': true, 'status': 'passed', 'is_acceptable': true},
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'success': true,
+                  'status': 'passed',
+                  'is_acceptable': true,
+                },
+              ),
+            );
+          },
+        ),
+      );
 
       final result = await dataSource.checkImageQuality();
       expect(result.success, isTrue);
@@ -116,20 +155,24 @@ void main() {
     });
 
     test('checkVideoQuality parses response correctly', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'success': false,
-              'status': 'failed',
-              'is_acceptable': false,
-              'message': 'blurry',
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'success': false,
+                  'status': 'failed',
+                  'is_acceptable': false,
+                  'message': 'blurry',
+                },
+              ),
+            );
+          },
+        ),
+      );
 
       final result = await dataSource.checkVideoQuality();
       expect(result.success, isFalse);
@@ -139,23 +182,27 @@ void main() {
     });
 
     test('extractMrz parses response correctly', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'raw_text': 'P<USA...',
-              'document_number': 'P12345678',
-              'first_name': 'JOHN',
-              'last_name': 'DOE',
-              'nationality': 'USA',
-              'date_of_birth': '1990-01-01',
-              'date_of_expiry': '2030-01-01',
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'raw_text': 'P<USA...',
+                  'document_number': 'P12345678',
+                  'first_name': 'JOHN',
+                  'last_name': 'DOE',
+                  'nationality': 'USA',
+                  'date_of_birth': '1990-01-01',
+                  'date_of_expiry': '2030-01-01',
+                },
+              ),
+            );
+          },
+        ),
+      );
 
       final result = await dataSource.extractMrz();
       expect(result.documentNumber, 'P12345678');
@@ -164,42 +211,52 @@ void main() {
     });
 
     test('submitVerification posts payload and returns result', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'session_id': 'sess-123',
-              'verification_job_id': 'job-999',
-              'status': 'queued',
-              'submitted_at': '2025-01-01T12:00:00Z',
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'session_id': 'sess-123',
+                  'verification_job_id': 'job-999',
+                  'status': 'queued',
+                  'submitted_at': '2025-01-01T12:00:00Z',
+                },
+              ),
+            );
+          },
+        ),
+      );
 
-      final result = await dataSource.submitVerification(nfcPayload: {'test': true});
+      final result = await dataSource.submitVerification(
+        nfcPayload: {'test': true},
+      );
       expect(result.verificationJobId, 'job-999');
       expect(result.status, 'queued');
       expect(result.sessionId, 'sess-123');
     });
 
     test('getVerificationStatus parses status and flags', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'session_id': 'sess-1',
-              'status': 'verified',
-              'passport_uploaded': true,
-              'video_uploaded': true,
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'session_id': 'sess-1',
+                  'status': 'verified',
+                  'passport_uploaded': true,
+                  'video_uploaded': true,
+                },
+              ),
+            );
+          },
+        ),
+      );
 
       final status = await dataSource.getVerificationStatus();
       expect(status.status, 'verified');
@@ -208,21 +265,25 @@ void main() {
     });
 
     test('getVerificationJob parses job result', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'id': 'job-1',
-              'traveler_id': 'traveler-1',
-              'verification_session_id': 'sess-1',
-              'status': 'completed',
-              'created_at': '2025-01-01T12:00:00Z',
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {
+                  'id': 'job-1',
+                  'traveler_id': 'traveler-1',
+                  'verification_session_id': 'sess-1',
+                  'status': 'completed',
+                  'created_at': '2025-01-01T12:00:00Z',
+                },
+              ),
+            );
+          },
+        ),
+      );
 
       final job = await dataSource.getVerificationJob('job-1');
       expect(job.id, 'job-1');
@@ -230,18 +291,19 @@ void main() {
     });
 
     test('getVerificationChallenge parses challenge DTO', () async {
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {
-              'challenge_id': 'c-1',
-              'challenge_type': 'nod',
-            },
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {'challenge_id': 'c-1', 'challenge_type': 'nod'},
+              ),
+            );
+          },
+        ),
+      );
 
       final challenge = await dataSource.getVerificationChallenge();
       expect(challenge.challengeId, 'c-1');
@@ -250,16 +312,20 @@ void main() {
 
     test('confirmMrz posts serialized DTO', () async {
       RequestOptions? recordedOptions;
-      dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) {
-          recordedOptions = options;
-          handler.resolve(Response(
-            requestOptions: options,
-            statusCode: 200,
-            data: {'success': true},
-          ));
-        },
-      ));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            recordedOptions = options;
+            handler.resolve(
+              Response(
+                requestOptions: options,
+                statusCode: 200,
+                data: {'success': true},
+              ),
+            );
+          },
+        ),
+      );
 
       const dto = ConfirmMrzRequestDto(
         firstName: 'JOHN',

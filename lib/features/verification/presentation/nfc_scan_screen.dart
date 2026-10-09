@@ -177,15 +177,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen>
               if (_isCheckingAvailability)
                 const Center(child: CircularProgressIndicator())
               else if (_nfcStatus == NfcDeviceStatus.disabled)
-                NfcStatusView(
-                  isDisabled: true,
-                  onSkipNfc: _skipNfc,
-                )
+                NfcStatusView(isDisabled: true, onSkipNfc: _skipNfc)
               else if (_nfcStatus == NfcDeviceStatus.unsupported)
-                NfcStatusView(
-                  isDisabled: false,
-                  onSkipNfc: _skipNfc,
-                )
+                NfcStatusView(isDisabled: false, onSkipNfc: _skipNfc)
               else if (error != null)
                 NfcErrorView(
                   error: error,

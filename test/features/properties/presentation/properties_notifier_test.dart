@@ -57,9 +57,7 @@ void main() {
       mockRepo = MockPropertiesRepository();
       mockRepo.propertiesToReturn = [testProperty];
       container = ProviderContainer(
-        overrides: [
-          propertiesRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [propertiesRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -68,7 +66,9 @@ void main() {
     });
 
     test('initial load fetches properties without filters', () async {
-      final properties = await container.read(propertiesNotifierProvider.future);
+      final properties = await container.read(
+        propertiesNotifierProvider.future,
+      );
       expect(properties.length, 1);
       expect(properties.first.name, 'Grand Hyatt');
       expect(mockRepo.lastSearch, isNull);
@@ -129,9 +129,7 @@ void main() {
       mockRepo = MockPropertiesRepository();
       mockRepo.propertiesToReturn = [testProperty];
       container = ProviderContainer(
-        overrides: [
-          propertiesRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [propertiesRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -140,21 +138,26 @@ void main() {
     });
 
     test('loads property detail by id', () async {
-      final property =
-          await container.read(propertyDetailNotifierProvider('prop-detail-1').future);
+      final property = await container.read(
+        propertyDetailNotifierProvider('prop-detail-1').future,
+      );
       expect(property.id, 'prop-detail-1');
       expect(property.name, 'Sea View Resort');
     });
 
     test('refresh re-fetches property detail', () async {
-      await container.read(propertyDetailNotifierProvider('prop-detail-1').future);
+      await container.read(
+        propertyDetailNotifierProvider('prop-detail-1').future,
+      );
 
-      final notifier =
-          container.read(propertyDetailNotifierProvider('prop-detail-1').notifier);
+      final notifier = container.read(
+        propertyDetailNotifierProvider('prop-detail-1').notifier,
+      );
       await notifier.refresh();
 
-      final state =
-          container.read(propertyDetailNotifierProvider('prop-detail-1'));
+      final state = container.read(
+        propertyDetailNotifierProvider('prop-detail-1'),
+      );
       expect(state.value?.name, 'Sea View Resort');
     });
 
@@ -162,7 +165,8 @@ void main() {
       mockRepo.shouldThrow = true;
 
       expect(
-        () => container.read(propertyDetailNotifierProvider('prop-fail').future),
+        () =>
+            container.read(propertyDetailNotifierProvider('prop-fail').future),
         throwsA(isA<NotFoundException>()),
       );
     });

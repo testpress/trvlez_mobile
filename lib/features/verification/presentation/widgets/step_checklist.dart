@@ -33,7 +33,10 @@ class StepChecklist extends StatelessWidget {
     final steps = [
       const StepItem(label: 'Complete Profile', status: StepStatus.completed),
       const StepItem(label: 'Upload Passport', status: StepStatus.completed),
-      const StepItem(label: 'Selfie Verification', status: StepStatus.completed),
+      const StepItem(
+        label: 'Selfie Verification',
+        status: StepStatus.completed,
+      ),
       if (hasNfcResult ||
           !isNfcSkipped) // Show NFC step if it was done, or assume done if not explicitly skipped
         StepItem(

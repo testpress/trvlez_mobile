@@ -65,10 +65,9 @@ class _ReservationDetailContent extends ConsumerWidget {
 
     if (reservation != null) {
       final reservationsState = ref.watch(reservationListProvider);
-      final updated =
-          reservationsState.valueOrNull
-              ?.where((r) => r.id == reservationId)
-              .firstOrNull;
+      final updated = reservationsState.valueOrNull
+          ?.where((r) => r.id == reservationId)
+          .firstOrNull;
       final activeReservation = updated ?? reservation!;
       return _buildScaffold(context, ref, activeReservation);
     }
@@ -96,16 +95,15 @@ class _ReservationDetailContent extends ConsumerWidget {
       body: detailAsync.when(
         data: (loaded) => _buildBody(context, ref, loaded),
         loading: () => const LoadingView(message: 'Loading reservation...'),
-        error:
-            (err, stack) => ErrorView(
-              title: 'Unable to load reservation',
-              message: err.toString(),
-              onRetry: () {
-                ref
-                    .read(reservationDetailNotifierProvider(reservationId).notifier)
-                    .refresh();
-              },
-            ),
+        error: (err, stack) => ErrorView(
+          title: 'Unable to load reservation',
+          message: err.toString(),
+          onRetry: () {
+            ref
+                .read(reservationDetailNotifierProvider(reservationId).notifier)
+                .refresh();
+          },
+        ),
       ),
     );
   }
@@ -148,9 +146,7 @@ class _ReservationDetailContent extends ConsumerWidget {
       onRefresh: () async {
         ref.invalidate(reservationDetailNotifierProvider(reservationId));
         ref.invalidate(reservationListProvider);
-        await ref.read(
-          reservationDetailNotifierProvider(reservationId).future,
-        );
+        await ref.read(reservationDetailNotifierProvider(reservationId).future);
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -210,10 +206,9 @@ class _ReservationDetailContent extends ConsumerWidget {
                 ReservationInfoRow(
                   icon: Icons.bed_outlined,
                   label: 'Rooms',
-                  value:
-                      activeReservation.rooms
-                          .map((r) => r.roomNumber)
-                          .join(', '),
+                  value: activeReservation.rooms
+                      .map((r) => r.roomNumber)
+                      .join(', '),
                 ),
                 if (activeReservation.guestEmail != null)
                   ReservationInfoRow(
@@ -357,7 +352,9 @@ class _ReservationDetailContent extends ConsumerWidget {
 
       if (context.mounted) {
         if (success) {
-          ref.invalidate(reservationDetailNotifierProvider(activeReservation.id));
+          ref.invalidate(
+            reservationDetailNotifierProvider(activeReservation.id),
+          );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Reservation cancelled successfully.'),

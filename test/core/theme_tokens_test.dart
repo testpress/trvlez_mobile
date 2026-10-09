@@ -50,26 +50,29 @@ void main() {
       expect(colors.lerp(null, 0.5), colors);
     });
 
-    testWidgets('AppTheme registers AppColors extension and context.colors resolves', (tester) async {
-      late AppColors activeColors;
-      late TextTheme activeText;
+    testWidgets(
+      'AppTheme registers AppColors extension and context.colors resolves',
+      (tester) async {
+        late AppColors activeColors;
+        late TextTheme activeText;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: Builder(
-            builder: (context) {
-              activeColors = context.colors;
-              activeText = context.text;
-              return const SizedBox();
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: Builder(
+              builder: (context) {
+                activeColors = context.colors;
+                activeText = context.text;
+                return const SizedBox();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(activeColors.actionPrimary, AppColors.light.actionPrimary);
-      expect(activeColors.surface, AppColors.light.surface);
-      expect(activeText.bodyMedium, isNotNull);
-    });
+        expect(activeColors.actionPrimary, AppColors.light.actionPrimary);
+        expect(activeColors.surface, AppColors.light.surface);
+        expect(activeText.bodyMedium, isNotNull);
+      },
+    );
   });
 }

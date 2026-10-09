@@ -51,11 +51,7 @@ void main() {
     guestName: 'Taylor Morgan',
     numberOfGuests: 2,
     rooms: const [
-      RoomSummary(
-        id: 'r-1',
-        roomNumber: '202',
-        roomTypeId: 'rt-standard',
-      ),
+      RoomSummary(id: 'r-1', roomNumber: '202', roomTypeId: 'rt-standard'),
     ],
     propertySummary: const ReservationPropertySummary(
       id: 'prop-1',
@@ -155,7 +151,10 @@ void main() {
           expiresAt: DateTime.now().add(const Duration(minutes: 10)),
         );
 
-        final regenerateButton = find.widgetWithText(AppButton, 'Refresh QR Code');
+        final regenerateButton = find.widgetWithText(
+          AppButton,
+          'Refresh QR Code',
+        );
         expect(regenerateButton, findsOneWidget);
         await tester.tap(regenerateButton);
         await tester.pumpAndSettle();
@@ -199,46 +198,45 @@ void main() {
       },
     );
 
-    testWidgets(
-      'shows error state with retry when deep link fetch fails',
-      (tester) async {
-        final mockRepo = MockReservationRepository();
-        mockRepo.shouldThrow = true;
+    testWidgets('shows error state with retry when deep link fetch fails', (
+      tester,
+    ) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.shouldThrow = true;
 
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              reservationRepositoryProvider.overrideWithValue(mockRepo),
-              isKycVerifiedProvider.overrideWithValue(true),
-              travelerVerificationStateProvider.overrideWithValue(
-                TravelerVerificationState.verified,
-              ),
-            ],
-            child: MaterialApp(
-              home: QrCodeScreen(
-                reservationId: 'res-error-id',
-                repository: mockRepo,
-                isKycVerified: true,
-                verificationState: TravelerVerificationState.verified,
-              ),
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            reservationRepositoryProvider.overrideWithValue(mockRepo),
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+          ],
+          child: MaterialApp(
+            home: QrCodeScreen(
+              reservationId: 'res-error-id',
+              repository: mockRepo,
+              isKycVerified: true,
+              verificationState: TravelerVerificationState.verified,
             ),
           ),
-        );
-        await tester.pumpAndSettle();
+        ),
+      );
+      await tester.pumpAndSettle();
 
-        expect(find.byType(ErrorView), findsOneWidget);
-        expect(find.text('Unable to load reservation'), findsOneWidget);
-        expect(find.text('Try Again'), findsOneWidget);
+      expect(find.byType(ErrorView), findsOneWidget);
+      expect(find.text('Unable to load reservation'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
 
-        // Recover on retry
-        mockRepo.shouldThrow = false;
-        mockRepo.reservationToReturn = testReservation;
-        await tester.tap(find.text('Try Again'));
-        await tester.pumpAndSettle();
+      // Recover on retry
+      mockRepo.shouldThrow = false;
+      mockRepo.reservationToReturn = testReservation;
+      await tester.tap(find.text('Try Again'));
+      await tester.pumpAndSettle();
 
-        expect(find.text('Azure Coastal Resort'), findsOneWidget);
-      },
-    );
+      expect(find.text('Azure Coastal Resort'), findsOneWidget);
+    });
 
     testWidgets(
       'blocks auto-generation and renders KYC required guidance when unverified',

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/properties/data/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/domain/property.dart';
+import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 
 final propertiesProvider =
     AsyncNotifierProvider<PropertiesNotifier, List<Property>>(
@@ -30,7 +30,8 @@ class PropertiesNotifier extends AsyncNotifier<List<Property>> {
       _searchQuery = search.trim().isEmpty ? null : search.trim();
     }
     if (propertyType != null) {
-      _propertyType = (propertyType.isEmpty || propertyType.toLowerCase() == 'all')
+      _propertyType =
+          (propertyType.isEmpty || propertyType.toLowerCase() == 'all')
           ? null
           : propertyType.toLowerCase();
     }

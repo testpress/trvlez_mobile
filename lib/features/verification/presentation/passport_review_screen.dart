@@ -30,7 +30,8 @@ class PassportReviewScreen extends ConsumerWidget {
       );
     }
 
-    final hasError = phase == VerificationPhase.error ||
+    final hasError =
+        phase == VerificationPhase.error ||
         phase == VerificationPhase.imageQualityFailed ||
         phase == VerificationPhase.mrzExtractionFailed;
 
@@ -56,9 +57,7 @@ class PassportReviewScreen extends ConsumerWidget {
       },
       mediaChild: AspectRatio(
         aspectRatio: 125.0 / 88.0,
-        child: InteractiveViewer(
-          child: Image.file(image, fit: BoxFit.contain),
-        ),
+        child: InteractiveViewer(child: Image.file(image, fit: BoxFit.contain)),
       ),
     );
   }

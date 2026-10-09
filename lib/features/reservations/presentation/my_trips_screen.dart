@@ -429,5 +429,3 @@ class _ReservationCard extends StatelessWidget {
     );
   }
 }
-
-

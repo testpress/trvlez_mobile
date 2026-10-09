@@ -98,21 +98,19 @@ class _BookingConfirmationContent extends ConsumerWidget {
         elevation: 0,
       ),
       body: detailAsync.when(
-        data: (loadedReservation) => _buildBody(context, ref, loadedReservation),
-        loading:
-            () => const LoadingView(
-              message: 'Loading your booking confirmation...',
-            ),
-        error:
-            (err, stack) => ErrorView(
-              title: 'Unable to load confirmation',
-              message: err.toString(),
-              onRetry: () {
-                ref
-                    .read(reservationDetailNotifierProvider(reservationId).notifier)
-                    .refresh();
-              },
-            ),
+        data: (loadedReservation) =>
+            _buildBody(context, ref, loadedReservation),
+        loading: () =>
+            const LoadingView(message: 'Loading your booking confirmation...'),
+        error: (err, stack) => ErrorView(
+          title: 'Unable to load confirmation',
+          message: err.toString(),
+          onRetry: () {
+            ref
+                .read(reservationDetailNotifierProvider(reservationId).notifier)
+                .refresh();
+          },
+        ),
       ),
     );
   }

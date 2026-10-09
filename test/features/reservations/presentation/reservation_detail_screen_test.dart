@@ -97,9 +97,7 @@ void main() {
               reservationRepositoryProvider.overrideWithValue(mockRepo),
             ],
             child: MaterialApp(
-              home: ReservationDetailScreen(
-                reservation: testReservation,
-              ),
+              home: ReservationDetailScreen(reservation: testReservation),
             ),
           ),
         );
@@ -143,9 +141,7 @@ void main() {
               reservationRepositoryProvider.overrideWithValue(mockRepo),
             ],
             child: MaterialApp(
-              home: ReservationDetailScreen(
-                reservation: prearrivalRes,
-              ),
+              home: ReservationDetailScreen(reservation: prearrivalRes),
             ),
           ),
         );
@@ -264,9 +260,7 @@ void main() {
       );
 
       // Confirm in dialog
-      await tester.tap(
-        find.widgetWithText(FilledButton, 'Cancel Reservation'),
-      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Cancel Reservation'));
       await tester.pumpAndSettle();
 
       expect(mockRepo.lastCancelledId, 'res-101');

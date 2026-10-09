@@ -2,10 +2,7 @@ class QualityFailureReason {
   final String code;
   final String message;
 
-  QualityFailureReason({
-    required this.code,
-    required this.message,
-  });
+  QualityFailureReason({required this.code, required this.message});
 
   factory QualityFailureReason.fromJson(Map<String, dynamic> json) {
     return QualityFailureReason(
@@ -44,7 +41,8 @@ class ImageQualityResult {
     return ImageQualityResult(
       success: (json['success'] as bool?) ?? false,
       status: json['status']?.toString() ?? 'passed',
-      isAcceptable: (json['is_acceptable'] as bool?) ?? (json['status'] == 'passed'),
+      isAcceptable:
+          (json['is_acceptable'] as bool?) ?? (json['status'] == 'passed'),
       failureReasons: parsedReasons,
       message: json['message'] as String?,
       uiGuidance: json['ui_guidance'] as String?,
@@ -82,7 +80,8 @@ class VideoQualityResult {
     return VideoQualityResult(
       success: (json['success'] as bool?) ?? false,
       status: json['status']?.toString() ?? 'passed',
-      isAcceptable: (json['is_acceptable'] as bool?) ?? (json['status'] == 'passed'),
+      isAcceptable:
+          (json['is_acceptable'] as bool?) ?? (json['status'] == 'passed'),
       failureReasons: parsedReasons,
       message: json['message'] as String?,
       uiGuidance: json['ui_guidance'] as String?,

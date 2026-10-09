@@ -11,11 +11,7 @@ class QrCodeCard extends StatelessWidget {
   final CheckInToken token;
   final bool isExpired;
 
-  const QrCodeCard({
-    super.key,
-    required this.token,
-    required this.isExpired,
-  });
+  const QrCodeCard({super.key, required this.token, required this.isExpired});
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +44,13 @@ class QrCodeCard extends StatelessWidget {
                   data: token.token,
                   version: QrVersions.auto,
                   size: 210,
-                  eyeStyle: const QrEyeStyle(
+                  eyeStyle: QrEyeStyle(
                     eyeShape: QrEyeShape.square,
-                    color: Color(0xFF111827),
+                    color: context.colors.textPrimary,
                   ),
-                  dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleStyle: QrDataModuleStyle(
                     dataModuleShape: QrDataModuleShape.square,
-                    color: Color(0xFF111827),
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),

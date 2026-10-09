@@ -11,8 +11,5 @@ abstract interface class AuthRepository {
   });
 
   /// Logs in an existing traveler and persists the access token.
-  Future<void> login({
-    required String email,
-    required String password,
-  });
+  Future<void> login({required String email, required String password});
 }

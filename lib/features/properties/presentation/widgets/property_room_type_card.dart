@@ -194,16 +194,16 @@ class PropertyRoomTypeCard extends StatelessWidget {
                   !isBookable
                       ? 'Unavailable'
                       : isSelected
-                          ? 'Selected'
-                          : 'Tap to select',
+                      ? 'Selected'
+                      : 'Tap to select',
                   style: GoogleFonts.nunito(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: !isBookable
                         ? colors.feedbackError
                         : isSelected
-                            ? colors.actionPrimary
-                            : colors.textSecondary,
+                        ? colors.actionPrimary
+                        : colors.textSecondary,
                   ),
                 ),
               ],

@@ -91,31 +91,24 @@ class BookingSummaryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.md),
                 child:
                     (reservation.propertySummary.heroImageUrl ?? '').isNotEmpty
-                        ? Image.network(
-                          reservation.propertySummary.heroImageUrl!,
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                          errorBuilder:
-                              (context, error, stackTrace) => Container(
-                                width: 56,
-                                height: 56,
-                                color: colors.surfaceSubtle,
-                                child: Icon(
-                                  Icons.hotel,
-                                  color: colors.textSecondary,
-                                ),
-                              ),
-                        )
-                        : Container(
+                    ? Image.network(
+                        reservation.propertySummary.heroImageUrl!,
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
                           width: 56,
                           height: 56,
                           color: colors.surfaceSubtle,
-                          child: Icon(
-                            Icons.hotel,
-                            color: colors.textSecondary,
-                          ),
+                          child: Icon(Icons.hotel, color: colors.textSecondary),
                         ),
+                      )
+                    : Container(
+                        width: 56,
+                        height: 56,
+                        color: colors.surfaceSubtle,
+                        child: Icon(Icons.hotel, color: colors.textSecondary),
+                      ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -130,7 +123,9 @@ class BookingSummaryCard extends StatelessWidget {
                         color: colors.textPrimary,
                       ),
                     ),
-                    if (reservation.propertySummary.locationString
+                    if (reservation
+                        .propertySummary
+                        .locationString
                         .isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.xs),
                       Text(
@@ -182,10 +177,9 @@ class BookingSummaryCard extends StatelessWidget {
                 _DetailRow(
                   icon: Icons.meeting_room_outlined,
                   label: 'Rooms',
-                  value:
-                      reservation.rooms
-                          .map((r) => r.roomTypeName ?? r.roomNumber)
-                          .join(', '),
+                  value: reservation.rooms
+                      .map((r) => r.roomTypeName ?? r.roomNumber)
+                      .join(', '),
                 ),
               ],
               if (reservation.totalAmount != null) ...[

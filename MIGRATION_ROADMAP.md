@@ -229,19 +229,19 @@
 ### Phase 6: Quality Gates & CI Enforcement
 > **Goal:** Ensure the codebase stays clean permanently and regressions are prevented automatically.
 
-- [ ] **Task 6.1: Add Automated Style Guard**
+- [x] **Task 6.1: Add Automated Style Guard**
   - Add a CI check to disallow raw color references and inline text styles in `lib/features/`:
     ```bash
     ! grep -rnE "Color\(0x|Colors\.(red|blue|green|grey)" lib/features/
     ```
 
-- [ ] **Task 6.2: Add Layer Import Guard**
+- [x] **Task 6.2: Add Layer Import Guard**
   - Ensure no `presentation/` file imports from `data/`:
     ```bash
     ! grep -rnE "import .*/data/" lib/features/*/presentation/
     ```
 
-- [ ] **Task 6.3: Final Analysis & Test Run**
+- [x] **Task 6.3: Final Analysis & Test Run**
   - Run `dart format --set-exit-if-changed .`
   - Run `flutter analyze --fatal-infos`
   - Run `flutter test` and confirm 100% pass rate.

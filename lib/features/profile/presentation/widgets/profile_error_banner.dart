@@ -6,10 +6,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Error banner widget displaying validation or network failure messages in profile flows.
 class ProfileErrorBanner extends StatelessWidget {
-  const ProfileErrorBanner({
-    required this.errorMessage,
-    super.key,
-  });
+  const ProfileErrorBanner({required this.errorMessage, super.key});
 
   final String? errorMessage;
 

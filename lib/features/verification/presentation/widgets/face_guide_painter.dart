@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class FaceGuidePainter extends CustomPainter {
   final double progress;
+  final Color? progressColor;
 
-  FaceGuidePainter({required this.progress});
+  FaceGuidePainter({required this.progress, this.progressColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -38,7 +39,7 @@ class FaceGuidePainter extends CustomPainter {
     // Draw the progress ring
     if (progress > 0) {
       final progressPaint = Paint()
-        ..color = Colors.red
+        ..color = progressColor ?? const Color.fromRGBO(228, 44, 58, 1)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 6.0
         ..strokeCap = StrokeCap.round;

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/face_guide_painter.dart';
@@ -202,7 +203,10 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(errorMsg!, style: const TextStyle(color: Colors.red)),
+              Text(
+                errorMsg ?? '',
+                style: TextStyle(color: context.colors.feedbackError),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -236,7 +240,10 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
               animation: progressController,
               builder: (context, child) {
                 return CustomPaint(
-                  painter: FaceGuidePainter(progress: progressController.value),
+                  painter: FaceGuidePainter(
+                    progress: progressController.value,
+                    progressColor: context.colors.actionPrimary,
+                  ),
                 );
               },
             ),
@@ -283,8 +290,8 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
           ),
           child: Text(
             '00:${recordedSeconds.toString().padLeft(2, '0')}',
-            style: const TextStyle(
-              color: Colors.redAccent,
+            style: TextStyle(
+              color: context.colors.feedbackError,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -307,14 +314,16 @@ class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
             FloatingActionButton(
               heroTag: 'record_btn',
               onPressed: startRecording,
-              backgroundColor: Colors.red,
+              backgroundColor: context.colors.actionPrimary,
               child: const Icon(Icons.videocam, color: Colors.white),
             )
           else
             FloatingActionButton(
               heroTag: 'stop_btn',
               onPressed: stopRecording,
-              backgroundColor: isMinTimeMet ? Colors.red : Colors.grey,
+              backgroundColor: isMinTimeMet
+                  ? context.colors.actionPrimary
+                  : context.colors.textDisabled,
               child: const Icon(Icons.stop, color: Colors.white),
             ),
           if (!isRecording)

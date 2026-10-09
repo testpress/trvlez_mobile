@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Step state for the verification progress bar.
 enum VerificationStepState { completed, active, upcoming }
@@ -59,7 +60,7 @@ class VerificationProgressBar extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
                   color: isConnected
-                      ? Colors.green
+                      ? context.colors.feedbackSuccess
                       : colorScheme.onSurface.withAlpha(40),
                   borderRadius: BorderRadius.circular(1),
                 ),
@@ -99,7 +100,7 @@ class _StepIndicator extends StatelessWidget {
     final isActive = state == VerificationStepState.active;
 
     final circleColor = isCompleted
-        ? Colors.green
+        ? context.colors.feedbackSuccess
         : isActive
         ? colorScheme.primary
         : colorScheme.onSurface.withAlpha(40);
@@ -119,9 +120,9 @@ class _StepIndicator extends StatelessWidget {
             border: Border.all(color: circleColor, width: isActive ? 2.5 : 2),
           ),
           child: isCompleted
-              ? const Icon(Icons.check, color: Colors.white, size: 14)
+              ? Icon(Icons.check, color: context.colors.textOnAction, size: 14)
               : isActive
-              ? const Icon(Icons.circle, color: Colors.white, size: 8)
+              ? Icon(Icons.circle, color: context.colors.textOnAction, size: 8)
               : null,
         ),
         const SizedBox(height: 6),
@@ -131,7 +132,7 @@ class _StepIndicator extends StatelessWidget {
             fontSize: 10,
             fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
             color: isCompleted
-                ? Colors.green
+                ? context.colors.feedbackSuccess
                 : isActive
                 ? colorScheme.primary
                 : colorScheme.onSurface.withAlpha(100),

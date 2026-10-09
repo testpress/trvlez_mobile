@@ -27,26 +27,13 @@ class ReservationPropertyCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(AppRadius.lg),
             ),
-            child:
-                (property.heroImageUrl ?? '').isNotEmpty
-                    ? Image.network(
-                      property.heroImageUrl!,
-                      height: 160,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder:
-                          (context, error, stackTrace) => Container(
-                            height: 160,
-                            width: double.infinity,
-                            color: colors.surfaceSubtle,
-                            child: Icon(
-                              Icons.hotel,
-                              size: 48,
-                              color: colors.textSecondary,
-                            ),
-                          ),
-                    )
-                    : Container(
+            child: (property.heroImageUrl ?? '').isNotEmpty
+                ? Image.network(
+                    property.heroImageUrl!,
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
                       height: 160,
                       width: double.infinity,
                       color: colors.surfaceSubtle,
@@ -56,6 +43,17 @@ class ReservationPropertyCard extends StatelessWidget {
                         color: colors.textSecondary,
                       ),
                     ),
+                  )
+                : Container(
+                    height: 160,
+                    width: double.infinity,
+                    color: colors.surfaceSubtle,
+                    child: Icon(
+                      Icons.hotel,
+                      size: 48,
+                      color: colors.textSecondary,
+                    ),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.md),

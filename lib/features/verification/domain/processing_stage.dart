@@ -83,15 +83,16 @@ class ProcessingStage {
       VerificationPhase.imageQualityFailed => ProcessingStage(
         type: ProcessingStageType.failed,
         title: 'Let\'s try that again',
-        subtitle: errorMessage ??
+        subtitle:
+            errorMessage ??
             'Your passport image isn\'t clear enough to continue.',
         errorMessage: errorMessage,
       ),
       VerificationPhase.mrzExtractionFailed => ProcessingStage(
         type: ProcessingStageType.failed,
         title: 'Let\'s try that again',
-        subtitle: errorMessage ??
-            'We couldn\'t read the details from your passport.',
+        subtitle:
+            errorMessage ?? 'We couldn\'t read the details from your passport.',
         errorMessage: errorMessage,
       ),
       VerificationPhase.error => ProcessingStage(
@@ -133,7 +134,8 @@ class ProcessingStage {
       VerificationPhase.videoQualityFailed => ProcessingStage(
         type: ProcessingStageType.failed,
         title: 'Let\'s record that again',
-        subtitle: errorMessage ??
+        subtitle:
+            errorMessage ??
             'We couldn\'t get a clear enough video to continue.',
         errorMessage: errorMessage,
       ),

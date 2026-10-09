@@ -4,11 +4,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Avatar presentation and image uploader placeholder for traveler profile setup.
 class ProfileAvatarUploader extends StatelessWidget {
-  const ProfileAvatarUploader({
-    this.avatarUrl,
-    this.onUploadTap,
-    super.key,
-  });
+  const ProfileAvatarUploader({this.avatarUrl, this.onUploadTap, super.key});
 
   final String? avatarUrl;
   final VoidCallback? onUploadTap;

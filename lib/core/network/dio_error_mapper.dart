@@ -37,7 +37,9 @@ AppException mapDioException(DioException e) {
     case DioExceptionType.sendTimeout:
     case DioExceptionType.receiveTimeout:
     case DioExceptionType.transformTimeout:
-      return const NetworkException('Network timeout or connection error. Please try again.');
+      return const NetworkException(
+        'Network timeout or connection error. Please try again.',
+      );
     case DioExceptionType.badCertificate:
       return const NetworkException('Security certificate validation failed.');
     case DioExceptionType.cancel:
@@ -53,7 +55,10 @@ AppException mapDioException(DioException e) {
           message = detail;
         } else if (detail is List) {
           message = detail
-              .map((item) => (item as Map<String, dynamic>)['msg'] as String? ?? '')
+              .map(
+                (item) =>
+                    (item as Map<String, dynamic>)['msg'] as String? ?? '',
+              )
               .where((m) => m.isNotEmpty)
               .join('. ');
         }

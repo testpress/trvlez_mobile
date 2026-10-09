@@ -9,13 +9,11 @@ import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_for
 class PreArrivalFormScreen extends ConsumerStatefulWidget {
   final String reservationId;
 
-  const PreArrivalFormScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const PreArrivalFormScreen({super.key, required this.reservationId});
 
   @override
-  ConsumerState<PreArrivalFormScreen> createState() => _PreArrivalFormScreenState();
+  ConsumerState<PreArrivalFormScreen> createState() =>
+      _PreArrivalFormScreenState();
 }
 
 class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
@@ -28,9 +26,9 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
         .saveDraft();
 
     if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Draft saved successfully')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Draft saved successfully')));
     }
   }
 
@@ -72,7 +70,8 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
 
     final formResponse = state.formResponse!;
     final template = formResponse.template;
-    final isReadOnly = formResponse.submission?.status == FormSubmissionStatus.submitted ||
+    final isReadOnly =
+        formResponse.submission?.status == FormSubmissionStatus.submitted ||
         formResponse.submission?.status == FormSubmissionStatus.approved;
 
     return Scaffold(
@@ -89,7 +88,12 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
           itemCount: template.formDefinition.sections.length,
           itemBuilder: (context, index) {
             final section = template.formDefinition.sections[index];
-            return _buildSection(section, state.currentResponses, isReadOnly, colorScheme);
+            return _buildSection(
+              section,
+              state.currentResponses,
+              isReadOnly,
+              colorScheme,
+            );
           },
         ),
       ),
@@ -116,7 +120,9 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               )
                             : const Text('Save Draft'),
                       ),
@@ -177,7 +183,11 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
     );
   }
 
-  Widget _buildField(FormFieldDefinition field, dynamic currentValue, bool isReadOnly) {
+  Widget _buildField(
+    FormFieldDefinition field,
+    dynamic currentValue,
+    bool isReadOnly,
+  ) {
     if (field.type == 'boolean' || field.type == 'checkbox') {
       return CheckboxListTile(
         title: Text(field.label),
@@ -202,12 +212,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
         ),
         initialValue: currentValue?.toString(),
         items: field.options!
-            .map(
-              (o) => DropdownMenuItem(
-                value: o,
-                child: Text(o),
-              ),
-            )
+            .map((o) => DropdownMenuItem(value: o, child: Text(o)))
             .toList(),
         onChanged: isReadOnly
             ? null

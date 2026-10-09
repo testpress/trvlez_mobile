@@ -19,9 +19,7 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
   @override
   void initState() {
     super.initState();
-    _lifecycleListener = AppLifecycleListener(
-      onResume: _onAppResumed,
-    );
+    _lifecycleListener = AppLifecycleListener(onResume: _onAppResumed);
   }
 
   @override

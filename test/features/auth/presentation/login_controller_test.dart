@@ -9,10 +9,7 @@ class MockAuthRepository extends Fake implements AuthRepository {
   String? lastLoginPassword;
 
   @override
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     lastLoginEmail = email;
     lastLoginPassword = password;
     if (shouldThrow) {
@@ -42,9 +39,7 @@ void main() {
     setUp(() {
       mockRepo = MockAuthRepository();
       container = ProviderContainer(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -59,32 +54,38 @@ void main() {
       expect(state.hasError, isFalse);
     });
 
-    test('successful login invokes repository and remains in data state', () async {
-      await container
-          .read(loginControllerProvider.notifier)
-          .login(email: 'alex@example.com', password: 'Password123!');
+    test(
+      'successful login invokes repository and remains in data state',
+      () async {
+        await container
+            .read(loginControllerProvider.notifier)
+            .login(email: 'alex@example.com', password: 'Password123!');
 
-      expect(mockRepo.lastLoginEmail, 'alex@example.com');
-      expect(mockRepo.lastLoginPassword, 'Password123!');
+        expect(mockRepo.lastLoginEmail, 'alex@example.com');
+        expect(mockRepo.lastLoginPassword, 'Password123!');
 
-      final state = container.read(loginControllerProvider);
-      expect(state.hasError, isFalse);
-    });
+        final state = container.read(loginControllerProvider);
+        expect(state.hasError, isFalse);
+      },
+    );
 
-    test('failed login sets AsyncError state and clearError resets it', () async {
-      mockRepo.shouldThrow = true;
+    test(
+      'failed login sets AsyncError state and clearError resets it',
+      () async {
+        mockRepo.shouldThrow = true;
 
-      await container
-          .read(loginControllerProvider.notifier)
-          .login(email: 'fail@example.com', password: 'wrong');
+        await container
+            .read(loginControllerProvider.notifier)
+            .login(email: 'fail@example.com', password: 'wrong');
 
-      var state = container.read(loginControllerProvider);
-      expect(state.hasError, isTrue);
-      expect(state.error, isA<UnauthorizedException>());
+        var state = container.read(loginControllerProvider);
+        expect(state.hasError, isTrue);
+        expect(state.error, isA<UnauthorizedException>());
 
-      container.read(loginControllerProvider.notifier).clearError();
-      state = container.read(loginControllerProvider);
-      expect(state.hasError, isFalse);
-    });
+        container.read(loginControllerProvider.notifier).clearError();
+        state = container.read(loginControllerProvider);
+        expect(state.hasError, isFalse);
+      },
+    );
   });
 }

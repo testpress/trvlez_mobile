@@ -78,8 +78,9 @@ class _CreateReservationScreenState
     final propId = widget.property?.id ?? widget.propertyId ?? '';
     if (propId.isNotEmpty) {
       setState(() {
-        _propertyFuture =
-            ref.read(propertiesRepositoryProvider).getPropertyDetail(propId);
+        _propertyFuture = ref
+            .read(propertiesRepositoryProvider)
+            .getPropertyDetail(propId);
       });
     }
   }
@@ -93,10 +94,9 @@ class _CreateReservationScreenState
         _selectedRoomCounts.containsKey(widget.initialRoomTypeId)) {
       _selectedRoomCounts[widget.initialRoomTypeId!] = 1;
     } else if (prop.roomTypes.isNotEmpty && _totalSelectedRooms == 0) {
-      final firstPricedRoom =
-          prop.roomTypes
-              .where((r) => r.hasValidPrice && r.isActive)
-              .firstOrNull;
+      final firstPricedRoom = prop.roomTypes
+          .where((r) => r.hasValidPrice && r.isActive)
+          .firstOrNull;
       if (firstPricedRoom != null) {
         _selectedRoomCounts[firstPricedRoom.id] = 1;
       } else {
@@ -116,10 +116,9 @@ class _CreateReservationScreenState
     double total = 0.0;
     for (final entry in _selectedRoomCounts.entries) {
       if (entry.value <= 0) continue;
-      final rt =
-          _activeProperty!.roomTypes
-              .where((r) => r.id == entry.key)
-              .firstOrNull;
+      final rt = _activeProperty!.roomTypes
+          .where((r) => r.id == entry.key)
+          .firstOrNull;
       if (rt != null && rt.hasValidPrice) {
         total += rt.pricePerNight! * _numberOfNights * entry.value;
       }
@@ -131,10 +130,9 @@ class _CreateReservationScreenState
     if (_activeProperty == null || _totalSelectedRooms == 0) return false;
     for (final entry in _selectedRoomCounts.entries) {
       if (entry.value <= 0) continue;
-      final rt =
-          _activeProperty!.roomTypes
-              .where((r) => r.id == entry.key)
-              .firstOrNull;
+      final rt = _activeProperty!.roomTypes
+          .where((r) => r.id == entry.key)
+          .firstOrNull;
       if (rt == null || !rt.hasValidPrice) return true;
     }
     return false;
@@ -148,10 +146,9 @@ class _CreateReservationScreenState
     int capacity = 0;
     for (final entry in _selectedRoomCounts.entries) {
       if (entry.value <= 0) continue;
-      final rt =
-          _activeProperty!.roomTypes
-              .where((r) => r.id == entry.key)
-              .firstOrNull;
+      final rt = _activeProperty!.roomTypes
+          .where((r) => r.id == entry.key)
+          .firstOrNull;
       if (rt != null) {
         capacity += entry.value * rt.maxOccupancy;
       }
@@ -183,16 +180,16 @@ class _CreateReservationScreenState
 
   Future<void> _selectDate({required bool isCheckIn}) async {
     final now = DateTime.now();
-    final firstDate =
-        isCheckIn ? now : (_checkInDate ?? now).add(const Duration(days: 1));
+    final firstDate = isCheckIn
+        ? now
+        : (_checkInDate ?? now).add(const Duration(days: 1));
 
     final picked = await showDatePicker(
       context: context,
-      initialDate:
-          isCheckIn
-              ? (_checkInDate ?? now.add(const Duration(days: 1)))
-              : (_checkOutDate ??
-                  (_checkInDate ?? now).add(const Duration(days: 1))),
+      initialDate: isCheckIn
+          ? (_checkInDate ?? now.add(const Duration(days: 1)))
+          : (_checkOutDate ??
+                (_checkInDate ?? now).add(const Duration(days: 1))),
       firstDate: firstDate,
       lastDate: now.add(const Duration(days: 365)),
     );
@@ -246,20 +243,17 @@ class _CreateReservationScreenState
           checkInDate: checkInExact.toIso8601String(),
           checkOutDate: checkOutExact.toIso8601String(),
           guestName: _guestNameController.text.trim(),
-          guestEmail:
-              _emailController.text.trim().isNotEmpty
-                  ? _emailController.text.trim()
-                  : null,
-          guestPhone:
-              _phoneController.text.trim().isNotEmpty
-                  ? _phoneController.text.trim()
-                  : null,
+          guestEmail: _emailController.text.trim().isNotEmpty
+              ? _emailController.text.trim()
+              : null,
+          guestPhone: _phoneController.text.trim().isNotEmpty
+              ? _phoneController.text.trim()
+              : null,
           numberOfGuests: _numberOfGuests,
           roomTypeIds: roomTypeIds,
-          specialRequests:
-              _specialRequestsController.text.trim().isNotEmpty
-                  ? _specialRequestsController.text.trim()
-                  : null,
+          specialRequests: _specialRequestsController.text.trim().isNotEmpty
+              ? _specialRequestsController.text.trim()
+              : null,
         );
 
     if (reservation != null && mounted) {
@@ -306,8 +300,9 @@ class _CreateReservationScreenState
     final colors = context.colors;
     final createState = ref.watch(createReservationProvider);
     final isCreating = createState.isLoading;
-    final createError =
-        createState.hasError ? createState.error.toString() : null;
+    final createError = createState.hasError
+        ? createState.error.toString()
+        : null;
     final property = _activeProperty ?? widget.property;
 
     return Scaffold(
@@ -341,16 +336,14 @@ class _CreateReservationScreenState
                 selectedRoomCounts: _selectedRoomCounts,
                 onIncrementRoom: (id) {
                   setState(
-                    () =>
-                        _selectedRoomCounts[id] =
-                            (_selectedRoomCounts[id] ?? 0) + 1,
+                    () => _selectedRoomCounts[id] =
+                        (_selectedRoomCounts[id] ?? 0) + 1,
                   );
                 },
                 onDecrementRoom: (id) {
                   setState(
-                    () =>
-                        _selectedRoomCounts[id] =
-                            (_selectedRoomCounts[id] ?? 0) - 1,
+                    () => _selectedRoomCounts[id] =
+                        (_selectedRoomCounts[id] ?? 0) - 1,
                   );
                 },
                 isOccupancyExceeded: _isOccupancyExceeded,
@@ -369,10 +362,9 @@ class _CreateReservationScreenState
             GuestSelectionSection(
               numberOfGuests: _numberOfGuests,
               onIncrementGuests: () => setState(() => _numberOfGuests++),
-              onDecrementGuests:
-                  _numberOfGuests > 1
-                      ? () => setState(() => _numberOfGuests--)
-                      : null,
+              onDecrementGuests: _numberOfGuests > 1
+                  ? () => setState(() => _numberOfGuests--)
+                  : null,
               nameController: _guestNameController,
               emailController: _emailController,
               phoneController: _phoneController,
@@ -400,7 +392,9 @@ class _CreateReservationScreenState
             AppButton(
               label: 'Confirm Reservation',
               isLoading: isCreating,
-              onPressed: _isFormValid && !isCreating ? _submitReservation : null,
+              onPressed: _isFormValid && !isCreating
+                  ? _submitReservation
+                  : null,
             ),
             const SizedBox(height: AppSpacing.xl),
           ],
@@ -423,30 +417,25 @@ class _CreateReservationScreenState
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(AppRadius.md),
-            child:
-                property.heroImageUrl.isNotEmpty
-                    ? Image.network(
-                      property.heroImageUrl,
-                      width: 64,
-                      height: 64,
-                      fit: BoxFit.cover,
-                      errorBuilder:
-                          (context, error, stackTrace) => Container(
-                            width: 64,
-                            height: 64,
-                            color: colors.surfaceSubtle,
-                            child: Icon(
-                              Icons.hotel,
-                              color: colors.textSecondary,
-                            ),
-                          ),
-                    )
-                    : Container(
+            child: property.heroImageUrl.isNotEmpty
+                ? Image.network(
+                    property.heroImageUrl,
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
                       width: 64,
                       height: 64,
                       color: colors.surfaceSubtle,
                       child: Icon(Icons.hotel, color: colors.textSecondary),
                     ),
+                  )
+                : Container(
+                    width: 64,
+                    height: 64,
+                    color: colors.surfaceSubtle,
+                    child: Icon(Icons.hotel, color: colors.textSecondary),
+                  ),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -498,10 +487,9 @@ class _CreateReservationScreenState
             Expanded(
               child: DatePickerTile(
                 label: 'Check-in',
-                value:
-                    _checkInDate != null
-                        ? dateFormat.format(_checkInDate!)
-                        : 'Select date',
+                value: _checkInDate != null
+                    ? dateFormat.format(_checkInDate!)
+                    : 'Select date',
                 icon: Icons.calendar_today_outlined,
                 colorScheme: Theme.of(context).colorScheme,
                 onTap: () => _selectDate(isCheckIn: true),
@@ -511,10 +499,9 @@ class _CreateReservationScreenState
             Expanded(
               child: DatePickerTile(
                 label: 'Check-out',
-                value:
-                    _checkOutDate != null
-                        ? dateFormat.format(_checkOutDate!)
-                        : 'Select date',
+                value: _checkOutDate != null
+                    ? dateFormat.format(_checkOutDate!)
+                    : 'Select date',
                 icon: Icons.calendar_today_outlined,
                 colorScheme: Theme.of(context).colorScheme,
                 onTap: () => _selectDate(isCheckIn: false),

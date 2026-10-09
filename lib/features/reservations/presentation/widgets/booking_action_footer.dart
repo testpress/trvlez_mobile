@@ -27,18 +27,18 @@ class BookingActionFooter extends StatelessWidget {
       children: [
         if (!isKycVerified) ...[
           AppButton(
-            label:
-                verificationState.needsOnboarding
-                    ? 'Start Identity Verification'
-                    : 'Check Verification Status',
+            label: verificationState.needsOnboarding
+                ? 'Start Identity Verification'
+                : 'Check Verification Status',
             onPressed: onStartVerification,
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
         AppButton(
           label: 'View in My Trips',
-          variant:
-              isKycVerified ? AppButtonVariant.primary : AppButtonVariant.secondary,
+          variant: isKycVerified
+              ? AppButtonVariant.primary
+              : AppButtonVariant.secondary,
           onPressed: onViewTrips,
         ),
       ],

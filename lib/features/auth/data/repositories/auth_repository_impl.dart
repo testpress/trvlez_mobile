@@ -22,7 +22,10 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final dto = await remoteDataSource.signUp(email: email, password: password);
+      final dto = await remoteDataSource.signUp(
+        email: email,
+        password: password,
+      );
 
       return SignupResult(
         id: dto.id,
@@ -36,12 +39,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     try {
-      final dto = await remoteDataSource.login(email: email, password: password);
+      final dto = await remoteDataSource.login(
+        email: email,
+        password: password,
+      );
       await tokenStorage.saveToken(dto.accessToken);
     } on DioException catch (e) {
       throw mapDioException(e);

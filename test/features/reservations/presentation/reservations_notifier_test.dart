@@ -115,9 +115,7 @@ void main() {
 
     test('initial build loads reservations from repository', () async {
       final container = ProviderContainer(
-        overrides: [
-          reservationRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [reservationRepositoryProvider.overrideWithValue(mockRepo)],
       );
       addTearDown(container.dispose);
 
@@ -128,9 +126,7 @@ void main() {
 
     test('addReservation prepends new reservation to state list', () async {
       final container = ProviderContainer(
-        overrides: [
-          reservationRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [reservationRepositoryProvider.overrideWithValue(mockRepo)],
       );
       addTearDown(container.dispose);
 
@@ -156,9 +152,7 @@ void main() {
       mockRepo.singleReservationToReturn = cancelledRes;
 
       final container = ProviderContainer(
-        overrides: [
-          reservationRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [reservationRepositoryProvider.overrideWithValue(mockRepo)],
       );
       addTearDown(container.dispose);
 
@@ -215,9 +209,7 @@ void main() {
       mockRepo.shouldThrow = true;
 
       final container = ProviderContainer(
-        overrides: [
-          reservationRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [reservationRepositoryProvider.overrideWithValue(mockRepo)],
       );
       addTearDown(container.dispose);
 
@@ -246,9 +238,7 @@ void main() {
 
     test('loads reservation detail by id', () async {
       final container = ProviderContainer(
-        overrides: [
-          reservationRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [reservationRepositoryProvider.overrideWithValue(mockRepo)],
       );
       addTearDown(container.dispose);
 
@@ -261,15 +251,11 @@ void main() {
 
     test('refresh re-fetches reservation detail', () async {
       final container = ProviderContainer(
-        overrides: [
-          reservationRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [reservationRepositoryProvider.overrideWithValue(mockRepo)],
       );
       addTearDown(container.dispose);
 
-      await container.read(
-        reservationDetailNotifierProvider('res-101').future,
-      );
+      await container.read(reservationDetailNotifierProvider('res-101').future);
 
       final updated = testReservation.copyWith(
         status: ReservationStatus.checkedIn,
@@ -280,8 +266,9 @@ void main() {
           .read(reservationDetailNotifierProvider('res-101').notifier)
           .refresh();
 
-      final state =
-          container.read(reservationDetailNotifierProvider('res-101')).value;
+      final state = container
+          .read(reservationDetailNotifierProvider('res-101'))
+          .value;
       expect(state?.status, ReservationStatus.checkedIn);
     });
   });

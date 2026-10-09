@@ -43,10 +43,7 @@ class S3UploadClient {
         uploadUrl,
         data: fileStream,
         options: Options(
-          headers: {
-            'Content-Type': mimeType,
-            'Content-Length': fileLength,
-          },
+          headers: {'Content-Type': mimeType, 'Content-Length': fileLength},
         ),
         onSendProgress: (sent, total) {
           if (total > 0) {

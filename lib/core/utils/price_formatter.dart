@@ -8,7 +8,9 @@ class PriceFormatter {
   static String getCurrencySymbol(String? currencyCode) {
     if (currencyCode == null || currencyCode.isEmpty) return '\$';
     try {
-      final symbol = NumberFormat.simpleCurrency(name: currencyCode).currencySymbol;
+      final symbol = NumberFormat.simpleCurrency(
+        name: currencyCode,
+      ).currencySymbol;
       return symbol.isNotEmpty ? symbol : currencyCode;
     } catch (_) {
       return currencyCode;
@@ -19,7 +21,9 @@ class PriceFormatter {
   static String formatPrice(double price, {String? currencyCode}) {
     final symbol = getCurrencySymbol(currencyCode);
     final isWhole = price % 1 == 0;
-    final formattedAmount = isWhole ? price.toInt().toString() : price.toStringAsFixed(2);
+    final formattedAmount = isWhole
+        ? price.toInt().toString()
+        : price.toStringAsFixed(2);
     return '$symbol$formattedAmount';
   }
 
@@ -27,8 +31,12 @@ class PriceFormatter {
   static String formatTotal(double amount, {String? currencyCode}) {
     final symbol = getCurrencySymbol(currencyCode);
     final isWhole = amount % 1 == 0;
-    final formattedAmount = isWhole ? amount.toInt().toString() : amount.toStringAsFixed(2);
-    final codeSuffix = (currencyCode != null && currencyCode.isNotEmpty) ? ' $currencyCode' : '';
+    final formattedAmount = isWhole
+        ? amount.toInt().toString()
+        : amount.toStringAsFixed(2);
+    final codeSuffix = (currencyCode != null && currencyCode.isNotEmpty)
+        ? ' $currencyCode'
+        : '';
     return '$symbol$formattedAmount$codeSuffix';
   }
 

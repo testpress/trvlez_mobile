@@ -162,7 +162,9 @@ class PersonalDetailsForm extends StatelessWidget {
                         child: Text(
                           selectedDateOfBirth == null
                               ? 'Select Date of Birth'
-                              : '${selectedDateOfBirth!.toLocal()}'.split(' ')[0],
+                              : '${selectedDateOfBirth!.toLocal()}'.split(
+                                  ' ',
+                                )[0],
                           style: GoogleFonts.cabin(
                             fontSize: 15,
                             color: selectedDateOfBirth == null
@@ -229,7 +231,9 @@ class PersonalDetailsForm extends StatelessWidget {
                         child: Text(
                           selectedPassportExpiry == null
                               ? 'Select Expiry Date (Optional)'
-                              : '${selectedPassportExpiry!.toLocal()}'.split(' ')[0],
+                              : '${selectedPassportExpiry!.toLocal()}'.split(
+                                  ' ',
+                                )[0],
                           style: GoogleFonts.cabin(
                             fontSize: 15,
                             color: selectedPassportExpiry == null

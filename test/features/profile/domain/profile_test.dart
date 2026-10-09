@@ -26,32 +26,29 @@ void main() {
       expect(profile.passportNumber, 'Z1234567');
       expect(profile.passportExpiry, expiry);
       expect(profile.onboardingStep, 'welcome');
-      expect(profile.verificationState, TravelerVerificationState.profilePending);
+      expect(
+        profile.verificationState,
+        TravelerVerificationState.profilePending,
+      );
     });
 
     test('derives verificationState correctly from backend step', () {
-      const pVerified = Profile(
-        id: 'p1',
-        onboardingStep: 'verified',
-      );
+      const pVerified = Profile(id: 'p1', onboardingStep: 'verified');
       expect(pVerified.verificationState, TravelerVerificationState.verified);
 
-      const pDocScan = Profile(
-        id: 'p2',
-        onboardingStep: 'documents_uploaded',
+      const pDocScan = Profile(id: 'p2', onboardingStep: 'documents_uploaded');
+      expect(
+        pDocScan.verificationState,
+        TravelerVerificationState.documentsUploaded,
       );
-      expect(pDocScan.verificationState, TravelerVerificationState.documentsUploaded);
 
-      const pComplete = Profile(
-        id: 'p3',
-        onboardingStep: 'profile_complete',
+      const pComplete = Profile(id: 'p3', onboardingStep: 'profile_complete');
+      expect(
+        pComplete.verificationState,
+        TravelerVerificationState.profileComplete,
       );
-      expect(pComplete.verificationState, TravelerVerificationState.profileComplete);
 
-      const pFailed = Profile(
-        id: 'p4',
-        onboardingStep: 'rejected',
-      );
+      const pFailed = Profile(id: 'p4', onboardingStep: 'rejected');
       expect(pFailed.verificationState, TravelerVerificationState.failed);
     });
 

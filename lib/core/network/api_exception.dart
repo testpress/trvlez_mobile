@@ -76,8 +76,7 @@ class ApiException implements Exception {
 
   /// Whether this 409 indicates the user is already verified.
   bool get isAlreadyVerified =>
-      isConflict &&
-      message.toLowerCase().contains('already verified');
+      isConflict && message.toLowerCase().contains('already verified');
 
   /// Whether this 409 indicates a verification was already submitted.
   bool get isAlreadySubmitted =>

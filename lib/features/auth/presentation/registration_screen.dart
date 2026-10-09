@@ -69,7 +69,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen>
         ),
         backgroundColor: context.colors.feedbackSuccess,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
         margin: const EdgeInsets.all(AppSpacing.md),
       ),
     );

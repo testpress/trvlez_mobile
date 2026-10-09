@@ -27,10 +27,7 @@ class MockAuthRepository extends Fake implements AuthRepository {
   }
 
   @override
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {}
+  Future<void> login({required String email, required String password}) async {}
 }
 
 void main() {
@@ -41,9 +38,7 @@ void main() {
     setUp(() {
       mockRepo = MockAuthRepository();
       container = ProviderContainer(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -70,20 +65,23 @@ void main() {
       expect(state.hasError, isFalse);
     });
 
-    test('failed signup captures error in state and clearError resets it', () async {
-      mockRepo.shouldThrow = true;
+    test(
+      'failed signup captures error in state and clearError resets it',
+      () async {
+        mockRepo.shouldThrow = true;
 
-      await container
-          .read(registrationControllerProvider.notifier)
-          .signUp(email: 'dup@example.com', password: 'Password123!');
+        await container
+            .read(registrationControllerProvider.notifier)
+            .signUp(email: 'dup@example.com', password: 'Password123!');
 
-      var state = container.read(registrationControllerProvider);
-      expect(state.hasError, isTrue);
-      expect(state.error, isA<ValidationException>());
+        var state = container.read(registrationControllerProvider);
+        expect(state.hasError, isTrue);
+        expect(state.error, isA<ValidationException>());
 
-      container.read(registrationControllerProvider.notifier).clearError();
-      state = container.read(registrationControllerProvider);
-      expect(state.hasError, isFalse);
-    });
+        container.read(registrationControllerProvider.notifier).clearError();
+        state = container.read(registrationControllerProvider);
+        expect(state.hasError, isFalse);
+      },
+    );
   });
 }

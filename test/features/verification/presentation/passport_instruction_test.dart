@@ -7,7 +7,8 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/kyc_pro
 
 void main() {
   Widget createTestWidget({GoRouter? router}) {
-    final testRouter = router ??
+    final testRouter =
+        router ??
         GoRouter(
           initialLocation: AppRoutes.passportInstructions,
           routes: [
@@ -17,16 +18,13 @@ void main() {
             ),
             GoRoute(
               path: AppRoutes.passportCapture,
-              builder: (context, state) => const Scaffold(
-                body: Text('Passport Capture Screen'),
-              ),
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Passport Capture Screen')),
             ),
           ],
         );
 
-    return MaterialApp.router(
-      routerConfig: testRouter,
-    );
+    return MaterialApp.router(routerConfig: testRouter);
   }
 
   group('PassportInstructionScreen', () {

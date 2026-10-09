@@ -173,22 +173,21 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
       ),
       body: detailAsync.when(
         data: (reservation) => _buildBody(context, reservation, tokenState),
-        loading:
-            () => const LoadingView(message: 'Loading reservation details...'),
-        error:
-            (err, stack) => ErrorView(
-              title: 'Unable to load reservation',
-              message: err.toString(),
-              onRetry: () {
-                ref
-                    .read(
-                      reservationDetailNotifierProvider(
-                        widget.reservationId,
-                      ).notifier,
-                    )
-                    .refresh();
-              },
-            ),
+        loading: () =>
+            const LoadingView(message: 'Loading reservation details...'),
+        error: (err, stack) => ErrorView(
+          title: 'Unable to load reservation',
+          message: err.toString(),
+          onRetry: () {
+            ref
+                .read(
+                  reservationDetailNotifierProvider(
+                    widget.reservationId,
+                  ).notifier,
+                )
+                .refresh();
+          },
+        ),
       ),
     );
   }
@@ -226,7 +225,8 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
     AsyncValue<CheckInToken?> tokenState,
   ) {
     final TravelerVerificationState verificationState =
-        widget.verificationState ?? ref.watch(travelerVerificationStateProvider);
+        widget.verificationState ??
+        ref.watch(travelerVerificationStateProvider);
     final isVerified = widget.isKycVerified ?? verificationState.isVerified;
 
     final token = tokenState.value;
@@ -244,33 +244,30 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
             ReservationOverviewTile(reservation: reservation),
             const SizedBox(height: AppSpacing.lg),
             Expanded(
-              child:
-                  isVerified
-                      ? _buildQrSection(tokenState, token, isExpired)
-                      : _KycRequiredView(
-                        verificationState: verificationState,
-                        onActionPressed:
-                            () => _handleKycAction(context, verificationState),
-                      ),
+              child: isVerified
+                  ? _buildQrSection(tokenState, token, isExpired)
+                  : _KycRequiredView(
+                      verificationState: verificationState,
+                      onActionPressed: () =>
+                          _handleKycAction(context, verificationState),
+                    ),
             ),
             const SizedBox(height: AppSpacing.md),
             if (isVerified)
               AppButton(
-                label:
-                    token == null
-                        ? 'Generate QR Code'
-                        : isExpired
-                        ? 'Refresh QR Code'
-                        : 'Regenerate Pass',
+                label: token == null
+                    ? 'Generate QR Code'
+                    : isExpired
+                    ? 'Refresh QR Code'
+                    : 'Regenerate Pass',
                 isLoading: isLoading,
                 onPressed: _generateToken,
               )
             else
               AppButton(
-                label:
-                    verificationState.needsOnboarding
-                        ? 'Start Identity Verification'
-                        : 'Check Verification Status',
+                label: verificationState.needsOnboarding
+                    ? 'Start Identity Verification'
+                    : 'Check Verification Status',
                 onPressed: () => _handleKycAction(context, verificationState),
               ),
             const SizedBox(height: AppSpacing.sm),

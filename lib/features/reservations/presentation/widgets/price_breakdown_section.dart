@@ -59,10 +59,9 @@ class PriceBreakdownSection extends StatelessWidget {
               ...selectedRoomsWithCounts.map((roomType) {
                 final count = selectedRoomCounts[roomType.id] ?? 0;
                 final isPriced = roomType.hasValidPrice;
-                final lineTotal =
-                    isPriced
-                        ? roomType.pricePerNight! * numberOfNights * count
-                        : null;
+                final lineTotal = isPriced
+                    ? roomType.pricePerNight! * numberOfNights * count
+                    : null;
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.xs),
@@ -81,18 +80,18 @@ class PriceBreakdownSection extends StatelessWidget {
                       Text(
                         isPriced
                             ? PriceFormatter.formatTotal(
-                              lineTotal!,
-                              currencyCode:
-                                  roomType.currencyCode ?? property.currencyCode,
-                            )
+                                lineTotal!,
+                                currencyCode:
+                                    roomType.currencyCode ??
+                                    property.currencyCode,
+                              )
                             : 'Unpriced',
                         style: GoogleFonts.cabin(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color:
-                              isPriced
-                                  ? colors.textPrimary
-                                  : colors.feedbackError,
+                          color: isPriced
+                              ? colors.textPrimary
+                              : colors.feedbackError,
                         ),
                       ),
                     ],
@@ -115,16 +114,15 @@ class PriceBreakdownSection extends StatelessWidget {
                     hasInvalidPricingSelected
                         ? 'Pricing unavailable'
                         : PriceFormatter.formatTotal(
-                          totalEstimatedAmount,
-                          currencyCode: property.currencyCode,
-                        ),
+                            totalEstimatedAmount,
+                            currencyCode: property.currencyCode,
+                          ),
                     style: GoogleFonts.nunito(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color:
-                          hasInvalidPricingSelected
-                              ? colors.feedbackError
-                              : colors.actionPrimary,
+                      color: hasInvalidPricingSelected
+                          ? colors.feedbackError
+                          : colors.actionPrimary,
                     ),
                   ),
                 ],

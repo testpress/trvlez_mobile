@@ -76,19 +76,34 @@ void main() {
 
     test('returns null for empty or too short byte array', () {
       expect(NfcImageExtractor.extractFromBytes(Uint8List(0)), isNull);
-      expect(NfcImageExtractor.extractFromBytes(Uint8List.fromList([1, 2, 3])), isNull);
+      expect(
+        NfcImageExtractor.extractFromBytes(Uint8List.fromList([1, 2, 3])),
+        isNull,
+      );
     });
 
     test('returns null when no recognized image signature is found', () {
-      final randomBytes = Uint8List.fromList([0x10, 0x20, 0x30, 0x40, 0x50, 0x60]);
+      final randomBytes = Uint8List.fromList([
+        0x10,
+        0x20,
+        0x30,
+        0x40,
+        0x50,
+        0x60,
+      ]);
       expect(NfcImageExtractor.extractFromBytes(randomBytes), isNull);
     });
 
     test('extractFromDg2 extracts face image from parsed EfDG2', () {
       final jpegBytes = Uint8List.fromList([
-        0xFF, 0xD8, 0xFF, 0xE0,
-        0x01, 0x02,
-        0xFF, 0xD9,
+        0xFF,
+        0xD8,
+        0xFF,
+        0xE0,
+        0x01,
+        0x02,
+        0xFF,
+        0xD9,
       ]);
 
       // Biometric Data Block (Tag 0x5F2E) contents matching ISO/IEC 19794-5

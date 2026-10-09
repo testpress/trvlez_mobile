@@ -31,12 +31,12 @@ class PropertyCard extends StatelessWidget {
   Widget _buildPopularCard(BuildContext context) {
     final colors = context.colors;
 
-    final badgeLabel = (property.propertyType != null &&
-            property.propertyType!.isNotEmpty)
+    final badgeLabel =
+        (property.propertyType != null && property.propertyType!.isNotEmpty)
         ? property.propertyType!.toUpperCase()
         : (property.amenities.isNotEmpty
-            ? property.amenities.first.toUpperCase()
-            : 'VERIFIED');
+              ? property.amenities.first.toUpperCase()
+              : 'VERIFIED');
 
     return GestureDetector(
       onTap: onTap,
@@ -321,9 +321,7 @@ class PropertyCard extends StatelessWidget {
 
   Widget _buildFallbackImage(AppColors colors) {
     return Container(
-      decoration: BoxDecoration(
-        color: colors.surfaceSubtle,
-      ),
+      decoration: BoxDecoration(color: colors.surfaceSubtle),
       child: Center(
         child: Icon(
           Icons.hotel_outlined,

@@ -153,9 +153,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             property = map['property'] as Property?;
             selectedRoomTypeId = map['selectedRoomTypeId'] as String?;
           }
-          final propertyId = property?.id ??
-              state.uri.queryParameters['property_id'] ??
-              '';
+          final propertyId =
+              property?.id ?? state.uri.queryParameters['property_id'] ?? '';
           if (property == null && propertyId.isEmpty) {
             return const PropertiesListingScreen();
           }
@@ -173,9 +172,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           final reservation = state.extra is Reservation
               ? state.extra as Reservation
               : (state.extra is Map<String, dynamic>
-                  ? (state.extra as Map<String, dynamic>)['reservation']
-                      as Reservation?
-                  : null);
+                    ? (state.extra as Map<String, dynamic>)['reservation']
+                          as Reservation?
+                    : null);
           if (reservation == null && id.isEmpty) {
             return const MyTripsScreen();
           }
@@ -193,9 +192,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           final reservation = state.extra is Reservation
               ? state.extra as Reservation
               : (state.extra is Map<String, dynamic>
-                  ? (state.extra as Map<String, dynamic>)['reservation']
-                      as Reservation?
-                  : null);
+                    ? (state.extra as Map<String, dynamic>)['reservation']
+                          as Reservation?
+                    : null);
           if (reservation == null && id.isEmpty) {
             return const MyTripsScreen();
           }
@@ -213,9 +212,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           final reservation = state.extra is Reservation
               ? state.extra as Reservation
               : (state.extra is Map<String, dynamic>
-                  ? (state.extra as Map<String, dynamic>)['reservation']
-                      as Reservation?
-                  : null);
+                    ? (state.extra as Map<String, dynamic>)['reservation']
+                          as Reservation?
+                    : null);
           if (reservation == null && id.isEmpty) {
             return const MyTripsScreen();
           }

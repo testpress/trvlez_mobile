@@ -60,17 +60,18 @@ class RoomSelectionSection extends StatelessWidget {
               child: CounterTile(
                 label: roomType.name,
                 subtitle: priceSubtitle,
-                subtitleColor:
-                    isPriced ? colors.actionPrimary : colors.feedbackError,
+                subtitleColor: isPriced
+                    ? colors.actionPrimary
+                    : colors.feedbackError,
                 icon: Icons.bed_outlined,
                 value: currentSelected,
                 colorScheme: Theme.of(context).colorScheme,
-                onIncrement:
-                    isPriced ? () => onIncrementRoom(roomType.id) : null,
-                onDecrement:
-                    currentSelected > 0
-                        ? () => onDecrementRoom(roomType.id)
-                        : null,
+                onIncrement: isPriced
+                    ? () => onIncrementRoom(roomType.id)
+                    : null,
+                onDecrement: currentSelected > 0
+                    ? () => onDecrementRoom(roomType.id)
+                    : null,
               ),
             );
           }),

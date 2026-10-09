@@ -70,31 +70,32 @@ void main() {
   );
 
   group('MyTripsScreen Widget Tests', () {
-    testWidgets('renders empty state with Explore Properties CTA when no trips exist',
-        (tester) async {
-      final mockRepo = MockReservationRepository();
-      mockRepo.reservationsToReturn = [];
+    testWidgets(
+      'renders empty state with Explore Properties CTA when no trips exist',
+      (tester) async {
+        final mockRepo = MockReservationRepository();
+        mockRepo.reservationsToReturn = [];
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            reservationRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: MyTripsScreen(),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              reservationRepositoryProvider.overrideWithValue(mockRepo),
+            ],
+            child: const MaterialApp(home: MyTripsScreen()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('My Trips'), findsOneWidget);
-      expect(find.text('No upcoming trips'), findsOneWidget);
-      expect(find.text('Explore Properties'), findsOneWidget);
-      expect(find.text('Upcoming (0)'), findsOneWidget);
-    });
+        expect(find.text('My Trips'), findsOneWidget);
+        expect(find.text('No upcoming trips'), findsOneWidget);
+        expect(find.text('Explore Properties'), findsOneWidget);
+        expect(find.text('Upcoming (0)'), findsOneWidget);
+      },
+    );
 
-    testWidgets('renders upcoming reservation card when reservations exist',
-        (tester) async {
+    testWidgets('renders upcoming reservation card when reservations exist', (
+      tester,
+    ) async {
       final mockRepo = MockReservationRepository();
       mockRepo.reservationsToReturn = [testUpcomingReservation];
 
@@ -103,9 +104,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: const MaterialApp(
-            home: MyTripsScreen(),
-          ),
+          child: const MaterialApp(home: MyTripsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -128,9 +127,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: const MaterialApp(
-            home: MyTripsScreen(),
-          ),
+          child: const MaterialApp(home: MyTripsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -156,9 +153,7 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: const MaterialApp(
-            home: MyTripsScreen(),
-          ),
+          child: const MaterialApp(home: MyTripsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -168,4 +163,3 @@ void main() {
     });
   });
 }
-

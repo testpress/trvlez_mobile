@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/profile/presentation/profile_notifier.dart';
@@ -108,7 +109,7 @@ class VerificationStatusScreenState
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final state = effectiveState;
-    final config = StatusConfig.from(state);
+    final config = StatusConfig.from(state, context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -338,7 +339,7 @@ class VerificationStatusScreenState
                                 text: 'Whatsapp',
                                 style: GoogleFonts.inter(
                                   fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF25D366),
+                                  color: context.colors.feedbackSuccess,
                                 ),
                               ),
                             ],
@@ -373,7 +374,7 @@ class VerificationStatusScreenState
           ),
         ],
       ),
-      child: Icon(config.icon, color: Colors.white, size: 44),
+      child: Icon(config.icon, color: context.colors.textOnAction, size: 44),
     );
 
     // Only pulse the icon when processing

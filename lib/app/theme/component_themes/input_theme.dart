@@ -7,14 +7,8 @@ InputDecorationTheme buildInputTheme(AppColors colors) {
   return InputDecorationTheme(
     filled: true,
     fillColor: colors.surfaceSubtle,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 20,
-      vertical: 16,
-    ),
-    hintStyle: GoogleFonts.cabin(
-      fontSize: 15,
-      color: colors.textDisabled,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    hintStyle: GoogleFonts.cabin(fontSize: 15, color: colors.textDisabled),
     labelStyle: GoogleFonts.nunito(
       fontSize: 14,
       fontWeight: FontWeight.w700,

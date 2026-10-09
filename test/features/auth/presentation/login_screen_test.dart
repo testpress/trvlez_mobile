@@ -11,10 +11,7 @@ class MockAuthRepository extends Fake implements AuthRepository {
   String? passwordCalled;
 
   @override
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     emailCalled = email;
     passwordCalled = password;
     if (shouldThrow) {
@@ -44,15 +41,13 @@ void main() {
       mockRepo = MockAuthRepository();
     });
 
-    testWidgets('renders brand header, inputs, and sign-in button', (tester) async {
+    testWidgets('renders brand header, inputs, and sign-in button', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: LoginScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -63,15 +58,13 @@ void main() {
       expect(find.text('Don\'t have an account? '), findsOneWidget);
     });
 
-    testWidgets('triggers client-side validation on empty submission', (tester) async {
+    testWidgets('triggers client-side validation on empty submission', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: LoginScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -84,15 +77,13 @@ void main() {
       expect(mockRepo.emailCalled, isNull);
     });
 
-    testWidgets('submits valid credentials and invokes repository login', (tester) async {
+    testWidgets('submits valid credentials and invokes repository login', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: LoginScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -117,12 +108,8 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(mockRepo),
-          ],
-          child: const MaterialApp(
-            home: LoginScreen(),
-          ),
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();

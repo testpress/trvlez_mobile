@@ -60,10 +60,7 @@ class FormDefinition {
   final int version;
   final List<FormSection> sections;
 
-  const FormDefinition({
-    required this.version,
-    required this.sections,
-  });
+  const FormDefinition({required this.version, required this.sections});
 }
 
 /// A form template configured by the property.

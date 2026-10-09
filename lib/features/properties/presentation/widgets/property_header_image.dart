@@ -58,11 +58,7 @@ class PropertyHeaderImage extends StatelessWidget {
     return Container(
       color: colors.surfaceSubtle,
       child: Center(
-        child: Icon(
-          Icons.hotel_outlined,
-          size: 64,
-          color: colors.textDisabled,
-        ),
+        child: Icon(Icons.hotel_outlined, size: 64, color: colors.textDisabled),
       ),
     );
   }

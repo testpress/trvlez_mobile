@@ -103,9 +103,7 @@ void main() {
       child: Consumer(
         builder: (context, ref, child) {
           final router = ref.watch(routerProvider);
-          return MaterialApp.router(
-            routerConfig: router,
-          );
+          return MaterialApp.router(routerConfig: router);
         },
       ),
     );
@@ -127,22 +125,23 @@ void main() {
       expect(find.text('Login'), findsOneWidget);
     });
 
-    testWidgets('Authenticated user on startup redirects away from WelcomeScreen to Home', (
-      tester,
-    ) async {
-      final fakeStorage = FakeSecureStorage();
-      final tokenStorage = TokenStorage(
-        storage: fakeStorage,
-        initialToken: 'fake_jwt_token',
-      );
+    testWidgets(
+      'Authenticated user on startup redirects away from WelcomeScreen to Home',
+      (tester) async {
+        final fakeStorage = FakeSecureStorage();
+        final tokenStorage = TokenStorage(
+          storage: fakeStorage,
+          initialToken: 'fake_jwt_token',
+        );
 
-      await tester.pumpWidget(createTestApp(tokenStorage: tokenStorage));
-      await tester.pump(const Duration(milliseconds: 1000));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(createTestApp(tokenStorage: tokenStorage));
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pumpAndSettle();
 
-      // WelcomeScreen should NOT be visible for authenticated users
-      expect(find.byType(WelcomeScreen), findsNothing);
-    });
+        // WelcomeScreen should NOT be visible for authenticated users
+        expect(find.byType(WelcomeScreen), findsNothing);
+      },
+    );
 
     testWidgets('Authenticated user navigating to /welcome redirects to Home', (
       tester,
@@ -168,27 +167,28 @@ void main() {
       expect(find.byType(WelcomeScreen), findsNothing);
     });
 
-    testWidgets('Unauthenticated user navigating to home is redirected to login', (
-      tester,
-    ) async {
-      final fakeStorage = FakeSecureStorage();
-      final tokenStorage = TokenStorage(storage: fakeStorage);
+    testWidgets(
+      'Unauthenticated user navigating to home is redirected to login',
+      (tester) async {
+        final fakeStorage = FakeSecureStorage();
+        final tokenStorage = TokenStorage(storage: fakeStorage);
 
-      await tester.pumpWidget(createTestApp(tokenStorage: tokenStorage));
-      await tester.pump(const Duration(milliseconds: 1000));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(createTestApp(tokenStorage: tokenStorage));
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pumpAndSettle();
 
-      // Now attempt to navigate to protected route
-      final BuildContext context = tester.element(find.byType(WelcomeScreen));
-      final container = ProviderScope.containerOf(context);
-      final router = container.read(routerProvider);
+        // Now attempt to navigate to protected route
+        final BuildContext context = tester.element(find.byType(WelcomeScreen));
+        final container = ProviderScope.containerOf(context);
+        final router = container.read(routerProvider);
 
-      router.go(AppRoutes.home);
-      await tester.pump(const Duration(milliseconds: 1000));
-      await tester.pumpAndSettle();
+        router.go(AppRoutes.home);
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pumpAndSettle();
 
-      // Should be on login screen
-      expect(find.text('Welcome back'), findsOneWidget);
-    });
+        // Should be on login screen
+        expect(find.text('Welcome back'), findsOneWidget);
+      },
+    );
   });
 }

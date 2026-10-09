@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/features/verification/domain/processing_stage.dart';
 
 /// Animated visual representing a document or video frame being processed.
@@ -77,9 +77,7 @@ class _DocumentProcessingVisualState extends State<DocumentProcessingVisual>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final successColor = colorScheme.brightness == Brightness.light
-        ? const Color(0xFF27AE60)
-        : const Color(0xFF4CAF50);
+    final successColor = context.colors.feedbackSuccess;
 
     return SizedBox(
       width: 120,
@@ -183,8 +181,10 @@ class _DocumentPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
-    final frameRRect =
-        RRect.fromRectAndRadius(frameRect, const Radius.circular(6));
+    final frameRRect = RRect.fromRectAndRadius(
+      frameRect,
+      const Radius.circular(6),
+    );
     canvas.drawRRect(frameRRect, framePaint);
     canvas.drawRRect(frameRRect, frameBorderPaint);
 
@@ -304,8 +304,10 @@ class _DocumentPainter extends CustomPainter {
 
   void _paintUploadIndicator(Canvas canvas, double centerX, Rect docRect) {
     final arrowY = docRect.bottom + 12 - (animationValue * 6);
-    final arrowOpacity =
-        (1.0 - (animationValue - 0.5).abs() * 2).clamp(0.3, 1.0);
+    final arrowOpacity = (1.0 - (animationValue - 0.5).abs() * 2).clamp(
+      0.3,
+      1.0,
+    );
 
     final arrowPaint = Paint()
       ..color = primaryColor.withValues(alpha: arrowOpacity * 0.6)
@@ -365,11 +367,7 @@ class _DocumentPainter extends CustomPainter {
     final badgeCenter = Offset(centerX + 24, centerY + 20);
     const badgeRadius = 12.0;
 
-    canvas.drawCircle(
-      badgeCenter,
-      badgeRadius,
-      Paint()..color = successColor,
-    );
+    canvas.drawCircle(badgeCenter, badgeRadius, Paint()..color = successColor);
 
     final checkPaint = Paint()
       ..color = surfaceColor
@@ -388,11 +386,7 @@ class _DocumentPainter extends CustomPainter {
     final badgeCenter = Offset(centerX + 24, centerY + 20);
     const badgeRadius = 12.0;
 
-    canvas.drawCircle(
-      badgeCenter,
-      badgeRadius,
-      Paint()..color = errorColor,
-    );
+    canvas.drawCircle(badgeCenter, badgeRadius, Paint()..color = errorColor);
 
     final excPaint = Paint()
       ..color = surfaceColor

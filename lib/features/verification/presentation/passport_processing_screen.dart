@@ -58,9 +58,7 @@ class _PassportProcessingScreenState
       );
 
       if (croppedFile != null && mounted) {
-        ref
-            .read(verificationNotifierProvider.notifier)
-            .setImage(croppedFile);
+        ref.read(verificationNotifierProvider.notifier).setImage(croppedFile);
         if (mounted) {
           context.go(AppRoutes.passportReview);
         }

@@ -15,33 +15,34 @@ export 'package:trvlez_mobile/features/verification/presentation/verification_no
 /// Notifier provider managing multi-step verification state machine.
 final verificationNotifierProvider =
     NotifierProvider<VerificationNotifier, VerificationState>(() {
-  return VerificationNotifier();
-});
+      return VerificationNotifier();
+    });
 
 /// Future provider fetching current verification status when in submitted step.
 final verificationStatusProvider =
     FutureProvider.autoDispose<VerificationStatus?>((ref) async {
-  final profileState = ref.watch(currentProfileProvider);
-  final profile = profileState.value;
+      final profileState = ref.watch(currentProfileProvider);
+      final profile = profileState.value;
 
-  if (profile?.verificationState == TravelerVerificationState.submitted) {
-    try {
-      final repository = ref.read(verificationRepositoryProvider);
-      return await repository.getVerificationStatus();
-    } catch (_) {
+      if (profile?.verificationState == TravelerVerificationState.submitted) {
+        try {
+          final repository = ref.read(verificationRepositoryProvider);
+          return await repository.getVerificationStatus();
+        } catch (_) {
+          return null;
+        }
+      }
       return null;
-    }
-  }
-  return null;
-});
+    });
 
 /// Computes the active traveler verification state.
 ///
 /// Combines the profile's onboarding step with the verification session status
 /// so that a submitted session marked as failed in the verification service
 /// transitions the state to [TravelerVerificationState.failed].
-final travelerVerificationStateProvider =
-    Provider<TravelerVerificationState>((ref) {
+final travelerVerificationStateProvider = Provider<TravelerVerificationState>((
+  ref,
+) {
   final profileState = ref.watch(currentProfileProvider);
   final profile = profileState.value;
   final verificationStatus = ref.watch(verificationStatusProvider).value;

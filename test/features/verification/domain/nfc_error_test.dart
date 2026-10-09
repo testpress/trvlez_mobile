@@ -8,78 +8,105 @@ void main() {
     const expectedAuthMessage =
         'We couldn’t verify this passport. Please make sure you’re using the same passport you uploaded.';
 
-    test('authenticationFailedMessage constant has the exact required wording', () {
-      expect(NfcError.authenticationFailedMessage, expectedAuthMessage);
-    });
+    test(
+      'authenticationFailedMessage constant has the exact required wording',
+      () {
+        expect(NfcError.authenticationFailedMessage, expectedAuthMessage);
+      },
+    );
 
-    test('maps PassportError with 0x6982 (Security status not satisfied) to authentication failure message', () {
-      final error = PassportError(
-        'Security status not satisfied',
-        code: const StatusWord(sw1: 0x69, sw2: 0x82),
-      );
+    test(
+      'maps PassportError with 0x6982 (Security status not satisfied) to authentication failure message',
+      () {
+        final error = PassportError(
+          'Security status not satisfied',
+          code: const StatusWord(sw1: 0x69, sw2: 0x82),
+        );
 
-      final nfcError = NfcError.fromException(error, readStep: 'authenticating');
+        final nfcError = NfcError.fromException(
+          error,
+          readStep: 'authenticating',
+        );
 
-      expect(nfcError.type, NfcErrorType.authenticationFailed);
-      expect(nfcError.message, expectedAuthMessage);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.authenticationFailed);
+        expect(nfcError.message, expectedAuthMessage);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
 
-    test('maps PassportError with 0x6300 (Authentication failed) to authentication failure message', () {
-      final error = PassportError(
-        'The protocol (step) failed.',
-        code: const StatusWord(sw1: 0x63, sw2: 0x00),
-      );
+    test(
+      'maps PassportError with 0x6300 (Authentication failed) to authentication failure message',
+      () {
+        final error = PassportError(
+          'The protocol (step) failed.',
+          code: const StatusWord(sw1: 0x63, sw2: 0x00),
+        );
 
-      final nfcError = NfcError.fromException(error);
+        final nfcError = NfcError.fromException(error);
 
-      expect(nfcError.type, NfcErrorType.authenticationFailed);
-      expect(nfcError.message, expectedAuthMessage);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.authenticationFailed);
+        expect(nfcError.message, expectedAuthMessage);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
 
-    test('maps PassportError with 0x63CF (Wrong DBAKeys) to authentication failure message', () {
-      final error = PassportError(
-        'Security status not satisfied',
-        code: const StatusWord(sw1: 0x63, sw2: 0xCF),
-      );
+    test(
+      'maps PassportError with 0x63CF (Wrong DBAKeys) to authentication failure message',
+      () {
+        final error = PassportError(
+          'Security status not satisfied',
+          code: const StatusWord(sw1: 0x63, sw2: 0xCF),
+        );
 
-      final nfcError = NfcError.fromException(error);
+        final nfcError = NfcError.fromException(error);
 
-      expect(nfcError.type, NfcErrorType.authenticationFailed);
-      expect(nfcError.message, expectedAuthMessage);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.authenticationFailed);
+        expect(nfcError.message, expectedAuthMessage);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
 
-    test('maps PassportError with message containing "authentication failed" without status code', () {
-      final error = PassportError('Authentication failed');
+    test(
+      'maps PassportError with message containing "authentication failed" without status code',
+      () {
+        final error = PassportError('Authentication failed');
 
-      final nfcError = NfcError.fromException(error);
+        final nfcError = NfcError.fromException(error);
 
-      expect(nfcError.type, NfcErrorType.authenticationFailed);
-      expect(nfcError.message, expectedAuthMessage);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.authenticationFailed);
+        expect(nfcError.message, expectedAuthMessage);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
 
-    test('maps PassportError with message containing "the protocol (step) failed"', () {
-      final error = PassportError('The protocol (step) failed.');
+    test(
+      'maps PassportError with message containing "the protocol (step) failed"',
+      () {
+        final error = PassportError('The protocol (step) failed.');
 
-      final nfcError = NfcError.fromException(error);
+        final nfcError = NfcError.fromException(error);
 
-      expect(nfcError.type, NfcErrorType.authenticationFailed);
-      expect(nfcError.message, expectedAuthMessage);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.authenticationFailed);
+        expect(nfcError.message, expectedAuthMessage);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
 
-    test('maps any PassportError occurring during authenticating step context to authentication failure', () {
-      final error = PassportError('Generic passport failure');
+    test(
+      'maps any PassportError occurring during authenticating step context to authentication failure',
+      () {
+        final error = PassportError('Generic passport failure');
 
-      final nfcError = NfcError.fromException(error, readStep: 'authenticating');
+        final nfcError = NfcError.fromException(
+          error,
+          readStep: 'authenticating',
+        );
 
-      expect(nfcError.type, NfcErrorType.authenticationFailed);
-      expect(nfcError.message, expectedAuthMessage);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.authenticationFailed);
+        expect(nfcError.message, expectedAuthMessage);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
 
     test('maps BACError from string to authentication failure message', () {
       final error = Exception('BACError: Verifying mac of Eicc failed');
@@ -92,7 +119,9 @@ void main() {
     });
 
     test('maps PACEError from string to authentication failure message', () {
-      final error = Exception('PACEError: PACE <ECDH> key establishment failed');
+      final error = Exception(
+        'PACEError: PACE <ECDH> key establishment failed',
+      );
 
       final nfcError = NfcError.fromException(error);
 

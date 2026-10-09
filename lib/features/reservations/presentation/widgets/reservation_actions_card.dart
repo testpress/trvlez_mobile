@@ -26,10 +26,7 @@ class ReservationActionsCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (status.canGenerateQr) ...[
-          AppButton(
-            label: 'Check-in Pass (QR Code)',
-            onPressed: onCheckIn,
-          ),
+          AppButton(label: 'Check-in Pass (QR Code)', onPressed: onCheckIn),
           const SizedBox(height: AppSpacing.sm),
         ],
         if (reservation.propertySummary.requiresPrearrivalForm) ...[

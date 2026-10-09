@@ -224,18 +224,27 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('uploadPassport coordinates start, init, upload, and complete', () async {
-      double progress = 0.0;
-      await repository.uploadPassport(testFile, onProgress: (p) => progress = p);
+    test(
+      'uploadPassport coordinates start, init, upload, and complete',
+      () async {
+        double progress = 0.0;
+        await repository.uploadPassport(
+          testFile,
+          onProgress: (p) => progress = p,
+        );
 
-      expect(fakeDataSource.startVerificationCalled, isTrue);
-      expect(fakeS3Client.lastUploadUrl, 'https://s3.example.com/passport-upload');
-      expect(fakeS3Client.lastMimeType, 'image/jpeg');
-      expect(fakeS3Client.lastFileLength, 4);
-      expect(fakeDataSource.completePassportUploadCalled, isTrue);
-      expect(fakeDataSource.lastCompletedFileId, 'file-pass-1');
-      expect(progress, 1.0);
-    });
+        expect(fakeDataSource.startVerificationCalled, isTrue);
+        expect(
+          fakeS3Client.lastUploadUrl,
+          'https://s3.example.com/passport-upload',
+        );
+        expect(fakeS3Client.lastMimeType, 'image/jpeg');
+        expect(fakeS3Client.lastFileLength, 4);
+        expect(fakeDataSource.completePassportUploadCalled, isTrue);
+        expect(fakeDataSource.lastCompletedFileId, 'file-pass-1');
+        expect(progress, 1.0);
+      },
+    );
 
     test('uploadSelfie coordinates init, upload, and complete', () async {
       final videoFile = File('${tempDir.path}/video.mp4');
@@ -244,7 +253,10 @@ void main() {
       double progress = 0.0;
       await repository.uploadSelfie(videoFile, onProgress: (p) => progress = p);
 
-      expect(fakeS3Client.lastUploadUrl, 'https://s3.example.com/selfie-upload');
+      expect(
+        fakeS3Client.lastUploadUrl,
+        'https://s3.example.com/selfie-upload',
+      );
       expect(fakeS3Client.lastMimeType, 'video/mp4');
       expect(fakeDataSource.completeSelfieUploadCalled, isTrue);
       expect(fakeDataSource.lastCompletedFileId, 'file-selfie-1');
@@ -269,25 +281,30 @@ void main() {
       expect(result.firstName, 'JOHN');
     });
 
-    test('confirmMrz converts domain payload to DTO and calls remoteDataSource', () async {
-      const payload = ConfirmMrzPayload(
-        firstName: 'JOHN',
-        lastName: 'DOE',
-        passportNumber: 'P12345678',
-        nationality: 'USA',
-        dateOfBirth: '1990-01-01',
-        dateOfExpiry: '2030-01-01',
-      );
+    test(
+      'confirmMrz converts domain payload to DTO and calls remoteDataSource',
+      () async {
+        const payload = ConfirmMrzPayload(
+          firstName: 'JOHN',
+          lastName: 'DOE',
+          passportNumber: 'P12345678',
+          nationality: 'USA',
+          dateOfBirth: '1990-01-01',
+          dateOfExpiry: '2030-01-01',
+        );
 
-      await repository.confirmMrz(payload);
+        await repository.confirmMrz(payload);
 
-      expect(fakeDataSource.lastConfirmPayload, isNotNull);
-      expect(fakeDataSource.lastConfirmPayload!.firstName, 'JOHN');
-      expect(fakeDataSource.lastConfirmPayload!.passportNumber, 'P12345678');
-    });
+        expect(fakeDataSource.lastConfirmPayload, isNotNull);
+        expect(fakeDataSource.lastConfirmPayload!.firstName, 'JOHN');
+        expect(fakeDataSource.lastConfirmPayload!.passportNumber, 'P12345678');
+      },
+    );
 
     test('submitVerification forwards nfcPayload', () async {
-      final result = await repository.submitVerification(nfcPayload: {'chip': 'ok'});
+      final result = await repository.submitVerification(
+        nfcPayload: {'chip': 'ok'},
+      );
       expect(result.verificationJobId, 'job-123');
       expect(fakeDataSource.lastNfcPayload, equals({'chip': 'ok'}));
     });

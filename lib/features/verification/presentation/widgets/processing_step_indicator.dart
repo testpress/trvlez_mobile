@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// A subtle horizontal step indicator for verification processing stages.
 ///
@@ -32,9 +33,7 @@ class ProcessingStepIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final successColor = colorScheme.brightness == Brightness.light
-        ? const Color(0xFF27AE60)
-        : const Color(0xFF4CAF50);
+    final successColor = context.colors.feedbackSuccess;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -115,18 +114,18 @@ class _StepDot extends StatelessWidget {
     final dotColor = isCompleted
         ? successColor
         : isActive
-            ? primaryColor
-            : isFailed
-                ? errorColor
-                : mutedColor;
+        ? primaryColor
+        : isFailed
+        ? errorColor
+        : mutedColor;
 
     final labelColor = isCompleted
         ? successColor
         : isActive
-            ? onSurfaceColor
-            : isFailed
-                ? errorColor
-                : onSurfaceColor.withValues(alpha: 0.4);
+        ? onSurfaceColor
+        : isFailed
+        ? errorColor
+        : onSurfaceColor.withValues(alpha: 0.4);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -138,10 +137,7 @@ class _StepDot extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isUpcoming ? Colors.transparent : dotColor,
-            border: Border.all(
-              color: dotColor,
-              width: isActive ? 2.0 : 1.5,
-            ),
+            border: Border.all(color: dotColor, width: isActive ? 2.0 : 1.5),
           ),
           child: isCompleted
               ? const Icon(Icons.check, size: 6, color: Colors.white)

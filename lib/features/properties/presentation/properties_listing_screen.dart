@@ -76,16 +76,17 @@ class _PropertiesListingScreenState
   void _resetAllFilters() {
     _searchController.clear();
     setState(() => _selectedCategoryIndex = 0);
-    ref.read(propertiesProvider.notifier).fetchProperties(
-          search: '',
-          propertyType: 'all',
-        );
+    ref
+        .read(propertiesProvider.notifier)
+        .fetchProperties(search: '', propertyType: 'all');
   }
 
   Future<void> _onRefresh() async {
     final selectedCategory = _categories[_selectedCategoryIndex];
     final propertyType = _categoryToType[selectedCategory];
-    await ref.read(propertiesProvider.notifier).fetchProperties(
+    await ref
+        .read(propertiesProvider.notifier)
+        .fetchProperties(
           search: _searchController.text,
           propertyType: propertyType,
         );
@@ -139,9 +140,8 @@ class _PropertiesListingScreenState
                   hasScrollBody: false,
                   child: _ErrorView(
                     error: error.toString(),
-                    onRetry: () => ref
-                        .read(propertiesProvider.notifier)
-                        .fetchProperties(),
+                    onRetry: () =>
+                        ref.read(propertiesProvider.notifier).fetchProperties(),
                   ),
                 )
               else if (properties.isEmpty)
@@ -239,7 +239,11 @@ class _PropertiesHeader extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.verified_outlined, color: colorScheme.primary, size: 16),
+              Icon(
+                Icons.verified_outlined,
+                color: colorScheme.primary,
+                size: 16,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Explore Stays',

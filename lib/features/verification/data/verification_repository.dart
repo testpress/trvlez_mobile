@@ -18,9 +18,9 @@ final s3UploadClientProvider = Provider<S3UploadClient>((ref) {
 /// Provider for [VerificationRemoteDataSource].
 final verificationRemoteDataSourceProvider =
     Provider<VerificationRemoteDataSource>((ref) {
-  final dio = ref.watch(dioProvider);
-  return VerificationRemoteDataSourceImpl(dio: dio);
-});
+      final dio = ref.watch(dioProvider);
+      return VerificationRemoteDataSourceImpl(dio: dio);
+    });
 
 /// Provider for the [VerificationRepository] contract.
 final verificationRepositoryProvider = Provider<VerificationRepository>((ref) {

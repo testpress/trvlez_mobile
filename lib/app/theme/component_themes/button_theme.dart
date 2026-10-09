@@ -9,13 +9,8 @@ FilledButtonThemeData buildFilledButtonTheme(AppColors colors) {
       minimumSize: const Size(double.infinity, 56),
       backgroundColor: colors.actionPrimary,
       foregroundColor: colors.textOnAction,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.button,
-      ),
-      textStyle: GoogleFonts.nunito(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
+      textStyle: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w700),
       elevation: 0,
     ),
   );
@@ -27,13 +22,8 @@ ElevatedButtonThemeData buildElevatedButtonTheme(AppColors colors) {
       minimumSize: const Size(double.infinity, 56),
       backgroundColor: colors.actionPrimary,
       foregroundColor: colors.textOnAction,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.button,
-      ),
-      textStyle: GoogleFonts.nunito(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
+      textStyle: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w700),
       elevation: 0,
     ),
   );
@@ -45,13 +35,8 @@ OutlinedButtonThemeData buildOutlinedButtonTheme(AppColors colors) {
       minimumSize: const Size(double.infinity, 50),
       foregroundColor: colors.textPrimary,
       side: BorderSide(color: colors.borderSubtle),
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.button,
-      ),
-      textStyle: GoogleFonts.nunito(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
+      textStyle: GoogleFonts.nunito(fontSize: 14, fontWeight: FontWeight.w700),
     ),
   );
 }
@@ -60,10 +45,7 @@ TextButtonThemeData buildTextButtonTheme(AppColors colors) {
   return TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: colors.actionPrimary,
-      textStyle: GoogleFonts.cabin(
-        fontSize: 15,
-        fontWeight: FontWeight.w700,
-      ),
+      textStyle: GoogleFonts.cabin(fontSize: 15, fontWeight: FontWeight.w700),
     ),
   );
 }

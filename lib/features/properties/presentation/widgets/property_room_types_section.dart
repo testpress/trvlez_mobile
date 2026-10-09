@@ -50,7 +50,9 @@ class PropertyRoomTypesSection extends StatelessWidget {
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(colors.actionPrimary),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colors.actionPrimary,
+                  ),
                 ),
               ),
           ],
@@ -66,11 +68,7 @@ class PropertyRoomTypesSection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: colors.textSecondary,
-                  size: 20,
-                ),
+                Icon(Icons.info_outline, color: colors.textSecondary, size: 20),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

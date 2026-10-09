@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_providers.dart';
 
 /// Screen summarizing the successful read of the NFC passport chip.
@@ -69,14 +70,13 @@ class NfcResultScreen extends ConsumerWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: theme
-                                      .colorScheme.surfaceContainerHighest,
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
                                   child: Center(
                                     child: Icon(
                                       Icons.person_rounded,
                                       size: 56,
-                                      color:
-                                          theme.colorScheme.onSurfaceVariant,
+                                      color: theme.colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                 );
@@ -89,16 +89,16 @@ class NfcResultScreen extends ConsumerWidget {
                             child: Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.green,
+                                color: context.colors.feedbackSuccess,
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: theme.colorScheme.surface,
                                   width: 2,
                                 ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.check,
-                                color: Colors.white,
+                                color: context.colors.textOnAction,
                                 size: 16,
                               ),
                             ),
@@ -109,12 +109,12 @@ class NfcResultScreen extends ConsumerWidget {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: Colors.green.withAlpha(30),
+                          color: context.colors.feedbackSuccess.withAlpha(30),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.check_circle_rounded,
-                          color: Colors.green,
+                          color: context.colors.feedbackSuccess,
                           size: 48,
                         ),
                       ),
