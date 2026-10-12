@@ -7,358 +7,234 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
+import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/face_guide_painter.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
+/// Capture screen for the traveler's selfie video liveness verification.
+///
+/// Features a centered 158x210 face oval with smooth progress ring, front camera feed,
+/// elapsed timer counting up to 10 seconds, and round shutter control.
 class SelfieCaptureScreen extends ConsumerStatefulWidget {
-  final CameraService cameraService;
+  const SelfieCaptureScreen({
+    super.key,
+    required this.cameraService,
+  });
 
-  const SelfieCaptureScreen({super.key, required this.cameraService});
+  final CameraService cameraService;
 
   @override
   ConsumerState<SelfieCaptureScreen> createState() =>
-      SelfieCaptureScreenState();
+      _SelfieCaptureScreenState();
 }
 
-class SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen>
-    with TickerProviderStateMixin {
-  CameraController? cameraController;
-  bool isInitializing = true;
-  bool isRecording = false;
-  String? errorMsg;
-  int recordedSeconds = 0;
-  Timer? recordingTimer;
-  late AnimationController progressController;
+class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
+  CameraController? _cameraController;
+  bool _isCameraInitialized = false;
+  bool _isRecording = false;
+  int _elapsed = 0;
+  double _progress = 0.0;
+  Timer? _timer;
 
-  static const int minRecordingSeconds = 3;
-  static const int maxRecordingSeconds = 10;
+  static const int kSelfieSeconds = 10;
 
   @override
   void initState() {
     super.initState();
-    progressController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: maxRecordingSeconds),
-    );
-    initializeCamera();
+    _initFrontCamera();
   }
 
-  Future<void> initializeCamera() async {
+  Future<void> _initFrontCamera() async {
     try {
-      cameraController = await widget.cameraService.initCamera(
+      _cameraController = await widget.cameraService.initCamera(
         lensDirection: CameraLensDirection.front,
         resolution: ResolutionPreset.high,
         enableAudio: false,
       );
 
-      if (cameraController == null) {
-        if (mounted) {
-          setState(() {
-            errorMsg = 'No cameras available';
-            isInitializing = false;
-          });
-        }
-        return;
-      }
-
-      if (mounted) {
+      if (_cameraController != null && mounted) {
         setState(() {
-          isInitializing = false;
+          _isCameraInitialized = true;
         });
       }
-    } catch (e) {
+    } catch (_) {
       if (mounted) {
         setState(() {
-          errorMsg = 'Failed to initialize camera: $e';
-          isInitializing = false;
+          _isCameraInitialized = false;
         });
-      }
-    }
-  }
-
-  Future<void> startRecording() async {
-    if (cameraController == null || !cameraController!.value.isInitialized) {
-      return;
-    }
-
-    if (cameraController!.value.isRecordingVideo) {
-      return;
-    }
-
-    try {
-      await cameraController!.startVideoRecording();
-      setState(() {
-        isRecording = true;
-        recordedSeconds = 0;
-      });
-      progressController.forward(from: 0.0);
-
-      recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (!mounted) {
-          timer.cancel();
-          return;
-        }
-
-        setState(() {
-          recordedSeconds++;
-        });
-
-        if (recordedSeconds >= maxRecordingSeconds) {
-          stopRecording();
-        }
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to start recording: $e')),
-        );
-      }
-    }
-  }
-
-  Future<void> stopRecording() async {
-    if (cameraController == null || !cameraController!.value.isRecordingVideo) {
-      return;
-    }
-
-    recordingTimer?.cancel();
-    progressController.stop();
-
-    try {
-      final video = await cameraController!.stopVideoRecording();
-
-      setState(() {
-        isRecording = false;
-      });
-
-      if (recordedSeconds >= minRecordingSeconds) {
-        ref
-            .read(verificationNotifierProvider.notifier)
-            .setVideo(File(video.path));
-        if (mounted) {
-          context.push(AppRoutes.selfieReview);
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Video must be at least 3 seconds long'),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      setState(() {
-        isRecording = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to stop recording: $e')));
-      }
-    }
-  }
-
-  Future<void> pickVideoFromGallery() async {
-    if (isRecording) return;
-
-    try {
-      final File? video = await widget.cameraService.pickVideoFromGallery();
-
-      if (video != null) {
-        ref.read(verificationNotifierProvider.notifier).setVideo(video);
-        if (mounted) {
-          context.push(AppRoutes.selfieReview);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to pick video. Please try again.'),
-          ),
-        );
       }
     }
   }
 
   @override
   void dispose() {
-    recordingTimer?.cancel();
-    progressController.dispose();
-    cameraController?.dispose();
+    _timer?.cancel();
+    _cameraController?.dispose();
     super.dispose();
+  }
+
+  Future<void> _startRecording() async {
+    if (_isRecording) return;
+
+    final cam = _cameraController;
+    if (cam != null && cam.value.isInitialized) {
+      try {
+        await cam.startVideoRecording();
+      } catch (_) {}
+    }
+
+    setState(() {
+      _isRecording = true;
+      _elapsed = 0;
+      _progress = 0.0;
+    });
+
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        _progress += 0.1 / kSelfieSeconds;
+        if ((timer.tick % 10) == 0) {
+          _elapsed++;
+        }
+      });
+
+      if (_progress >= 1.0) {
+        timer.cancel();
+        _stopRecording();
+      }
+    });
+  }
+
+  Future<void> _stopRecording() async {
+    _timer?.cancel();
+    setState(() => _isRecording = false);
+
+    final cam = _cameraController;
+    File? videoFile;
+    if (cam != null && cam.value.isRecordingVideo) {
+      try {
+        final XFile file = await cam.stopVideoRecording();
+        videoFile = File(file.path);
+      } catch (_) {}
+    }
+
+    if (mounted) {
+      if (videoFile != null) {
+        ref.read(verificationNotifierProvider.notifier).setVideo(videoFile);
+      }
+      context.pushReplacement(AppRoutes.selfieReview);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isInitializing) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final colors = context.colors;
+    final cam = _cameraController;
 
-    if (errorMsg != null) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                errorMsg ?? '',
-                style: context.text.bodyMedium?.copyWith(
-                  color: context.colors.feedbackError,
+    return BrandVerifyScreen(
+      backgroundAsset: 'assets/art/bg_capture.svg',
+      title: 'Verification',
+      helpLine: false,
+      isScrollable: true,
+      onBack: _isRecording ? null : () => context.pop(),
+      body: [
+        const VerificationStepper(current: 2, circleSize: 23.0),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          'Centre your face',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 20.0,
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+            letterSpacing: -0.2,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'Hold still until the ring fills.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 12.0,
+            fontWeight: TypeScale.regular,
+            color: colors.brandSecondaryBody,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Center(
+          child: VerifyFaceOval(
+            width: 158.0,
+            height: 210.0,
+            progress: _progress.clamp(0.0, 1.0),
+            previewChild: _isCameraInitialized && cam != null
+                ? CameraPreview(cam)
+                : null,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Center(
+          child: VerifyRecordingTime(
+            seconds: _elapsed.clamp(0, kSelfieSeconds),
+          ),
+        ),
+      ],
+      foot: [
+        VerifyShutter(
+          square: false,
+          recording: _isRecording,
+          onPressed: _isRecording ? _stopRecording : _startRecording,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Center(
+          child: InkWell(
+            onTap: () {
+              context.push(
+                AppRoutes.reportProblem,
+                extra: const ProblemReportContext(
+                  area: ProblemArea.verification,
+                  screen: AppRoutes.selfieCapture,
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 11.5,
+                    color: colors.brandSecondaryBody,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Trouble with the camera? '),
+                    TextSpan(
+                      text: "Tell us what's wrong",
+                      style: TextStyle(
+                        color: colors.brandSecondary,
+                        decoration: TextDecoration.underline,
+                        fontWeight: TypeScale.medium,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isInitializing = true;
-                    errorMsg = null;
-                  });
-                  initializeCamera();
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    final isMinTimeMet = recordedSeconds >= minRecordingSeconds;
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          if (cameraController != null && cameraController!.value.isInitialized)
-            CameraPreview(cameraController!),
-
-          // Face Guide Overlay
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: progressController,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: FaceGuidePainter(
-                    progress: progressController.value,
-                    progressColor: context.colors.actionPrimary,
-                  ),
-                );
-              },
-            ),
-          ),
-
-          _buildInstructionsOverlay(),
-          if (isRecording) _buildTimerOverlay(),
-          _buildControls(isMinTimeMet),
-          _buildBackButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInstructionsOverlay() {
-    return Positioned(
-      top: 64,
-      left: 24,
-      right: 24,
-      child: Text(
-        'Please look directly into the camera',
-        textAlign: TextAlign.center,
-        style: context.text.titleMedium?.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          shadows: const [Shadow(blurRadius: 4, color: Colors.black54)],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimerOverlay() {
-    return Positioned(
-      top: 100,
-      left: 0,
-      right: 0,
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.black54,
-            borderRadius: AppRadius.lg20Radius,
-          ),
-          child: Text(
-            '00:${recordedSeconds.toString().padLeft(2, '0')}',
-            style: context.text.titleSmall?.copyWith(
-              color: context.colors.feedbackError,
-              fontWeight: FontWeight.bold,
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildControls(bool isMinTimeMet) {
-    return Positioned(
-      bottom: 48,
-      left: 32,
-      right: 32,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(width: 48), // Spacer to keep record button centered
-          if (!isRecording)
-            FloatingActionButton(
-              heroTag: 'record_btn',
-              onPressed: startRecording,
-              backgroundColor: context.colors.actionPrimary,
-              child: const Icon(Icons.videocam, color: Colors.white),
-            )
-          else
-            FloatingActionButton(
-              heroTag: 'stop_btn',
-              onPressed: stopRecording,
-              backgroundColor: isMinTimeMet
-                  ? context.colors.actionPrimary
-                  : context.colors.textDisabled,
-              child: const Icon(Icons.stop, color: Colors.white),
-            ),
-          if (!isRecording)
-            IconButton(
-              iconSize: 32,
-              onPressed: pickVideoFromGallery,
-              icon: const Icon(Icons.video_library, color: Colors.white),
-            )
-          else
-            const SizedBox(
-              width: 48,
-            ), // Match the size of the gallery button when hidden
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBackButton() {
-    return Positioned(
-      top: 48,
-      left: 16,
-      child: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () {
-          if (isRecording) {
-            stopRecording();
-          }
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.go(AppRoutes.verificationStatus);
-          }
-        },
-      ),
+      ],
     );
   }
 }

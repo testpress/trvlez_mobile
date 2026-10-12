@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
-import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_instruction_screen.dart';
 
 void main() {
@@ -28,16 +29,16 @@ void main() {
   }
 
   group('PassportInstructionScreen', () {
-    testWidgets('renders KYC header and stepper at step 1', (tester) async {
+    testWidgets('renders Verification header and stepper at step 0', (tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('KYC'), findsOneWidget);
-      expect(find.byType(KycProgressStepper), findsOneWidget);
-      final stepper = tester.widget<KycProgressStepper>(
-        find.byType(KycProgressStepper),
+      expect(find.text('Verification'), findsOneWidget);
+      expect(find.byType(VerificationStepper), findsOneWidget);
+      final stepper = tester.widget<VerificationStepper>(
+        find.byType(VerificationStepper),
       );
-      expect(stepper.progressIndex, 0);
+      expect(stepper.current, 0);
     });
 
     testWidgets('renders clear passport title and user-friendly guidelines', (
@@ -46,28 +47,23 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Passport Photo'), findsOneWidget);
+      expect(find.text('Passport photo'), findsOneWidget);
       expect(
-        find.textContaining('Take a clear, readable photo'),
+        find.textContaining('We need both of these'),
         findsOneWidget,
       );
-      expect(find.text('Please ensure:'), findsOneWidget);
+      expect(find.text('Photo page'), findsOneWidget);
+      expect(find.text('Code lines'), findsOneWidget);
       expect(
-        find.text('Well-lit area with no flash reflection or glare'),
-        findsOneWidget,
-      );
-      expect(
-        find.text('All 4 corners of the page are inside the frame'),
+        find.text('Well lit, no glare or flash reflection'),
         findsOneWidget,
       );
       expect(
-        find.text(
-          'The 2 lines of text and numbers at the bottom are fully visible',
-        ),
+        find.text('All four corners of the page inside the frame'),
         findsOneWidget,
       );
       expect(
-        find.text('No fingers or shadows cover any information'),
+        find.text('No fingers or shadows across either part'),
         findsOneWidget,
       );
     });
@@ -81,17 +77,17 @@ void main() {
       expect(find.textContaining('Machine Readable Zone'), findsNothing);
     });
 
-    testWidgets('tapping Continue navigates to passport capture screen', (
+    testWidgets('tapping Open camera navigates to passport capture screen', (
       tester,
     ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      final continueButton = find.widgetWithText(ElevatedButton, 'Continue');
-      expect(continueButton, findsOneWidget);
+      final openCameraButton = find.widgetWithText(AppButton, 'Open camera');
+      expect(openCameraButton, findsOneWidget);
 
-      await tester.ensureVisible(continueButton);
-      await tester.tap(continueButton);
+      await tester.ensureVisible(openCameraButton);
+      await tester.tap(openCameraButton);
       await tester.pumpAndSettle();
 
       expect(find.text('Passport Capture Screen'), findsOneWidget);

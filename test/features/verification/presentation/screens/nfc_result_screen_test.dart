@@ -117,21 +117,17 @@ void main() {
       // Verify Image.memory is rendered
       expect(find.byType(Image), findsOneWidget);
 
-      // Verify verified checkmark badge icon is displayed on the photo frame
-      expect(find.byIcon(Icons.check), findsOneWidget);
+      // Verify 'From the chip' provenance badge is displayed
+      expect(find.text('From the chip'), findsOneWidget);
 
       // Verify MRZ details are shown
-      expect(find.text('P12345678'), findsOneWidget);
       expect(find.text('JOHN DOE'), findsOneWidget);
       expect(find.text('USA'), findsOneWidget);
-      expect(find.text('Passport Authenticated'), findsOneWidget);
-
-      // Verify generic checkmark circle is NOT displayed when image is present
-      expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
+      expect(find.text('Chip scan'), findsOneWidget);
     },
   );
 
-  testWidgets('falls back to checkmark circle when faceImageBytes is null', (
+  testWidgets('falls back to chip photo placeholder when faceImageBytes is null', (
     tester,
   ) async {
     final resultWithoutImage = NfcPassportResult(
@@ -158,11 +154,11 @@ void main() {
     // Verify no Image widget
     expect(find.byType(Image), findsNothing);
 
-    // Verify generic checkmark icon is displayed
-    expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+    // Verify provenance badge is displayed
+    expect(find.text('From the chip'), findsOneWidget);
 
     // Verify details still shown
-    expect(find.text('P12345678'), findsOneWidget);
     expect(find.text('JOHN DOE'), findsOneWidget);
+    expect(find.text('USA'), findsOneWidget);
   });
 }

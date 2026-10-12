@@ -1,374 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
-/// Instruction screen shown before passport camera capture.
+/// Instruction screen guiding the user on how to take an acceptable passport photo.
 ///
-/// Clearly explains how to position the passport photo page and emphasizes
-/// keeping the bottom two lines of text and numbers fully visible.
+/// Promotes the MRZ code lines to half the visual explanation with numbered
+/// pointers (1 & 2) and clear guidance bullets to prevent common retake loops.
 class PassportInstructionScreen extends StatelessWidget {
   const PassportInstructionScreen({super.key});
 
-  void _proceedToCapture(BuildContext context) {
-    context.go(AppRoutes.passportCapture);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = context.colors;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'KYC',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: colorScheme.onSurface,
+    return BrandVerifyScreen(
+      backgroundAsset: 'assets/art/bg_passport_howto.svg',
+      title: 'Verification',
+      isScrollable: true,
+      onBack: () {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go(AppRoutes.verificationLanding);
+        }
+      },
+      body: [
+        const VerificationStepper(current: 0, circleSize: 24.0),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          'Passport photo',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 20.0,
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+            letterSpacing: -0.2,
           ),
         ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Step 1 (Passport) is active
-              const KycProgressStepper(progressIndex: 0),
-              const SizedBox(height: 24),
-
-              // Central Card Container
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
-                ),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: AppRadius.sm10Radius,
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.shadow.withValues(alpha: 0.08),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Passport Visual Graphic
-                    Center(child: _buildPassportVisual(colorScheme)),
-                    const SizedBox(height: 20),
-
-                    Text(
-                      'Passport Photo',
-                      style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Take a clear, readable photo of the main photo page of your passport.',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: colorScheme.onSurface.withValues(alpha: 0.65),
-                        height: 1.4,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Guidelines Box
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(
-                          alpha: 0.3,
-                        ),
-                        borderRadius: AppRadius.sm10Radius,
-                        border: Border.all(
-                          color: colorScheme.outlineVariant,
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Please ensure:',
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildGuidelineRow(
-                            Icons.lightbulb_outline_rounded,
-                            'Well-lit area with no flash reflection or glare',
-                            colorScheme,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildGuidelineRow(
-                            Icons.crop_free_rounded,
-                            'All 4 corners of the page are inside the frame',
-                            colorScheme,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildGuidelineRow(
-                            Icons.pin_outlined,
-                            'The 2 lines of text and numbers at the bottom are fully visible',
-                            colorScheme,
-                            isHighlighted: true,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildGuidelineRow(
-                            Icons.front_hand_outlined,
-                            'No fingers or shadows cover any information',
-                            colorScheme,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-
-                    // Continue CTA Button
-                    ElevatedButton(
-                      onPressed: () => _proceedToCapture(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.onSurface,
-                        foregroundColor: colorScheme.surface,
-                        minimumSize: const Size(double.infinity, 44),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.xl22Radius,
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Continue',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // Footer WhatsApp help text
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        color: colorScheme.onSurface.withValues(alpha: 0.65),
-                      ),
-                      children: [
-                        const TextSpan(
-                          text:
-                              'If you are facing any difficulties, please get in touch with us on ',
-                        ),
-                        TextSpan(
-                          text: 'Whatsapp',
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.bold,
-                            color: context.colors.feedbackSuccess,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'We need both of these. Most retakes happen because the bottom two lines were cut off.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 12.0,
+            fontWeight: TypeScale.regular,
+            color: colors.brandSecondaryBody,
+            height: 1.4,
           ),
         ),
-      ),
-    );
-  }
-
-  /// Builds a visual sample card showing the passport photo page layout
-  /// with the bottom code lines emphasized.
-  Widget _buildPassportVisual(ColorScheme colorScheme) {
-    return Container(
-      width: 180,
-      height: 110,
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: AppRadius.smRadius,
-        border: Border.all(
-          color: colorScheme.primary.withValues(alpha: 0.3),
-          width: 1.2,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Passport header & photo / info row
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Photo placeholder
-                Container(
-                  width: 36,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.15),
-                    borderRadius: AppRadius.xsRadius,
-                    border: Border.all(
-                      color: colorScheme.primary.withValues(alpha: 0.3),
-                      width: 0.8,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.person_rounded,
-                    size: 22,
-                    color: colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Text placeholder lines
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 5,
-                        width: 70,
-                        decoration: BoxDecoration(
-                          color: colorScheme.onSurface.withValues(alpha: 0.25),
-                          borderRadius: AppRadius.xxsRadius,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        height: 4,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: colorScheme.onSurface.withValues(alpha: 0.18),
-                          borderRadius: AppRadius.xxsRadius,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        height: 4,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: colorScheme.onSurface.withValues(alpha: 0.18),
-                          borderRadius: AppRadius.xxsRadius,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6),
-          // Bottom 2 lines (highlighted code lines area)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.12),
-              borderRadius: AppRadius.xsRadius,
-              border: Border.all(
-                color: colorScheme.primary.withValues(alpha: 0.5),
-                width: 0.8,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'P<UTOEXAMPLE<<USER<<<<<<<<<<<<<<<<<<',
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 6,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: colorScheme.primary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 1),
-                Text(
-                  'L898902C36UTO7404144F2501017<<<<<<6',
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 6,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: colorScheme.primary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGuidelineRow(
-    IconData icon,
-    String text,
-    ColorScheme colorScheme, {
-    bool isHighlighted = false,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 1),
-          child: Icon(
-            icon,
-            size: 18,
-            color: isHighlighted
-                ? colorScheme.primary
-                : colorScheme.primary.withValues(alpha: 0.8),
+        const SizedBox(height: AppSpacing.md),
+        Center(
+          child: SvgPicture.asset(
+            'assets/art/passport_diagram.svg',
+            width: 170.0,
+            height: 129.0,
+            fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
-              color: colorScheme.onSurface.withValues(
-                alpha: isHighlighted ? 0.95 : 0.8,
-              ),
-              height: 1.3,
+        const SizedBox(height: AppSpacing.md),
+        const VerifyPointerPair(
+          items: [
+            ('1', 'Photo page', 'Your picture and details, sharp'),
+            ('2', 'Code lines', 'Every character, nothing cropped'),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const VerifyInfoCard(
+          borderRadius: 13.0,
+          paddingVertical: 11.0,
+          paddingHorizontal: 12.0,
+          itemGap: 8.0,
+          iconSize: 13.0,
+          bullets: [
+            VerifyBullet(
+              icon: AppIcons.bulb,
+              text: 'Well lit, no glare or flash reflection',
             ),
-          ),
+            VerifyBullet(
+              icon: AppIcons.crop,
+              text: 'All four corners of the page inside the frame',
+            ),
+            VerifyBullet(
+              icon: AppIcons.handStop,
+              text: 'No fingers or shadows across either part',
+            ),
+          ],
+        ),
+      ],
+      foot: [
+        AppButton(
+          label: 'Open camera',
+          variant: AppButtonVariant.brandWhite,
+          onPressed: () => context.push(AppRoutes.passportCapture),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const BrandSecurityNote(
+          text: 'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
         ),
       ],
     );

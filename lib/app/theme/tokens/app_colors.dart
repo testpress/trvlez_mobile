@@ -144,6 +144,13 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color verificationOutlineButton;
   final Color verificationDivider;
 
+  // ─── Brand Screen Convenience Getters ───────────────────────────────
+  Color get brandShotBackdrop => const Color(0x59000000);
+  Color get brandScrubTrack => const Color(0x40FFFFFF);
+  Color get brandBorderSubtle => const Color(0x59FFFFFF);
+  Color get brandDivider => verificationDivider;
+  Color get brandCardIconBackground => verificationCardIconFill;
+
   // ─── Main App Polish & Surfaces ──────────────────────────────────────
   final Color pageBackground;
   final Color cardBorder;

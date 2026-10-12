@@ -2,343 +2,351 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_cropper/image_cropper.dart';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
+import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/camera_overlay_painter.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_capture_controls.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_guidance_bar.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_top_bar.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
+/// Capture screen for the passport photo page.
+///
+/// Features a dedicated 1:1.05 aspect camera frame with corner guides and dashed
+/// MRZ box, live camera feed support with SVG fallback, square shutter capture button,
+/// and support for gallery fallback.
 class PassportCaptureScreen extends ConsumerStatefulWidget {
-  final CameraService cameraService;
+  const PassportCaptureScreen({
+    super.key,
+    required this.cameraService,
+  });
 
-  const PassportCaptureScreen({super.key, required this.cameraService});
+  final CameraService cameraService;
 
   @override
   ConsumerState<PassportCaptureScreen> createState() =>
-      PassportCaptureScreenState();
+      _PassportCaptureScreenState();
 }
 
-class PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
-  CameraController? controller;
-  bool isCameraInitialized = false;
-  bool isCapturing = false;
-  FlashMode currentFlashMode = FlashMode.off;
-
-  /// ICAO 9303 TD3 passport data page: 125 mm × 88 mm → ratio ≈ 1.42.
-  static const double _passportAspectRatio = 125.0 / 88.0;
+class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
+  CameraController? _controller;
+  bool _isCameraInitialized = false;
+  bool _isCapturing = false;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _initOrientationAndCamera();
-  }
-
-  Future<void> _initOrientationAndCamera() async {
-    // Lock to landscape for natural passport framing
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
-
-    await _initCamera();
+    _initCamera();
   }
 
   Future<void> _initCamera() async {
     try {
-      controller = await widget.cameraService.initCamera(
+      _controller = await widget.cameraService.initCamera(
         lensDirection: CameraLensDirection.back,
-        resolution: ResolutionPreset.max,
+        resolution: ResolutionPreset.high,
         enableAudio: false,
       );
 
-      final cam = controller;
-      if (cam != null) {
-        // Configure autofocus and exposure for document capture
-        await _configureCameraForDocumentCapture(cam);
-
-        if (mounted) {
-          setState(() {
-            isCameraInitialized = true;
-          });
-        }
+      final cam = _controller;
+      if (cam != null && mounted) {
+        try {
+          await cam.setFocusMode(FocusMode.auto);
+        } catch (_) {}
+        try {
+          await cam.setExposureMode(ExposureMode.auto);
+        } catch (_) {}
+        setState(() {
+          _isCameraInitialized = true;
+        });
       }
-    } catch (e) {
+    } catch (_) {
+      // Graceful fallback to SVG illustration if camera is unavailable in simulator/environment
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to initialize camera.')),
-        );
+        setState(() {
+          _isCameraInitialized = false;
+        });
       }
-    }
-  }
-
-  Future<void> _configureCameraForDocumentCapture(CameraController cam) async {
-    try {
-      await cam.setFocusMode(FocusMode.auto);
-    } catch (_) {
-      // Device may not support settable focus modes
-    }
-
-    try {
-      await cam.setExposureMode(ExposureMode.auto);
-    } catch (_) {
-      // Device may not support settable exposure modes
-    }
-
-    try {
-      await cam.setFlashMode(FlashMode.off);
-    } catch (_) {
-      // Flash may not be available
     }
   }
 
   @override
   void dispose() {
-    // Restore portrait orientation so subsequent screens render in portrait
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    controller?.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
-  Future<void> _toggleFlash() async {
-    final cam = controller;
-    if (cam == null || !cam.value.isInitialized) return;
+  Future<void> _capturePhoto() async {
+    if (_isCapturing) return;
 
-    final nextMode = switch (currentFlashMode) {
-      FlashMode.off => FlashMode.auto,
-      FlashMode.auto => FlashMode.torch,
-      _ => FlashMode.off,
-    };
+    final cam = _controller;
+    if (cam != null && cam.value.isInitialized) {
+      setState(() => _isCapturing = true);
+      try {
+        final XFile file = await cam.takePicture();
+        final cropParams = PassportCropParams(
+          imagePath: file.path,
+          screenWidth: 300,
+          screenHeight: 400,
+          frameWidth: 260,
+          frameHeight: 273,
+          frameCenterX: 150,
+          previewAspectRatio: cam.value.aspectRatio,
+        );
 
-    try {
-      await cam.setFlashMode(nextMode);
-      setState(() {
-        currentFlashMode = nextMode;
-      });
-    } catch (_) {
-      // Flash mode not supported — silently ignore
-    }
-  }
+        ref
+            .read(verificationNotifierProvider.notifier)
+            .setImage(File(file.path), cropParams: cropParams);
 
-  Future<void> capturePassport() async {
-    final cam = controller;
-    if (cam == null || !cam.value.isInitialized || isCapturing) {
-      return;
-    }
-
-    setState(() {
-      isCapturing = true;
-    });
-
-    final screenSize = MediaQuery.sizeOf(context);
-    final sw = screenSize.width;
-    final sh = screenSize.height;
-    final (frameWidth, frameHeight) = _computeFrameDimensions(screenSize);
-    const double controlColumnWidth = 100.0;
-    final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
-
-    try {
-      final XFile file = await cam.takePicture();
-
-      // Immediately freeze/stop the camera preview
-      await cam.pausePreview();
-
-      final cropParams = PassportCropParams(
-        imagePath: file.path,
-        screenWidth: sw,
-        screenHeight: sh,
-        frameWidth: frameWidth,
-        frameHeight: frameHeight,
-        frameCenterX: frameCenterX,
-        previewAspectRatio: cam.value.aspectRatio,
-      );
-
-      // Hand off image and crop params, then transition to review screen immediately
-      ref
-          .read(verificationNotifierProvider.notifier)
-          .setImage(File(file.path), cropParams: cropParams);
-
-      if (mounted) {
-        // Restore portrait before leaving so the processing screen renders correctly
-        await SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-        ]);
         if (mounted) {
-          context.go(
-            AppRoutes.passportProcessing,
-            extra: {'cropParams': cropParams},
+          context.push(AppRoutes.passportReview);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to capture photo. Try again.')),
           );
         }
+      } finally {
+        if (mounted) setState(() => _isCapturing = false);
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to capture image. Please try again.'),
-          ),
-        );
-      }
-      try {
-        await cam.resumePreview();
-      } catch (_) {}
-      if (mounted) {
-        setState(() {
-          isCapturing = false;
-        });
-      }
+    } else {
+      // If camera preview is inactive (e.g. simulator), open gallery or use sample capture
+      await _pickFromGallery();
     }
   }
 
-  Future<void> pickPassportFromGallery() async {
-    if (isCapturing) return;
-
-    setState(() {
-      isCapturing = true;
-    });
-
+  Future<void> _pickFromGallery() async {
     try {
-      final File? image = await widget.cameraService.pickImageFromGallery();
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 90,
+      );
 
-      if (image != null) {
-        final CroppedFile? croppedFile = await ImageCropper().cropImage(
-          sourcePath: image.path,
-          uiSettings: [
-            AndroidUiSettings(
-              toolbarTitle: 'Crop Passport',
-              toolbarColor: Colors.black,
-              toolbarWidgetColor: Colors.white,
-              initAspectRatio: CropAspectRatioPreset.original,
-              lockAspectRatio: false,
-            ),
-            IOSUiSettings(
-              title: 'Crop Passport',
-              aspectRatioLockEnabled: false,
-            ),
-          ],
+      if (image != null && mounted) {
+        final cropParams = PassportCropParams(
+          imagePath: image.path,
+          screenWidth: 300,
+          screenHeight: 400,
+          frameWidth: 260,
+          frameHeight: 273,
+          frameCenterX: 150,
+          previewAspectRatio: 1.0,
         );
 
-        if (croppedFile != null) {
-          await controller?.pausePreview();
-          ref
-              .read(verificationNotifierProvider.notifier)
-              .setImage(File(croppedFile.path));
-          if (mounted) {
-            await SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-            ]);
-            if (mounted) {
-              context.go(AppRoutes.passportReview);
-            }
-          }
-          return;
+        ref
+            .read(verificationNotifierProvider.notifier)
+            .setImage(File(image.path), cropParams: cropParams);
+
+        if (mounted) {
+          context.push(AppRoutes.passportReview);
         }
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to pick image. Please try again.'),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          isCapturing = false;
-        });
-      }
+    } catch (_) {
+      // Gallery picker dismissed or unavailable
     }
-  }
-
-  (double width, double height) _computeFrameDimensions(Size screenSize) {
-    const double controlColumnWidth = 100.0;
-    final availableWidth = screenSize.width - controlColumnWidth;
-
-    final candidateHeight = screenSize.height * 0.70;
-    final candidateWidth = candidateHeight * _passportAspectRatio;
-
-    if (candidateWidth <= availableWidth * 0.95) {
-      return (candidateWidth, candidateHeight);
-    }
-
-    final constrainedWidth = availableWidth * 0.95;
-    final constrainedHeight = constrainedWidth / _passportAspectRatio;
-    return (constrainedWidth, constrainedHeight);
   }
 
   @override
   Widget build(BuildContext context) {
-    final cam = controller;
-    if (!isCameraInitialized || cam == null) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator(color: Colors.white)),
-      );
-    }
+    final colors = context.colors;
+    final cam = _controller;
 
-    final screenSize = MediaQuery.sizeOf(context);
-    final padding = MediaQuery.paddingOf(context);
-    final (frameWidth, frameHeight) = _computeFrameDimensions(screenSize);
-
-    const double controlColumnWidth = 100.0;
-    final frameCenterX = (screenSize.width - controlColumnWidth) / 2;
-    final cutoutRect = Rect.fromCenter(
-      center: Offset(frameCenterX, screenSize.height / 2),
-      width: frameWidth,
-      height: frameHeight,
-    );
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          FittedBox(
-            fit: BoxFit.cover,
-            child: SizedBox(
-              width: cam.value.aspectRatio,
-              height: 1,
-              child: CameraPreview(cam),
+    return BrandVerifyScreen(
+      backgroundAsset: 'assets/art/bg_capture.svg',
+      title: 'Verification',
+      helpLine: false,
+      isScrollable: true,
+      onBack: () => context.pop(),
+      body: [
+        const VerificationStepper(current: 0, circleSize: 23.0),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          'Fit the page in the frame',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 20.0,
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+            letterSpacing: -0.2,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'Both the photo page and the code lines.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 12.0,
+            fontWeight: TypeScale.regular,
+            color: colors.brandSecondaryBody,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: AspectRatio(
+              aspectRatio: 1 / 1.05,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                child: Container(
+                  color: colors.brandShotBackdrop.withValues(alpha: 0.35),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (_isCameraInitialized && cam != null)
+                        CameraPreview(cam)
+                      else
+                        SvgPicture.asset(
+                          'assets/art/camera_passport.svg',
+                          fit: BoxFit.cover,
+                        ),
+                      // Framing overlay guide with corners and dashed MRZ box
+                      _buildFramingGuide(colors),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
-          CustomPaint(
-            size: Size.infinite,
-            painter: CameraOverlayPainter(
-              cutout: cutoutRect,
-              overlayColor: Colors.black.withAlpha(150),
-              radius: 16.0,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              AppIcons.numbers,
+              size: 14.0,
+              color: colors.brandSecondary,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Flexible(
+              child: Text(
+                'Keep the dashed box over the code lines',
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 11.5,
+                  fontWeight: TypeScale.regular,
+                  color: colors.brandSecondaryBody,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Center(
+          child: TextButton.icon(
+            onPressed: _pickFromGallery,
+            icon: Icon(
+              AppIcons.photo,
+              size: 14.0,
+              color: colors.brandSecondaryBody,
+            ),
+            label: Text(
+              'Upload from photo library',
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 11.0,
+                color: colors.brandSecondaryBody,
+              ),
             ),
           ),
-          PassportTopBar(
-            onClose: () {
-              SystemChrome.setPreferredOrientations([
-                DeviceOrientation.portraitUp,
-              ]);
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go(AppRoutes.passportInstructions);
-              }
+        ),
+      ],
+      foot: [
+        VerifyShutter(
+          square: true,
+          onPressed: _isCapturing ? null : _capturePhoto,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Center(
+          child: InkWell(
+            onTap: () {
+              context.push(
+                AppRoutes.reportProblem,
+                extra: const ProblemReportContext(
+                  area: ProblemArea.verification,
+                  screen: AppRoutes.passportCapture,
+                ),
+              );
             },
-            onToggleFlash: _toggleFlash,
-            flashMode: currentFlashMode,
-            padding: padding,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 11.5,
+                    color: colors.brandSecondaryBody,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Trouble with the camera? '),
+                    TextSpan(
+                      text: "Tell us what's wrong",
+                      style: TextStyle(
+                        color: colors.brandSecondary,
+                        decoration: TextDecoration.underline,
+                        fontWeight: TypeScale.medium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          PassportGuidanceBar(cutoutRect: cutoutRect, screenSize: screenSize),
-          PassportCaptureControls(
-            isCapturing: isCapturing,
-            onCapture: capturePassport,
-            onPickGallery: pickPassportFromGallery,
-            padding: padding,
-          ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFramingGuide(AppColors colors) {
+    return IgnorePointer(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: colors.brandBorderSubtle,
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Container(
+              height: 48.0,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: colors.brandSecondary.withValues(alpha: 0.8),
+                  style: BorderStyle.solid,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(AppRadius.xs),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

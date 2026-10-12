@@ -1,0 +1,112 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
+
+/// Transient celebration screen displayed briefly (~1.4s) when selfie verification succeeds.
+///
+/// Automatically transitions to the NFC chip scan step without requiring user interaction.
+class SelfieSuccessScreen extends StatefulWidget {
+  const SelfieSuccessScreen({super.key});
+
+  @override
+  State<SelfieSuccessScreen> createState() => _SelfieSuccessScreenState();
+}
+
+class _SelfieSuccessScreenState extends State<SelfieSuccessScreen> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(const Duration(milliseconds: 1400), () {
+      if (mounted) {
+        context.pushReplacement(AppRoutes.nfcIntro);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return BrandVerifyScreen(
+      backgroundAsset: 'assets/art/bg_success.svg',
+      title: 'Verification',
+      helpLine: false,
+      isScrollable: true,
+      body: [
+        const VerificationStepper(current: 3, circleSize: 23.0),
+        const SizedBox(height: AppSpacing.xl),
+        Center(
+          child: Container(
+            width: 66.0,
+            height: 66.0,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colors.brandOnSurface,
+            ),
+            child: Icon(
+              AppIcons.check,
+              size: 34.0,
+              color: colors.brandPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        const VerifyProgressTrio(
+          labels: ['Upload', 'Check'],
+          states: [
+            TrioState.done,
+            TrioState.done,
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'Selfie verified',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 20.0,
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+            letterSpacing: -0.2,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'Going to the chip scan…',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 12.0,
+            fontWeight: TypeScale.regular,
+            color: colors.brandSecondaryBody,
+          ),
+        ),
+      ],
+      foot: const [
+        BrandSecurityNote(
+          text: 'Checked on our own systems.\nNever shared with external AI.',
+        ),
+      ],
+    );
+  }
+}

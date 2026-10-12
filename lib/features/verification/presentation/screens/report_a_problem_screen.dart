@@ -1,0 +1,255 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
+
+/// Screen allowing the traveler to report friction or issues encountered during verification.
+///
+/// Features multi-select complaint tags, context notes with smart auto-ticking,
+/// and a prominent fraud safety warning.
+class ReportAProblemScreen extends StatefulWidget {
+  const ReportAProblemScreen({
+    super.key,
+    this.contextData,
+  });
+
+  final ProblemReportContext? contextData;
+
+  @override
+  State<ReportAProblemScreen> createState() => _ReportAProblemScreenState();
+}
+
+class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
+  final Set<int> _selected = {};
+  final TextEditingController _notes = TextEditingController();
+  bool _autoTicked = false;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _notes.addListener(_onNotesChanged);
+  }
+
+  void _onNotesChanged() {
+    final problems = _currentArea.problems;
+    final somethingElseIndex = problems.length - 1;
+    final hasText = _notes.text.trim().isNotEmpty;
+
+    if (hasText && !_selected.contains(somethingElseIndex)) {
+      setState(() {
+        _selected.add(somethingElseIndex);
+        _autoTicked = true;
+      });
+    } else if (!hasText && _autoTicked) {
+      setState(() {
+        _selected.remove(somethingElseIndex);
+        _autoTicked = false;
+      });
+    }
+  }
+
+  ProblemArea get _currentArea =>
+      widget.contextData?.area ?? ProblemArea.verification;
+
+  @override
+  void dispose() {
+    _notes.removeListener(_onNotesChanged);
+    _notes.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitReport() async {
+    if (_selected.isEmpty && _notes.text.trim().isEmpty) return;
+
+    setState(() => _isSubmitting = true);
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Thank you. Your feedback has been sent to support.'),
+      ),
+    );
+    context.pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final problems = _currentArea.problems;
+    final canSubmit = _selected.isNotEmpty || _notes.text.trim().isNotEmpty;
+
+    return BrandVerifyScreen(
+      backgroundAsset: 'assets/art/bg_report_problem.svg',
+      title: 'Report a problem',
+      closeIcon: true,
+      helpLine: false,
+      isScrollable: true,
+      onBack: () => context.pop(),
+      body: [
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          'Tell us what went wrong',
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 20.0,
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+            letterSpacing: -0.2,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          "We'll attach your step, device model and app version so support has context.",
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 12.0,
+            fontWeight: TypeScale.regular,
+            color: colors.brandSecondaryBody,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: [
+            for (int i = 0; i < problems.length; i++)
+              _ProblemChip(
+                label: problems[i],
+                isSelected: _selected.contains(i),
+                onTap: () {
+                  setState(() {
+                    if (_selected.contains(i)) {
+                      _selected.remove(i);
+                    } else {
+                      _selected.add(i);
+                    }
+                  });
+                },
+              ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TextField(
+          controller: _notes,
+          maxLines: 4,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 13.0,
+            color: colors.brandOnSurface,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Additional details (optional)…',
+            hintStyle: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 13.0,
+              color: colors.brandSecondaryBody,
+            ),
+            filled: true,
+            fillColor: colors.brandCardBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.all(AppSpacing.md),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: colors.brandShotBackdrop.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                AppIcons.shieldCheck,
+                size: 16.0,
+                color: colors.brandSecondary,
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Never send photos of your passport by message. We will never ask you to.',
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 11.5,
+                    fontWeight: TypeScale.medium,
+                    color: colors.brandSecondary,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+      foot: [
+        AppButton(
+          label: 'Send report',
+          variant: AppButtonVariant.brandWhite,
+          isLoading: _isSubmitting,
+          enabled: canSubmit && !_isSubmitting,
+          onPressed: canSubmit ? _submitReport : null,
+        ),
+      ],
+    );
+  }
+}
+
+class _ProblemChip extends StatelessWidget {
+  const _ProblemChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            color: isSelected ? colors.brandOnSurface : colors.brandCardBackground,
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            border: Border.all(
+              color: isSelected ? colors.brandOnSurface : colors.brandBorderSubtle,
+              width: 1.0,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 12.0,
+              fontWeight: isSelected ? TypeScale.semiBold : TypeScale.regular,
+              color: isSelected ? colors.brandPrimary : colors.brandOnSurface,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

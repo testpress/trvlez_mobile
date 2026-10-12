@@ -7,11 +7,15 @@ import 'package:trvlez_mobile/features/verification/presentation/verification_no
 
 export 'package:trvlez_mobile/core/auth/auth_notifier.dart'
     show isKycVerifiedProvider, travelerVerificationStateProvider;
+export 'package:trvlez_mobile/features/verification/data/services/nfc_passport_service_impl.dart'
+    show nfcPassportServiceProvider;
 export 'package:trvlez_mobile/features/verification/data/verification_data_providers.dart'
     show verificationRepositoryProvider;
 export 'package:trvlez_mobile/features/verification/domain/entities/confirm_mrz_payload.dart';
 export 'package:trvlez_mobile/features/verification/domain/entities/verification_challenge.dart';
 export 'package:trvlez_mobile/features/verification/domain/repositories/verification_repository.dart';
+export 'package:trvlez_mobile/features/verification/domain/services/nfc_passport_service.dart'
+    show NfcDeviceStatus, NfcPassportService;
 export 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 export 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 export 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';

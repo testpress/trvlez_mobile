@@ -29,20 +29,32 @@ import 'package:trvlez_mobile/features/reservations/presentation/screens/qr_code
 import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/saved/presentation/screens/saved_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_passport_service_impl.dart';
+import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/chip_data_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/confirm_details_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/mrz_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_failed_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_final_check_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_intro_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_result_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_scan_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/passport_failed_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_instruction_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/report_a_problem_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_capture_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_failed_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_instruction_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_review_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_success_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/verification_landing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_status_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/verification_success_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 
 /// Adapter to trigger GoRouter refresh when AuthState changes
@@ -287,6 +299,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ProfileSetupScreen(),
       ),
       GoRoute(
+        path: AppRoutes.verificationLanding,
+        builder: (context, state) => const VerificationLandingScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reportProblem,
+        builder: (context, state) {
+          final contextData = state.extra as ProblemReportContext?;
+          return ReportAProblemScreen(contextData: contextData);
+        },
+      ),
+      GoRoute(
         path: AppRoutes.passportInstructions,
         builder: (context, state) => const PassportInstructionScreen(),
       ),
@@ -308,8 +331,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const PassportReviewScreen(),
       ),
       GoRoute(
-        path: AppRoutes.mrzReview,
-        builder: (context, state) => const MrzReviewScreen(),
+        path: AppRoutes.passportFailed,
+        builder: (context, state) => const PassportFailedScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.confirmDetails,
+        builder: (context, state) => const ConfirmDetailsScreen(),
       ),
       GoRoute(
         path: AppRoutes.selfieInstructions,
@@ -325,6 +352,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SelfieReviewScreen(),
       ),
       GoRoute(
+        path: AppRoutes.selfieProcessing,
+        builder: (context, state) => const SelfieProcessingScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.selfieFailed,
+        builder: (context, state) => const SelfieFailedScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.selfieSuccess,
+        builder: (context, state) => const SelfieSuccessScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.nfcIntro,
         builder: (context, state) => const NfcIntroScreen(),
       ),
@@ -334,8 +373,20 @@ final routerProvider = Provider<GoRouter>((ref) {
             NfcScanScreen(nfcService: nfcPassportService),
       ),
       GoRoute(
-        path: AppRoutes.nfcResult,
-        builder: (context, state) => const NfcResultScreen(),
+        path: AppRoutes.chipData,
+        builder: (context, state) => const ChipDataScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.nfcFinalCheck,
+        builder: (context, state) => const NfcFinalCheckScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.nfcFailed,
+        builder: (context, state) => const NfcFailedScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.verificationSuccess,
+        builder: (context, state) => const VerificationSuccessScreen(),
       ),
       GoRoute(
         path: AppRoutes.verificationProcessing,

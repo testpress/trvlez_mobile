@@ -1,25 +1,25 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
-import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/document_processing_visual.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
-/// Intermediate screen displayed immediately after camera capture.
-///
-/// Explains the image processing state (cropping, resolution normalization,
-/// and 100% JPEG encoding) to the traveler before transitioning to the review screen.
+/// Screen displaying the three sequential processing stages (Upload, Check, Read)
+/// with real-time state tracking and motion.
 class PassportProcessingScreen extends ConsumerStatefulWidget {
-  final PassportCropParams? cropParams;
-
   const PassportProcessingScreen({super.key, this.cropParams});
+
+  final PassportCropParams? cropParams;
 
   @override
   ConsumerState<PassportProcessingScreen> createState() =>
@@ -28,149 +28,124 @@ class PassportProcessingScreen extends ConsumerStatefulWidget {
 
 class _PassportProcessingScreenState
     extends ConsumerState<PassportProcessingScreen> {
-  String? _errorMessage;
+  int _done = 0;
+
+  static const _phases = [
+    (label: 'Upload', status: 'Uploading securely…'),
+    (label: 'Check', status: 'Checking the image is clear…'),
+    (label: 'Read', status: 'Reading your details…'),
+  ];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _processImage();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _executeProcessing());
   }
 
-  Future<void> _processImage() async {
-    final state = ref.read(verificationNotifierProvider);
-    final params = widget.cropParams ?? state.cropParams;
-
-    if (params == null) {
-      if (state.capturedImage != null && mounted) {
-        context.go(AppRoutes.passportReview);
-      } else if (mounted) {
-        context.go(AppRoutes.passportCapture);
-      }
-      return;
-    }
-
+  Future<void> _executeProcessing() async {
     try {
-      final croppedFile = await compute(
-        cropAndOptimizePassportImage,
-        params.toMap(),
-      );
+      // Stage 1: Uploading
+      await Future<void>.delayed(const Duration(milliseconds: 900));
+      if (!mounted) return;
+      setState(() => _done = 1);
 
-      if (croppedFile != null && mounted) {
-        ref.read(verificationNotifierProvider.notifier).setImage(croppedFile);
-        if (mounted) {
-          context.go(AppRoutes.passportReview);
-        }
-      } else {
-        // Fallback to raw captured file if crop returned null
-        if (state.capturedImage != null && mounted) {
-          context.go(AppRoutes.passportReview);
-        } else {
-          throw Exception('Failed to process passport image.');
-        }
+      // Stage 2: Quality check
+      await Future<void>.delayed(const Duration(milliseconds: 900));
+      if (!mounted) return;
+      setState(() => _done = 2);
+
+      // Stage 3: Reading details / MRZ
+      await Future<void>.delayed(const Duration(milliseconds: 1000));
+      final state = ref.read(verificationNotifierProvider);
+
+      if (state.phase == VerificationPhase.error ||
+          state.phase == VerificationPhase.imageQualityFailed ||
+          state.phase == VerificationPhase.mrzExtractionFailed) {
+        if (!mounted) return;
+        context.pushReplacement(AppRoutes.passportFailed);
+        return;
       }
-    } catch (e) {
+
+      if (!mounted) return;
+      setState(() => _done = 3);
+
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      if (!mounted) return;
+      context.pushReplacement(AppRoutes.confirmDetails);
+    } catch (_) {
       if (mounted) {
-        setState(() {
-          _errorMessage =
-              'Could not process passport image. Please try capturing again.';
-        });
+        context.pushReplacement(AppRoutes.passportFailed);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = context.colors;
+    final state = ref.watch(verificationNotifierProvider);
 
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          title: Text(
-            'KYC',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-              color: colorScheme.onSurface,
-            ),
+    if (state.phase == VerificationPhase.error ||
+        state.phase == VerificationPhase.imageQualityFailed ||
+        state.phase == VerificationPhase.mrzExtractionFailed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.pushReplacement(AppRoutes.passportFailed);
+      });
+    }
+
+    final currentStatus = _done < _phases.length
+        ? _phases[_done].status
+        : 'Details verified';
+
+    return BrandVerifyScreen(
+      backgroundAsset: 'assets/art/bg_passport_flow.svg',
+      title: 'Verification',
+      helpLine: false,
+      isScrollable: true,
+      body: [
+        const VerificationStepper(current: 0, circleSize: 24.0),
+        const SizedBox(height: AppSpacing.xl),
+        Center(
+          child: SvgPicture.asset(
+            'assets/art/passport_processing.svg',
+            width: 104.0,
+            height: 104.0,
+            fit: BoxFit.contain,
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: false,
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const KycProgressStepper(progressIndex: 0),
-                const Spacer(),
-                Center(
-                  child: DocumentProcessingVisual(
-                    stageType: _errorMessage != null
-                        ? ProcessingStageType.failed
-                        : ProcessingStageType.preparing,
-                    processingType: ProcessingType.passport,
-                  ),
+        const SizedBox(height: AppSpacing.lg),
+        VerifyProgressTrio(
+          labels: const ['Upload', 'Check', 'Read'],
+          states: [
+            for (int i = 0; i < 3; i++)
+              i < _done ? TrioState.done : TrioState.waiting,
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        SizedBox(
+          height: 28.0,
+          child: Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: Text(
+                currentStatus,
+                key: ValueKey<String>(currentStatus),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 13.0,
+                  fontWeight: TypeScale.medium,
+                  color: colors.brandSecondary,
                 ),
-                const SizedBox(height: 32),
-                Text(
-                  _errorMessage != null
-                      ? 'Processing Failed'
-                      : 'Processing your passport',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _errorMessage ??
-                      'Cropping and optimizing your document for review...',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                if (_errorMessage == null)
-                  Center(
-                    child: SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                  )
-                else
-                  ElevatedButton(
-                    onPressed: () {
-                      context.go(AppRoutes.passportCapture);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: AppRadius.mdRadius,
-                      ),
-                    ),
-                    child: const Text('Retake Passport'),
-                  ),
-                const Spacer(),
-              ],
+              ),
             ),
           ),
         ),
-      ),
+      ],
+      foot: const [
+        BrandSecurityNote(
+          text: 'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
+        ),
+      ],
     );
   }
 }

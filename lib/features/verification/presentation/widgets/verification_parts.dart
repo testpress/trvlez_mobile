@@ -1,0 +1,18 @@
+/// Barrel export for verification presentation widgets.
+///
+/// Each widget is individually defined in its own single-responsibility file
+/// adhering to Clean Architecture and Code Standards (files <= 300 lines).
+library;
+
+export 'verify_detail_row.dart';
+export 'verify_face_oval.dart';
+export 'verify_hourglass.dart';
+export 'verify_info_card.dart';
+export 'verify_nfc_pulse.dart';
+export 'verify_pointer_pair.dart';
+export 'verify_progress_trio.dart';
+export 'verify_recording_time.dart';
+export 'verify_shutter.dart';
+export 'verify_status_rows.dart';
+export 'verify_wobble.dart';
+export 'verify_zoom_panel.dart';

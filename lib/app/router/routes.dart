@@ -46,20 +46,34 @@ class AppRoutes {
   static const String profileSetup = '/profile-setup';
 
   // Verification Flow
+  static const String verificationLanding = '/verification/landing';
+  static const String verificationStatus = '/verification/status';
+  static const String reportProblem = '/verification/report-problem';
   static const String passportInstructions =
       '/verification/passport-instructions';
+  static const String passportHowTo = '/verification/passport-instructions';
   static const String passportCapture = '/verification/passport-capture';
   static const String passportProcessing = '/verification/passport-processing';
   static const String passportReview = '/verification/passport-review';
-  static const String mrzReview = '/verification/mrz-review';
+  static const String passportFailed = '/verification/passport-failed';
+  static const String mrzReview = '/verification/confirm-details';
+  static const String confirmDetails = '/verification/confirm-details';
   static const String selfieInstructions = '/verification/selfie-instructions';
+  static const String selfieIntro = '/verification/selfie-instructions';
   static const String selfieCapture = '/verification/selfie-capture';
+  static const String selfieRecording = '/verification/selfie-capture';
   static const String selfieReview = '/verification/selfie-review';
+  static const String selfieProcessing = '/verification/selfie-processing';
+  static const String selfieFailed = '/verification/selfie-failed';
+  static const String selfieSuccess = '/verification/selfie-success';
   static const String nfcIntro = '/verification/nfc-intro';
   static const String nfcScan = '/verification/nfc-scan';
-  static const String nfcResult = '/verification/nfc-result';
+  static const String nfcResult = '/verification/chip-data';
+  static const String chipData = '/verification/chip-data';
+  static const String nfcFinalCheck = '/verification/nfc-final-check';
+  static const String nfcFailed = '/verification/nfc-failed';
   static const String verificationProcessing = '/verification/processing';
-  static const String verificationStatus = '/verification/status';
+  static const String verificationSuccess = '/verification/success';
 }
 
 /// Alias for [AppRoutes] per architecture guidelines.
