@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
+import 'package:trvlez_mobile/features/booking/presentation/screens/property_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
@@ -26,21 +27,19 @@ class PropertyDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final view = _PropertyDetailView(
-      propertyId: propertyId,
-      initialProperty: property,
-    );
-
     if (repository != null) {
       return ProviderScope(
         overrides: [
           propertiesRepositoryProvider.overrideWithValue(repository!),
         ],
-        child: view,
+        child: _PropertyDetailView(
+          propertyId: propertyId,
+          initialProperty: property,
+        ),
       );
     }
 
-    return view;
+    return PropertyScreen(property: property);
   }
 }
 

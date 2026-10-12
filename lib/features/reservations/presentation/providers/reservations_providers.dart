@@ -75,6 +75,11 @@ class ReservationListNotifier extends AsyncNotifier<List<Reservation>> {
     }
   }
 
+  void addCreatedReservations(List<Reservation> created) {
+    final current = state.valueOrNull ?? [];
+    state = AsyncData([...created, ...current]);
+  }
+
   void addReservation(Reservation reservation) {
     if (state.hasValue && state.value != null) {
       final newList = List<Reservation>.from(state.value!);

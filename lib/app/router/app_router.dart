@@ -10,6 +10,11 @@ import 'package:trvlez_mobile/features/auth/presentation/screens/new_password_sc
 import 'package:trvlez_mobile/features/auth/presentation/screens/registration_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/two_step_code_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:trvlez_mobile/features/booking/presentation/screens/booked_screen.dart';
+import 'package:trvlez_mobile/features/booking/presentation/screens/booking_card_screen.dart';
+import 'package:trvlez_mobile/features/booking/presentation/screens/booking_dates_screen.dart';
+import 'package:trvlez_mobile/features/booking/presentation/screens/booking_review_screen.dart';
+import 'package:trvlez_mobile/features/booking/presentation/screens/property_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -19,7 +24,6 @@ import 'package:trvlez_mobile/features/profile/presentation/screens/profile_setu
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 import 'package:trvlez_mobile/features/properties/presentation/screens/properties_listing_screen.dart';
-import 'package:trvlez_mobile/features/properties/presentation/screens/property_detail_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/booking_confirmation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/create_reservation_screen.dart';
@@ -178,12 +182,40 @@ final routerProvider = Provider<GoRouter>((ref) {
           if (property == null && id.isEmpty) {
             return const PropertiesListingScreen();
           }
-          return PropertyDetailScreen(
-            propertyId: property?.id ?? id,
+          return PropertyScreen(
             property: property,
-            repository: ref.read(propertiesRepositoryProvider),
+            propertyId: property?.id ?? id,
           );
         },
+      ),
+      // ─── Booking Flow Routes ─────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.bookingProperty,
+        builder: (context, state) {
+          final property = state.extra as Property?;
+          final propertyId =
+              property?.id ?? state.uri.queryParameters['id'] ?? '';
+          return PropertyScreen(
+            property: property,
+            propertyId: propertyId.isNotEmpty ? propertyId : null,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.bookingDates,
+        builder: (context, state) => const BookingDatesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.bookingReview,
+        builder: (context, state) => const BookingReviewScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.bookingCard,
+        builder: (context, state) => const BookingCardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.bookingDone,
+        builder: (context, state) => const BookedScreen(),
       ),
       // ─── Reservation Routes ─────────────────────────────────────
       GoRoute(

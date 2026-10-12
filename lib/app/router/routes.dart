@@ -29,6 +29,13 @@ class AppRoutes {
 
   static String propertyDetailPath(String id) => '/properties/$id';
 
+  // Section 05 · Booking Flow
+  static const String bookingProperty = '/stays/property';
+  static const String bookingDates = '/stays/property/dates';
+  static const String bookingReview = '/stays/review';
+  static const String bookingCard = '/stays/review/card';
+  static const String bookingDone = '/stays/booked';
+
   // Reservations
   static const String createReservation = '/reservations/create';
   static const String reservationDetail = '/reservations/:id';

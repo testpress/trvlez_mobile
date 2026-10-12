@@ -49,13 +49,15 @@ class VerificationSuccessScreen extends ConsumerWidget {
     final mrz = state.mrzExtractionResult;
 
     final parsedMrz = nfc?.parsedMrz;
-    final givenNames = parsedMrz?.firstName ?? mrz?.firstName ?? 'AMARA';
-    final surname = parsedMrz?.lastName ?? mrz?.lastName ?? 'OKAFOR';
-    final displayName = '$givenNames $surname';
+    final givenNames = parsedMrz?.firstName ?? mrz?.firstName ?? '';
+    final surname = parsedMrz?.lastName ?? mrz?.lastName ?? '';
+    final displayName = (givenNames.isNotEmpty || surname.isNotEmpty)
+        ? '$givenNames $surname'.trim()
+        : 'Verified Traveler';
 
     final expiryFormatted = parsedMrz != null
         ? '${_months[parsedMrz.dateOfExpiry.month - 1]} ${parsedMrz.dateOfExpiry.year}'
-        : (mrz?.dateOfExpiry ?? 'Aug 2031');
+        : (mrz?.dateOfExpiry ?? '');
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_success.svg',
@@ -95,7 +97,9 @@ class VerificationSuccessScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          '$displayName · passport valid to $expiryFormatted',
+          expiryFormatted.isNotEmpty
+              ? '$displayName · passport valid to $expiryFormatted'
+              : displayName,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
