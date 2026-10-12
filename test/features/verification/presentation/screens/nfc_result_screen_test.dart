@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
-import 'package:trvlez_mobile/features/verification/presentation/nfc_result_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_result_screen.dart';
 
 void main() {
   final testPngBytes = Uint8List.fromList([

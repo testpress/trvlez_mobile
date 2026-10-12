@@ -86,7 +86,7 @@ Allow new travelers to complete their onboarding profile with verified personal 
 - **lib/features/profile/data/profile_remote_data_source.dart** - Data source mapping
 - **lib/features/profile/data/profile_repository.dart** - Repository coordinator
 - **lib/features/profile/presentation/profile_notifier.dart** - State management
-- **lib/features/profile/presentation/profile_setup_screen.dart** - Setup Form UI
+- **lib/features/profile/presentation/screens/profile_setup_screen.dart** - Setup Form UI
 
 #### Architecture
 

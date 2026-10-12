@@ -6,7 +6,7 @@ import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/reservation_detail_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {

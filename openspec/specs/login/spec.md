@@ -94,7 +94,7 @@ POST /traveler/login
 #### Files (To Be Created)
 
 **Presentation Layer:**
-- `lib/features/auth/presentation/login_screen.dart` - Login UI
+- `lib/features/auth/presentation/screens/login_screen.dart` - Login UI
 - `lib/features/auth/presentation/login_controller.dart` - State management
 
 **Data Layer:**

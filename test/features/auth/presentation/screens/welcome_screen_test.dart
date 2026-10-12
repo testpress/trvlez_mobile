@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
-import 'package:trvlez_mobile/features/auth/presentation/welcome_screen.dart';
+import 'package:trvlez_mobile/features/auth/presentation/screens/welcome_screen.dart';
 
 void main() {
   group('WelcomeScreen Widget Tests', () {

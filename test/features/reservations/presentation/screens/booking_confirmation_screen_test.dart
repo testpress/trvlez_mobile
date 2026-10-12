@@ -5,8 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/booking_confirmation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/screens/booking_confirmation_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {

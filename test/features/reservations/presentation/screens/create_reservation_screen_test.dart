@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/create_reservation_screen.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/screens/create_reservation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
 
 void main() {

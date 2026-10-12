@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/providers/auth_providers.dart';
-import 'package:trvlez_mobile/features/auth/presentation/registration_screen.dart';
+import 'package:trvlez_mobile/features/auth/presentation/screens/login_screen.dart';
 
 class MockAuthRepository extends Fake implements AuthRepository {
   bool shouldThrow = false;
@@ -11,60 +11,65 @@ class MockAuthRepository extends Fake implements AuthRepository {
   String? passwordCalled;
 
   @override
+  Future<void> login({required String email, required String password}) async {
+    emailCalled = email;
+    passwordCalled = password;
+    if (shouldThrow) {
+      throw const UnauthorizedException('Invalid credentials');
+    }
+  }
+
+  @override
   Future<SignupResult> signUp({
     required String email,
     required String password,
   }) async {
-    emailCalled = email;
-    passwordCalled = password;
-    if (shouldThrow) {
-      throw const ValidationException('Email already registered');
-    }
     return const SignupResult(
-      id: 'usr-new-1',
-      email: 'new@example.com',
-      travelerProfileId: 'tp-new-1',
-      onboardingStep: 'profile_pending',
+      id: 'usr-1',
+      email: 'a@b.com',
+      travelerProfileId: 'tp-1',
+      onboardingStep: 'welcome',
     );
   }
-
-  @override
-  Future<void> login({required String email, required String password}) async {}
 }
 
 void main() {
-  group('RegistrationScreen Widget Tests', () {
+  group('LoginScreen Widget Tests', () {
     late MockAuthRepository mockRepo;
 
     setUp(() {
       mockRepo = MockAuthRepository();
     });
 
-    testWidgets('renders registration form components', (tester) async {
+    testWidgets('renders brand header, inputs, and sign-in button', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: RegistrationScreen()),
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Create your account'), findsOneWidget);
-      expect(find.text('Create Account'), findsOneWidget);
-      expect(find.text('Already have an account? '), findsOneWidget);
+      expect(find.text('Welcome back'), findsOneWidget);
       expect(find.byType(TextFormField), findsNWidgets(2));
+      expect(find.text('Sign In'), findsOneWidget);
+      expect(find.text('Don\'t have an account? '), findsOneWidget);
     });
 
-    testWidgets('validates required fields on empty submit', (tester) async {
+    testWidgets('triggers client-side validation on empty submission', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: RegistrationScreen()),
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Create Account'));
+      await tester.tap(find.text('Sign In'));
       await tester.pumpAndSettle();
 
       expect(find.text('Email is required'), findsOneWidget);
@@ -72,55 +77,55 @@ void main() {
       expect(mockRepo.emailCalled, isNull);
     });
 
-    testWidgets('submits valid inputs to repository', (tester) async {
+    testWidgets('submits valid credentials and invokes repository login', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: RegistrationScreen()),
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
 
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Enter your email address'),
-        'new@example.com',
+        'traveler@example.com',
       );
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Create a password (min 8 chars)'),
-        'Password123!',
+        find.widgetWithText(TextFormField, 'Enter your password'),
+        'Secret1234',
       );
-      await tester.tap(find.text('Create Account'));
+      await tester.tap(find.text('Sign In'));
       await tester.pumpAndSettle();
 
-      expect(mockRepo.emailCalled, 'new@example.com');
-      expect(mockRepo.passwordCalled, 'Password123!');
+      expect(mockRepo.emailCalled, 'traveler@example.com');
+      expect(mockRepo.passwordCalled, 'Secret1234');
     });
 
-    testWidgets('displays error banner when registration fails', (
-      tester,
-    ) async {
+    testWidgets('displays error banner when repository fails', (tester) async {
       mockRepo.shouldThrow = true;
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: RegistrationScreen()),
+          child: const MaterialApp(home: LoginScreen()),
         ),
       );
       await tester.pumpAndSettle();
 
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Enter your email address'),
-        'dup@example.com',
+        'traveler@example.com',
       );
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Create a password (min 8 chars)'),
-        'Password123!',
+        find.widgetWithText(TextFormField, 'Enter your password'),
+        'WrongPassword',
       );
-      await tester.tap(find.text('Create Account'));
+      await tester.tap(find.text('Sign In'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Email already registered'), findsOneWidget);
+      expect(find.text('Invalid credentials'), findsOneWidget);
     });
   });
 }

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
-import 'package:trvlez_mobile/features/properties/presentation/property_detail_screen.dart';
+import 'package:trvlez_mobile/features/properties/presentation/screens/property_detail_screen.dart';
 
 class MockPropertiesRepository extends Fake implements PropertiesRepository {
   List<Property> propertiesToReturn = [];

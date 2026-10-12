@@ -82,7 +82,7 @@ POST /traveler/signup
 ### 1.5 Implementation
 
 #### Files
-- **lib/features/auth/presentation/registration_screen.dart** - UI Screen
+- **lib/features/auth/presentation/screens/registration_screen.dart** - UI Screen
 - **lib/features/auth/presentation/registration_controller.dart** - State Management
 - **lib/features/auth/data/auth_repository.dart** - Repository Pattern
 - **lib/features/auth/data/auth_remote_data_source.dart** - API Integration

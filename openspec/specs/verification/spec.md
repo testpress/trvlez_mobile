@@ -32,8 +32,8 @@ Ensure users securely verify their identity by capturing and uploading their pas
 ### 1.3 Implementation Details
 
 #### Files
-- **lib/features/verification/presentation/passport_capture_screen.dart** - Camera capture UI and Gallery Picker integration
-- **lib/features/verification/presentation/passport_review_screen.dart** - Image review and upload UI
+- **lib/features/verification/presentation/screens/passport_capture_screen.dart** - Camera capture UI and Gallery Picker integration
+- **lib/features/verification/presentation/screens/passport_review_screen.dart** - Image review and upload UI
 - **lib/features/verification/presentation/verification_notifier.dart** - State management
 - **lib/features/verification/data/verification_repository.dart** - Repository handling simulated upload
 
@@ -104,8 +104,8 @@ Ensure users securely verify their identity by capturing and uploading a live vi
 ### 2.3 Implementation Details
 
 #### Files
-- **lib/features/verification/presentation/selfie_capture_screen.dart** - Video capture UI and Gallery Picker integration
-- **lib/features/verification/presentation/selfie_review_screen.dart** - Video review and upload UI
+- **lib/features/verification/presentation/screens/selfie_capture_screen.dart** - Video capture UI and Gallery Picker integration
+- **lib/features/verification/presentation/screens/selfie_review_screen.dart** - Video review and upload UI
 - **lib/features/verification/presentation/verification_notifier.dart** - State management
 - **lib/features/verification/data/verification_repository.dart** - Repository handling AWS S3 video upload
 
@@ -168,9 +168,9 @@ Provide travelers with a clear, universal home dashboard where they can track th
 ### 3.3 Implementation Details
 
 #### Files
-- **lib/features/home/presentation/home_screen.dart** - Universal landing page
+- **lib/features/home/presentation/screens/home_screen.dart** - Universal landing page
 - **lib/features/home/presentation/widgets/verification_banner.dart** - Dynamic context-aware banner
-- **lib/features/verification/presentation/verification_status_screen.dart** - Detailed tracking view
+- **lib/features/verification/presentation/screens/verification_status_screen.dart** - Detailed tracking view
 - **lib/features/profile/domain/traveler_verification_state.dart** - Enum mapping for the exact backend states
 
 #### Dependencies
