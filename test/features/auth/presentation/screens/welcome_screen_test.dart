@@ -5,19 +5,22 @@ import 'package:trvlez_mobile/features/auth/presentation/screens/welcome_screen.
 
 void main() {
   group('WelcomeScreen Widget Tests', () {
-    testWidgets('renders title and buttons correctly', (tester) async {
+    testWidgets('renders brand wordmark, launch art, and actions', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp(home: WelcomeScreen()));
 
-      expect(find.text('TrvlEz'), findsOneWidget);
       expect(find.byType(WelcomeScreen), findsOneWidget);
+      expect(find.text('TRVL'), findsOneWidget);
+      expect(find.text('ez'), findsOneWidget);
 
-      // Advance timer for entrance animation
-      await tester.pump(const Duration(milliseconds: 700));
+      // Advance through sequenced entrance animations
+      await tester.pump(const Duration(milliseconds: 3000));
       await tester.pumpAndSettle();
 
-      expect(find.text('Sign Up'), findsOneWidget);
-      expect(find.text('Login'), findsOneWidget);
-      expect(find.byType(AppButton), findsNWidgets(2));
+      expect(find.text('Create account'), findsOneWidget);
+      expect(find.text('Log in'), findsOneWidget);
+      expect(find.byType(AppButton), findsOneWidget);
     });
   });
 }

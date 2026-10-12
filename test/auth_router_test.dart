@@ -121,8 +121,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(WelcomeScreen), findsOneWidget);
-      expect(find.text('Sign Up'), findsOneWidget);
-      expect(find.text('Login'), findsOneWidget);
+      expect(find.text('Create account'), findsOneWidget);
+      expect(find.text('Log in'), findsOneWidget);
     });
 
     testWidgets(

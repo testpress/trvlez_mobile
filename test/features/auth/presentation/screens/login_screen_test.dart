@@ -41,7 +41,7 @@ void main() {
       mockRepo = MockAuthRepository();
     });
 
-    testWidgets('renders brand header, inputs, and sign-in button', (
+    testWidgets('renders brand header, inputs, and log-in button', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -54,8 +54,8 @@ void main() {
 
       expect(find.text('Welcome back'), findsOneWidget);
       expect(find.byType(TextFormField), findsNWidgets(2));
-      expect(find.text('Sign In'), findsOneWidget);
-      expect(find.text('Don\'t have an account? '), findsOneWidget);
+      expect(find.text('Log in'), findsNWidgets(1));
+      expect(find.text('New to TRVLez? '), findsOneWidget);
     });
 
     testWidgets('triggers client-side validation on empty submission', (
@@ -69,7 +69,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Sign In'));
+      await tester.tap(find.text('Log in'));
       await tester.pumpAndSettle();
 
       expect(find.text('Email is required'), findsOneWidget);
@@ -96,7 +96,7 @@ void main() {
         find.widgetWithText(TextFormField, 'Enter your password'),
         'Secret1234',
       );
-      await tester.tap(find.text('Sign In'));
+      await tester.tap(find.text('Log in'));
       await tester.pumpAndSettle();
 
       expect(mockRepo.emailCalled, 'traveler@example.com');
@@ -122,7 +122,7 @@ void main() {
         find.widgetWithText(TextFormField, 'Enter your password'),
         'WrongPassword',
       );
-      await tester.tap(find.text('Sign In'));
+      await tester.tap(find.text('Log in'));
       await tester.pumpAndSettle();
 
       expect(find.text('Invalid credentials'), findsOneWidget);

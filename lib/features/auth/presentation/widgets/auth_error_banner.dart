@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Reusable dismissible error banner for authentication screens.
 class AuthErrorBanner extends StatelessWidget {
@@ -19,43 +23,58 @@ class AuthErrorBanner extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = context.colors;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: AnimatedSize(
         duration: const Duration(milliseconds: 200),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 12),
           decoration: BoxDecoration(
-            color: colorScheme.error.withAlpha(15),
+            color: colors.brandCardBackground,
             borderRadius: AppRadius.mdRadius,
-            border: Border.all(color: colorScheme.error.withAlpha(50)),
+            border: Border.all(
+              color: colors.brandButtonDisabledBackground,
+              width: 1,
+            ),
           ),
           child: Row(
             children: [
               Icon(
-                Icons.error_outline_rounded,
-                color: colorScheme.error,
-                size: 20,
+                AppIcons.alertCircle,
+                color: colors.brandSecondary,
+                size: 18,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   errorMessage!,
-                  style: GoogleFonts.cabin(
-                    fontSize: 14,
-                    color: colorScheme.error,
-                  ),
+                  style: const TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 13,
+                    fontWeight: TypeScale.regular,
+                  ).copyWith(color: colors.brandOnSurface),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              GestureDetector(
-                onTap: onDismiss,
-                child: Icon(
-                  Icons.close_rounded,
-                  color: colorScheme.error.withAlpha(150),
-                  size: 18,
+              const SizedBox(width: AppSpacing.xs),
+              Semantics(
+                button: true,
+                label: 'Dismiss error',
+                child: InkWell(
+                  onTap: onDismiss,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xs),
+                    child: Icon(
+                      AppIcons.close,
+                      color: colors.brandSecondarySmall,
+                      size: 16,
+                    ),
+                  ),
                 ),
               ),
             ],

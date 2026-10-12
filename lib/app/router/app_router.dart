@@ -4,8 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/login_screen.dart';
+import 'package:trvlez_mobile/features/auth/presentation/screens/new_password_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/registration_screen.dart';
+import 'package:trvlez_mobile/features/auth/presentation/screens/two_step_code_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
@@ -68,7 +71,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute =
           location == AppRoutes.login ||
           location == AppRoutes.register ||
-          location == AppRoutes.welcome;
+          location == AppRoutes.welcome ||
+          location == AppRoutes.forgotPassword ||
+          location == AppRoutes.newPassword ||
+          location == AppRoutes.twoStepCode;
 
       if (!isAuthenticated) {
         if (!isAuthRoute) return AppRoutes.login;
@@ -95,6 +101,24 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.register,
         builder: (context, state) => const RegistrationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.newPassword,
+        builder: (context, state) => const NewPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.twoStepCode,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return TwoStepCodeScreen(
+            email: extra?['email'] as String? ?? 'amara@example.com',
+            isPasswordReset: extra?['isPasswordReset'] as bool? ?? false,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.onboarding,

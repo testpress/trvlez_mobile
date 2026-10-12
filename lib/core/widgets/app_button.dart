@@ -28,6 +28,7 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     this.variant = AppButtonVariant.primary,
     this.isLoading = false,
+    this.enabled = true,
     this.isFullWidth = true,
     this.icon,
     this.height = 50,
@@ -39,6 +40,7 @@ class AppButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final AppButtonVariant variant;
   final bool isLoading;
+  final bool enabled;
   final bool isFullWidth;
   final Widget? icon;
   final double height;
@@ -92,7 +94,7 @@ class AppButton extends StatelessWidget {
         break;
     }
 
-    final effectiveOnPressed = isLoading ? null : onPressed;
+    final effectiveOnPressed = (isLoading || !enabled) ? null : onPressed;
 
     Widget child;
     if (isLoading) {
@@ -101,7 +103,7 @@ class AppButton extends StatelessWidget {
         child: CircularProgressIndicator(
           strokeWidth: 2.2,
           valueColor: AlwaysStoppedAnimation<Color>(
-            onPressed != null ? foregroundColor : disabledForegroundColor,
+            effectiveOnPressed != null ? foregroundColor : disabledForegroundColor,
           ),
         ),
       );

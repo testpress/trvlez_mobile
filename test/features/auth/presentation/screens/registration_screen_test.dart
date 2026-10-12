@@ -50,7 +50,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Create your account'), findsOneWidget);
-      expect(find.text('Create Account'), findsOneWidget);
+      expect(find.text('Create account'), findsNWidgets(1));
       expect(find.text('Already have an account? '), findsOneWidget);
       expect(find.byType(TextFormField), findsNWidgets(2));
     });
@@ -64,7 +64,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Create Account'));
+      await tester.tap(find.text('Create account'));
       await tester.pumpAndSettle();
 
       expect(find.text('Email is required'), findsOneWidget);
@@ -82,14 +82,14 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Enter your email address'),
+        find.widgetWithText(TextFormField, 'you@example.com'),
         'new@example.com',
       );
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Create a password (min 8 chars)'),
+        find.widgetWithText(TextFormField, 'At least 8 characters'),
         'Password123!',
       );
-      await tester.tap(find.text('Create Account'));
+      await tester.tap(find.text('Create account'));
       await tester.pumpAndSettle();
 
       expect(mockRepo.emailCalled, 'new@example.com');
@@ -110,14 +110,14 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Enter your email address'),
+        find.widgetWithText(TextFormField, 'you@example.com'),
         'dup@example.com',
       );
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Create a password (min 8 chars)'),
+        find.widgetWithText(TextFormField, 'At least 8 characters'),
         'Password123!',
       );
-      await tester.tap(find.text('Create Account'));
+      await tester.tap(find.text('Create account'));
       await tester.pumpAndSettle();
 
       expect(find.text('Email already registered'), findsOneWidget);
