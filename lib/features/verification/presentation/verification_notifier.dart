@@ -10,9 +10,9 @@ import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.d
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/verification_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart'
     show verificationRepositoryProvider;
+import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 
 class VerificationNotifier extends Notifier<VerificationState> {
   late final VerificationPollingService _pollingService;

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/properties/data/models/property_dto.dart';
+import 'package:trvlez_mobile/features/properties/data/dto/property_dto.dart';
 
 void main() {
   group('PropertyDto JSON Serialization', () {

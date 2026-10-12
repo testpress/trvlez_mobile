@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/verification/data/datasources/verification_remote_data_source.dart';
-import 'package:trvlez_mobile/features/verification/data/models/confirm_mrz_dto.dart';
+import 'package:trvlez_mobile/features/verification/data/dto/confirm_mrz_dto.dart';
 
 void main() {
   group('VerificationRemoteDataSourceImpl', () {

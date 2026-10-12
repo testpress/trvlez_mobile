@@ -4,9 +4,8 @@ import 'package:dmrtd/dmrtd.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
-
-import 'package:trvlez_mobile/features/verification/data/nfc_image_extractor.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_error_mapper.dart';
+import 'package:trvlez_mobile/features/verification/data/services/nfc_image_extractor.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';

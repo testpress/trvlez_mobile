@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/shared_review_scaffold.dart';
 
 /// Displays the captured passport image for the traveler to review

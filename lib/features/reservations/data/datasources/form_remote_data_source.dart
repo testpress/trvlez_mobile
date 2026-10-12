@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
-import 'package:trvlez_mobile/features/reservations/data/models/form_dto.dart';
+import 'package:trvlez_mobile/features/reservations/data/dto/form_dto.dart';
 
 class FormRemoteDataSource {
   final Dio dio;

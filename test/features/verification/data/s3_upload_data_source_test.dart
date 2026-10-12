@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
-import 'package:trvlez_mobile/features/verification/data/datasources/s3_upload_client.dart';
+import 'package:trvlez_mobile/features/verification/data/datasources/s3_upload_data_source.dart';
 
 void main() {
   group('S3UploadClient', () {

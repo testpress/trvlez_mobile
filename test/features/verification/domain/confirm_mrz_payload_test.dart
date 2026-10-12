@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/verification/data/models/confirm_mrz_dto.dart';
+import 'package:trvlez_mobile/features/verification/data/dto/confirm_mrz_dto.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/confirm_mrz_payload.dart';
 
 void main() {

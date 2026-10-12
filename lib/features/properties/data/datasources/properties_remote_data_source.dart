@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
-import 'package:trvlez_mobile/features/properties/data/models/property_dto.dart';
+import 'package:trvlez_mobile/features/properties/data/dto/property_dto.dart';
 
 /// Remote data source for property listing and detail API calls.
 ///

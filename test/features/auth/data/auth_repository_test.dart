@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:trvlez_mobile/features/auth/data/models/login_response_dto.dart';
-import 'package:trvlez_mobile/features/auth/data/models/traveler_signup_dto.dart';
+import 'package:trvlez_mobile/features/auth/data/dto/login_response_dto.dart';
+import 'package:trvlez_mobile/features/auth/data/dto/traveler_signup_dto.dart';
 import 'package:trvlez_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 
 class MockFlutterSecureStorage extends Fake implements FlutterSecureStorage {

@@ -8,8 +8,8 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/document_processing_visual.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/processing_step_indicator.dart';
 

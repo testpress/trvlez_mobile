@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/reservations/data/datasources/reservation_remote_data_source.dart';
-import 'package:trvlez_mobile/features/reservations/data/models/reservation_dto.dart';
+import 'package:trvlez_mobile/features/reservations/data/dto/reservation_dto.dart';
 import 'package:trvlez_mobile/features/reservations/data/repositories/reservation_repository_impl.dart';
 
 class MockReservationRemoteDataSource extends Fake

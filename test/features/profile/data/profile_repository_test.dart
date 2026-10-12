@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/profile/data/datasources/profile_remote_data_source.dart';
-import 'package:trvlez_mobile/features/profile/data/models/profile_dto.dart';
+import 'package:trvlez_mobile/features/profile/data/dto/profile_dto.dart';
 import 'package:trvlez_mobile/features/profile/data/repositories/profile_repository_impl.dart';
 
 class MockProfileRemoteDataSource extends Fake

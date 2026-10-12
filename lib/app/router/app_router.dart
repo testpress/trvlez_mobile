@@ -22,9 +22,8 @@ import 'package:trvlez_mobile/features/reservations/presentation/screens/my_trip
 import 'package:trvlez_mobile/features/reservations/presentation/screens/pre_arrival_form_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
-import 'package:trvlez_mobile/features/verification/data/nfc_passport_service.dart';
+import 'package:trvlez_mobile/features/verification/data/services/nfc_passport_service_impl.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/mrz_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_intro_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_result_screen.dart';
@@ -38,6 +37,7 @@ import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_status_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 
 /// Adapter to trigger GoRouter refresh when AuthState changes
 class RouterNotifier extends ChangeNotifier {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/reservations/data/models/reservation_dto.dart';
+import 'package:trvlez_mobile/features/reservations/data/dto/reservation_dto.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 void main() {

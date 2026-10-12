@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/properties/data/datasources/properties_remote_data_source.dart';
-import 'package:trvlez_mobile/features/properties/data/models/property_dto.dart';
+import 'package:trvlez_mobile/features/properties/data/dto/property_dto.dart';
 import 'package:trvlez_mobile/features/properties/data/repositories/properties_repository_impl.dart';
 
 class FakePropertiesRemoteDataSource extends Fake

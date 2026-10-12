@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
-import 'package:trvlez_mobile/features/verification/data/datasources/s3_upload_client.dart';
+import 'package:trvlez_mobile/features/verification/data/datasources/s3_upload_data_source.dart';
 import 'package:trvlez_mobile/features/verification/data/datasources/verification_remote_data_source.dart';
-import 'package:trvlez_mobile/features/verification/data/models/confirm_mrz_dto.dart';
+import 'package:trvlez_mobile/features/verification/data/dto/confirm_mrz_dto.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/confirm_mrz_payload.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/verification_challenge.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';

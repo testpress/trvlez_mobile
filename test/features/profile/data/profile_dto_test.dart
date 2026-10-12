@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/profile/data/models/profile_dto.dart';
+import 'package:trvlez_mobile/features/profile/data/dto/profile_dto.dart';
 
 void main() {
   group('ProfileDto Tests', () {

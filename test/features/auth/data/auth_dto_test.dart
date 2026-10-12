@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/auth/data/models/login_response_dto.dart';
-import 'package:trvlez_mobile/features/auth/data/models/traveler_signup_dto.dart';
+import 'package:trvlez_mobile/features/auth/data/dto/login_response_dto.dart';
+import 'package:trvlez_mobile/features/auth/data/dto/traveler_signup_dto.dart';
 
 void main() {
   group('Auth DTO Tests', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/verification_state.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 
 void main() {
   group('ProcessingStage.forPassport', () {

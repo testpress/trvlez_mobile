@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dmrtd/dmrtd.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/verification/data/nfc_image_extractor.dart';
+import 'package:trvlez_mobile/features/verification/data/services/nfc_image_extractor.dart';
 
 void main() {
   group('NfcImageExtractor', () {

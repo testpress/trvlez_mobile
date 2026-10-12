@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 
 /// Animated visual representing a document or video frame being processed.
 ///

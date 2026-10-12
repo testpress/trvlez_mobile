@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
-import 'package:trvlez_mobile/features/verification/data/models/confirm_mrz_dto.dart';
-import 'package:trvlez_mobile/features/verification/data/models/verification_challenge_dto.dart';
+import 'package:trvlez_mobile/features/verification/data/dto/confirm_mrz_dto.dart';
+import 'package:trvlez_mobile/features/verification/data/dto/verification_challenge_dto.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_extraction_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/quality_check_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';

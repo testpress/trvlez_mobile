@@ -8,8 +8,8 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
-import 'package:trvlez_mobile/features/verification/presentation/models/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/document_processing_visual.dart';
 
 /// Intermediate screen displayed immediately after camera capture.

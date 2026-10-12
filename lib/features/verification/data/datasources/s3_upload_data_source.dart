@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 
-/// Network utility responsible for uploading files to S3 via presigned PUT URLs.
+/// Data source responsible for uploading files to S3 via presigned PUT URLs.
 ///
 /// Uses an isolated [Dio] client without authorization interceptors to avoid
 /// injecting bearer tokens into external S3 storage requests.
-class S3UploadClient {
+class S3UploadDataSource {
   final Dio Function()? dioFactory;
   static const Duration _timeout = Duration(seconds: 45);
 
-  const S3UploadClient({this.dioFactory});
+  const S3UploadDataSource({this.dioFactory});
 
   Dio _createDio() {
     if (dioFactory != null) {
@@ -69,3 +69,6 @@ class S3UploadClient {
     }
   }
 }
+
+/// Backward compatibility alias for [S3UploadDataSource].
+typedef S3UploadClient = S3UploadDataSource;
