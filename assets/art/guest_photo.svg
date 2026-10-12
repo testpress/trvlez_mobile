@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 60">
+  <!-- DESIGN SOURCE: 05_Check_In/html/checkin_pass_photo.html
+       The guest photo on the pass. Placeholder for the real portrait. -->
+<rect width="48" height="60" fill="#D8CDBC"/>
+            <circle cx="24" cy="23" r="12" fill="#A8917A"/>
+            <path d="M5 60c3-16 35-16 38 0Z" fill="#A8917A"/>
+</svg>

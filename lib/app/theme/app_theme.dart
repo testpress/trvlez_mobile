@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/button_theme.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/card_theme.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/input_theme.dart';
@@ -79,7 +78,7 @@ class AppTheme {
         foregroundColor: colors.textPrimary,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.nunito(
+        titleTextStyle: AppTypography.heading.copyWith(
           fontSize: 18,
           fontWeight: FontWeight.w700,
           color: colors.textPrimary,

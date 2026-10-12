@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Standard form input field adhering to design system tokens.
 class AppTextField extends StatelessWidget {
@@ -17,6 +18,7 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.textInputAction,
+    this.autofillHints,
     this.prefixIcon,
     this.suffixIcon,
     this.enabled = true,
@@ -36,6 +38,7 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final Iterable<String>? autofillHints;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final bool enabled;
@@ -56,19 +59,28 @@ class AppTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      autofillHints: autofillHints,
       enabled: enabled,
       readOnly: readOnly,
       maxLines: maxLines,
       onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.cabin(fontSize: 15, color: colors.textPrimary),
+      style: const TextStyle(
+        fontFamily: AppTypography.fontFamily,
+        fontSize: 14,
+        fontWeight: TypeScale.regular,
+      ).copyWith(color: colors.textPrimary),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.cabin(fontSize: 15, color: colors.textDisabled),
+        hintStyle: const TextStyle(
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 14,
+          fontWeight: TypeScale.regular,
+        ).copyWith(color: colors.textDisabled),
         filled: true,
         fillColor: colors.surfaceSubtle,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 16,
+          horizontal: 16,
+          vertical: 14,
         ),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
@@ -82,7 +94,7 @@ class AppTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.borderFocused, width: 2),
+          borderSide: BorderSide(color: colors.borderFocused, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.input,
@@ -90,12 +102,13 @@ class AppTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.feedbackError, width: 2),
+          borderSide: BorderSide(color: colors.feedbackError, width: 1.5),
         ),
-        errorStyle: GoogleFonts.cabin(
+        errorStyle: const TextStyle(
+          fontFamily: AppTypography.fontFamily,
           fontSize: 12,
-          color: colors.feedbackError,
-        ),
+          fontWeight: TypeScale.regular,
+        ).copyWith(color: colors.feedbackError),
       ),
     );
 
@@ -109,13 +122,13 @@ class AppTextField extends StatelessWidget {
       children: [
         Text(
           label!,
-          style: GoogleFonts.nunito(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: colors.textPrimary,
-          ),
+          style: const TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 13,
+            fontWeight: TypeScale.semiBold,
+          ).copyWith(color: colors.textPrimary),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.xs),
         field,
       ],
     );

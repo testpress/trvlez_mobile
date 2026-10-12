@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 198 126">
+  <!-- DESIGN SOURCE: 05_Check_In/html/visa_and_guests.html
+       The .ill illustration — a passport open at the visa page. -->
+<rect x="10" y="4" width="178" height="82" rx="8" fill="rgba(255,255,255,.1)" stroke="#FFD2BE" stroke-width="1.5"/>
+        <rect x="22" y="15" width="70" height="5" rx="2.5" fill="rgba(255,255,255,.42)"/>
+        <rect x="22" y="27" width="96" height="4.5" rx="2" fill="rgba(255,255,255,.28)"/>
+        <rect x="22" y="38" width="80" height="4.5" rx="2" fill="rgba(255,255,255,.28)"/>
+        <rect x="22" y="49" width="88" height="4.5" rx="2" fill="rgba(255,255,255,.28)"/>
+        <circle cx="152" cy="42" r="20" fill="none" stroke="#FFD2BE" stroke-width="1.4" stroke-dasharray="3 3"/>
+        <circle cx="152" cy="42" r="13" fill="none" stroke="#FFD2BE" stroke-width="1.2"/>
+        <circle cx="10" cy="4" r="9.5" fill="#FFD2BE"/>
+        <text x="10" y="7.8" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10.5" font-weight="700" fill="#B01B1B">1</text>
+        <path d="M22 86 L14 104 M118 86 L126 104" stroke="#FFD2BE" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+        <rect x="8" y="104" width="124" height="18" rx="5" fill="rgba(255,255,255,.16)" stroke="#FFD2BE" stroke-width="1.5"/>
+        <text x="70" y="116" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" font-weight="600" fill="#FFE4D6">Valid from · Valid to</text>
+        <circle cx="8" cy="104" r="9.5" fill="#FFD2BE"/>
+        <text x="8" y="107.8" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10.5" font-weight="700" fill="#B01B1B">2</text>
+</svg>

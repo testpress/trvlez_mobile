@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 152" width="200" height="152">
+  <rect x="26" y="5" width="148" height="80" rx="8" fill="rgba(255,255,255,.1)" stroke="#FFD2BE" stroke-width="1.5"/>
+  <rect x="36" y="15" width="30" height="34" rx="4" fill="rgba(255,255,255,.3)"/>
+  <rect x="74" y="18" width="76" height="4.5" rx="2" fill="rgba(255,255,255,.4)"/>
+  <rect x="74" y="28" width="56" height="4.5" rx="2" fill="rgba(255,255,255,.28)"/>
+  <rect x="74" y="38" width="64" height="4.5" rx="2" fill="rgba(255,255,255,.28)"/>
+  <rect x="36" y="59" width="128" height="18" rx="3" fill="rgba(255,255,255,.14)"/>
+  <circle cx="26" cy="5" r="9.5" fill="#FFD2BE"/>
+  <text x="26" y="8.8" text-anchor="middle" font-family="Poppins" font-size="10.5" font-weight="700" fill="#B01B1B">1</text>
+  <path d="M36 85 L18 108 M164 85 L182 108" stroke="#FFD2BE" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+  <rect x="10" y="108" width="180" height="38" rx="7" fill="rgba(255,255,255,.16)" stroke="#FFD2BE" stroke-width="1.6"/>
+  <text x="100" y="124" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#FFE4D6" letter-spacing="0.4">P&lt;GBROKAFOR&lt;&lt;AMARA&lt;&lt;&lt;&lt;&lt;</text>
+  <text x="100" y="138" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#FFE4D6" letter-spacing="0.4">5362941454GBR9103141F31</text>
+  <circle cx="10" cy="108" r="9.5" fill="#FFD2BE"/>
+  <text x="10" y="111.8" text-anchor="middle" font-family="Poppins" font-size="10.5" font-weight="700" fill="#B01B1B">2</text>
+</svg>

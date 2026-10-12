@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 226 600">
+  <!-- DESIGN SOURCE: 05_Check_In/html/checkin_pass_photo.html, svg.lay #0.
+       Roughening filter ['qpR'] stripped: flutter_svg does not implement
+       SVG filters. Same as every other asset — see
+       docs/KNOWN_DIFFERENCES.md section 1. -->
+<g stroke="#fff" fill="none" stroke-linecap="round">
+      <path d="M-8 548 Q68 574 146 546 T234 562" stroke-opacity=".1" stroke-width="1.2" stroke-dasharray="5 9"/>
+    </g>
+</svg>

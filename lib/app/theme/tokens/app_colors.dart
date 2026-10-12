@@ -7,23 +7,81 @@ import 'package:trvlez_mobile/app/theme/tokens/primitives/palette.dart';
 @immutable
 class AppColors extends ThemeExtension<AppColors> {
   const AppColors({
+    // Standard Surfaces
     required this.surface,
     required this.surfaceRaised,
     required this.surfaceSubtle,
+    this.background,
+
+    // Typography & Foregrounds
     required this.textPrimary,
     required this.textSecondary,
     required this.textDisabled,
     required this.textOnAction,
+
+    // Borders
     required this.borderDefault,
     required this.borderFocused,
     required this.borderSubtle,
+
+    // Actions
     required this.actionPrimary,
     required this.actionSecondary,
+
+    // Feedback & Status
     required this.feedbackSuccess,
     required this.feedbackError,
     required this.feedbackWarning,
     required this.feedbackInfo,
-    this.background,
+
+    // Brand / Red Screen Specific Tokens
+    required this.brandPrimary,
+    required this.brandSurface,
+    required this.brandOnSurface,
+    required this.brandSecondary,
+    required this.brandSecondaryBody,
+    required this.brandSecondarySmall,
+    required this.brandSecondaryNote,
+    required this.brandSecondaryPlaceholder,
+    required this.brandActionLabel,
+    required this.brandFieldBackground,
+    required this.brandButtonDisabledBackground,
+    required this.brandButtonDisabledForeground,
+    required this.brandCardBackground,
+    required this.brandUnderline,
+    required this.brandKeyBackground,
+    required this.brandDotOutline,
+    required this.brandCodeBoxBackground,
+
+    // Verification & Stepper Tokens
+    required this.verificationStepActiveText,
+    required this.verificationStepInactiveText,
+    required this.verificationStepRing,
+    required this.verificationStepTrack,
+    required this.verificationCardLockedTitle,
+    required this.verificationCardLockedSubtitle,
+    required this.verificationCardActiveFill,
+    required this.verificationCardIconFill,
+    required this.verificationProgressTrack,
+    required this.verificationChipBackground,
+    required this.verificationOutlineButton,
+    required this.verificationDivider,
+
+    // Main App Polish & Surfaces
+    required this.pageBackground,
+    required this.cardBorder,
+    required this.cardShadow,
+    required this.statusSuccessBackground,
+    required this.statusSuccessForeground,
+    required this.statusWarningBackground,
+    required this.statusWarningForeground,
+    required this.statusVerifiedForeground,
+    required this.statusVerifiedSubForeground,
+    required this.surfaceRedTint,
+    required this.ink,
+    required this.inkSecondary,
+    required this.inkTertiary,
+    required this.line,
   });
 
   // ─── Surfaces ────────────────────────────────────────────────────────
@@ -53,6 +111,55 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color feedbackWarning;
   final Color feedbackInfo;
 
+  // ─── Brand / Red Screen Specific Tokens ──────────────────────────────
+  final Color brandPrimary;
+  final Color brandSurface;
+  final Color brandOnSurface;
+  final Color brandSecondary; // Cream
+  final Color brandSecondaryBody; // Cream body
+  final Color brandSecondarySmall; // Cream small
+  final Color brandSecondaryNote; // Security note cream
+  final Color brandSecondaryPlaceholder; // Placeholder cream
+  final Color brandActionLabel; // Red label on white button
+  final Color brandFieldBackground; // Pill field fill on red
+  final Color brandButtonDisabledBackground; // Inactive button fill on red
+  final Color brandButtonDisabledForeground; // Inactive button label on red
+  final Color brandCardBackground; // Instruction card fill on red
+  final Color brandUnderline; // Link underline on red
+  final Color brandKeyBackground; // Keypad key background
+  final Color brandDotOutline; // Empty passcode dot outline
+  final Color brandCodeBoxBackground; // 2FA code box fill
+
+  // ─── Verification & Stepper Tokens ───────────────────────────────────
+  final Color verificationStepActiveText;
+  final Color verificationStepInactiveText;
+  final Color verificationStepRing;
+  final Color verificationStepTrack;
+  final Color verificationCardLockedTitle;
+  final Color verificationCardLockedSubtitle;
+  final Color verificationCardActiveFill;
+  final Color verificationCardIconFill;
+  final Color verificationProgressTrack;
+  final Color verificationChipBackground;
+  final Color verificationOutlineButton;
+  final Color verificationDivider;
+
+  // ─── Main App Polish & Surfaces ──────────────────────────────────────
+  final Color pageBackground;
+  final Color cardBorder;
+  final Color cardShadow;
+  final Color statusSuccessBackground;
+  final Color statusSuccessForeground;
+  final Color statusWarningBackground;
+  final Color statusWarningForeground;
+  final Color statusVerifiedForeground;
+  final Color statusVerifiedSubForeground;
+  final Color surfaceRedTint;
+  final Color ink;
+  final Color inkSecondary;
+  final Color inkTertiary;
+  final Color line;
+
   // ─── Legacy Compatibility Getters ────────────────────────────────────
   Color get primary => actionPrimary;
   Color get primaryForeground => textOnAction;
@@ -70,16 +177,15 @@ class AppColors extends ThemeExtension<AppColors> {
   // ─── Static Feature Gradients & Constants ────────────────────────────
   static const Color white = Palette.neutral0;
   static const Color red500 = Palette.red500;
-  static const Color red600 = Palette.red600;
+  static const Color red600 = Palette.brandRed;
   static const Color successColor = Palette.green600;
-  static const Color errorColor = Palette.red600;
+  static const Color errorColor = Palette.brandRed;
   static const Color warningColor = Palette.orange500;
   static const Color infoColor = Palette.blue700;
 
-  // Kept for direct static references during migration
   static const Color success = Palette.green600;
   static const Color warning = Palette.orange500;
-  static const Color error = Palette.red600;
+  static const Color error = Palette.brandRed;
   static const Color info = Palette.blue700;
 
   static const List<Color> exploreGradient = [
@@ -98,41 +204,139 @@ class AppColors extends ThemeExtension<AppColors> {
     surface: Palette.neutral0,
     surfaceRaised: Palette.neutral0,
     surfaceSubtle: Palette.neutral50,
-    textPrimary: Palette.neutral900,
-    textSecondary: Palette.neutral500,
+    textPrimary: Palette.ink,
+    textSecondary: Palette.ink2,
     textDisabled: Palette.neutral300,
     textOnAction: Palette.neutral0,
-    borderDefault: Palette.neutral200,
-    borderFocused: Palette.red600,
-    borderSubtle: Palette.neutral150,
-    actionPrimary: Palette.red600,
+    borderDefault: Palette.line,
+    borderFocused: Palette.brandRed,
+    borderSubtle: Palette.cardBorderSoft,
+    actionPrimary: Palette.brandRed,
     actionSecondary: Palette.neutral150,
     feedbackSuccess: Palette.green600,
-    feedbackError: Palette.red600,
+    feedbackError: Palette.brandRed,
     feedbackWarning: Palette.orange500,
     feedbackInfo: Palette.blue700,
-    background: Palette.neutral50,
+    background: Palette.page,
+
+    // Brand tokens
+    brandPrimary: Palette.brandRed,
+    brandSurface: Palette.brandRed,
+    brandOnSurface: Palette.neutral0,
+    brandSecondary: Palette.cream,
+    brandSecondaryBody: Palette.creamBody,
+    brandSecondarySmall: Palette.creamSmall,
+    brandSecondaryNote: Palette.creamNote,
+    brandSecondaryPlaceholder: Palette.creamPlaceholder,
+    brandActionLabel: Palette.brandRedLabel,
+    brandFieldBackground: Palette.fieldFill,
+    brandButtonDisabledBackground: Palette.buttonOff,
+    brandButtonDisabledForeground: Palette.buttonOffLabel,
+    brandCardBackground: Palette.cardFill,
+    brandUnderline: Palette.underline,
+    brandKeyBackground: Palette.keyFill,
+    brandDotOutline: Palette.dotOutline,
+    brandCodeBoxBackground: Palette.codeBoxFill,
+
+    // Verification
+    verificationStepActiveText: Palette.brandRed,
+    verificationStepInactiveText: Palette.stepInactiveText,
+    verificationStepRing: Palette.stepRing,
+    verificationStepTrack: Palette.stepTrack,
+    verificationCardLockedTitle: Palette.cardTitleLocked,
+    verificationCardLockedSubtitle: Palette.cardSubtitleLocked,
+    verificationCardActiveFill: Palette.cardFillNow,
+    verificationCardIconFill: Palette.cardIconFill,
+    verificationProgressTrack: Palette.progressTrack,
+    verificationChipBackground: Palette.chipFill,
+    verificationOutlineButton: Palette.outlineButton,
+    verificationDivider: Palette.divider,
+
+    // App polish
+    pageBackground: Palette.page,
+    cardBorder: Palette.cardBorderSoft,
+    cardShadow: Palette.cardShadow,
+    statusSuccessBackground: Palette.okFill,
+    statusSuccessForeground: Palette.okInk,
+    statusWarningBackground: Palette.waitFill,
+    statusWarningForeground: Palette.waitInk,
+    statusVerifiedForeground: Palette.verifiedInk,
+    statusVerifiedSubForeground: Palette.verifiedInk2,
+    surfaceRedTint: Palette.redTint,
+    ink: Palette.ink,
+    inkSecondary: Palette.ink2,
+    inkTertiary: Palette.ink3,
+    line: Palette.line,
   );
 
   // ─── Dark Preset ────────────────────────────────────────────────────
   static const dark = AppColors(
-    surface: Palette.neutral900,
-    surfaceRaised: Palette.neutral800,
+    surface: Palette.surfaceDark,
+    surfaceRaised: Palette.surfaceDark2,
     surfaceSubtle: Palette.neutral950,
-    textPrimary: Palette.neutral50,
-    textSecondary: Palette.neutral300,
+    textPrimary: Palette.inkDark,
+    textSecondary: Palette.ink2Dark,
     textDisabled: Palette.neutral600,
     textOnAction: Palette.neutral0,
     borderDefault: Palette.neutral700,
-    borderFocused: Palette.red400,
+    borderFocused: Palette.brandRedDark,
     borderSubtle: Palette.neutral800,
-    actionPrimary: Palette.red500,
+    actionPrimary: Palette.brandRedDark,
     actionSecondary: Palette.neutral700,
     feedbackSuccess: Palette.green500,
-    feedbackError: Palette.red400,
+    feedbackError: Palette.brandRedDark,
     feedbackWarning: Palette.amber500,
     feedbackInfo: Palette.blue400,
-    background: Palette.neutral900,
+    background: Palette.pageDark,
+
+    // Brand tokens
+    brandPrimary: Palette.brandRedDark,
+    brandSurface: Palette.brandRedDark,
+    brandOnSurface: Palette.neutral0,
+    brandSecondary: Palette.cream,
+    brandSecondaryBody: Palette.creamBody,
+    brandSecondarySmall: Palette.creamSmall,
+    brandSecondaryNote: Palette.creamNote,
+    brandSecondaryPlaceholder: Palette.creamPlaceholder,
+    brandActionLabel: Palette.brandRedLabel,
+    brandFieldBackground: Palette.fieldFill,
+    brandButtonDisabledBackground: Palette.buttonOff,
+    brandButtonDisabledForeground: Palette.buttonOffLabel,
+    brandCardBackground: Palette.cardFill,
+    brandUnderline: Palette.underline,
+    brandKeyBackground: Palette.keyFill,
+    brandDotOutline: Palette.dotOutline,
+    brandCodeBoxBackground: Palette.codeBoxFill,
+
+    // Verification
+    verificationStepActiveText: Palette.brandRedDark,
+    verificationStepInactiveText: Palette.stepInactiveText,
+    verificationStepRing: Palette.stepRing,
+    verificationStepTrack: Palette.stepTrack,
+    verificationCardLockedTitle: Palette.cardTitleLocked,
+    verificationCardLockedSubtitle: Palette.cardSubtitleLocked,
+    verificationCardActiveFill: Palette.cardFillNow,
+    verificationCardIconFill: Palette.cardIconFill,
+    verificationProgressTrack: Palette.progressTrack,
+    verificationChipBackground: Palette.chipFill,
+    verificationOutlineButton: Palette.outlineButton,
+    verificationDivider: Palette.divider,
+
+    // App polish
+    pageBackground: Palette.pageDark,
+    cardBorder: Palette.neutral800,
+    cardShadow: Colors.transparent,
+    statusSuccessBackground: Palette.okFill,
+    statusSuccessForeground: Palette.okInk,
+    statusWarningBackground: Palette.waitFill,
+    statusWarningForeground: Palette.waitInk,
+    statusVerifiedForeground: Palette.verifiedInk,
+    statusVerifiedSubForeground: Palette.verifiedInk2,
+    surfaceRedTint: Palette.redTint,
+    ink: Palette.inkDark,
+    inkSecondary: Palette.ink2Dark,
+    inkTertiary: Palette.ink3Dark,
+    line: Palette.line,
   );
 
   @override
@@ -154,6 +358,49 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? feedbackWarning,
     Color? feedbackInfo,
     Color? background,
+    Color? brandPrimary,
+    Color? brandSurface,
+    Color? brandOnSurface,
+    Color? brandSecondary,
+    Color? brandSecondaryBody,
+    Color? brandSecondarySmall,
+    Color? brandSecondaryNote,
+    Color? brandSecondaryPlaceholder,
+    Color? brandActionLabel,
+    Color? brandFieldBackground,
+    Color? brandButtonDisabledBackground,
+    Color? brandButtonDisabledForeground,
+    Color? brandCardBackground,
+    Color? brandUnderline,
+    Color? brandKeyBackground,
+    Color? brandDotOutline,
+    Color? brandCodeBoxBackground,
+    Color? verificationStepActiveText,
+    Color? verificationStepInactiveText,
+    Color? verificationStepRing,
+    Color? verificationStepTrack,
+    Color? verificationCardLockedTitle,
+    Color? verificationCardLockedSubtitle,
+    Color? verificationCardActiveFill,
+    Color? verificationCardIconFill,
+    Color? verificationProgressTrack,
+    Color? verificationChipBackground,
+    Color? verificationOutlineButton,
+    Color? verificationDivider,
+    Color? pageBackground,
+    Color? cardBorder,
+    Color? cardShadow,
+    Color? statusSuccessBackground,
+    Color? statusSuccessForeground,
+    Color? statusWarningBackground,
+    Color? statusWarningForeground,
+    Color? statusVerifiedForeground,
+    Color? statusVerifiedSubForeground,
+    Color? surfaceRedTint,
+    Color? ink,
+    Color? inkSecondary,
+    Color? inkTertiary,
+    Color? line,
   }) {
     return AppColors(
       surface: surface ?? this.surface,
@@ -173,6 +420,69 @@ class AppColors extends ThemeExtension<AppColors> {
       feedbackWarning: feedbackWarning ?? this.feedbackWarning,
       feedbackInfo: feedbackInfo ?? this.feedbackInfo,
       background: background ?? this.background,
+      brandPrimary: brandPrimary ?? this.brandPrimary,
+      brandSurface: brandSurface ?? this.brandSurface,
+      brandOnSurface: brandOnSurface ?? this.brandOnSurface,
+      brandSecondary: brandSecondary ?? this.brandSecondary,
+      brandSecondaryBody: brandSecondaryBody ?? this.brandSecondaryBody,
+      brandSecondarySmall: brandSecondarySmall ?? this.brandSecondarySmall,
+      brandSecondaryNote: brandSecondaryNote ?? this.brandSecondaryNote,
+      brandSecondaryPlaceholder:
+          brandSecondaryPlaceholder ?? this.brandSecondaryPlaceholder,
+      brandActionLabel: brandActionLabel ?? this.brandActionLabel,
+      brandFieldBackground: brandFieldBackground ?? this.brandFieldBackground,
+      brandButtonDisabledBackground:
+          brandButtonDisabledBackground ?? this.brandButtonDisabledBackground,
+      brandButtonDisabledForeground:
+          brandButtonDisabledForeground ?? this.brandButtonDisabledForeground,
+      brandCardBackground: brandCardBackground ?? this.brandCardBackground,
+      brandUnderline: brandUnderline ?? this.brandUnderline,
+      brandKeyBackground: brandKeyBackground ?? this.brandKeyBackground,
+      brandDotOutline: brandDotOutline ?? this.brandDotOutline,
+      brandCodeBoxBackground:
+          brandCodeBoxBackground ?? this.brandCodeBoxBackground,
+      verificationStepActiveText:
+          verificationStepActiveText ?? this.verificationStepActiveText,
+      verificationStepInactiveText:
+          verificationStepInactiveText ?? this.verificationStepInactiveText,
+      verificationStepRing: verificationStepRing ?? this.verificationStepRing,
+      verificationStepTrack:
+          verificationStepTrack ?? this.verificationStepTrack,
+      verificationCardLockedTitle:
+          verificationCardLockedTitle ?? this.verificationCardLockedTitle,
+      verificationCardLockedSubtitle:
+          verificationCardLockedSubtitle ?? this.verificationCardLockedSubtitle,
+      verificationCardActiveFill:
+          verificationCardActiveFill ?? this.verificationCardActiveFill,
+      verificationCardIconFill:
+          verificationCardIconFill ?? this.verificationCardIconFill,
+      verificationProgressTrack:
+          verificationProgressTrack ?? this.verificationProgressTrack,
+      verificationChipBackground:
+          verificationChipBackground ?? this.verificationChipBackground,
+      verificationOutlineButton:
+          verificationOutlineButton ?? this.verificationOutlineButton,
+      verificationDivider: verificationDivider ?? this.verificationDivider,
+      pageBackground: pageBackground ?? this.pageBackground,
+      cardBorder: cardBorder ?? this.cardBorder,
+      cardShadow: cardShadow ?? this.cardShadow,
+      statusSuccessBackground:
+          statusSuccessBackground ?? this.statusSuccessBackground,
+      statusSuccessForeground:
+          statusSuccessForeground ?? this.statusSuccessForeground,
+      statusWarningBackground:
+          statusWarningBackground ?? this.statusWarningBackground,
+      statusWarningForeground:
+          statusWarningForeground ?? this.statusWarningForeground,
+      statusVerifiedForeground:
+          statusVerifiedForeground ?? this.statusVerifiedForeground,
+      statusVerifiedSubForeground:
+          statusVerifiedSubForeground ?? this.statusVerifiedSubForeground,
+      surfaceRedTint: surfaceRedTint ?? this.surfaceRedTint,
+      ink: ink ?? this.ink,
+      inkSecondary: inkSecondary ?? this.inkSecondary,
+      inkTertiary: inkTertiary ?? this.inkTertiary,
+      line: line ?? this.line,
     );
   }
 
@@ -214,6 +524,189 @@ class AppColors extends ThemeExtension<AppColors> {
       feedbackInfo:
           Color.lerp(feedbackInfo, other.feedbackInfo, t) ?? feedbackInfo,
       background: Color.lerp(background, other.background, t) ?? background,
+      brandPrimary:
+          Color.lerp(brandPrimary, other.brandPrimary, t) ?? brandPrimary,
+      brandSurface:
+          Color.lerp(brandSurface, other.brandSurface, t) ?? brandSurface,
+      brandOnSurface:
+          Color.lerp(brandOnSurface, other.brandOnSurface, t) ?? brandOnSurface,
+      brandSecondary:
+          Color.lerp(brandSecondary, other.brandSecondary, t) ?? brandSecondary,
+      brandSecondaryBody:
+          Color.lerp(brandSecondaryBody, other.brandSecondaryBody, t) ??
+          brandSecondaryBody,
+      brandSecondarySmall:
+          Color.lerp(brandSecondarySmall, other.brandSecondarySmall, t) ??
+          brandSecondarySmall,
+      brandSecondaryNote:
+          Color.lerp(brandSecondaryNote, other.brandSecondaryNote, t) ??
+          brandSecondaryNote,
+      brandSecondaryPlaceholder:
+          Color.lerp(
+            brandSecondaryPlaceholder,
+            other.brandSecondaryPlaceholder,
+            t,
+          ) ??
+          brandSecondaryPlaceholder,
+      brandActionLabel:
+          Color.lerp(brandActionLabel, other.brandActionLabel, t) ??
+          brandActionLabel,
+      brandFieldBackground:
+          Color.lerp(brandFieldBackground, other.brandFieldBackground, t) ??
+          brandFieldBackground,
+      brandButtonDisabledBackground:
+          Color.lerp(
+            brandButtonDisabledBackground,
+            other.brandButtonDisabledBackground,
+            t,
+          ) ??
+          brandButtonDisabledBackground,
+      brandButtonDisabledForeground:
+          Color.lerp(
+            brandButtonDisabledForeground,
+            other.brandButtonDisabledForeground,
+            t,
+          ) ??
+          brandButtonDisabledForeground,
+      brandCardBackground:
+          Color.lerp(brandCardBackground, other.brandCardBackground, t) ??
+          brandCardBackground,
+      brandUnderline:
+          Color.lerp(brandUnderline, other.brandUnderline, t) ?? brandUnderline,
+      brandKeyBackground:
+          Color.lerp(brandKeyBackground, other.brandKeyBackground, t) ??
+          brandKeyBackground,
+      brandDotOutline:
+          Color.lerp(brandDotOutline, other.brandDotOutline, t) ??
+          brandDotOutline,
+      brandCodeBoxBackground:
+          Color.lerp(brandCodeBoxBackground, other.brandCodeBoxBackground, t) ??
+          brandCodeBoxBackground,
+      verificationStepActiveText:
+          Color.lerp(
+            verificationStepActiveText,
+            other.verificationStepActiveText,
+            t,
+          ) ??
+          verificationStepActiveText,
+      verificationStepInactiveText:
+          Color.lerp(
+            verificationStepInactiveText,
+            other.verificationStepInactiveText,
+            t,
+          ) ??
+          verificationStepInactiveText,
+      verificationStepRing:
+          Color.lerp(verificationStepRing, other.verificationStepRing, t) ??
+          verificationStepRing,
+      verificationStepTrack:
+          Color.lerp(verificationStepTrack, other.verificationStepTrack, t) ??
+          verificationStepTrack,
+      verificationCardLockedTitle:
+          Color.lerp(
+            verificationCardLockedTitle,
+            other.verificationCardLockedTitle,
+            t,
+          ) ??
+          verificationCardLockedTitle,
+      verificationCardLockedSubtitle:
+          Color.lerp(
+            verificationCardLockedSubtitle,
+            other.verificationCardLockedSubtitle,
+            t,
+          ) ??
+          verificationCardLockedSubtitle,
+      verificationCardActiveFill:
+          Color.lerp(
+            verificationCardActiveFill,
+            other.verificationCardActiveFill,
+            t,
+          ) ??
+          verificationCardActiveFill,
+      verificationCardIconFill:
+          Color.lerp(
+            verificationCardIconFill,
+            other.verificationCardIconFill,
+            t,
+          ) ??
+          verificationCardIconFill,
+      verificationProgressTrack:
+          Color.lerp(
+            verificationProgressTrack,
+            other.verificationProgressTrack,
+            t,
+          ) ??
+          verificationProgressTrack,
+      verificationChipBackground:
+          Color.lerp(
+            verificationChipBackground,
+            other.verificationChipBackground,
+            t,
+          ) ??
+          verificationChipBackground,
+      verificationOutlineButton:
+          Color.lerp(
+            verificationOutlineButton,
+            other.verificationOutlineButton,
+            t,
+          ) ??
+          verificationOutlineButton,
+      verificationDivider:
+          Color.lerp(verificationDivider, other.verificationDivider, t) ??
+          verificationDivider,
+      pageBackground:
+          Color.lerp(pageBackground, other.pageBackground, t) ?? pageBackground,
+      cardBorder: Color.lerp(cardBorder, other.cardBorder, t) ?? cardBorder,
+      cardShadow: Color.lerp(cardShadow, other.cardShadow, t) ?? cardShadow,
+      statusSuccessBackground:
+          Color.lerp(
+            statusSuccessBackground,
+            other.statusSuccessBackground,
+            t,
+          ) ??
+          statusSuccessBackground,
+      statusSuccessForeground:
+          Color.lerp(
+            statusSuccessForeground,
+            other.statusSuccessForeground,
+            t,
+          ) ??
+          statusSuccessForeground,
+      statusWarningBackground:
+          Color.lerp(
+            statusWarningBackground,
+            other.statusWarningBackground,
+            t,
+          ) ??
+          statusWarningBackground,
+      statusWarningForeground:
+          Color.lerp(
+            statusWarningForeground,
+            other.statusWarningForeground,
+            t,
+          ) ??
+          statusWarningForeground,
+      statusVerifiedForeground:
+          Color.lerp(
+            statusVerifiedForeground,
+            other.statusVerifiedForeground,
+            t,
+          ) ??
+          statusVerifiedForeground,
+      statusVerifiedSubForeground:
+          Color.lerp(
+            statusVerifiedSubForeground,
+            other.statusVerifiedSubForeground,
+            t,
+          ) ??
+          statusVerifiedSubForeground,
+      surfaceRedTint:
+          Color.lerp(surfaceRedTint, other.surfaceRedTint, t) ?? surfaceRedTint,
+      ink: Color.lerp(ink, other.ink, t) ?? ink,
+      inkSecondary:
+          Color.lerp(inkSecondary, other.inkSecondary, t) ?? inkSecondary,
+      inkTertiary: Color.lerp(inkTertiary, other.inkTertiary, t) ?? inkTertiary,
+      line: Color.lerp(line, other.line, t) ?? line,
     );
   }
 }

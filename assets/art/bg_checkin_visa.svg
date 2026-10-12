@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 580">
+  <!-- DESIGN SOURCE: 05_Check_In/html/visa_and_guests.html, svg.lay #0.
+       Roughening filter ['vgR'] stripped: flutter_svg does not implement
+       SVG filters. Same as every other asset — see
+       docs/KNOWN_DIFFERENCES.md section 1. -->
+<g stroke="#fff" fill="none" stroke-linecap="round">
+      <path d="M-10 168 Q64 136 138 158 T252 134" stroke-opacity=".12" stroke-width="1.2" stroke-dasharray="5 9"/>
+      <path d="M-10 528 Q72 554 148 526 T252 542" stroke-opacity=".1" stroke-width="1.2" stroke-dasharray="5 9"/>
+    </g>
+</svg>

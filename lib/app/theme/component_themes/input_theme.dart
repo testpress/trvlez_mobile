@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 InputDecorationTheme buildInputTheme(AppColors colors) {
   return InputDecorationTheme(
     filled: true,
     fillColor: colors.surfaceSubtle,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-    hintStyle: GoogleFonts.cabin(fontSize: 15, color: colors.textDisabled),
-    labelStyle: GoogleFonts.nunito(
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    hintStyle: const TextStyle(
+      fontFamily: AppTypography.fontFamily,
       fontSize: 14,
-      fontWeight: FontWeight.w700,
-      color: colors.textPrimary,
-    ),
+      fontWeight: TypeScale.regular,
+    ).copyWith(color: colors.textDisabled),
+    labelStyle: const TextStyle(
+      fontFamily: AppTypography.fontFamily,
+      fontSize: 13,
+      fontWeight: TypeScale.medium,
+    ).copyWith(color: colors.textSecondary),
     border: OutlineInputBorder(
       borderRadius: AppRadius.input,
       borderSide: BorderSide(color: colors.borderSubtle),
@@ -24,7 +29,7 @@ InputDecorationTheme buildInputTheme(AppColors colors) {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.borderFocused, width: 2),
+      borderSide: BorderSide(color: colors.borderFocused, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: AppRadius.input,
@@ -32,8 +37,12 @@ InputDecorationTheme buildInputTheme(AppColors colors) {
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.feedbackError, width: 2),
+      borderSide: BorderSide(color: colors.feedbackError, width: 1.5),
     ),
-    errorStyle: GoogleFonts.cabin(fontSize: 12, color: colors.feedbackError),
+    errorStyle: const TextStyle(
+      fontFamily: AppTypography.fontFamily,
+      fontSize: 12,
+      fontWeight: TypeScale.regular,
+    ).copyWith(color: colors.feedbackError),
   );
 }
