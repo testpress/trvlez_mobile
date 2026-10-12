@@ -50,23 +50,15 @@ class BrandWordmark extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          'TRVL',
-          style: baseStyle.copyWith(color: trvlCol),
-        ),
+        Text('TRVL', style: baseStyle.copyWith(color: trvlCol)),
         SizedBox(width: gap),
         SizedBox(
           width: planeWidth,
           height: planeWidth * (16 / 20),
-          child: CustomPaint(
-            painter: _PlanePainter(ezCol),
-          ),
+          child: CustomPaint(painter: _PlanePainter(ezCol)),
         ),
         SizedBox(width: gap),
-        Text(
-          'ez',
-          style: baseStyle.copyWith(color: ezCol),
-        ),
+        Text('ez', style: baseStyle.copyWith(color: ezCol)),
       ],
     );
   }

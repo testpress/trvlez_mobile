@@ -41,9 +41,7 @@ class BrandSecurityNote extends StatelessWidget {
           child: SizedBox(
             width: iconWidth,
             height: iconHeight,
-            child: CustomPaint(
-              painter: _PadlockPainter(noteColor, 1.4),
-            ),
+            child: CustomPaint(painter: _PadlockPainter(noteColor, 1.4)),
           ),
         ),
         const SizedBox(width: AppSpacing.xs),

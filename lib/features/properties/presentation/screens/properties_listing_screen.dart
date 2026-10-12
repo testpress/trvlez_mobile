@@ -2,11 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
-import 'package:trvlez_mobile/features/properties/presentation/widgets/properties_listing_sections.dart';
-import 'package:trvlez_mobile/features/properties/presentation/widgets/properties_search_header.dart';
+import 'package:trvlez_mobile/features/properties/presentation/widgets/property_card.dart';
 
-/// Screen displaying the curated and searchable properties catalog.
+/// Screen displaying the curated and searchable ezStays properties catalog.
 class PropertiesListingScreen extends ConsumerStatefulWidget {
   const PropertiesListingScreen({super.key});
 
@@ -20,6 +29,7 @@ class _PropertiesListingScreenState
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
   int _selectedCategoryIndex = 0;
+  final Set<String> _savedPropertyIds = {};
 
   static const List<String> _categories = [
     'All',
@@ -38,6 +48,12 @@ class _PropertiesListingScreenState
   };
 
   @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
     _debounceTimer?.cancel();
     _searchController.dispose();
@@ -46,14 +62,9 @@ class _PropertiesListingScreenState
 
   void _onSearchChanged(String query) {
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 400), () {
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
       ref.read(propertiesProvider.notifier).search(query);
     });
-  }
-
-  void _onSearchSubmitted(String query) {
-    _debounceTimer?.cancel();
-    ref.read(propertiesProvider.notifier).search(query);
   }
 
   void _clearSearch() {
@@ -90,82 +101,343 @@ class _PropertiesListingScreenState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
     final propertiesState = ref.watch(propertiesProvider);
-    final properties = propertiesState.value ?? [];
+    final properties = propertiesState.valueOrNull ?? [];
     final isLoading = propertiesState.isLoading;
     final error = propertiesState.error;
+    final canPop = Navigator.canPop(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    const PropertiesHeader(),
-                    const SizedBox(height: 20),
-                    PropertiesSearchBar(
-                      controller: _searchController,
-                      onChanged: _onSearchChanged,
-                      onSubmitted: _onSearchSubmitted,
-                      onClear: _clearSearch,
-                    ),
-                    const SizedBox(height: 20),
-                    PropertyCategorySelector(
-                      categories: _categories,
-                      selectedIndex: _selectedCategoryIndex,
-                      onSelected: _onCategorySelected,
-                    ),
-                    const SizedBox(height: 24),
-                  ]),
-                ),
-              ),
-              if (isLoading && properties.isEmpty)
-                const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: PropertiesLoadingView(),
-                )
-              else if (error != null && properties.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: PropertiesErrorView(
-                    error: error.toString(),
-                    onRetry: () =>
-                        ref.read(propertiesProvider.notifier).fetchProperties(),
-                  ),
-                )
-              else if (properties.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: PropertiesEmptyView(onResetFilters: _resetAllFilters),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      PropertiesPopularSection(
-                        properties: properties.take(5).toList(),
+      backgroundColor: colors.page,
+      body: Column(
+        children: [
+          // ── Pinned Header ──────────────────────────────────────────────
+          AppPinnedHeader(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    if (canPop) ...[
+                      Semantics(
+                        button: true,
+                        label: 'Back',
+                        child: InkWell(
+                          borderRadius: AppRadius.fullRadius,
+                          onTap: () => Navigator.maybePop(context),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Icon(
+                              AppIcons.arrowLeft,
+                              size: 20,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 32),
-                      PropertiesRecommendedSection(
-                        properties: properties.length > 5
-                            ? properties.skip(5).toList()
-                            : properties,
+                      const SizedBox(width: AppSpacing.sm),
+                    ],
+                    EzWord(
+                      rest: 'Stays',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 20,
+                        fontWeight: TypeScale.bold,
+                        letterSpacing: -0.3,
+                        color: colors.textPrimary,
                       ),
-                      const SizedBox(height: 32),
-                    ]),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                // Search box
+                Container(
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.page,
+                    borderRadius: AppRadius.fullRadius,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        AppIcons.search,
+                        size: 16,
+                        color: colors.brandPrimary,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          textInputAction: TextInputAction.search,
+                          cursorColor: colors.brandPrimary,
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 13,
+                            color: colors.textPrimary,
+                          ),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: 'Search properties or cities',
+                            hintStyle: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 13,
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (_searchController.text.isNotEmpty)
+                        Semantics(
+                          button: true,
+                          label: 'Clear search',
+                          child: InkWell(
+                            onTap: _clearSearch,
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                AppIcons.circleX,
+                                size: 16,
+                                color: colors.inkTertiary,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-            ],
+                const SizedBox(height: AppSpacing.md),
+                // Category filter chips
+                SizedBox(
+                  height: 32,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _categories.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: AppSpacing.xs),
+                    itemBuilder: (context, index) {
+                      final isSelected = index == _selectedCategoryIndex;
+                      return ChoiceChip(
+                        label: Text(_categories[index]),
+                        selected: isSelected,
+                        onSelected: (_) => _onCategorySelected(index),
+                        selectedColor: colors.brandPrimary,
+                        backgroundColor: colors.surface,
+                        labelStyle: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 12,
+                          fontWeight: isSelected
+                              ? TypeScale.bold
+                              : TypeScale.medium,
+                          color: isSelected ? Colors.white : colors.textPrimary,
+                        ),
+                        side: BorderSide(
+                          color: isSelected
+                              ? colors.brandPrimary
+                              : colors.cardBorderSoft,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: AppRadius.fullRadius,
+                        ),
+                        showCheckmark: false,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+
+          // ── Scrollable Catalog ─────────────────────────────────────────
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: isLoading && properties.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : error != null && properties.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              AppIcons.circleX,
+                              size: 40,
+                              color: colors.brandPrimary,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Text(
+                              'Unable to load properties',
+                              style: TextStyle(
+                                fontFamily: AppTypography.fontFamily,
+                                fontSize: 16,
+                                fontWeight: TypeScale.bold,
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            ElevatedButton(
+                              onPressed: () => ref
+                                  .read(propertiesProvider.notifier)
+                                  .fetchProperties(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colors.brandPrimary,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: AppRadius.fullRadius,
+                                ),
+                              ),
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : properties.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              AppIcons.search,
+                              size: 36,
+                              color: colors.inkTertiary,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Text(
+                              'Nothing matches that',
+                              style: TextStyle(
+                                fontFamily: AppTypography.fontFamily,
+                                fontSize: 15,
+                                fontWeight: TypeScale.bold,
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Try adjusting your search terms or filters.',
+                              style: TextStyle(
+                                fontFamily: AppTypography.fontFamily,
+                                fontSize: 12,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            TextButton(
+                              onPressed: _resetAllFilters,
+                              child: Text(
+                                'Reset filters',
+                                style: TextStyle(
+                                  fontFamily: AppTypography.fontFamily,
+                                  fontSize: 13,
+                                  fontWeight: TypeScale.bold,
+                                  color: colors.brandPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Featured Stays Horizontal Rail
+                          Text(
+                            'Popular now',
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 14,
+                              fontWeight: TypeScale.bold,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          SizedBox(
+                            height: 226,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: properties.length,
+                              itemBuilder: (context, index) {
+                                final property = properties[index];
+                                return PropertyCard(
+                                  property: property,
+                                  isHorizontal: true,
+                                  isSaved: _savedPropertyIds.contains(
+                                    property.id,
+                                  ),
+                                  onSaveToggle: () {
+                                    setState(() {
+                                      if (_savedPropertyIds.contains(
+                                        property.id,
+                                      )) {
+                                        _savedPropertyIds.remove(property.id);
+                                      } else {
+                                        _savedPropertyIds.add(property.id);
+                                      }
+                                    });
+                                  },
+                                  onTap: () => context.push(
+                                    AppRoutes.propertyDetailPath(property.id),
+                                    extra: property,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+
+                          // All properties vertical list
+                          Text(
+                            'All Stays',
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 14,
+                              fontWeight: TypeScale.bold,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          ...properties.map(
+                            (property) => PropertyCard(
+                              property: property,
+                              isHorizontal: false,
+                              isSaved: _savedPropertyIds.contains(property.id),
+                              onSaveToggle: () {
+                                setState(() {
+                                  if (_savedPropertyIds.contains(property.id)) {
+                                    _savedPropertyIds.remove(property.id);
+                                  } else {
+                                    _savedPropertyIds.add(property.id);
+                                  }
+                                });
+                              },
+                              onTap: () => context.push(
+                                AppRoutes.propertyDetailPath(property.id),
+                                extra: property,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -31,7 +31,10 @@ class AuthErrorBanner extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 12),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 12,
+          ),
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
             borderRadius: AppRadius.mdRadius,

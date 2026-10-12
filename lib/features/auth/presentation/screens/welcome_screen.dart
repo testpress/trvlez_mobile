@@ -67,7 +67,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   void _startAnimation() {
     final reduceMotion = SchedulerBinding
-        .instance.platformDispatcher.accessibilityFeatures.disableAnimations;
+        .instance
+        .platformDispatcher
+        .accessibilityFeatures
+        .disableAnimations;
     if (reduceMotion) {
       _controller.value = 1.0;
     } else {

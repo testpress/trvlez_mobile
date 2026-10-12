@@ -37,9 +37,6 @@ void main() {
       expect(find.text('Hilltop Sanctuary Resort'), findsOneWidget);
       expect(find.text('Ooty, Tamil Nadu, India'), findsOneWidget);
 
-      // Verify amenity text is rendered
-      expect(find.text('wifi • spa'), findsOneWidget);
-
       // Verify no fake hardcoded price or ratings
       expect(find.text('\$199'), findsNothing);
       expect(find.text('4N/5D'), findsNothing);
@@ -101,7 +98,8 @@ void main() {
         ),
       );
 
-      expect(find.text('\$249 / night'), findsOneWidget);
+      expect(find.text('£249'), findsOneWidget);
+      expect(find.text('/night'), findsOneWidget);
     });
 
     testWidgets('renders price per night on recommended card when present', (
@@ -130,7 +128,8 @@ void main() {
         ),
       );
 
-      expect(find.text('\$249/nt'), findsOneWidget);
+      expect(find.text('£249'), findsOneWidget);
+      expect(find.text('/night'), findsOneWidget);
     });
   });
 }

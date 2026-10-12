@@ -160,7 +160,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color inkTertiary;
   final Color line;
 
-  // ─── Legacy Compatibility Getters ────────────────────────────────────
+  // ─── Legacy Compatibility & Convenience Getters ─────────────────────────
   Color get primary => actionPrimary;
   Color get primaryForeground => textOnAction;
   Color get secondary => actionSecondary;
@@ -173,6 +173,17 @@ class AppColors extends ThemeExtension<AppColors> {
   Color get border => borderDefault;
   Color get borderFocus => borderFocused;
   Color get backgroundMuted => surfaceSubtle;
+
+  Color get page => pageBackground;
+  Color get redTint => surfaceRedTint;
+  Color get okFill => statusSuccessBackground;
+  Color get okInk => statusSuccessForeground;
+  Color get waitFill => statusWarningBackground;
+  Color get waitInk => statusWarningForeground;
+  Color get cardBorderSoft => cardBorder;
+  Color get paper => Palette.paper;
+  Color get paperLine => Palette.paperLine;
+  Color get photoChip => Palette.photoChip;
 
   // ─── Static Feature Gradients & Constants ────────────────────────────
   static const Color white = Palette.neutral0;

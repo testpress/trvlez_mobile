@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/heart_button.dart';
+import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 
 /// Reusable property card with horizontal (popular) and vertical (recommended) variants.
 class PropertyCard extends StatelessWidget {
   final Property property;
   final VoidCallback onTap;
-  final bool isHorizontal; // True for "Popular" list, false for "Recommended"
+  final bool isHorizontal;
+  final bool isSaved;
+  final VoidCallback? onSaveToggle;
 
   const PropertyCard({
     super.key,
     required this.property,
     required this.onTap,
     this.isHorizontal = false,
+    this.isSaved = false,
+    this.onSaveToggle,
   });
 
   @override
@@ -34,260 +41,159 @@ class PropertyCard extends StatelessWidget {
     final badgeLabel =
         (property.propertyType != null && property.propertyType!.isNotEmpty)
         ? property.propertyType!.toUpperCase()
-        : (property.amenities.isNotEmpty
-              ? property.amenities.first.toUpperCase()
-              : 'VERIFIED');
+        : 'HOTEL';
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 240.0,
-        margin: const EdgeInsets.only(right: AppSpacing.md),
-        decoration: BoxDecoration(
-          borderRadius: AppRadius.card,
-          color: colors.surfaceSubtle,
-        ),
-        child: Stack(
-          children: [
-            // Image with fallback
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: AppRadius.card,
-                child: property.heroImageUrl.isNotEmpty
-                    ? Image.network(
-                        property.heroImageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            _buildFallbackImage(colors),
-                      )
-                    : _buildFallbackImage(colors),
+    return Semantics(
+      button: true,
+      label:
+          '${property.name}, £${property.pricePerNight?.toInt() ?? 120} per night',
+      child: InkWell(
+        borderRadius: AppRadius.cardRadius,
+        onTap: onTap,
+        child: Container(
+          width: 220.0,
+          margin: const EdgeInsets.only(right: AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.cardRadius,
+            color: colors.surface,
+            border: Border.all(color: colors.cardBorderSoft),
+            boxShadow: [
+              BoxShadow(
+                color: colors.cardShadow,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-            ),
-            // Gradient overlay
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: AppRadius.card,
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      colors.textPrimary.withValues(alpha: 0.75),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-            ),
-            // Badge (Property Type / Amenity)
-            Positioned(
-              top: AppSpacing.md,
-              left: AppSpacing.md,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: colors.actionPrimary,
-                  borderRadius: AppRadius.input,
-                ),
-                child: Text(
-                  badgeLabel,
-                  style: GoogleFonts.nunito(
-                    color: colors.textOnAction,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ),
-            // Content
-            Positioned(
-              bottom: AppSpacing.md,
-              left: AppSpacing.md,
-              right: AppSpacing.md,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Photo area with heart and badge
+              Stack(
                 children: [
-                  Text(
-                    property.name,
-                    style: GoogleFonts.nunito(
-                      color: colors.textOnAction,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                  PhotoBox(
+                    height: 125,
+                    imageUrl: property.heroImageUrl,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    iconSize: 28,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        color: colors.textOnAction.withValues(alpha: 0.8),
-                        size: 15,
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
                       ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          property.locationString.isNotEmpty
-                              ? property.locationString
-                              : 'Location available on detail',
-                          style: GoogleFonts.cabin(
-                            color: colors.textOnAction.withValues(alpha: 0.85),
-                            fontSize: 12,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      decoration: BoxDecoration(
+                        color: colors.brandPrimary,
+                        borderRadius: AppRadius.fullRadius,
+                      ),
+                      child: Text(
+                        badgeLabel,
+                        style: const TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: TypeScale.bold,
+                          letterSpacing: 0.5,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  if (property.amenities.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      property.amenities.take(2).join(' • '),
-                      style: GoogleFonts.cabin(
-                        color: colors.textOnAction.withValues(alpha: 0.9),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  Positioned(
+                    top: 2,
+                    right: 2,
+                    child: HeartButton(
+                      saved: isSaved,
+                      onPhoto: true,
+                      size: 28,
+                      onTap: onSaveToggle,
                     ),
-                  ],
-                  if (property.pricePerNight != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      '\$${property.pricePerNight!.toInt()} / night',
-                      style: GoogleFonts.nunito(
-                        color: colors.textOnAction,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecommendedCard(BuildContext context) {
-    final colors = context.colors;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 110.0,
-        margin: const EdgeInsets.only(bottom: AppSpacing.md),
-        decoration: BoxDecoration(
-          borderRadius: AppRadius.lg20Radius,
-          color: colors.surface,
-          border: Border.all(color: colors.borderSubtle),
-          boxShadow: [
-            BoxShadow(
-              color: colors.textPrimary.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Image
-            Container(
-              width: 90,
-              height: 90,
-              margin: const EdgeInsets.all(10),
-              child: ClipRRect(
-                borderRadius: AppRadius.cardSm,
-                child: property.heroImageUrl.isNotEmpty
-                    ? Image.network(
-                        property.heroImageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            _buildFallbackImage(colors),
-                      )
-                    : _buildFallbackImage(colors),
-              ),
-            ),
-            // Property details
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 6,
-                ),
+              // Body info
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       property.name,
-                      style: GoogleFonts.nunito(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 13,
+                        fontWeight: TypeScale.bold,
                         color: colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      property.locationString.isNotEmpty
-                          ? property.locationString
-                          : 'Location available on detail',
-                      style: GoogleFonts.cabin(
-                        fontSize: 12,
-                        color: colors.textSecondary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(
+                          AppIcons.mapPin,
+                          size: 11,
+                          color: colors.inkTertiary,
+                        ),
+                        const SizedBox(width: 3),
+                        Expanded(
+                          child: Text(
+                            property.locationString,
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 11,
+                              color: colors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 6),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
                       children: [
-                        if (property.amenities.isNotEmpty)
-                          Expanded(
-                            child: Text(
-                              property.amenities.take(2).join(' • '),
-                              style: GoogleFonts.cabin(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: colors.actionPrimary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        else if (property.shortDescription.isNotEmpty)
-                          Expanded(
-                            child: Text(
-                              property.shortDescription,
-                              style: GoogleFonts.cabin(
-                                fontSize: 11,
-                                color: colors.textSecondary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        else
-                          const Spacer(),
-                        if (property.pricePerNight != null) ...[
-                          const SizedBox(width: 6),
+                        Text(
+                          '£${property.pricePerNight?.toInt() ?? 120}',
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 14,
+                            fontWeight: TypeScale.extraBold,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          '/night',
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 10,
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (property.rating != null) ...[
+                          Icon(
+                            AppIcons.starFilled,
+                            size: 11,
+                            color: colors.brandPrimary,
+                          ),
+                          const SizedBox(width: 2),
                           Text(
-                            '\$${property.pricePerNight!.toInt()}/nt',
-                            style: GoogleFonts.nunito(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: colors.actionPrimary,
+                            property.rating!.toStringAsFixed(1),
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 11,
+                              fontWeight: TypeScale.bold,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
@@ -296,37 +202,122 @@ class PropertyCard extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            // View Details arrow
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: colors.surfaceSubtle,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: colors.actionPrimary,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildFallbackImage(AppColors colors) {
-    return Container(
-      decoration: BoxDecoration(color: colors.surfaceSubtle),
-      child: Center(
-        child: Icon(
-          Icons.hotel_outlined,
-          color: colors.actionPrimary,
-          size: 32,
+  Widget _buildRecommendedCard(BuildContext context) {
+    final colors = context.colors;
+
+    return Semantics(
+      button: true,
+      label:
+          '${property.name}, £${property.pricePerNight?.toInt() ?? 120} per night',
+      child: InkWell(
+        borderRadius: AppRadius.cardRadius,
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.cardRadius,
+            color: colors.surface,
+            border: Border.all(color: colors.cardBorderSoft),
+            boxShadow: [
+              BoxShadow(
+                color: colors.cardShadow,
+                blurRadius: 6,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              PhotoBox(
+                width: 90,
+                height: 90,
+                imageUrl: property.heroImageUrl,
+                borderRadius: AppRadius.mdRadius,
+                iconSize: 24,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      property.name,
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 14,
+                        fontWeight: TypeScale.bold,
+                        color: colors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(
+                          AppIcons.mapPin,
+                          size: 11,
+                          color: colors.inkTertiary,
+                        ),
+                        const SizedBox(width: 3),
+                        Expanded(
+                          child: Text(
+                            property.locationString,
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 11,
+                              color: colors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          '£${property.pricePerNight?.toInt() ?? 120}',
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 14,
+                            fontWeight: TypeScale.extraBold,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          '/night',
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 10,
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        const Spacer(),
+                        HeartButton(
+                          saved: isSaved,
+                          size: 26,
+                          onTap: onSaveToggle,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

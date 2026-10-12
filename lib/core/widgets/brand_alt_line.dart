@@ -63,13 +63,17 @@ class BrandAltLine extends StatelessWidget {
                 onTap: onTap,
                 borderRadius: BorderRadius.circular(4),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 6,
+                  ),
                   child: Container(
                     padding: const EdgeInsets.only(bottom: 1),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: underlineColor ?? context.colors.brandUnderline,
+                          color:
+                              underlineColor ?? context.colors.brandUnderline,
                           width: 1,
                         ),
                       ),

@@ -13,6 +13,8 @@ import 'package:trvlez_mobile/features/auth/presentation/screens/welcome_screen.
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/screens/account_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/screens/close_account_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/profile_setup_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
@@ -25,6 +27,7 @@ import 'package:trvlez_mobile/features/reservations/presentation/screens/my_trip
 import 'package:trvlez_mobile/features/reservations/presentation/screens/pre_arrival_form_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
+import 'package:trvlez_mobile/features/saved/presentation/screens/saved_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_passport_service_impl.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/mrz_review_screen.dart';
@@ -115,7 +118,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           return TwoStepCodeScreen(
-            email: extra?['email'] as String? ?? 'amara@example.com',
+            email: extra?['email'] as String? ?? '',
             isPasswordReset: extra?['isPasswordReset'] as bool? ?? false,
           );
         },
@@ -131,7 +134,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: AppRoutes.home,
-            builder: (context, state) => const PropertiesListingScreen(),
+            builder: (context, state) => const HomeScreen(),
           ),
           GoRoute(
             path: AppRoutes.myTrips,
@@ -139,15 +142,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: AppRoutes.favorites,
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Favorites Coming Soon')),
-            ),
+            builder: (context, state) => const SavedScreen(),
           ),
           GoRoute(
             path: AppRoutes.profile,
-            builder: (context, state) => const HomeScreen(),
+            builder: (context, state) => const AccountScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.ezStays,
+        builder: (context, state) => const PropertiesListingScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.closeAccount,
+        builder: (context, state) => const CloseAccountScreen(),
       ),
       GoRoute(
         path: AppRoutes.propertyDetail,

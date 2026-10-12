@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 /// App icon constants mapped to the subsetted TablerIcons webfont.
 ///
@@ -68,8 +68,7 @@ abstract final class AppIcons {
   static const home = IconData(0xeac1, fontFamily: _fontFamily);
   static const calendar = IconData(0xea53, fontFamily: _fontFamily);
   static const heart = IconData(0xeabe, fontFamily: _fontFamily);
-  static const rosetteDiscountCheck =
-      IconData(0xf1f8, fontFamily: _fontFamily);
+  static const rosetteDiscountCheck = IconData(0xf1f8, fontFamily: _fontFamily);
   static const playerPause = IconData(0xed45, fontFamily: _fontFamily);
   static const trash = IconData(0xeb41, fontFamily: _fontFamily);
   static const infoCircle = IconData(0xeac5, fontFamily: _fontFamily);
@@ -97,6 +96,8 @@ abstract final class AppIcons {
   static const help = IconData(0xeabf, fontFamily: _fontFamily);
   static const fileText = IconData(0xeaa2, fontFamily: _fontFamily);
   static const download = IconData(0xea96, fontFamily: _fontFamily);
+  static const starFilled = Icons.star_rounded;
+  static const star = Icons.star_outline_rounded;
 
   // ─── Check-in (Section 05) ─────────────────────────────────────────
   static const doorEnter = IconData(0xef4c, fontFamily: _fontFamily);

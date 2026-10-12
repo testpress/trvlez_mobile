@@ -10,20 +10,14 @@ class AppTypography {
 
   static const String fontFamily = TypeScale.fontFamily;
 
-  static TextStyle get heading => const TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: TypeScale.bold,
-      );
+  static TextStyle get heading =>
+      const TextStyle(fontFamily: fontFamily, fontWeight: TypeScale.bold);
 
-  static TextStyle get body => const TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: TypeScale.regular,
-      );
+  static TextStyle get body =>
+      const TextStyle(fontFamily: fontFamily, fontWeight: TypeScale.regular);
 
-  static TextStyle get label => const TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: TypeScale.semiBold,
-      );
+  static TextStyle get label =>
+      const TextStyle(fontFamily: fontFamily, fontWeight: TypeScale.semiBold);
 
   /// Generates the standard [TextTheme] bound to [AppColors.textPrimary].
   static TextTheme buildTextTheme(AppColors colors) {
@@ -44,10 +38,7 @@ class AppTypography {
         color: foregroundColor,
         letterSpacing: -0.25,
       ),
-      displaySmall: heading.copyWith(
-        fontSize: 24,
-        color: foregroundColor,
-      ),
+      displaySmall: heading.copyWith(fontSize: 24, color: foregroundColor),
       headlineLarge: heading.copyWith(
         fontSize: 22,
         fontWeight: TypeScale.semiBold,

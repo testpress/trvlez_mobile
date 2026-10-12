@@ -170,7 +170,10 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                   onTap: () => context.push(AppRoutes.forgotPassword),
                   borderRadius: BorderRadius.circular(4),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 6,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.only(bottom: 1),
                       decoration: BoxDecoration(

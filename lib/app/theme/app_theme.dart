@@ -111,12 +111,18 @@ class AppTheme {
 class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override
   ThemeMode build() {
-    return ref.watch(settingsRepositoryProvider).getThemeMode();
+    try {
+      return ref.watch(settingsRepositoryProvider).getThemeMode();
+    } catch (_) {
+      return ThemeMode.light;
+    }
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
     state = mode;
-    await ref.read(settingsRepositoryProvider).setThemeMode(mode);
+    try {
+      await ref.read(settingsRepositoryProvider).setThemeMode(mode);
+    } catch (_) {}
   }
 
   Future<void> toggleTheme() async {

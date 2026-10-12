@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/photo_box.dart';
+import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/widgets/reservation_status_badge.dart';
 
-/// Displays the traveler's reservations organized by status tabs.
-///
-/// Replaces the old "Tickets Coming Soon" placeholder.
+/// Displays the traveler's reservations and booking history.
 class MyTripsScreen extends ConsumerStatefulWidget {
   const MyTripsScreen({super.key});
 
@@ -37,7 +40,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = context.colors;
     final reservationsState = ref.watch(reservationListProvider);
     final reservations = reservationsState.valueOrNull ?? [];
 
@@ -46,72 +49,62 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     final cancelled = reservations.where((r) => r.status.isCancelled).toList();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(colorScheme),
-            _buildTabBar(
-              colorScheme,
-              upcoming.length,
-              completed.length,
-              cancelled.length,
+      backgroundColor: colors.page,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // ── Pinned Header ──────────────────────────────────────────────
+          AppPinnedHeader(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'My Trips',
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 20,
+                    fontWeight: TypeScale.bold,
+                    letterSpacing: -0.3,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                TabBar(
+                  controller: _tabController,
+                  indicatorColor: colors.brandPrimary,
+                  indicatorWeight: 2.5,
+                  labelColor: colors.brandPrimary,
+                  unselectedLabelColor: colors.inkTertiary,
+                  labelStyle: const TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 13,
+                    fontWeight: TypeScale.bold,
+                  ),
+                  unselectedLabelStyle: const TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 13,
+                    fontWeight: TypeScale.medium,
+                  ),
+                  tabs: [
+                    Tab(text: 'Upcoming (${upcoming.length})'),
+                    Tab(text: 'Completed (${completed.length})'),
+                    Tab(text: 'Cancelled (${cancelled.length})'),
+                  ],
+                ),
+              ],
             ),
-            Expanded(
-              child: _buildTabContent(
-                reservationsState,
-                upcoming,
-                completed,
-                cancelled,
-              ),
+          ),
+
+          // ── Tab Bar Views ──────────────────────────────────────────────
+          Expanded(
+            child: _buildTabContent(
+              reservationsState,
+              upcoming,
+              completed,
+              cancelled,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(ColorScheme colorScheme) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-      child: Text(
-        'My Trips',
-        style: GoogleFonts.nunito(
-          fontSize: 28,
-          fontWeight: FontWeight.w700,
-          color: colorScheme.onSurface,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabBar(
-    ColorScheme colorScheme,
-    int upcomingCount,
-    int completedCount,
-    int cancelledCount,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: TabBar(
-        controller: _tabController,
-        indicatorColor: colorScheme.primary,
-        indicatorWeight: 3,
-        labelColor: colorScheme.primary,
-        unselectedLabelColor: colorScheme.onSurfaceVariant,
-        labelStyle: GoogleFonts.nunito(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        unselectedLabelStyle: GoogleFonts.nunito(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        tabs: [
-          Tab(text: 'Upcoming ($upcomingCount)'),
-          Tab(text: 'Completed ($completedCount)'),
-          Tab(text: 'Cancelled ($cancelledCount)'),
+          ),
         ],
       ),
     );
@@ -152,9 +145,10 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     return RefreshIndicator(
       onRefresh: () => ref.refresh(reservationListProvider.future),
       child: ListView.separated(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.md),
         itemCount: reservations.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 16),
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: AppSpacing.md),
         itemBuilder: (context, index) => _ReservationCard(
           reservation: reservations[index],
           onTap: () => context.push(
@@ -167,7 +161,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   }
 
   Widget _buildEmptyState(String type) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = context.colors;
     final messages = {
       'upcoming': (
         'No upcoming trips',
@@ -183,49 +177,64 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(48),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
-                color: colorScheme.primary.withAlpha(20),
+                color: colors.redTint,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.luggage_outlined,
-                size: 48,
-                color: colorScheme.primary,
+                AppIcons.calendar,
+                size: 36,
+                color: colors.brandPrimary,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.md),
             Text(
               title,
-              style: GoogleFonts.nunito(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: colorScheme.onSurface,
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 18,
+                fontWeight: TypeScale.bold,
+                color: colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cabin(
-                fontSize: 14,
-                color: colorScheme.onSurfaceVariant,
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 13,
+                color: colors.textSecondary,
               ),
             ),
             if (type == 'upcoming') ...[
-              const SizedBox(height: 20),
-              FilledButton.icon(
+              const SizedBox(height: AppSpacing.lg),
+              ElevatedButton.icon(
                 onPressed: () => context.go(AppRoutes.home),
-                icon: const Icon(Icons.search, size: 18),
-                label: Text(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.brandPrimary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.fullRadius,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
+                ),
+                icon: const Icon(AppIcons.search, size: 16),
+                label: const Text(
                   'Explore Properties',
-                  style: context.text.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 13,
+                    fontWeight: TypeScale.bold,
                   ),
                 ),
               ),
@@ -237,37 +246,51 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   }
 
   Widget _buildErrorState(String error) {
+    final colors = context.colors;
+
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline_rounded,
-            size: 48,
-            color: Theme.of(context).colorScheme.error,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Failed to load reservations',
-            style: GoogleFonts.nunito(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(AppIcons.circleX, size: 40, color: colors.brandPrimary),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Failed to load reservations',
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 16,
+                fontWeight: TypeScale.bold,
+                color: colors.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error,
-            style: GoogleFonts.nunito(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            const SizedBox(height: 6),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 12,
+                color: colors.textSecondary,
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () =>
-                ref.read(reservationListProvider.notifier).fetchReservations(),
-            child: const Text('Retry'),
-          ),
-        ],
+            const SizedBox(height: AppSpacing.lg),
+            ElevatedButton(
+              onPressed: () => ref
+                  .read(reservationListProvider.notifier)
+                  .fetchReservations(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colors.brandPrimary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadius.fullRadius,
+                ),
+              ),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -283,153 +306,187 @@ class _ReservationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = context.colors;
     final dateFormat = DateFormat('MMM d');
 
-    return GestureDetector(
+    final pillState = switch (reservation.status) {
+      ReservationStatus.confirmed => StatusPillState.confirmed,
+      ReservationStatus.checkedIn => StatusPillState.confirmed,
+      ReservationStatus.checkedOut => StatusPillState.completed,
+      ReservationStatus.cancelled ||
+      ReservationStatus.noShow => StatusPillState.cancelled,
+      ReservationStatus.pending => StatusPillState.awaiting,
+    };
+
+    return InkWell(
+      borderRadius: AppRadius.cardRadius,
       onTap: onTap,
       child: Container(
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: AppRadius.lg20Radius,
-          border: Border.all(color: colorScheme.outlineVariant),
+          color: colors.surface,
+          borderRadius: AppRadius.cardRadius,
+          border: Border.all(color: colors.cardBorderSoft),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withAlpha(10),
+              color: colors.cardShadow,
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Hero image
-            ClipRRect(
+            PhotoBox(
+              height: 130,
+              imageUrl: reservation.propertySummary.heroImageUrl,
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+                top: Radius.circular(16),
               ),
-              child: _buildImage(colorScheme),
+              iconSize: 32,
             ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
                           reservation.propertySummary.name,
-                          style: GoogleFonts.nunito(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface,
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 15,
+                            fontWeight: TypeScale.bold,
+                            color: colors.textPrimary,
                           ),
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      ReservationStatusBadge(status: reservation.status),
+                      const SizedBox(width: AppSpacing.sm),
+                      StatusPill(
+                        label: reservation.status.displayLabel,
+                        state: pillState,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   if (reservation.propertySummary.locationString.isNotEmpty)
                     Row(
                       children: [
                         Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: colorScheme.onSurfaceVariant,
+                          AppIcons.mapPin,
+                          size: 12,
+                          color: colors.inkTertiary,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          reservation.propertySummary.locationString,
-                          style: GoogleFonts.cabin(
-                            fontSize: 13,
-                            color: colorScheme.onSurfaceVariant,
+                        Expanded(
+                          child: Text(
+                            reservation.propertySummary.locationString,
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 12,
+                              color: colors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                  const SizedBox(height: 10),
-                  Divider(color: colorScheme.outlineVariant, height: 1),
-                  const SizedBox(height: 10),
+                  const Divider(height: AppSpacing.md),
                   Row(
                     children: [
                       Icon(
-                        Icons.calendar_today_outlined,
-                        size: 14,
-                        color: colorScheme.primary,
+                        AppIcons.calendar,
+                        size: 13,
+                        color: colors.brandPrimary,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         '${dateFormat.format(reservation.checkInDate)} – ${dateFormat.format(reservation.checkOutDate)}',
-                        style: GoogleFonts.cabin(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurface,
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 12,
+                          fontWeight: TypeScale.semiBold,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         '${reservation.nights} night(s)',
-                        style: GoogleFonts.cabin(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 11,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Icon(
-                        Icons.confirmation_number_outlined,
-                        size: 14,
-                        color: colorScheme.primary,
+                        AppIcons.receipt,
+                        size: 13,
+                        color: colors.inkTertiary,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         reservation.confirmationCode,
-                        style: GoogleFonts.cabin(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 11,
+                          fontWeight: TypeScale.medium,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
                   ),
+                  if (reservation.status.isUpcoming) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.sm,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.redTint,
+                        borderRadius: AppRadius.mdRadius,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            AppIcons.doorEnter,
+                            size: 14,
+                            color: colors.brandPrimary,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              'Check in online · Open now · Start',
+                              style: TextStyle(
+                                fontFamily: AppTypography.fontFamily,
+                                fontSize: 11,
+                                fontWeight: TypeScale.semiBold,
+                                color: colors.brandPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildImage(ColorScheme colorScheme) {
-    final imageUrl = reservation.propertySummary.heroImageUrl ?? '';
-    if (imageUrl.isNotEmpty) {
-      return Image.network(
-        imageUrl,
-        height: 140,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) =>
-            _buildPlaceholder(colorScheme),
-      );
-    }
-    return _buildPlaceholder(colorScheme);
-  }
-
-  Widget _buildPlaceholder(ColorScheme colorScheme) {
-    return Container(
-      height: 140,
-      width: double.infinity,
-      color: colorScheme.surfaceContainerHighest,
-      child: Icon(Icons.hotel, size: 40, color: colorScheme.onSurfaceVariant),
     );
   }
 }

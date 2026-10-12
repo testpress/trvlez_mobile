@@ -94,10 +94,7 @@ class BrandScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (showWordmark)
-                        const Center(
-                          child: BrandWordmark(),
-                        ),
+                      if (showWordmark) const Center(child: BrandWordmark()),
                     ],
                   ),
                 ),
@@ -109,10 +106,7 @@ class BrandScreen extends StatelessWidget {
                           padding: contentPadding,
                           child: body,
                         )
-                      : Padding(
-                          padding: contentPadding,
-                          child: body,
-                        ),
+                      : Padding(padding: contentPadding, child: body),
                 ),
               ],
             ),

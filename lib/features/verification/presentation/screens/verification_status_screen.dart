@@ -77,7 +77,7 @@ class VerificationStatusScreenState
 
   /// Derives the effective verification state.
   TravelerVerificationState get effectiveState {
-    final profile = ref.read(currentProfileProvider).value;
+    final profile = ref.read(currentProfileProvider).valueOrNull;
     final profileState =
         profile?.verificationState ?? TravelerVerificationState.submitted;
     return ref
@@ -141,7 +141,7 @@ class VerificationStatusScreenState
           },
         ),
       ),
-      body: profileState.isLoading && profileState.value == null
+      body: profileState.isLoading && profileState.valueOrNull == null
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: handleRefresh,

@@ -48,10 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (!isEmailValid) return;
     context.push(
       AppRoutes.twoStepCode,
-      extra: {
-        'email': emailController.text.trim(),
-        'isPasswordReset': true,
-      },
+      extra: {'email': emailController.text.trim(), 'isPasswordReset': true},
     );
   }
 
@@ -102,9 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           const SizedBox(height: AppSpacing.xxl),
 
-          const BrandSecurityNote(
-            text: 'Codes expire after 10 minutes.',
-          ),
+          const BrandSecurityNote(text: 'Codes expire after 10 minutes.'),
 
           const SizedBox(height: AppSpacing.md),
 

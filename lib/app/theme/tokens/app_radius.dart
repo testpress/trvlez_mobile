@@ -29,8 +29,10 @@ abstract final class AppRadius {
 
   // Semantic aliases
   static BorderRadius get card => BorderRadius.circular(xl);
+  static BorderRadius get cardRadius => BorderRadius.circular(lg);
   static BorderRadius get cardSm => BorderRadius.circular(md);
   static BorderRadius get button => BorderRadius.circular(md);
   static BorderRadius get input => BorderRadius.circular(md);
   static BorderRadius get pillRadius => BorderRadius.circular(pill);
+  static BorderRadius get fullRadius => BorderRadius.circular(pill);
 }

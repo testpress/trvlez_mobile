@@ -53,7 +53,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final colorScheme = theme.colorScheme;
 
     final isLoading = profileState.isLoading;
-    final step = profileState.value?.onboardingStep ?? 'profile_pending';
+    final step = profileState.valueOrNull?.onboardingStep ?? 'profile_pending';
     final progressIndex = _stepToProgressIndex(step);
 
     final bool isPassportUploaded = progressIndex >= 1;
@@ -85,7 +85,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: isLoading && profileState.value == null
+      body: isLoading && profileState.valueOrNull == null
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: RefreshIndicator(

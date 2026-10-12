@@ -1,338 +1,301 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/core/widgets/app_brand_logo.dart';
-import 'package:trvlez_mobile/features/home/presentation/widgets/verification_banner.dart';
+import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/check_in_banner.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/findr_card.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/home_location_row.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/home_section_header.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/home_wordmark_row.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/location_picker_sheet.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/next_stay_row.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/notifications_sheet.dart';
+import 'package:trvlez_mobile/features/home/presentation/widgets/service_grid.dart';
+import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 
-/// The primary landing screen for all authenticated travelers.
-///
-/// Always shown after login regardless of onboarding state. Displays a
-/// context-aware verification banner that guides users through profile
-/// completion, document upload, or shows verification progress.
+/// The central Home Hub screen displaying wordmark, location, service cards,
+/// Findr loyalty card, and next stay previews.
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class HomeScreenState extends ConsumerState<HomeScreen> {
-  Future<void> handleRefresh() async {
-    await ref.read(authNotifierProvider.notifier).refreshVerificationState();
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String _selectedLocation = 'Edinburgh, UK';
+  bool _findrJoined = false;
+  final Set<String> _readNotifIds = {};
+
+  List<NotificationItem> _getNotifications({
+    Reservation? nextStay,
+    required bool isVerified,
+  }) {
+    return [
+      if (nextStay != null) ...[
+        NotificationItem(
+          id: 'notif-stay-${nextStay.id}',
+          title: 'Booking confirmed',
+          body:
+              '${nextStay.propertySummary.name} · ${DateFormat('d MMM').format(nextStay.checkInDate)}',
+          timeAgo: 'Recent',
+          icon: AppIcons.check,
+          isUnread: !_readNotifIds.contains('notif-stay-${nextStay.id}'),
+        ),
+        NotificationItem(
+          id: 'notif-checkin-${nextStay.id}',
+          title: 'Check-in open',
+          body:
+              'Online check-in is now ready for ${nextStay.propertySummary.name}',
+          timeAgo: 'Recent',
+          icon: AppIcons.doorEnter,
+          isUnread: !_readNotifIds.contains('notif-checkin-${nextStay.id}'),
+        ),
+      ],
+      if (isVerified)
+        NotificationItem(
+          id: 'notif-verify',
+          title: 'Identity verified',
+          body: 'Your passport and biometrics are approved',
+          timeAgo: 'Recent',
+          icon: AppIcons.rosetteDiscountCheck,
+          isUnread: !_readNotifIds.contains('notif-verify'),
+        ),
+    ];
   }
 
-  void onBannerTap(TravelerVerificationState state) {
-    if (state.needsOnboarding) {
-      // Pre-submission: go to onboarding stepper to complete steps
-      context.push(AppRoutes.onboarding);
-    } else {
-      // Post-submission (submitted, failed): go to status screen
-      context.push(AppRoutes.verificationStatus);
-    }
-  }
-
-  void onFeatureTap(String featureName) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$featureName — coming soon!'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
-        duration: const Duration(seconds: 2),
-      ),
+  void _onBellTap(List<NotificationItem> notifications) {
+    NotificationsSheet.show(
+      context,
+      items: notifications,
+      onClearAll: () {
+        setState(() {
+          for (final n in notifications) {
+            _readNotifIds.add(n.id);
+          }
+        });
+      },
     );
+  }
+
+  void _onLocationTap() {
+    LocationPickerSheet.show(
+      context,
+      currentLocation: _selectedLocation,
+      onLocationSelected: (city) {
+        setState(() => _selectedLocation = city);
+      },
+    );
+  }
+
+  String _greetingText(String? name) {
+    final hour = DateTime.now().hour;
+    final timeGreeting = hour < 12
+        ? 'Good morning'
+        : (hour < 17 ? 'Good afternoon' : 'Good evening');
+    if (name != null && name.trim().isNotEmpty) {
+      final firstName = name.trim().split(' ').first;
+      return '$timeGreeting, $firstName';
+    }
+    return timeGreeting;
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final currentThemeMode = ref.watch(themeModeProvider);
+    final isDarkMode =
+        currentThemeMode == ThemeMode.dark ||
+        (currentThemeMode == ThemeMode.system &&
+            Theme.of(context).brightness == Brightness.dark);
+
     final verificationState = ref.watch(travelerVerificationStateProvider);
-    final shouldShowBanner = verificationState.shouldShowBanner;
+    final isVerified = verificationState.isVerified;
+
+    final reservationsState = ref.watch(reservationListProvider);
+    final allReservations = reservationsState.valueOrNull ?? [];
+    final upcomingReservations =
+        allReservations.where((r) => r.status.isUpcoming).toList()
+          ..sort((a, b) => a.checkInDate.compareTo(b.checkInDate));
+    final nextStay = upcomingReservations.isNotEmpty
+        ? upcomingReservations.first
+        : null;
+
+    final travelerName = nextStay?.guestName;
+
+    final notifications = _getNotifications(
+      nextStay: nextStay,
+      isVerified: isVerified,
+    );
+    final unreadCount = notifications.where((n) => n.isUnread).length;
+
+    final findrCardState = !isVerified
+        ? FindrState.locked
+        : (_findrJoined ? FindrState.active : FindrState.notJoined);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const AppBrandLogo(),
-        centerTitle: false,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.person_outline_rounded),
-            tooltip: 'Profile Options',
-            onSelected: (value) async {
-              if (value == 'theme') {
-                await ref.read(themeModeProvider.notifier).toggleTheme();
-              }
-            },
-            itemBuilder: (context) {
-              final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
-              return [
-                PopupMenuItem(
-                  value: 'theme',
-                  child: Row(
-                    children: [
-                      Icon(
-                        isDark ? Icons.light_mode : Icons.dark_mode,
-                        size: 20,
+      backgroundColor: colors.page,
+      body: Column(
+        children: [
+          // ── Pinned Header ──────────────────────────────────────────────
+          AppPinnedHeader(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                HomeWordmarkRow(
+                  unreadCount: unreadCount,
+                  onBellTap: () => _onBellTap(notifications),
+                  isDarkMode: isDarkMode,
+                  onThemeToggle: () =>
+                      ref.read(themeModeProvider.notifier).toggleTheme(),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                HomeLocationRow(
+                  location: _selectedLocation,
+                  onTap: _onLocationTap,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  _greetingText(travelerName),
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 20,
+                    fontWeight: TypeScale.bold,
+                    letterSpacing: -0.3,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isVerified
+                      ? 'ID verified — book without re-checking'
+                      : 'Verify once, book without re-checking',
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 12,
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Scrollable Hub Content ─────────────────────────────────────
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Check-in banner when an upcoming stay is ready
+                  if (nextStay != null) ...[
+                    CheckInBanner(
+                      title: 'Check in for ${nextStay.propertySummary.name}',
+                      subtitle: 'Open now · takes 2 minutes',
+                      onTap: () => context.push('/reservations/${nextStay.id}'),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+
+                  // ── Services Section ───────────────────────────────────
+                  const HomeSectionHeader(title: 'Services'),
+                  const SizedBox(height: AppSpacing.sm),
+                  ServiceGrid(
+                    cards: [
+                      ServiceCard(
+                        icon: AppIcons.building,
+                        title: 'Stays',
+                        subtitle: 'Hotels, resorts, villas',
+                        onTap: () => context.push(AppRoutes.ezStays),
                       ),
-                      const SizedBox(width: 8),
-                      Text(isDark ? 'Light Mode' : 'Dark Mode'),
+                      const ServiceCard(
+                        icon: AppIcons.wallet,
+                        title: 'Money',
+                        subtitle: 'Exchange and spend',
+                        soon: true,
+                      ),
+                      const ServiceCard(
+                        icon: AppIcons.shoppingBag,
+                        title: 'Shop',
+                        subtitle: 'Duty free and local',
+                        soon: true,
+                      ),
+                      const ServiceCard(
+                        icon: AppIcons.messageCircle,
+                        title: 'Chat',
+                        subtitle: 'Talk to your host',
+                        soon: true,
+                      ),
                     ],
                   ),
-                ),
-              ];
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Sign out',
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Sign out'),
-                  content: const Text('Are you sure you want to sign out?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Cancel'),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // ── Earn With Us Section ───────────────────────────────
+                  HomeSectionHeader(
+                    title: 'Earn with us',
+                    action: findrCardState == FindrState.active ? 'Open' : null,
+                    onAction: () {},
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  FindrCard(
+                    state: findrCardState,
+                    onCta: () {
+                      if (findrCardState == FindrState.locked) {
+                        context.push(AppRoutes.onboarding);
+                      } else if (findrCardState == FindrState.notJoined) {
+                        setState(() => _findrJoined = true);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Findr activated! You can now earn rewards.',
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // ── Next Stay Section ──────────────────────────────────
+                  if (nextStay != null) ...[
+                    HomeSectionHeader(
+                      title: 'Your next stay',
+                      action: 'View',
+                      onAction: () =>
+                          context.push('/reservations/${nextStay.id}'),
                     ),
-                    FilledButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('Sign out'),
+                    const SizedBox(height: AppSpacing.sm),
+                    NextStayRow(
+                      title: nextStay.propertySummary.name,
+                      detail:
+                          '${DateFormat('d MMM').format(nextStay.checkInDate)}–${DateFormat('d MMM').format(nextStay.checkOutDate)} · ${nextStay.propertySummary.city ?? 'Stay'}',
+                      badge:
+                          '${nextStay.checkOutDate.difference(nextStay.checkInDate).inDays} nights',
+                      imageUrl: nextStay.propertySummary.heroImageUrl,
+                      onTap: () => context.push('/reservations/${nextStay.id}'),
                     ),
+                    const SizedBox(height: AppSpacing.xl),
                   ],
-                ),
-              );
-              if (confirm == true) {
-                ref.read(authNotifierProvider.notifier).logout();
-              }
-            },
-          ),
-        ],
-      ),
-      body:
-          ref.watch(authNotifierProvider).isLoading &&
-              ref.watch(authNotifierProvider).valueOrNull == null
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: handleRefresh,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    // ── Verification Banner ─────────────────────────
-                    if (shouldShowBanner)
-                      VerificationBanner(
-                        state: verificationState,
-                        onActionTap: () => onBannerTap(verificationState),
-                      ),
-                    const SizedBox(height: 24),
-                    // ── Welcome Section ──────────────────────────────
-                    WelcomeSection(isVerified: verificationState.isVerified),
-                    const SizedBox(height: 32),
-                    // ── Feature Grid ────────────────────────────────
-                    FeatureGrid(
-                      isVerified: verificationState.isVerified,
-                      onFeatureTap: onFeatureTap,
-                    ),
-                    const SizedBox(height: 40),
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
-}
-
-// ─── Welcome Section ──────────────────────────────────────────────────────
-
-class WelcomeSection extends StatelessWidget {
-  final bool isVerified;
-
-  const WelcomeSection({super.key, required this.isVerified});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            isVerified ? 'Ready to explore!' : 'Welcome to TrvlEz!',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isVerified
-                ? 'Your identity is verified. Start planning your next adventure.'
-                : 'Your next adventure awaits. Complete your setup to unlock all features.',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(160),
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Feature Grid ─────────────────────────────────────────────────────────
-
-class FeatureGrid extends StatelessWidget {
-  final bool isVerified;
-  final void Function(String featureName) onFeatureTap;
-
-  const FeatureGrid({
-    super.key,
-    required this.isVerified,
-    required this.onFeatureTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final features = const [
-      FeatureItem(
-        icon: Icons.explore_rounded,
-        label: 'Explore',
-        subtitle: 'Discover destinations',
-        gradientColors: AppColors.exploreGradient,
-      ),
-      FeatureItem(
-        icon: Icons.flight_takeoff_rounded,
-        label: 'My Trips',
-        subtitle: 'View bookings',
-        gradientColors: AppColors.tripsGradient,
-      ),
-      FeatureItem(
-        icon: Icons.local_offer_rounded,
-        label: 'Deals',
-        subtitle: 'Exclusive offers',
-        gradientColors: AppColors.dealsGradient,
-      ),
-      FeatureItem(
-        icon: Icons.support_agent_rounded,
-        label: 'Support',
-        subtitle: 'Get help',
-        gradientColors: AppColors.supportGradient,
-      ),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 1.15,
-        ),
-        itemCount: features.length,
-        itemBuilder: (context, index) {
-          final feature = features[index];
-          return FeatureCard(
-            feature: feature,
-            onTap: () => onFeatureTap(feature.label),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class FeatureItem {
-  final IconData icon;
-  final String label;
-  final String subtitle;
-  final List<Color> gradientColors;
-
-  const FeatureItem({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-    required this.gradientColors,
-  });
-}
-
-class FeatureCard extends StatelessWidget {
-  final FeatureItem feature;
-  final VoidCallback onTap;
-
-  const FeatureCard({super.key, required this.feature, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Material(
-      color: theme.colorScheme.surface,
-      borderRadius: AppRadius.lg20Radius,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.lg20Radius,
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.lg20Radius,
-            border: Border.all(
-              color: theme.colorScheme.outlineVariant.withAlpha(80),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: feature.gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: AppRadius.md14Radius,
-                ),
-                child: Icon(feature.icon, color: Colors.white, size: 26),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    feature.label,
-                    style: GoogleFonts.nunito(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    feature.subtitle,
-                    style: GoogleFonts.cabin(
-                      fontSize: 12,
-                      color: theme.colorScheme.onSurface.withAlpha(130),
-                    ),
-                  ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

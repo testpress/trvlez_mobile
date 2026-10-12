@@ -23,7 +23,9 @@ abstract final class Palette {
   static const creamBody = Color(0xFFFFD9CE); // Subtitles, body copy
   static const creamSmall = Color(0xFFFFD0BF); // Small print
   static const creamNote = Color(0xFFFFC7B4); // Security note
-  static const creamPlaceholder = Color(0xFFFFC0AB); // Unfilled field placeholder
+  static const creamPlaceholder = Color(
+    0xFFFFC0AB,
+  ); // Unfilled field placeholder
   static const creamDotError = Color(0xFFFFC2B4); // Passcode mismatch dots
 
   // ─── Neutrals & Slates ─────────────────────────────────────────────

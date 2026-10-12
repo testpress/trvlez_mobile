@@ -17,7 +17,7 @@ import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 class TwoStepCodeScreen extends StatefulWidget {
   const TwoStepCodeScreen({
     super.key,
-    this.email = 'amara@example.com',
+    this.email = '',
     this.isPasswordReset = false,
   });
 
@@ -226,9 +226,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
 
           const SizedBox(height: AppSpacing.xxl),
 
-          const BrandSecurityNote(
-            text: 'Codes expire after 10 minutes.',
-          ),
+          const BrandSecurityNote(text: 'Codes expire after 10 minutes.'),
 
           const SizedBox(height: AppSpacing.md),
 

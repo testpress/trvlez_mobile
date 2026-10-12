@@ -95,8 +95,8 @@ final travelerVerificationStateProvider = Provider<TravelerVerificationState>((
   ref,
 ) {
   final profileState = ref.watch(currentProfileProvider);
-  final profile = profileState.value;
-  final verificationStatus = ref.watch(verificationStatusProvider).value;
+  final profile = profileState.valueOrNull;
+  final verificationStatus = ref.watch(verificationStatusProvider).valueOrNull;
 
   TravelerVerificationState state =
       profile?.verificationState ?? TravelerVerificationState.profilePending;

@@ -14,11 +14,18 @@ class AppRoutes {
   // Main Shell
   static const String home = '/home';
   static const String myTrips = '/my-trips';
+  static const String bookings = '/my-trips';
   static const String favorites = '/favorites';
+  static const String saved = '/favorites';
   static const String profile = '/profile';
+  static const String account = '/profile';
 
-  // Properties
+  // Properties / ezStays
+  static const String ezStays = '/stays';
   static const String propertyDetail = '/properties/:id';
+
+  // Account Operations
+  static const String closeAccount = '/close-account';
 
   static String propertyDetailPath(String id) => '/properties/$id';
 

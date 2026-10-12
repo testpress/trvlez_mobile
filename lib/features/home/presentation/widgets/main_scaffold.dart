@@ -1,8 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
+/// Top-level scaffold managing the 4-tab bottom navigation shell for authenticated users.
 class MainScaffold extends StatelessWidget {
   final Widget child;
 
@@ -11,113 +17,134 @@ class MainScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.colors.page,
       body: child,
-      bottomNavigationBar: _buildBottomNavigation(context),
+      bottomNavigationBar: _BottomTabBar(),
     );
   }
+}
 
-  Widget _buildBottomNavigation(BuildContext context) {
-    final theme = Theme.of(context);
+class _BottomTabBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
     final location = GoRouterState.of(context).matchedLocation;
+    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
 
     int currentIndex = 0;
-    if (location.startsWith(AppRoutes.home)) {
-      currentIndex = 0;
-    } else if (location.startsWith(AppRoutes.myTrips)) {
+    if (location.startsWith(AppRoutes.myTrips)) {
       currentIndex = 1;
-    } else if (location.startsWith('/favorites')) {
+    } else if (location.startsWith(AppRoutes.favorites)) {
       currentIndex = 2;
     } else if (location.startsWith(AppRoutes.profile)) {
       currentIndex = 3;
+    } else {
+      currentIndex = 0;
     }
 
+    final barHeight = math.max(54.0, 48.0 + bottomInset);
+
     return Container(
+      height: barHeight,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.shadow.withAlpha(13), // 0.05 * 255
-            blurRadius: 10,
-            offset: const Offset(0, -4),
-          ),
-        ],
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.cardBorderSoft, width: 1)),
       ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildNavItem(
-                context,
-                Icons.home_filled,
-                Icons.home_outlined,
-                0,
-                currentIndex,
-                AppRoutes.home,
-              ),
-              _buildNavItem(
-                context,
-                Icons.luggage,
-                Icons.luggage_outlined,
-                1,
-                currentIndex,
-                AppRoutes.myTrips,
-              ),
-              _buildNavItem(
-                context,
-                Icons.favorite,
-                Icons.favorite_outline,
-                2,
-                currentIndex,
-                '/favorites',
-              ),
-              _buildNavItem(
-                context,
-                Icons.person,
-                Icons.person_outline,
-                3,
-                currentIndex,
-                AppRoutes.profile,
-              ),
-            ],
-          ),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: Row(
+          children: [
+            _TabBarItem(
+              index: 0,
+              currentIndex: currentIndex,
+              icon: AppIcons.home,
+              label: 'Home',
+              route: AppRoutes.home,
+            ),
+            _TabBarItem(
+              index: 1,
+              currentIndex: currentIndex,
+              icon: AppIcons.calendar,
+              label: 'Bookings',
+              route: AppRoutes.myTrips,
+            ),
+            _TabBarItem(
+              index: 2,
+              currentIndex: currentIndex,
+              icon: AppIcons.heart,
+              label: 'Saved',
+              route: AppRoutes.favorites,
+            ),
+            _TabBarItem(
+              index: 3,
+              currentIndex: currentIndex,
+              icon: AppIcons.user,
+              label: 'Account',
+              route: AppRoutes.profile,
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildNavItem(
-    BuildContext context,
-    IconData activeIcon,
-    IconData inactiveIcon,
-    int index,
-    int currentIndex,
-    String route,
-  ) {
-    final theme = Theme.of(context);
-    final isActive = index == currentIndex;
+class _TabBarItem extends StatelessWidget {
+  const _TabBarItem({
+    required this.index,
+    required this.currentIndex,
+    required this.icon,
+    required this.label,
+    required this.route,
+  });
 
-    return GestureDetector(
-      onTap: () {
-        if (!isActive) {
-          context.go(route);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isActive
-              ? theme.colorScheme.primary.withAlpha(26)
-              : Colors.transparent, // 0.1 * 255
-          borderRadius: AppRadius.lgRadius,
-        ),
-        child: Icon(
-          isActive ? activeIcon : inactiveIcon,
-          color: isActive
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurfaceVariant,
-          size: 26,
+  final int index;
+  final int currentIndex;
+  final IconData icon;
+  final String label;
+  final String route;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final isSelected = index == currentIndex;
+    final activeColor = colors.brandPrimary;
+    final inactiveColor = colors.inkTertiary;
+
+    return Expanded(
+      child: Semantics(
+        button: true,
+        selected: isSelected,
+        label: label,
+        child: InkWell(
+          onTap: () {
+            if (!isSelected) {
+              context.go(route);
+            }
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 20,
+                color: isSelected ? activeColor : inactiveColor,
+              ),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 10,
+                  fontWeight: isSelected
+                      ? TypeScale.semiBold
+                      : TypeScale.medium,
+                  color: isSelected ? activeColor : inactiveColor,
+                  letterSpacing: 0.1,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

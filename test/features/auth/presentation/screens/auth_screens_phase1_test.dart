@@ -11,9 +11,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: ForgotPasswordScreen()),
-        ),
+        const ProviderScope(child: MaterialApp(home: ForgotPasswordScreen())),
       );
       await tester.pumpAndSettle();
 
@@ -26,9 +24,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: NewPasswordScreen()),
-        ),
+        const ProviderScope(child: MaterialApp(home: NewPasswordScreen())),
       );
       await tester.pumpAndSettle();
 
