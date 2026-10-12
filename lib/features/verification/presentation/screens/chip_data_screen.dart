@@ -29,7 +29,7 @@ class ChipDataScreen extends ConsumerWidget {
   ];
 
   static String _formatDate(DateTime? d) {
-    if (d == null) return '14 Mar 1991';
+    if (d == null) return '—';
     return '${d.day} ${_months[d.month - 1]} ${d.year}';
   }
 
@@ -41,19 +41,20 @@ class ChipDataScreen extends ConsumerWidget {
     final mrz = state.mrzExtractionResult;
 
     final parsedMrz = nfc?.parsedMrz;
-    final givenNames = parsedMrz?.firstName ?? mrz?.firstName ?? 'AMARA';
-    final surname = parsedMrz?.lastName ?? mrz?.lastName ?? 'OKAFOR';
-    final displayName = '$givenNames $surname';
+    final givenNames = parsedMrz?.firstName ?? mrz?.firstName ?? '';
+    final surname = parsedMrz?.lastName ?? mrz?.lastName ?? '';
+    final nameParts = [givenNames, surname].where((s) => s.isNotEmpty).toList();
+    final displayName = nameParts.isNotEmpty ? nameParts.join(' ') : '—';
 
-    final nationality = parsedMrz?.nationality ?? mrz?.nationality ?? 'GBR';
-    final dob = parsedMrz?.dateOfBirth;
+    final nationality = parsedMrz?.nationality ?? mrz?.nationality ?? '—';
+    final dob = parsedMrz?.dateOfBirth ?? state.extractedDateOfBirth;
     final dobFormatted = dob != null
         ? _formatDate(dob)
-        : (mrz?.dateOfBirth ?? '14 Mar 1991');
-    final expiry = parsedMrz?.dateOfExpiry;
+        : (mrz?.dateOfBirth ?? '—');
+    final expiry = parsedMrz?.dateOfExpiry ?? state.extractedDateOfExpiry;
     final expiryFormatted = expiry != null
         ? _formatDate(expiry)
-        : (mrz?.dateOfExpiry ?? '22 Aug 2031');
+        : (mrz?.dateOfExpiry ?? '—');
 
     final Uint8List? faceBytes = nfc?.faceImageBytes;
 

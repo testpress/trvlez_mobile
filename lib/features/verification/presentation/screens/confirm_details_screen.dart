@@ -17,25 +17,73 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Screen displaying extracted read-only passport details for confirmation before moving to selfie.
 ///
 /// Corresponds to Stepper Step 2 (Profile Review active).
-class ConfirmDetailsScreen extends ConsumerWidget {
+class ConfirmDetailsScreen extends ConsumerStatefulWidget {
   const ConfirmDetailsScreen({super.key});
 
+  @override
+  ConsumerState<ConfirmDetailsScreen> createState() =>
+      _ConfirmDetailsScreenState();
+}
+
+class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
+  bool _isConfirming = false;
+
+  Future<void> _handleConfirm() async {
+    if (_isConfirming) return;
+    setState(() => _isConfirming = true);
+
+    try {
+      final notifier = ref.read(verificationNotifierProvider.notifier);
+      await notifier.confirmMrz();
+      if (!mounted) return;
+
+      final updatedState = ref.read(verificationNotifierProvider);
+      if (updatedState.phase == VerificationPhase.mrzReviewed ||
+          updatedState.phase == VerificationPhase.uploadSuccess) {
+        context.push(AppRoutes.selfieInstructions);
+      } else if (updatedState.phase == VerificationPhase.verified) {
+        context.pushReplacement(AppRoutes.verificationSuccess);
+      } else if (updatedState.phase == VerificationPhase.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              updatedState.errorMessage ?? 'Failed to confirm passport details',
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isConfirming = false);
+    }
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final mrz = state.mrzExtractionResult;
 
+    final firstName = mrz?.firstName?.isNotEmpty == true ? mrz!.firstName! : '—';
+    final lastName = mrz?.lastName?.isNotEmpty == true ? mrz!.lastName! : '—';
+    final docNumber = mrz?.documentNumber?.isNotEmpty == true
+        ? mrz!.documentNumber!
+        : (state.extractedDocumentNumber?.isNotEmpty == true
+            ? state.extractedDocumentNumber!
+            : '—');
+    final nationality = mrz?.nationality?.isNotEmpty == true ? mrz!.nationality! : '—';
+    final dob = mrz?.dateOfBirth?.isNotEmpty == true ? mrz!.dateOfBirth! : '—';
+    final expiry = mrz?.dateOfExpiry?.isNotEmpty == true ? mrz!.dateOfExpiry! : '—';
+    final sex = mrz?.sex?.isNotEmpty == true ? mrz!.sex! : '—';
+
     final rows = <(String, String)>[
-      ('First name', mrz?.firstName ?? 'AMARA CHIDINMA'),
-      ('Last name', mrz?.lastName ?? 'OKAFOR'),
-      ('Passport number', mrz?.documentNumber ?? state.extractedDocumentNumber ?? '536294145'),
-      ('Nationality', mrz?.nationality ?? 'GBR'),
-      ('Date of birth', mrz?.dateOfBirth ?? '14 Mar 1991'),
-      ('Expiry', mrz?.dateOfExpiry ?? '22 Aug 2031'),
-      ('Sex', mrz?.sex ?? 'F'),
+      ('First name', firstName),
+      ('Last name', lastName),
+      ('Passport number', docNumber),
+      ('Nationality', nationality),
+      ('Date of birth', dob),
+      ('Expiry', expiry),
+      ('Sex', sex),
     ];
 
     return BrandVerifyScreen(
@@ -99,12 +147,9 @@ class ConfirmDetailsScreen extends ConsumerWidget {
       ],
       foot: [
         AppButton(
-          label: 'Confirm and continue',
+          label: _isConfirming ? 'Confirming…' : 'Confirm and continue',
           variant: AppButtonVariant.brandWhite,
-          onPressed: () {
-            notifier.confirmMrz();
-            context.push(AppRoutes.selfieInstructions);
-          },
+          onPressed: _isConfirming ? null : _handleConfirm,
         ),
         const SizedBox(height: AppSpacing.xs),
         AppButton(

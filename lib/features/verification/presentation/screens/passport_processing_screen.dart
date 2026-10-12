@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +17,7 @@ import 'package:trvlez_mobile/features/verification/presentation/providers/verif
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Screen displaying the three sequential processing stages (Upload, Check, Read)
-/// with real-time state tracking and motion.
+/// driven by real-time backend verification state.
 class PassportProcessingScreen extends ConsumerStatefulWidget {
   const PassportProcessingScreen({super.key, this.cropParams});
 
@@ -28,54 +30,86 @@ class PassportProcessingScreen extends ConsumerStatefulWidget {
 
 class _PassportProcessingScreenState
     extends ConsumerState<PassportProcessingScreen> {
-  int _done = 0;
-
-  static const _phases = [
-    (label: 'Upload', status: 'Uploading securely…'),
-    (label: 'Check', status: 'Checking the image is clear…'),
-    (label: 'Read', status: 'Reading your details…'),
-  ];
+  bool _hasNavigated = false;
+  Timer? _successTimer;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _executeProcessing());
-  }
-
-  Future<void> _executeProcessing() async {
-    try {
-      // Stage 1: Uploading
-      await Future<void>.delayed(const Duration(milliseconds: 900));
-      if (!mounted) return;
-      setState(() => _done = 1);
-
-      // Stage 2: Quality check
-      await Future<void>.delayed(const Duration(milliseconds: 900));
-      if (!mounted) return;
-      setState(() => _done = 2);
-
-      // Stage 3: Reading details / MRZ
-      await Future<void>.delayed(const Duration(milliseconds: 1000));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = ref.read(verificationNotifierProvider);
-
-      if (state.phase == VerificationPhase.error ||
-          state.phase == VerificationPhase.imageQualityFailed ||
-          state.phase == VerificationPhase.mrzExtractionFailed) {
-        if (!mounted) return;
-        context.pushReplacement(AppRoutes.passportFailed);
+      if (state.capturedImage == null) {
+        context.pushReplacement(AppRoutes.passportCapture);
         return;
       }
-
-      if (!mounted) return;
-      setState(() => _done = 3);
-
-      await Future<void>.delayed(const Duration(milliseconds: 400));
-      if (!mounted) return;
-      context.pushReplacement(AppRoutes.confirmDetails);
-    } catch (_) {
-      if (mounted) {
-        context.pushReplacement(AppRoutes.passportFailed);
+      // If upload hasn't started yet, trigger it now
+      if (state.phase == VerificationPhase.idle) {
+        ref.read(verificationNotifierProvider.notifier).uploadPassport();
       }
+    });
+  }
+
+  @override
+  void dispose() {
+    _successTimer?.cancel();
+    super.dispose();
+  }
+
+  int _calculateDone(VerificationPhase phase) {
+    return switch (phase) {
+      VerificationPhase.idle ||
+      VerificationPhase.preparingImage ||
+      VerificationPhase.uploading => 0,
+      VerificationPhase.checkingImageQuality => 1,
+      VerificationPhase.extractingMrz => 2,
+      VerificationPhase.uploadSuccess ||
+      VerificationPhase.mrzReviewed ||
+      VerificationPhase.verified => 3,
+      _ => 0,
+    };
+  }
+
+  String _calculateStatus(VerificationState state) {
+    return switch (state.phase) {
+      VerificationPhase.preparingImage => 'Preparing image…',
+      VerificationPhase.uploading =>
+        state.uploadProgress > 0 && state.uploadProgress < 1.0
+            ? 'Uploading ${(state.uploadProgress * 100).toInt()}%…'
+            : 'Uploading securely…',
+      VerificationPhase.checkingImageQuality => 'Checking the image is clear…',
+      VerificationPhase.extractingMrz => 'Reading your details…',
+      VerificationPhase.uploadSuccess ||
+      VerificationPhase.mrzReviewed ||
+      VerificationPhase.verified => 'Details verified',
+      VerificationPhase.imageQualityFailed ||
+      VerificationPhase.mrzExtractionFailed ||
+      VerificationPhase.error => 'Processing failed',
+      _ => 'Uploading securely…',
+    };
+  }
+
+  void _handleStateTransition(VerificationState next) {
+    if (_hasNavigated || !mounted) return;
+
+    if (next.phase == VerificationPhase.uploadSuccess) {
+      _hasNavigated = true;
+      _successTimer?.cancel();
+      _successTimer = Timer(const Duration(milliseconds: 400), () {
+        if (mounted) {
+          context.pushReplacement(AppRoutes.confirmDetails);
+        }
+      });
+    } else if (next.phase == VerificationPhase.imageQualityFailed ||
+        next.phase == VerificationPhase.mrzExtractionFailed ||
+        next.phase == VerificationPhase.error) {
+      _hasNavigated = true;
+      context.pushReplacement(
+        AppRoutes.passportFailed,
+        extra: next.errorMessage,
+      );
+    } else if (next.phase == VerificationPhase.verified) {
+      _hasNavigated = true;
+      context.pushReplacement(AppRoutes.verificationSuccess);
     }
   }
 
@@ -84,17 +118,12 @@ class _PassportProcessingScreenState
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
 
-    if (state.phase == VerificationPhase.error ||
-        state.phase == VerificationPhase.imageQualityFailed ||
-        state.phase == VerificationPhase.mrzExtractionFailed) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.pushReplacement(AppRoutes.passportFailed);
-      });
-    }
+    ref.listen<VerificationState>(verificationNotifierProvider, (previous, next) {
+      _handleStateTransition(next);
+    });
 
-    final currentStatus = _done < _phases.length
-        ? _phases[_done].status
-        : 'Details verified';
+    final doneCount = _calculateDone(state.phase);
+    final currentStatus = _calculateStatus(state);
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_flow.svg',
@@ -117,7 +146,7 @@ class _PassportProcessingScreenState
           labels: const ['Upload', 'Check', 'Read'],
           states: [
             for (int i = 0; i < 3; i++)
-              i < _done ? TrioState.done : TrioState.waiting,
+              i < doneCount ? TrioState.done : TrioState.waiting,
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -143,7 +172,8 @@ class _PassportProcessingScreenState
       ],
       foot: const [
         BrandSecurityNote(
-          text: 'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
+          text:
+              'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
         ),
       ],
     );

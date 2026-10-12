@@ -332,7 +332,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.passportFailed,
-        builder: (context, state) => const PassportFailedScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final reason = extra is String
+              ? extra
+              : (extra is Map<String, dynamic>
+                  ? extra['reason'] as String?
+                  : null);
+          return PassportFailedScreen(failureReason: reason);
+        },
       ),
       GoRoute(
         path: AppRoutes.confirmDetails,
@@ -357,7 +365,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.selfieFailed,
-        builder: (context, state) => const SelfieFailedScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final reason = extra is String
+              ? extra
+              : (extra is Map<String, dynamic>
+                  ? extra['reason'] as String?
+                  : null);
+          return SelfieFailedScreen(failureReason: reason);
+        },
       ),
       GoRoute(
         path: AppRoutes.selfieSuccess,
@@ -382,7 +398,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.nfcFailed,
-        builder: (context, state) => const NfcFailedScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final extras = extra is Map<String, dynamic> ? extra : null;
+          return NfcFailedScreen(
+            failedStepTitle:
+                extras?['failedStepTitle'] as String? ?? 'Chip scan',
+            redoButtonLabel: extras?['redoButtonLabel'] as String?,
+            redoRoute: extras?['redoRoute'] as String?,
+            reason: extras?['reason'] as String?,
+            mitigation: extras?['mitigation'] as String?,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.verificationSuccess,

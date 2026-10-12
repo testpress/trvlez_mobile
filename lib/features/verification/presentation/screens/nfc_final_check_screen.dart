@@ -1,13 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -17,8 +17,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 
 /// Screen displayed while the backend final decision engine processes all verification inputs.
 ///
-/// Features the 3D twisting hourglass animation and live checklist showing 4 completed steps
-/// and 1 running step.
+/// Submits verification asynchronously and polls for live status until completion.
 class NfcFinalCheckScreen extends ConsumerStatefulWidget {
   const NfcFinalCheckScreen({super.key});
 
@@ -28,22 +27,67 @@ class NfcFinalCheckScreen extends ConsumerStatefulWidget {
 }
 
 class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
-  Timer? _decisionTimer;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
-    _decisionTimer = Timer(const Duration(milliseconds: 2800), () {
-      if (mounted) {
-        context.pushReplacement(AppRoutes.verificationSuccess);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final state = ref.read(verificationNotifierProvider);
+      if (state.phase == VerificationPhase.verified) {
+        _navigateToSuccess();
+      } else if (state.phase == VerificationPhase.verificationFailed) {
+        _handleFailure(state);
+      } else if (state.phase != VerificationPhase.submitting &&
+          state.phase != VerificationPhase.verifying) {
+        ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
       }
     });
   }
 
-  @override
-  void dispose() {
-    _decisionTimer?.cancel();
-    super.dispose();
+  void _navigateToSuccess() {
+    if (_hasNavigated || !mounted) return;
+    _hasNavigated = true;
+    context.pushReplacement(AppRoutes.verificationSuccess);
+  }
+
+  void _handleFailure(VerificationState state) {
+    if (_hasNavigated || !mounted) return;
+    _hasNavigated = true;
+    final status = state.verificationStatus;
+    final (title, route, label) = _resolveFailedStep(status?.failedStep);
+    context.pushReplacement(
+      AppRoutes.nfcFailed,
+      extra: {
+        'failedStepTitle': title,
+        'redoButtonLabel': label,
+        'redoRoute': route,
+        'reason': state.errorMessage ?? status?.errorReason,
+        'mitigation': status?.uiMitigation,
+      },
+    );
+  }
+
+  (String, String, String) _resolveFailedStep(String? failedStep) {
+    if (failedStep == null) {
+      return ('Verification check', AppRoutes.passportCapture, 'Start over');
+    }
+    final normalized = failedStep.toLowerCase();
+    if (normalized.contains('selfie') ||
+        normalized.contains('face') ||
+        normalized.contains('liveness')) {
+      return ('Selfie', AppRoutes.selfieCapture, 'Record the video again');
+    }
+    if (normalized.contains('chip') || normalized.contains('nfc')) {
+      return ('Chip scan', AppRoutes.nfcScan, 'Try chip scan again');
+    }
+    if (normalized.contains('passport') ||
+        normalized.contains('doc') ||
+        normalized.contains('mrz')) {
+      return ('Passport photo', AppRoutes.passportCapture, 'Retake photo');
+    }
+    return ('Verification check', AppRoutes.passportCapture, 'Start over');
   }
 
   @override
@@ -51,11 +95,13 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
 
-    if (state.phase == VerificationPhase.verified) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.pushReplacement(AppRoutes.verificationSuccess);
-      });
-    }
+    ref.listen<VerificationState>(verificationNotifierProvider, (previous, next) {
+      if (next.phase == VerificationPhase.verified) {
+        _navigateToSuccess();
+      } else if (next.phase == VerificationPhase.verificationFailed) {
+        _handleFailure(next);
+      }
+    });
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc.svg',
@@ -94,15 +140,51 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyStatusRows(
+        VerifyStatusRows(
           rows: [
-            VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
-            VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
-            VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
-            VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
-            VerifyStatusRow(title: 'Final check', state: VerifyRowStatus.running),
+            const VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
+            const VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
+            const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
+            if (!state.isNfcSkipped)
+              const VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
+            const VerifyStatusRow(title: 'Final check', state: VerifyRowStatus.running),
           ],
         ),
+        if (state.phase == VerificationPhase.error) ...[
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: colors.brandCardBackground,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: colors.brandDivider),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  state.errorMessage ?? 'Submission encountered an issue.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 12.0,
+                    fontWeight: TypeScale.medium,
+                    color: colors.brandOnSurface,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                AppButton(
+                  label: 'Retry submission',
+                  variant: AppButtonVariant.brandWhite,
+                  onPressed: () {
+                    ref
+                        .read(verificationNotifierProvider.notifier)
+                        .submitVerificationAsync();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
       foot: [
         Center(

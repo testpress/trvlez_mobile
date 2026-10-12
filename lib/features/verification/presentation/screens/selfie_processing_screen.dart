@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +15,8 @@ import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
-/// Screen displaying the two sequential processing stages (Upload, Check) for selfie verification.
+/// Screen displaying the two sequential processing stages (Upload, Check) for selfie verification
+/// driven by real-time backend state.
 class SelfieProcessingScreen extends ConsumerStatefulWidget {
   const SelfieProcessingScreen({super.key});
 
@@ -24,47 +27,78 @@ class SelfieProcessingScreen extends ConsumerStatefulWidget {
 
 class _SelfieProcessingScreenState
     extends ConsumerState<SelfieProcessingScreen> {
-  int _done = 0;
-
-  static const _stages = [
-    (label: 'Upload', status: 'Uploading securely…'),
-    (label: 'Check', status: "Checking it's you…"),
-  ];
+  bool _hasNavigated = false;
+  Timer? _successTimer;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _executeProcessing());
-  }
-
-  Future<void> _executeProcessing() async {
-    try {
-      // Stage 1: Uploading video
-      await Future<void>.delayed(const Duration(milliseconds: 1100));
-      if (!mounted) return;
-      setState(() => _done = 1);
-
-      // Stage 2: Face matching / liveness check
-      await Future<void>.delayed(const Duration(milliseconds: 1400));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = ref.read(verificationNotifierProvider);
-
-      if (state.phase == VerificationPhase.error ||
-          state.phase == VerificationPhase.videoQualityFailed) {
-        if (!mounted) return;
-        context.pushReplacement(AppRoutes.selfieFailed);
+      if (state.capturedVideo == null) {
+        context.pushReplacement(AppRoutes.selfieCapture);
         return;
       }
-
-      if (!mounted) return;
-      setState(() => _done = 2);
-
-      await Future<void>.delayed(const Duration(milliseconds: 400));
-      if (!mounted) return;
-      context.pushReplacement(AppRoutes.selfieSuccess);
-    } catch (_) {
-      if (mounted) {
-        context.pushReplacement(AppRoutes.selfieFailed);
+      // If upload hasn't started yet, trigger it now
+      if (state.phase != VerificationPhase.uploading &&
+          state.phase != VerificationPhase.checkingVideoQuality) {
+        ref.read(verificationNotifierProvider.notifier).uploadSelfie();
       }
+    });
+  }
+
+  @override
+  void dispose() {
+    _successTimer?.cancel();
+    super.dispose();
+  }
+
+  int _calculateDone(VerificationPhase phase) {
+    return switch (phase) {
+      VerificationPhase.uploading => 0,
+      VerificationPhase.checkingVideoQuality => 1,
+      VerificationPhase.uploadSuccess ||
+      VerificationPhase.verified => 2,
+      _ => 0,
+    };
+  }
+
+  String _calculateStatus(VerificationState state) {
+    return switch (state.phase) {
+      VerificationPhase.uploading =>
+        state.uploadProgress > 0 && state.uploadProgress < 1.0
+            ? 'Uploading ${(state.uploadProgress * 100).toInt()}%…'
+            : 'Uploading securely…',
+      VerificationPhase.checkingVideoQuality => "Checking it's you…",
+      VerificationPhase.uploadSuccess ||
+      VerificationPhase.verified => 'Face verified',
+      VerificationPhase.videoQualityFailed ||
+      VerificationPhase.error => 'Processing failed',
+      _ => 'Uploading securely…',
+    };
+  }
+
+  void _handleStateTransition(VerificationState next) {
+    if (_hasNavigated || !mounted) return;
+
+    if (next.phase == VerificationPhase.uploadSuccess) {
+      _hasNavigated = true;
+      _successTimer?.cancel();
+      _successTimer = Timer(const Duration(milliseconds: 400), () {
+        if (mounted) {
+          context.pushReplacement(AppRoutes.selfieSuccess);
+        }
+      });
+    } else if (next.phase == VerificationPhase.videoQualityFailed ||
+        next.phase == VerificationPhase.error) {
+      _hasNavigated = true;
+      context.pushReplacement(
+        AppRoutes.selfieFailed,
+        extra: next.errorMessage,
+      );
+    } else if (next.phase == VerificationPhase.verified) {
+      _hasNavigated = true;
+      context.pushReplacement(AppRoutes.verificationSuccess);
     }
   }
 
@@ -73,16 +107,12 @@ class _SelfieProcessingScreenState
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
 
-    if (state.phase == VerificationPhase.error ||
-        state.phase == VerificationPhase.videoQualityFailed) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.pushReplacement(AppRoutes.selfieFailed);
-      });
-    }
+    ref.listen<VerificationState>(verificationNotifierProvider, (previous, next) {
+      _handleStateTransition(next);
+    });
 
-    final currentStatus = _done < _stages.length
-        ? _stages[_done].status
-        : 'Face verified';
+    final doneCount = _calculateDone(state.phase);
+    final currentStatus = _calculateStatus(state);
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_upload_check.svg',
@@ -114,7 +144,7 @@ class _SelfieProcessingScreenState
           labels: const ['Upload', 'Check'],
           states: [
             for (int i = 0; i < 2; i++)
-              i < _done ? TrioState.done : TrioState.waiting,
+              i < doneCount ? TrioState.done : TrioState.waiting,
           ],
         ),
         const SizedBox(height: AppSpacing.lg),

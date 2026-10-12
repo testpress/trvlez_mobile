@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
@@ -11,27 +12,128 @@ import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
-/// Screen displayed when one specific step needs redoing during the final verification check.
+/// Screen displayed when one specific step needs redoing during the verification process.
 ///
 /// Clearly indicates that all other steps remain saved and allows the traveler to jump
-/// directly into retrying the single required action.
-class NfcFailedScreen extends StatelessWidget {
+/// directly into retrying the single required action or skipping optional hardware steps.
+class NfcFailedScreen extends ConsumerWidget {
   const NfcFailedScreen({
     super.key,
-    this.failedStepTitle = 'Selfie',
-    this.redoButtonLabel = 'Record the video again',
-    this.redoRoute = AppRoutes.selfieInstructions,
+    this.failedStepTitle = 'Chip scan',
+    this.redoButtonLabel,
+    this.redoRoute,
+    this.reason,
+    this.mitigation,
   });
 
   final String failedStepTitle;
-  final String redoButtonLabel;
-  final String redoRoute;
+  final String? redoButtonLabel;
+  final String? redoRoute;
+  final String? reason;
+  final String? mitigation;
+
+  bool get _isChipScan =>
+      failedStepTitle.toLowerCase().contains('chip') ||
+      failedStepTitle.toLowerCase().contains('nfc');
+
+  bool get _isSelfie =>
+      failedStepTitle.toLowerCase().contains('selfie') ||
+      failedStepTitle.toLowerCase().contains('face') ||
+      failedStepTitle.toLowerCase().contains('liveness');
+
+  String _getResolvedButtonLabel() {
+    if (redoButtonLabel != null && redoButtonLabel!.isNotEmpty) {
+      return redoButtonLabel!;
+    }
+    if (_isChipScan) return 'Try chip scan again';
+    if (_isSelfie) return 'Record the video again';
+    return 'Retake photo';
+  }
+
+  String _getResolvedRedoRoute() {
+    if (redoRoute != null && redoRoute!.isNotEmpty) {
+      return redoRoute!;
+    }
+    if (_isChipScan) return AppRoutes.nfcScan;
+    if (_isSelfie) return AppRoutes.selfieCapture;
+    return AppRoutes.passportCapture;
+  }
+
+  String _getSubtitle(String? errorFromState) {
+    if (reason != null && reason!.isNotEmpty) return reason!;
+    if (errorFromState != null && errorFromState.isNotEmpty) {
+      return errorFromState;
+    }
+    if (_isChipScan) {
+      return "We couldn't read the chip inside your passport. You can try again or skip this step.";
+    }
+    if (_isSelfie) {
+      return "Everything else is fine — we just couldn't read your face clearly in the video.";
+    }
+    return "Everything else is fine — we couldn't clearly read your passport document.";
+  }
+
+  String _getMitigation() {
+    if (mitigation != null && mitigation!.isNotEmpty) return mitigation!;
+    if (_isChipScan) {
+      return 'Hold the top of your phone flat against the passport cover, remove thick phone cases, and keep it still for a few seconds.';
+    }
+    if (_isSelfie) {
+      return "Better light on your face, nothing covering it, and holding the phone at arm's length rather than close up.";
+    }
+    return 'Place the passport on a flat, well-lit surface with no glare or reflections.';
+  }
+
+  List<VerifyStatusItem> _buildRows(bool isNfcSkipped) {
+    if (_isChipScan) {
+      return const [
+        VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
+        VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
+        VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
+        VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.redo),
+      ];
+    }
+    if (_isSelfie) {
+      return [
+        const VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
+        const VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
+        const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.redo),
+        if (!isNfcSkipped)
+          const VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
+      ];
+    }
+    return [
+      const VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.redo),
+      const VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.redo),
+      const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
+      if (!isNfcSkipped)
+        const VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
+    ];
+  }
+
+  void _onRedoTap(BuildContext context, WidgetRef ref, String route) {
+    final notifier = ref.read(verificationNotifierProvider.notifier);
+    if (_isSelfie) {
+      notifier.clearVideo();
+    } else if (!_isChipScan) {
+      notifier.clearImage();
+    }
+    context.pushReplacement(route);
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final state = ref.watch(verificationNotifierProvider);
+
+    final resolvedLabel = _getResolvedButtonLabel();
+    final resolvedRoute = _getResolvedRedoRoute();
+    final subtitle = _getSubtitle(state.errorMessage);
+    final fixText = _getMitigation();
+    final rows = _buildRows(state.isNfcSkipped);
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc_scan.svg',
@@ -73,7 +175,7 @@ class NfcFailedScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Text(
-            "Everything else is fine — we just couldn't read your face clearly in the video.",
+            subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
@@ -85,14 +187,9 @@ class NfcFailedScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyStatusRows(
+        VerifyStatusRows(
           dimCompleted: true,
-          rows: [
-            VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
-            VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
-            VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.redo),
-            VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
-          ],
+          rows: rows,
         ),
         const SizedBox(height: AppSpacing.md),
         Container(
@@ -116,7 +213,7 @@ class NfcFailedScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                "Better light on your face, nothing covering it, and holding the phone at arm's length rather than close up.",
+                fixText,
                 style: TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 11.5,
@@ -131,12 +228,24 @@ class NfcFailedScreen extends StatelessWidget {
       ],
       foot: [
         AppButton(
-          label: redoButtonLabel,
+          label: resolvedLabel,
           variant: AppButtonVariant.brandWhite,
-          onPressed: () {
-            context.pushReplacement(redoRoute);
-          },
+          onPressed: () => _onRedoTap(context, ref, resolvedRoute),
         ),
+        if (_isChipScan) ...[
+          const SizedBox(height: AppSpacing.xs),
+          AppButton(
+            label: 'Skip chip scan and continue',
+            variant: AppButtonVariant.brandOutline,
+            onPressed: () {
+              ref.read(verificationNotifierProvider.notifier).skipNfc();
+              ref
+                  .read(verificationNotifierProvider.notifier)
+                  .submitVerificationAsync();
+              context.pushReplacement(AppRoutes.nfcFinalCheck);
+            },
+          ),
+        ],
         const SizedBox(height: AppSpacing.sm),
         const BrandSecurityNote(
           text: "Your other steps are saved. You won't repeat them.",

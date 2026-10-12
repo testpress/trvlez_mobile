@@ -111,6 +111,16 @@ class NfcIntroScreen extends ConsumerWidget {
             context.push(AppRoutes.nfcScan);
           },
         ),
+        const SizedBox(height: AppSpacing.xs),
+        AppButton(
+          label: 'Skip chip scan',
+          variant: AppButtonVariant.brandOutline,
+          onPressed: () {
+            ref.read(verificationNotifierProvider.notifier).skipNfc();
+            ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
+            context.pushReplacement(AppRoutes.nfcFinalCheck);
+          },
+        ),
         const SizedBox(height: AppSpacing.sm),
         const BrandSecurityNote(
           text: 'Read on your phone.\nNever shared with external AI.',

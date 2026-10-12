@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
@@ -10,13 +11,14 @@ import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Screen displayed when the selfie video check does not succeed.
 ///
 /// Features a wobbling face illustration, 2-stage trio with check failure,
 /// compassionate lighting explanation, and retry/tips actions.
-class SelfieFailedScreen extends StatelessWidget {
+class SelfieFailedScreen extends ConsumerWidget {
   const SelfieFailedScreen({
     super.key,
     this.failureReason,
@@ -24,17 +26,20 @@ class SelfieFailedScreen extends StatelessWidget {
 
   final String? failureReason;
 
-  String _getExplanation() {
-    final reason = failureReason;
-    if (reason != null && reason.isNotEmpty) {
-      return reason;
+  String _getExplanation(String? errorFromState) {
+    if (failureReason != null && failureReason!.isNotEmpty) {
+      return failureReason!;
+    }
+    if (errorFromState != null && errorFromState.isNotEmpty) {
+      return errorFromState;
     }
     return "We couldn't get a clear enough look at your face. A little more light usually fixes it.";
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final state = ref.watch(verificationNotifierProvider);
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_capture.svg',
@@ -79,7 +84,7 @@ class SelfieFailedScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Text(
-            _getExplanation(),
+            _getExplanation(state.errorMessage),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
@@ -95,7 +100,10 @@ class SelfieFailedScreen extends StatelessWidget {
         AppButton(
           label: 'Record again',
           variant: AppButtonVariant.brandWhite,
-          onPressed: () => context.pushReplacement(AppRoutes.selfieCapture),
+          onPressed: () {
+            ref.read(verificationNotifierProvider.notifier).clearVideo();
+            context.pushReplacement(AppRoutes.selfieCapture);
+          },
         ),
         const SizedBox(height: AppSpacing.xs),
         AppButton(

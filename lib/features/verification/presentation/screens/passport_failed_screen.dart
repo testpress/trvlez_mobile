@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
@@ -10,13 +11,14 @@ import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Screen displayed when passport quality gate or MRZ reading encounters an issue.
 ///
 /// Features a single-play 800ms wobble illustration, trio progress marking the failed stage,
 /// supportive guidance blaming the lighting rather than the traveler, and clear recovery actions.
-class PassportFailedScreen extends StatelessWidget {
+class PassportFailedScreen extends ConsumerWidget {
   const PassportFailedScreen({
     super.key,
     this.failureReason,
@@ -24,17 +26,20 @@ class PassportFailedScreen extends StatelessWidget {
 
   final String? failureReason;
 
-  String _getExplanation() {
-    final reason = failureReason;
-    if (reason != null && reason.isNotEmpty) {
-      return reason;
+  String _getExplanation(String? errorFromState) {
+    if (failureReason != null && failureReason!.isNotEmpty) {
+      return failureReason!;
+    }
+    if (errorFromState != null && errorFromState.isNotEmpty) {
+      return errorFromState;
     }
     return "We couldn't read the two lines at the bottom of the page. A little more light usually fixes it.";
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final state = ref.watch(verificationNotifierProvider);
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_flow.svg',
@@ -80,7 +85,7 @@ class PassportFailedScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Text(
-            _getExplanation(),
+            _getExplanation(state.errorMessage),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
@@ -96,7 +101,10 @@ class PassportFailedScreen extends StatelessWidget {
         AppButton(
           label: 'Retake photo',
           variant: AppButtonVariant.brandWhite,
-          onPressed: () => context.pushReplacement(AppRoutes.passportCapture),
+          onPressed: () {
+            ref.read(verificationNotifierProvider.notifier).clearImage();
+            context.pushReplacement(AppRoutes.passportCapture);
+          },
         ),
         const SizedBox(height: AppSpacing.xs),
         AppButton(
