@@ -4,6 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/features/anywhere/presentation/screens/anywhere_sent_screen.dart';
+import 'package:trvlez_mobile/features/anywhere/presentation/screens/find_hotel_screen.dart';
+import 'package:trvlez_mobile/features/anywhere/presentation/screens/hotel_details_screen.dart';
+import 'package:trvlez_mobile/features/anywhere/presentation/screens/stay_details_screen.dart';
+import 'package:trvlez_mobile/features/anywhere/presentation/screens/what_they_are_told_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/login_screen.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/new_password_screen.dart';
@@ -26,6 +31,12 @@ import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_vi
 import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_visa_review_screen.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_visa_screen.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/screens/hotel_view_screen.dart';
+import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_detail_screen.dart';
+import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_raised_screen.dart';
+import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_reason_screen.dart';
+import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_status_screen.dart';
+import 'package:trvlez_mobile/features/findr/presentation/screens/findr_programme_screen.dart';
+import 'package:trvlez_mobile/features/findr/presentation/screens/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -412,6 +423,65 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
           return HotelViewScreen(reservationId: id);
+        },
+      ),
+      // ─── Findr Routes (Section 04) ──────────────────────────────
+      GoRoute(
+        path: AppRoutes.findr,
+        builder: (context, state) => const FindrProgrammeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.joinFindr,
+        builder: (context, state) => const JoinFindrSheet(),
+      ),
+      // ─── Check-in Anywhere Routes ───────────────────────────────
+      GoRoute(
+        path: AppRoutes.anywhereFind,
+        builder: (context, state) => const FindHotelScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.anywhereHotel,
+        builder: (context, state) => const HotelDetailsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.anywhereStay,
+        builder: (context, state) => const StayDetailsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.anywhereTold,
+        builder: (context, state) => const WhatTheyAreToldScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.anywhereSent,
+        builder: (context, state) => const AnywhereSentScreen(),
+      ),
+      // ─── Dispute Routes ─────────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.disputeReason,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return DisputeReasonScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.disputeDetail,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return DisputeDetailScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.disputeRaised,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return DisputeRaisedScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.disputeStatus,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return DisputeStatusScreen(reservationId: id);
         },
       ),
       // ─── Profile & Verification Routes ──────────────────────────

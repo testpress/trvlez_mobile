@@ -205,10 +205,17 @@ class AppColors extends ThemeExtension<AppColors> {
   Color get okInk => statusSuccessForeground;
   Color get waitFill => statusWarningBackground;
   Color get waitInk => statusWarningForeground;
-  Color get cardBorderSoft => cardBorder;
   Color get paper => Palette.paper;
   Color get paperLine => Palette.paperLine;
+  Color get paperInk => Palette.paperInk;
+  Color get paperInk2 => Palette.paperInk2;
   Color get photoChip => Palette.photoChip;
+  Color get buttonIdle => Palette.buttonIdle;
+  Color get buttonIdleLabel => Palette.buttonIdleLabel;
+  Color get chipBorder => Palette.chipBorder;
+  Color get chevron => Palette.chevron;
+  Color get scrim => Palette.scrim;
+  Color get cardBorderSoft => cardBorder;
 
   // ─── Static Feature Gradients & Constants ────────────────────────────
   static const Color white = Palette.neutral0;

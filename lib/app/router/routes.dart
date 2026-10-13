@@ -62,6 +62,28 @@ class AppRoutes {
   static String checkInPassPath(String id) => '/check-in/$id/pass';
   static String hotelViewPath(String id) => '/check-in/$id/hotel-view';
 
+  // Section 04 · Findr Programme
+  static const String findr = '/findr';
+  static const String joinFindr = '/findr/join';
+
+  // Section 06b · Check in Anywhere
+  static const String anywhereFind = '/anywhere/find';
+  static const String anywhereHotel = '/anywhere/hotel';
+  static const String anywhereStay = '/anywhere/stay';
+  static const String anywhereTold = '/anywhere/told';
+  static const String anywhereSent = '/anywhere/sent';
+
+  // Section 06c · Disputes
+  static const String disputeReason = '/dispute/:id/reason';
+  static const String disputeDetail = '/dispute/:id/detail';
+  static const String disputeRaised = '/dispute/:id/raised';
+  static const String disputeStatus = '/dispute/:id/status';
+
+  static String disputeReasonPath(String id) => '/dispute/$id/reason';
+  static String disputeDetailPath(String id) => '/dispute/$id/detail';
+  static String disputeRaisedPath(String id) => '/dispute/$id/raised';
+  static String disputeStatusPath(String id) => '/dispute/$id/status';
+
   // Reservations
   static const String createReservation = '/reservations/create';
   static const String reservationDetail = '/reservations/:id';

@@ -107,4 +107,12 @@ abstract final class AppIcons {
   static const send = IconData(0xeb1e, fontFamily: _fontFamily);
   static const fileSearch = IconData(0xed5d, fontFamily: _fontFamily);
   static const scale = IconData(0xebc2, fontFamily: _fontFamily);
+
+  // ─── Semantic Aliases ──────────────────────────────────────────────
+  static const x = close;
+  static const plus = Icons.add_rounded;
+  static const globe = building;
+  static const info = infoCircle;
+  static const checkCircle = circleCheck;
+  static const shieldAlert = alertTriangle;
 }

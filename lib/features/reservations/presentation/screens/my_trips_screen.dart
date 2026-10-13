@@ -12,6 +12,8 @@ import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
+import 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart';
+import 'package:trvlez_mobile/features/disputes/presentation/providers/dispute_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 
 /// Displays the traveler's reservations and booking history.
@@ -138,24 +140,54 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     List<Reservation> reservations,
     String emptyType,
   ) {
-    if (reservations.isEmpty) {
+    final anywhereStays = emptyType == 'upcoming'
+        ? ref.watch(anywhereStaysProvider)
+        : const <AnywhereStay>[];
+
+    if (reservations.isEmpty && anywhereStays.isEmpty) {
+      if (emptyType == 'upcoming') {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            children: [
+              _buildEmptyState(emptyType),
+              const SizedBox(height: AppSpacing.md),
+              _AddStayRow(
+                onTap: () => context.push(AppRoutes.anywhereFind),
+              ),
+            ],
+          ),
+        );
+      }
       return _buildEmptyState(emptyType);
     }
 
     return RefreshIndicator(
       onRefresh: () => ref.refresh(reservationListProvider.future),
-      child: ListView.separated(
+      child: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
-        itemCount: reservations.length,
-        separatorBuilder: (context, index) =>
+        children: [
+          for (final reservation in reservations) ...[
+            _ReservationCard(
+              reservation: reservation,
+              onTap: () => context.push(
+                '/reservations/${reservation.id}',
+                extra: {'reservation': reservation},
+              ),
+            ),
             const SizedBox(height: AppSpacing.md),
-        itemBuilder: (context, index) => _ReservationCard(
-          reservation: reservations[index],
-          onTap: () => context.push(
-            '/reservations/${reservations[index].id}',
-            extra: {'reservation': reservations[index]},
-          ),
-        ),
+          ],
+          if (emptyType == 'upcoming') ...[
+            for (final stay in anywhereStays) ...[
+              _AnywhereCard(stay: stay),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            _AddStayRow(
+              onTap: () => context.push(AppRoutes.anywhereFind),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+        ],
       ),
     );
   }
@@ -298,16 +330,17 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
 
 // ─── Reservation Card ──────────────────────────────────────────────
 
-class _ReservationCard extends StatelessWidget {
+class _ReservationCard extends ConsumerWidget {
   final Reservation reservation;
   final VoidCallback onTap;
 
   const _ReservationCard({required this.reservation, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final dateFormat = DateFormat('MMM d');
+    final dispute = ref.watch(disputesProvider)[reservation.id];
 
     final pillState = switch (reservation.status) {
       ReservationStatus.confirmed => StatusPillState.confirmed,
@@ -505,6 +538,139 @@ class _ReservationCard extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (dispute != null && dispute.status == 'holding') ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        context.push(
+                          AppRoutes.disputeStatusPath(reservation.id),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.statusWarningBackground,
+                          borderRadius: AppRadius.mdRadius,
+                          border: Border.all(
+                            color: colors.statusWarningForeground
+                                .withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              AppIcons.shieldAlert,
+                              size: 14,
+                              color: colors.statusWarningForeground,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Payment on hold',
+                                    style: TextStyle(
+                                      fontFamily: AppTypography.fontFamily,
+                                      fontSize: 12,
+                                      fontWeight: TypeScale.bold,
+                                      color: colors.statusWarningForeground,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Dispute active · Raised ${dispute.raisedAt}',
+                                    style: TextStyle(
+                                      fontFamily: AppTypography.fontFamily,
+                                      fontSize: 10,
+                                      color: colors.statusWarningForeground,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              AppIcons.chevronRight,
+                              size: 13,
+                              color: colors.statusWarningForeground,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ] else if (dispute != null && dispute.status == 'withdrawn') ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.surfaceSubtle,
+                        borderRadius: AppRadius.mdRadius,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            AppIcons.checkCircle,
+                            size: 12,
+                            color: colors.inkTertiary,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Dispute withdrawn · Payment released to hotel',
+                              style: TextStyle(
+                                fontFamily: AppTypography.fontFamily,
+                                fontSize: 11,
+                                color: colors.inkTertiary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ] else if (reservation.status == ReservationStatus.checkedIn ||
+                      reservation.status == ReservationStatus.checkedOut) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        ref.read(disputeDraftProvider.notifier).initDraft(
+                              reservationId: reservation.id,
+                              bookingReference: reservation.confirmationCode,
+                              hotel: reservation.propertySummary.name,
+                            );
+                        context.push(
+                          AppRoutes.disputeReasonPath(reservation.id),
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            AppIcons.alertCircle,
+                            size: 12,
+                            color: colors.inkTertiary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Something wrong with this stay? Report issue',
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 11,
+                              fontWeight: TypeScale.medium,
+                              color: colors.inkTertiary,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -514,3 +680,280 @@ class _ReservationCard extends StatelessWidget {
     );
   }
 }
+
+// ─── Anywhere Card ──────────────────────────────────────────────────
+
+class _AnywhereCard extends StatelessWidget {
+  const _AnywhereCard({required this.stay});
+
+  final AnywhereStay stay;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    final (pillLabel, pillState) = switch (stay.status) {
+      AnywhereStatus.sent => ('Sent to hotel', StatusPillState.awaiting),
+      AnywhereStatus.noted => ('Noted by hotel', StatusPillState.confirmed),
+      AnywhereStatus.desk => ('Check-in at desk', StatusPillState.completed),
+    };
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: AppRadius.cardRadius,
+        border: Border.all(color: colors.cardBorderSoft),
+        boxShadow: [
+          BoxShadow(
+            color: colors.cardShadow,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: colors.redTint,
+                  borderRadius: AppRadius.smRadius,
+                ),
+                child: Center(
+                  child: Icon(
+                    AppIcons.globe,
+                    size: 18,
+                    color: colors.brandPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      stay.hotel,
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 15,
+                        fontWeight: TypeScale.bold,
+                        color: colors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(
+                          AppIcons.mapPin,
+                          size: 12,
+                          color: colors.inkTertiary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            stay.place,
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 12,
+                              color: colors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              StatusPill(
+                label: pillLabel,
+                state: pillState,
+              ),
+            ],
+          ),
+          const Divider(height: AppSpacing.md),
+          Row(
+            children: [
+              Icon(
+                AppIcons.calendar,
+                size: 13,
+                color: colors.brandPrimary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                stay.dates,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 12,
+                  fontWeight: TypeScale.semiBold,
+                  color: colors.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${stay.guests} guest${stay.guests > 1 ? 's' : ''}',
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 11,
+                  color: colors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Icon(
+                stay.route == AnywhereRoute.byEmail
+                    ? AppIcons.mail
+                    : AppIcons.shieldCheck,
+                size: 13,
+                color: colors.inkTertiary,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  stay.route == AnywhereRoute.byEmail
+                      ? 'Delivered to ${stay.hotelEmail}'
+                      : 'TRVLez connected direct check-in',
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 11,
+                    color: colors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: 6,
+            ),
+            decoration: BoxDecoration(
+              color: colors.surfaceSubtle,
+              borderRadius: AppRadius.smRadius,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  AppIcons.info,
+                  size: 12,
+                  color: colors.inkTertiary,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Check-in Anywhere pass · Show passport upon arrival',
+                    style: TextStyle(
+                      fontFamily: AppTypography.fontFamily,
+                      fontSize: 10,
+                      fontWeight: TypeScale.medium,
+                      color: colors.inkSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Add Stay Row ───────────────────────────────────────────────────
+
+class _AddStayRow extends StatelessWidget {
+  const _AddStayRow({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: AppRadius.cardRadius,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: colors.surfaceSubtle,
+            borderRadius: AppRadius.cardRadius,
+            border: Border.all(color: colors.cardBorderSoft),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: colors.redTint,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Icon(
+                    AppIcons.plus,
+                    size: 16,
+                    color: colors.brandPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Check-in Anywhere',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 13,
+                        fontWeight: TypeScale.bold,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Staying at a hotel not on TRVLez? Check in online here.',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 11,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Icon(
+                AppIcons.chevronRight,
+                size: 16,
+                color: colors.inkTertiary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

@@ -11,6 +11,8 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/screens/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/check_in_banner.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/findr_card.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/home_location_row.dart';
@@ -33,7 +35,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _selectedLocation = 'Edinburgh, UK';
-  bool _findrJoined = false;
   final Set<String> _readNotifIds = {};
 
   List<NotificationItem> _getNotifications({
@@ -138,9 +139,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
     final unreadCount = notifications.where((n) => n.isUnread).length;
 
+    final findrPortfolio = ref.watch(findrPortfolioProvider);
     final findrCardState = !isVerified
         ? FindrState.locked
-        : (_findrJoined ? FindrState.active : FindrState.notJoined);
+        : (findrPortfolio.joined ? FindrState.active : FindrState.notJoined);
 
     return Scaffold(
       backgroundColor: colors.page,
@@ -254,24 +256,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   HomeSectionHeader(
                     title: 'Earn with us',
                     action: findrCardState == FindrState.active ? 'Open' : null,
-                    onAction: () {},
+                    onAction: () => context.push(AppRoutes.findr),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   FindrCard(
                     state: findrCardState,
+                    earned: findrPortfolio.earned,
+                    joined: findrPortfolio.joinedCount,
+                    inReview: findrPortfolio.inReviewCount,
+                    due: findrPortfolio.dueAmount,
+                    dueDate: findrPortfolio.dueDate,
                     onCta: () {
                       if (findrCardState == FindrState.locked) {
-                        context.push(AppRoutes.onboarding);
+                        context.push(AppRoutes.verificationLanding);
                       } else if (findrCardState == FindrState.notJoined) {
-                        setState(() => _findrJoined = true);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Findr activated! You can now earn rewards.',
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
+                        showJoinFindrSheet(context);
+                      } else {
+                        context.push(AppRoutes.findr);
                       }
                     },
                   ),

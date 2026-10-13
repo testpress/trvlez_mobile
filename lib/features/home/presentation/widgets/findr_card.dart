@@ -72,7 +72,7 @@ class FindrCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const _FindrHeading(),
+                const FindrHeading(),
                 if (state == FindrState.active) ...[
                   _FindrEarnedRow(earned: earned),
                   _FindrMiniStats(
@@ -125,8 +125,15 @@ class FindrCard extends StatelessWidget {
   }
 }
 
-class _FindrHeading extends StatelessWidget {
-  const _FindrHeading();
+class FindrHeading extends StatelessWidget {
+  const FindrHeading({
+    super.key,
+    this.prefix = 'Find',
+    this.iconBox = 32,
+  });
+
+  final String prefix;
+  final double iconBox;
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +142,8 @@ class _FindrHeading extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 32,
-          height: 32,
+          width: iconBox,
+          height: iconBox,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: colors.surface,
@@ -149,15 +156,15 @@ class _FindrHeading extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(AppIcons.mapSearch, size: 16, color: colors.brandPrimary),
+          child: Icon(AppIcons.mapSearch, size: iconBox * 0.5, color: colors.brandPrimary),
         ),
         const SizedBox(width: AppSpacing.sm),
         Text.rich(
           TextSpan(
             children: [
-              const TextSpan(
-                text: 'Find',
-                style: TextStyle(
+              TextSpan(
+                text: prefix,
+                style: const TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 16,
                   fontWeight: TypeScale.bold,
