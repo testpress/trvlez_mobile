@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_brand_logo.dart';
 
 /// Top bar header for the properties listing screen with brand logo and explore badge.
@@ -38,9 +38,8 @@ class PropertiesHeader extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 'Explore Stays',
-                style: GoogleFonts.inter(
+                style: AppTypography.label.copyWith(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface,
                 ),
               ),
@@ -103,11 +102,14 @@ class _PropertiesSearchBarState extends State<PropertiesSearchBar> {
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
         textInputAction: TextInputAction.search,
-        style: GoogleFonts.inter(color: colorScheme.onSurface, fontSize: 14),
+        style: AppTypography.body.copyWith(
+          color: colorScheme.onSurface,
+          fontSize: 14,
+        ),
         decoration: InputDecoration(
           icon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
           hintText: 'Search properties or cities',
-          hintStyle: GoogleFonts.inter(
+          hintStyle: AppTypography.body.copyWith(
             color: colorScheme.onSurfaceVariant,
             fontSize: 14,
           ),
@@ -167,7 +169,7 @@ class PropertyCategorySelector extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 categories[index],
-                style: GoogleFonts.inter(
+                style: AppTypography.label.copyWith(
                   color: isSelected
                       ? colorScheme.onPrimary
                       : colorScheme.onSurfaceVariant,

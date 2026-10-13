@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
@@ -80,14 +82,15 @@ class _ReservationDetailContent extends ConsumerWidget {
       backgroundColor: colors.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: const Icon(AppIcons.arrowLeft, size: 20),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Reservation Details',
-          style: GoogleFonts.nunito(
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             fontSize: 20,
-            fontWeight: FontWeight.w700,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
@@ -119,14 +122,15 @@ class _ReservationDetailContent extends ConsumerWidget {
       backgroundColor: colors.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: const Icon(AppIcons.arrowLeft, size: 20),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Reservation Details',
-          style: GoogleFonts.nunito(
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             fontSize: 20,
-            fontWeight: FontWeight.w700,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
@@ -232,7 +236,8 @@ class _ReservationDetailContent extends ConsumerWidget {
                 children: [
                   Text(
                     activeReservation.specialRequests!,
-                    style: GoogleFonts.cabin(
+                    style: TextStyle(
+                      fontFamily: AppTypography.fontFamily,
                       fontSize: 14,
                       color: context.colors.textSecondary,
                       height: 1.5,
@@ -287,9 +292,10 @@ class _ReservationDetailContent extends ConsumerWidget {
             children: [
               Text(
                 'CONFIRMATION CODE',
-                style: GoogleFonts.inter(
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
                   fontSize: 11,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: TypeScale.semiBold,
                   letterSpacing: 0.8,
                   color: colors.textSecondary,
                 ),
@@ -297,9 +303,10 @@ class _ReservationDetailContent extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xs),
               Text(
                 activeReservation.confirmationCode,
-                style: GoogleFonts.inter(
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: TypeScale.bold,
                   color: colors.actionPrimary,
                 ),
               ),
@@ -325,13 +332,16 @@ class _ReservationDetailContent extends ConsumerWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.lg),
           ),
-          title: Text(
+          title: const Text(
             'Cancel Reservation?',
-            style: GoogleFonts.nunito(fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontWeight: TypeScale.bold,
+            ),
           ),
           content: Text(
             'Are you sure you want to cancel this reservation at ${activeReservation.propertySummary.name}?',
-            style: GoogleFonts.cabin(),
+            style: const TextStyle(fontFamily: AppTypography.fontFamily),
           ),
           actions: [
             TextButton(

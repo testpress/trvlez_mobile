@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
@@ -28,8 +28,7 @@ class VerificationStatusActions extends ConsumerWidget {
             icon: const Icon(Icons.refresh_rounded),
             label: Text(
               'Re-submit Documents',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w500,
+              style: AppTypography.label.copyWith(
                 fontSize: 16,
               ),
             ),
@@ -57,8 +56,7 @@ class VerificationStatusActions extends ConsumerWidget {
             icon: const Icon(Icons.support_agent_rounded),
             label: Text(
               'Contact Support',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w500,
+              style: AppTypography.label.copyWith(
                 fontSize: 14,
               ),
             ),
@@ -77,7 +75,7 @@ class VerificationStatusActions extends ConsumerWidget {
         icon: const Icon(Icons.explore_rounded),
         label: Text(
           'Start Exploring',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+          style: AppTypography.label.copyWith(fontSize: 16),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.onSurface,

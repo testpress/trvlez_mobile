@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
@@ -70,9 +70,8 @@ class StepChecklist extends StatelessWidget {
         children: [
           Text(
             'Verification Steps',
-            style: GoogleFonts.nunito(
+            style: AppTypography.heading.copyWith(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
               color: theme.colorScheme.onSurface,
             ),
           ),
@@ -131,7 +130,7 @@ class StepRow extends StatelessWidget {
           Expanded(
             child: Text(
               step.label,
-              style: GoogleFonts.cabin(
+              style: AppTypography.body.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: theme.colorScheme.onSurface,
@@ -146,9 +145,8 @@ class StepRow extends StatelessWidget {
             ),
             child: Text(
               statusLabel,
-              style: GoogleFonts.cabin(
+              style: AppTypography.label.copyWith(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
                 color: color,
               ),
             ),

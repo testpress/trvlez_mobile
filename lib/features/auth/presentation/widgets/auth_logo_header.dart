@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Top brand logo header for authentication screens (app icon + stylized TrvlEz brand name).
 class AuthLogoHeader extends StatelessWidget {
@@ -45,9 +45,8 @@ class AuthLogoHeader extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.inter(
+            style: AppTypography.heading.copyWith(
               fontSize: 20,
-              fontWeight: FontWeight.w700,
               color: colors.textOnAction,
             ),
             children: [

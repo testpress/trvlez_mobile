@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/form.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_notifier.dart';
 
@@ -52,19 +55,49 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(preArrivalFormProvider(widget.reservationId));
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = context.colors;
 
     if (state.isLoading && state.formResponse == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Pre-Arrival Form')),
-        body: const Center(child: CircularProgressIndicator()),
+        backgroundColor: colors.surface,
+        appBar: AppBar(
+          backgroundColor: colors.surface,
+          title: Text(
+            'Pre-Arrival Form',
+            style: AppTypography.heading.copyWith(
+              fontSize: 20,
+              color: colors.textPrimary,
+            ),
+          ),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(color: colors.brandPrimary),
+        ),
       );
     }
 
     if (state.error != null && state.formResponse == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Pre-Arrival Form')),
-        body: Center(child: Text('Error: ${state.error}')),
+        backgroundColor: colors.surface,
+        appBar: AppBar(
+          backgroundColor: colors.surface,
+          title: Text(
+            'Pre-Arrival Form',
+            style: AppTypography.heading.copyWith(
+              fontSize: 20,
+              color: colors.textPrimary,
+            ),
+          ),
+        ),
+        body: Center(
+          child: Text(
+            'Error: ${state.error}',
+            style: AppTypography.body.copyWith(
+              fontSize: 14,
+              color: colors.feedbackError,
+            ),
+          ),
+        ),
       );
     }
 
@@ -75,16 +108,25 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
         formResponse.submission?.status == FormSubmissionStatus.approved;
 
     return Scaffold(
+      backgroundColor: colors.surface,
       appBar: AppBar(
+        backgroundColor: colors.surface,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => context.pop(),
+        ),
         title: Text(
           template.title,
-          style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
+          style: AppTypography.heading.copyWith(
+            fontSize: 20,
+            color: colors.textPrimary,
+          ),
         ),
       ),
       body: Form(
         key: _formKey,
         child: ListView.builder(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.screenPadding),
           itemCount: template.formDefinition.sections.length,
           itemBuilder: (context, index) {
             final section = template.formDefinition.sections[index];
@@ -92,7 +134,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
               section,
               state.currentResponses,
               isReadOnly,
-              colorScheme,
+              colors,
             );
           },
         ),
@@ -100,11 +142,13 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
       bottomNavigationBar: isReadOnly
           ? null
           : Container(
-              padding: const EdgeInsets.all(24).copyWith(top: 16),
+              padding: const EdgeInsets.all(AppSpacing.screenPadding).copyWith(
+                top: AppSpacing.md,
+              ),
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: colors.surface,
                 border: Border(
-                  top: BorderSide(color: colorScheme.outlineVariant),
+                  top: BorderSide(color: colors.borderSubtle),
                 ),
               ),
               child: SafeArea(
@@ -114,27 +158,54 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
                       child: OutlinedButton(
                         onPressed: state.isLoading ? null : _handleSaveDraft,
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.md,
+                          ),
+                          side: BorderSide(color: colors.borderSubtle),
+                          foregroundColor: colors.textPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
                         ),
                         child: state.isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
+                                  color: colors.brandPrimary,
                                 ),
                               )
-                            : const Text('Save Draft'),
+                            : Text(
+                                'Save Draft',
+                                style: AppTypography.label.copyWith(
+                                  fontSize: 14,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: FilledButton(
                         onPressed: state.isLoading ? null : _handleSubmit,
                         style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: colors.brandPrimary,
+                          foregroundColor: colors.brandOnSurface,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.md,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
                         ),
-                        child: const Text('Submit'),
+                        child: Text(
+                          'Submit',
+                          style: AppTypography.label.copyWith(
+                            fontSize: 14,
+                            color: colors.brandOnSurface,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -148,37 +219,36 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
     FormSection section,
     Map<String, dynamic> responses,
     bool isReadOnly,
-    ColorScheme colorScheme,
+    AppColors colors,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           section.title,
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: colorScheme.primary,
+            color: colors.brandPrimary,
           ),
         ),
         if (section.description != null && section.description!.isNotEmpty) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             section.description!,
-            style: GoogleFonts.cabin(
+            style: AppTypography.body.copyWith(
               fontSize: 14,
-              color: colorScheme.onSurfaceVariant,
+              color: colors.textSecondary,
             ),
           ),
         ],
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         ...section.fields.map(
           (field) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: _buildField(field, responses[field.id], isReadOnly),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
       ],
     );
   }

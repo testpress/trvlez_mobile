@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
@@ -119,7 +121,7 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
             label: 'Verify Now',
             onPressed: () {
               if (verification.needsOnboarding) {
-                context.push(AppRoutes.onboarding);
+                context.push(AppRoutes.verificationLanding);
               } else {
                 context.push(AppRoutes.verificationStatus);
               }
@@ -158,14 +160,15 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
       backgroundColor: colors.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: const Icon(AppIcons.arrowLeft, size: 20),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Check-in QR Code',
-          style: GoogleFonts.inter(
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             fontSize: 18,
-            fontWeight: FontWeight.w700,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
@@ -202,14 +205,15 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
       backgroundColor: colors.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: const Icon(AppIcons.arrowLeft, size: 20),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Check-in QR Code',
-          style: GoogleFonts.inter(
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             fontSize: 18,
-            fontWeight: FontWeight.w700,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
@@ -281,7 +285,7 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
     TravelerVerificationState verificationState,
   ) {
     if (verificationState.needsOnboarding) {
-      context.push(AppRoutes.onboarding);
+      context.push(AppRoutes.verificationLanding);
     } else {
       context.push(AppRoutes.verificationStatus);
     }
@@ -310,16 +314,17 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.qr_code_2_rounded,
+              AppIcons.qrcode,
               size: 80,
               color: context.colors.textDisabled,
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
               'No Active Check-in Pass',
-              style: GoogleFonts.inter(
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
                 fontSize: 16,
-                fontWeight: FontWeight.w700,
+                fontWeight: TypeScale.bold,
                 color: context.colors.textPrimary,
               ),
             ),
@@ -327,7 +332,8 @@ class _QrCodeScreenContentState extends ConsumerState<_QrCodeScreenContent> {
             Text(
               'Tap below to generate your check-in QR code pass.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
                 fontSize: 13,
                 color: context.colors.textSecondary,
               ),
@@ -366,16 +372,17 @@ class _KycRequiredView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.verified_user_outlined,
+              AppIcons.shieldCheck,
               size: 48,
               color: colors.feedbackWarning,
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
               'Verification Required',
-              style: GoogleFonts.inter(
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
                 fontSize: 18,
-                fontWeight: FontWeight.w700,
+                fontWeight: TypeScale.bold,
                 color: colors.textPrimary,
               ),
             ),
@@ -383,7 +390,8 @@ class _KycRequiredView extends StatelessWidget {
             Text(
               'To receive your digital room key and check-in pass, your identity must be verified before arrival.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
                 fontSize: 13,
                 color: colors.textSecondary,
               ),

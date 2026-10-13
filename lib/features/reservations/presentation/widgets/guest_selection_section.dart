@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_text_field.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
 
@@ -35,9 +35,8 @@ class GuestSelectionSection extends StatelessWidget {
       children: [
         Text(
           'Guest Details',
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
             color: colors.textPrimary,
           ),
         ),

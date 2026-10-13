@@ -122,7 +122,8 @@ class AccountScreen extends ConsumerWidget {
                     )
                   else
                     VerifyPromptCard(
-                      onStart: () => context.push(AppRoutes.onboarding),
+                      onStart: () =>
+                          context.push(AppRoutes.verificationLanding),
                     ),
 
                   // ── Personal ───────────────────────────────────────────

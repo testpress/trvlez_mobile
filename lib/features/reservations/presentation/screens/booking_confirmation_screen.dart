@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
@@ -85,13 +87,14 @@ class _BookingConfirmationContent extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Confirmation',
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(AppIcons.close),
           onPressed: () => context.go(AppRoutes.home),
         ),
         elevation: 0,
@@ -126,13 +129,14 @@ class _BookingConfirmationContent extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Confirmation',
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(AppIcons.close),
           onPressed: () => context.go(AppRoutes.home),
         ),
         elevation: 0,
@@ -180,9 +184,10 @@ class _BookingConfirmationContent extends ConsumerWidget {
             Center(
               child: Text(
                 'Booking Confirmed!',
-                style: GoogleFonts.nunito(
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
                   fontSize: 22,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: TypeScale.extraBold,
                   color: colors.textPrimary,
                 ),
               ),
@@ -200,7 +205,7 @@ class _BookingConfirmationContent extends ConsumerWidget {
                 propertyName: displayReservation.propertySummary.name,
                 onVerifyTap: () {
                   if (currentVerification.needsOnboarding) {
-                    context.push(AppRoutes.onboarding);
+                    context.push(AppRoutes.verificationLanding);
                   } else {
                     context.push(AppRoutes.verificationStatus);
                   }
@@ -216,7 +221,7 @@ class _BookingConfirmationContent extends ConsumerWidget {
               verificationState: currentVerification,
               onStartVerification: () {
                 if (currentVerification.needsOnboarding) {
-                  context.push(AppRoutes.onboarding);
+                  context.push(AppRoutes.verificationLanding);
                 } else {
                   context.push(AppRoutes.verificationStatus);
                 }

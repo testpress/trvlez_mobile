@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 class CounterTile extends StatelessWidget {
   final String label;
@@ -46,18 +46,16 @@ class CounterTile extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: GoogleFonts.nunito(
+                      style: AppTypography.label.copyWith(
                         fontSize: 13,
-                        fontWeight: FontWeight.w600,
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                     if (subtitle != null)
                       Text(
                         subtitle!,
-                        style: GoogleFonts.nunito(
+                        style: AppTypography.heading.copyWith(
                           fontSize: 12,
-                          fontWeight: FontWeight.w700,
                           color: subtitleColor ?? colorScheme.primary,
                         ),
                       ),
@@ -75,9 +73,8 @@ class CounterTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   '$value',
-                  style: GoogleFonts.nunito(
+                  style: AppTypography.heading.copyWith(
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
                     color: colorScheme.onSurface,
                   ),
                 ),

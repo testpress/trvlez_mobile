@@ -39,7 +39,6 @@ import 'package:trvlez_mobile/features/findr/presentation/screens/findr_programm
 import 'package:trvlez_mobile/features/findr/presentation/screens/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
-import 'package:trvlez_mobile/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/account_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/close_account_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/profile_setup_screen.dart';
@@ -163,7 +162,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
+        redirect: (context, state) => AppRoutes.verificationLanding,
       ),
       ShellRoute(
         builder: (context, state, child) {

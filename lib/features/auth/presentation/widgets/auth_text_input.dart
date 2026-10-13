@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Reusable stylized text field for authentication forms.
 class AuthTextInput extends StatelessWidget {
@@ -46,7 +46,7 @@ class AuthTextInput extends StatelessWidget {
           textInputAction: textInputAction,
           autocorrect: autocorrect,
           onFieldSubmitted: onFieldSubmitted,
-          style: GoogleFonts.cabin(fontSize: 14),
+          style: AppTypography.body.copyWith(fontSize: 14),
           decoration: InputDecoration(
             hintText: hintText,
             isDense: true,

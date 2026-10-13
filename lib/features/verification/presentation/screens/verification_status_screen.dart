@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -117,8 +117,7 @@ class VerificationStatusScreenState
       appBar: AppBar(
         title: Text(
           'KYC',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
+          style: AppTypography.heading.copyWith(
             fontSize: 18,
             color: colorScheme.onSurface,
           ),
@@ -190,9 +189,8 @@ class VerificationStatusScreenState
                           // ── Title & Subtitle ──────────────────────────
                           Text(
                             config.title,
-                            style: GoogleFonts.inter(
+                            style: AppTypography.heading.copyWith(
                               fontSize: 18,
-                              fontWeight: FontWeight.w600,
                               color: colorScheme.onSurface,
                             ),
                             textAlign: TextAlign.center,
@@ -200,7 +198,7 @@ class VerificationStatusScreenState
                           const SizedBox(height: 8),
                           Text(
                             config.subtitle,
-                            style: GoogleFonts.inter(
+                            style: AppTypography.body.copyWith(
                               fontSize: 13,
                               color: colorScheme.onSurface.withValues(
                                 alpha: 0.65,
@@ -253,7 +251,7 @@ class VerificationStatusScreenState
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: GoogleFonts.inter(
+                            style: AppTypography.body.copyWith(
                               fontSize: 10,
                               color: colorScheme.onSurface.withValues(
                                 alpha: 0.65,
@@ -266,8 +264,7 @@ class VerificationStatusScreenState
                               ),
                               TextSpan(
                                 text: 'Whatsapp',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.bold,
+                                style: AppTypography.label.copyWith(
                                   color: context.colors.feedbackSuccess,
                                 ),
                               ),

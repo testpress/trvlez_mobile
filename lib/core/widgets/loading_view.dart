@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Full-screen or centered loading state indicator.
 class LoadingView extends StatelessWidget {
@@ -25,7 +25,7 @@ class LoadingView extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               message!,
-              style: GoogleFonts.cabin(
+              style: AppTypography.body.copyWith(
                 fontSize: 14,
                 color: colors.textSecondary,
               ),

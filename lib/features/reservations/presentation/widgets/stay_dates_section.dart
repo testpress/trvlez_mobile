@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/date_picker_tile.dart';
 
 /// Form section for selecting stay check-in and check-out dates.
@@ -30,9 +32,10 @@ class StayDatesSection extends StatelessWidget {
       children: [
         Text(
           'Stay Dates',
-          style: GoogleFonts.nunito(
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontWeight: TypeScale.bold,
             color: colors.textPrimary,
           ),
         ),
@@ -45,7 +48,7 @@ class StayDatesSection extends StatelessWidget {
                 value: checkInDate != null
                     ? dateFormat.format(checkInDate!)
                     : 'Select date',
-                icon: Icons.calendar_today_outlined,
+                icon: AppIcons.calendar,
                 colorScheme: Theme.of(context).colorScheme,
                 onTap: onSelectCheckIn,
               ),
@@ -57,7 +60,7 @@ class StayDatesSection extends StatelessWidget {
                 value: checkOutDate != null
                     ? dateFormat.format(checkOutDate!)
                     : 'Select date',
-                icon: Icons.calendar_today_outlined,
+                icon: AppIcons.calendar,
                 colorScheme: Theme.of(context).colorScheme,
                 onTap: onSelectCheckOut,
               ),
@@ -68,10 +71,11 @@ class StayDatesSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             '${checkOutDate!.difference(checkInDate!).inDays} night(s)',
-            style: GoogleFonts.cabin(
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
               fontSize: 13,
               color: colors.actionPrimary,
-              fontWeight: FontWeight.w600,
+              fontWeight: TypeScale.semiBold,
             ),
           ),
         ],

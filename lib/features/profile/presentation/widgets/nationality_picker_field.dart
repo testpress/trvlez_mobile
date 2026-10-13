@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/constants/nationalities.dart';
 
 /// Form selector field for choosing traveler nationality with searchable modal sheet.
@@ -69,7 +70,12 @@ class NationalityPickerField extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final n = filtered[index];
                           return ListTile(
-                            title: Text(n, style: GoogleFonts.cabin()),
+                            title: Text(
+                              n,
+                              style: const TextStyle(
+                                fontFamily: AppTypography.fontFamily,
+                              ),
+                            ),
                             onTap: () {
                               onNationalitySelected(n);
                               Navigator.pop(context);
@@ -115,7 +121,8 @@ class NationalityPickerField extends StatelessWidget {
               children: [
                 Text(
                   selectedNationality ?? 'Select Nationality',
-                  style: GoogleFonts.cabin(
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
                     fontSize: 15,
                     color: selectedNationality == null
                         ? colors.textSecondary
@@ -123,7 +130,7 @@ class NationalityPickerField extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                  Icons.arrow_drop_down,
+                  AppIcons.chevronDown,
                   color: colorScheme.onSurface.withAlpha(150),
                   size: 20,
                 ),

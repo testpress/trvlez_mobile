@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Displays horizontal pills of property amenities and facilities.
 class PropertyAmenitiesSection extends StatelessWidget {
@@ -19,9 +19,8 @@ class PropertyAmenitiesSection extends StatelessWidget {
       children: [
         Text(
           'Facilities & Amenities',
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 18,
-            fontWeight: FontWeight.w700,
             color: colors.textPrimary,
           ),
         ),
@@ -119,7 +118,7 @@ class _FacilityPill extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Text(
             label,
-            style: GoogleFonts.cabin(
+            style: AppTypography.body.copyWith(
               color: colors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w500,

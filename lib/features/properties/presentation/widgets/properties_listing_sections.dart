@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/widgets/property_card.dart';
 
@@ -20,9 +20,8 @@ class PropertiesPopularSection extends StatelessWidget {
       children: [
         Text(
           'Featured Properties',
-          style: GoogleFonts.inter(
+          style: AppTypography.heading.copyWith(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
             color: colorScheme.onSurface,
           ),
         ),
@@ -67,9 +66,8 @@ class PropertiesRecommendedSection extends StatelessWidget {
       children: [
         Text(
           'All Available Properties',
-          style: GoogleFonts.inter(
+          style: AppTypography.heading.copyWith(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
             color: colorScheme.onSurface,
           ),
         ),
@@ -112,7 +110,7 @@ class PropertiesLoadingView extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'Discovering bookable properties...',
-            style: GoogleFonts.inter(
+            style: AppTypography.body.copyWith(
               color: colorScheme.onSurfaceVariant,
               fontSize: 14,
             ),
@@ -148,9 +146,8 @@ class PropertiesErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Failed to load properties',
-              style: GoogleFonts.inter(
+              style: AppTypography.heading.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
               ),
             ),
@@ -158,7 +155,7 @@ class PropertiesErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: AppTypography.body.copyWith(
                 fontSize: 13,
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -200,9 +197,8 @@ class PropertiesEmptyView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'No properties match your criteria',
-              style: GoogleFonts.inter(
+              style: AppTypography.heading.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
               ),
             ),
@@ -210,7 +206,7 @@ class PropertiesEmptyView extends StatelessWidget {
             Text(
               'Try searching with a different keyword or select another category.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: AppTypography.body.copyWith(
                 fontSize: 13,
                 color: colorScheme.onSurfaceVariant,
               ),

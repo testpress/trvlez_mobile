@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 /// A context-aware banner that displays the current verification status.
@@ -64,16 +64,15 @@ class VerificationBanner extends StatelessWidget {
                     children: [
                       Text(
                         config.title,
-                        style: GoogleFonts.nunito(
+                        style: AppTypography.heading.copyWith(
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
                           color: config.foregroundColor,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         config.subtitle,
-                        style: GoogleFonts.cabin(
+                        style: AppTypography.body.copyWith(
                           fontSize: 13,
                           color: config.foregroundColor.withAlpha(200),
                           height: 1.4,
@@ -97,9 +96,8 @@ class VerificationBanner extends StatelessWidget {
                     children: [
                       Text(
                         config.actionLabel,
-                        style: GoogleFonts.nunito(
+                        style: AppTypography.label.copyWith(
                           fontSize: 12,
-                          fontWeight: FontWeight.w700,
                           color: config.foregroundColor,
                         ),
                       ),

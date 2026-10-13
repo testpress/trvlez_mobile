@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 /// Card containing QR code display, live countdown, and check-in instructions.
@@ -63,16 +65,18 @@ class QrCodeCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               'Show this QR to the front desk',
-              style: GoogleFonts.inter(
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
                 fontSize: 16,
-                fontWeight: FontWeight.w700,
+                fontWeight: TypeScale.bold,
                 color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               'Hotel staff will scan to confirm check-in',
-              style: GoogleFonts.inter(
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
                 fontSize: 13,
                 color: colors.textSecondary,
               ),
@@ -110,13 +114,14 @@ class _CountdownBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.timer_outlined, size: 16, color: colors.feedbackSuccess),
+          Icon(AppIcons.clock, size: 16, color: colors.feedbackSuccess),
           const SizedBox(width: AppSpacing.xs),
           Text(
             'Valid for $timeString',
-            style: GoogleFonts.inter(
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
               fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontWeight: TypeScale.semiBold,
               color: colors.feedbackSuccess,
             ),
           ),
@@ -146,13 +151,14 @@ class _ExpiredBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.timer_off_outlined, size: 16, color: colors.feedbackError),
+          Icon(AppIcons.clock, size: 16, color: colors.feedbackError),
           const SizedBox(width: AppSpacing.xs),
           Text(
             'Token Expired',
-            style: GoogleFonts.inter(
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
               fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontWeight: TypeScale.semiBold,
               color: colors.feedbackError,
             ),
           ),

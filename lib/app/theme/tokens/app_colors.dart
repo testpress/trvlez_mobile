@@ -199,21 +199,24 @@ class AppColors extends ThemeExtension<AppColors> {
   Color get borderFocus => borderFocused;
   Color get backgroundMuted => surfaceSubtle;
 
+  bool get isDark => surface == Palette.surfaceDark;
+
   Color get page => pageBackground;
   Color get redTint => surfaceRedTint;
   Color get okFill => statusSuccessBackground;
   Color get okInk => statusSuccessForeground;
   Color get waitFill => statusWarningBackground;
   Color get waitInk => statusWarningForeground;
-  Color get paper => Palette.paper;
-  Color get paperLine => Palette.paperLine;
-  Color get paperInk => Palette.paperInk;
-  Color get paperInk2 => Palette.paperInk2;
-  Color get photoChip => Palette.photoChip;
-  Color get buttonIdle => Palette.buttonIdle;
-  Color get buttonIdleLabel => Palette.buttonIdleLabel;
-  Color get chipBorder => Palette.chipBorder;
-  Color get chevron => Palette.chevron;
+  Color get paper => isDark ? Palette.surfaceDark2 : Palette.paper;
+  Color get paperLine => isDark ? Palette.neutral800 : Palette.paperLine;
+  Color get paperInk => isDark ? Palette.inkDark : Palette.paperInk;
+  Color get paperInk2 => isDark ? Palette.ink2Dark : Palette.paperInk2;
+  Color get photoChip => isDark ? Palette.neutral800 : Palette.photoChip;
+  Color get buttonIdle => isDark ? Palette.neutral800 : Palette.buttonIdle;
+  Color get buttonIdleLabel =>
+      isDark ? Palette.inkDark : Palette.buttonIdleLabel;
+  Color get chipBorder => isDark ? Palette.neutral700 : Palette.chipBorder;
+  Color get chevron => isDark ? Palette.neutral600 : Palette.chevron;
   Color get scrim => Palette.scrim;
   Color get cardBorderSoft => cardBorder;
 

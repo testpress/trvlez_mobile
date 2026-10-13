@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Step state for the verification progress bar.
 enum VerificationStepState { completed, active, upcoming }
@@ -129,9 +129,8 @@ class _StepIndicator extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           label,
-          style: GoogleFonts.nunito(
+          style: AppTypography.label.copyWith(
             fontSize: 10,
-            fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
             color: isCompleted
                 ? context.colors.feedbackSuccess
                 : isActive

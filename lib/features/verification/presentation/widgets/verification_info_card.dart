@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
@@ -53,9 +53,8 @@ class InfoCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   'Verification Unsuccessful',
-                  style: GoogleFonts.cabin(
+                  style: AppTypography.heading.copyWith(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
                     color: theme.colorScheme.error,
                   ),
                 ),
@@ -65,9 +64,8 @@ class InfoCard extends StatelessWidget {
             if (failedStep != null && failedStep!.isNotEmpty) ...[
               Text(
                 'Failed at: ${formatStep(failedStep!)}',
-                style: GoogleFonts.cabin(
+                style: AppTypography.label.copyWith(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurface.withAlpha(200),
                 ),
               ),
@@ -76,7 +74,7 @@ class InfoCard extends StatelessWidget {
             Text(
               errorReason ??
                   'Your verification could not be completed. This may be due to unclear document images or a mismatch. Please try again.',
-              style: GoogleFonts.cabin(
+              style: AppTypography.body.copyWith(
                 fontSize: 14,
                 color: theme.colorScheme.onSurface.withAlpha(180),
                 height: 1.5,
@@ -105,7 +103,7 @@ class InfoCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         uiMitigation!,
-                        style: GoogleFonts.cabin(
+                        style: AppTypography.body.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: theme.colorScheme.onSurface.withAlpha(200),
@@ -155,7 +153,7 @@ class InfoCard extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.cabin(
+              style: AppTypography.body.copyWith(
                 fontSize: 14,
                 color: theme.colorScheme.onSurface.withAlpha(180),
                 height: 1.5,

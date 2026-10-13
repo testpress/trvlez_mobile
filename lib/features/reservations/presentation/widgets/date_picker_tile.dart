@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 class DatePickerTile extends StatelessWidget {
   final String label;
@@ -34,9 +34,8 @@ class DatePickerTile extends StatelessWidget {
           children: [
             Text(
               label,
-              style: GoogleFonts.nunito(
+              style: AppTypography.label.copyWith(
                 fontSize: 11,
-                fontWeight: FontWeight.w600,
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
@@ -48,7 +47,7 @@ class DatePickerTile extends StatelessWidget {
                 Expanded(
                   child: Text(
                     value,
-                    style: GoogleFonts.cabin(
+                    style: AppTypography.body.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,

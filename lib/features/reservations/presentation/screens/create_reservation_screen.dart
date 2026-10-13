@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
@@ -310,9 +310,8 @@ class _CreateReservationScreenState
         ),
         title: Text(
           'Book Your Stay',
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 20,
-            fontWeight: FontWeight.w700,
             color: colors.textPrimary,
           ),
         ),
@@ -382,7 +381,7 @@ class _CreateReservationScreenState
                 ),
                 child: Text(
                   createError,
-                  style: GoogleFonts.cabin(
+                  style: AppTypography.body.copyWith(
                     fontSize: 13,
                     color: colors.feedbackError,
                   ),

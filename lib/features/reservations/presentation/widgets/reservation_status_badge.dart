@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 /// Pill badge rendering the status of a reservation with tokenized colors.
@@ -52,9 +52,8 @@ class ReservationStatusBadge extends StatelessWidget {
           const SizedBox(width: AppSpacing.xs),
           Text(
             status.displayLabel,
-            style: GoogleFonts.inter(
+            style: AppTypography.label.copyWith(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
               color: badgeColor,
             ),
           ),

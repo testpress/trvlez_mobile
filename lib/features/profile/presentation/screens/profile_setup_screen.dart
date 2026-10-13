@@ -80,7 +80,7 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
         if (context.canPop()) {
           context.pop();
         } else {
-          context.go(AppRoutes.onboarding);
+          context.go(AppRoutes.verificationLanding);
         }
       } catch (_) {}
     }

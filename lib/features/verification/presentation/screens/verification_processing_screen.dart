@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
@@ -213,8 +213,7 @@ class _VerificationProcessingScreenState
         appBar: AppBar(
           title: Text(
             'KYC',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
+            style: AppTypography.heading.copyWith(
               fontSize: 18,
               color: colorScheme.onSurface,
             ),
@@ -293,9 +292,8 @@ class _VerificationProcessingScreenState
           _buildAnimatedText(
             key: ValueKey('title_${stage.title}'),
             text: stage.title,
-            style: GoogleFonts.inter(
+            style: AppTypography.heading.copyWith(
               fontSize: 20,
-              fontWeight: FontWeight.w700,
               color: colorScheme.onSurface,
             ),
           ),
@@ -303,7 +301,7 @@ class _VerificationProcessingScreenState
           _buildAnimatedText(
             key: ValueKey('subtitle_${stage.subtitle}'),
             text: stage.subtitle,
-            style: GoogleFonts.inter(
+            style: AppTypography.body.copyWith(
               fontSize: 13,
               color: colorScheme.onSurface.withValues(alpha: 0.6),
               height: 1.5,
@@ -372,7 +370,7 @@ class _VerificationProcessingScreenState
       ),
       child: Text(
         retryLabel,
-        style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 16),
+        style: AppTypography.label.copyWith(fontSize: 16),
       ),
     );
   }
@@ -384,7 +382,7 @@ class _VerificationProcessingScreenState
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            style: GoogleFonts.inter(
+            style: AppTypography.body.copyWith(
               fontSize: 10,
               color: colorScheme.onSurface.withValues(alpha: 0.65),
             ),
@@ -395,8 +393,7 @@ class _VerificationProcessingScreenState
               ),
               TextSpan(
                 text: 'Whatsapp',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
+                style: AppTypography.label.copyWith(
                   color: AppColors.success,
                 ),
               ),

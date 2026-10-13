@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/widgets/counter_tile.dart';
@@ -35,9 +35,8 @@ class RoomSelectionSection extends StatelessWidget {
       children: [
         Text(
           'Room Types',
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
             color: colors.textPrimary,
           ),
         ),
@@ -45,7 +44,10 @@ class RoomSelectionSection extends StatelessWidget {
         if (property.roomTypes.isEmpty)
           Text(
             'No rooms available for this property.',
-            style: GoogleFonts.cabin(fontSize: 14, color: colors.feedbackError),
+            style: AppTypography.body.copyWith(
+              fontSize: 14,
+              color: colors.feedbackError,
+            ),
           )
         else
           ...property.roomTypes.map((roomType) {
@@ -95,7 +97,7 @@ class RoomSelectionSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Selected rooms accommodate up to $totalMaxCapacity guests. Please add more rooms or adjust guest count to confirm reservation.',
-                    style: GoogleFonts.cabin(
+                    style: AppTypography.body.copyWith(
                       fontSize: 13,
                       color: colors.feedbackError,
                       fontWeight: FontWeight.w600,

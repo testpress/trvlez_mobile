@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
@@ -37,9 +38,10 @@ class BookingSummaryCard extends StatelessWidget {
                 children: [
                   Text(
                     'CONFIRMATION CODE',
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
+                      fontFamily: AppTypography.fontFamily,
                       fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: TypeScale.semiBold,
                       letterSpacing: 0.8,
                       color: colors.textSecondary,
                     ),
@@ -47,9 +49,10 @@ class BookingSummaryCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     reservation.confirmationCode,
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
+                      fontFamily: AppTypography.fontFamily,
                       fontSize: 20,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: TypeScale.extraBold,
                       letterSpacing: 1.0,
                       color: colors.actionPrimary,
                     ),
@@ -117,9 +120,10 @@ class BookingSummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       reservation.propertySummary.name,
-                      style: GoogleFonts.inter(
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
                         fontSize: 15,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: TypeScale.bold,
                         color: colors.textPrimary,
                       ),
                     ),
@@ -130,7 +134,8 @@ class BookingSummaryCard extends StatelessWidget {
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         reservation.propertySummary.locationString,
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
                           fontSize: 12,
                           color: colors.textSecondary,
                         ),
@@ -225,14 +230,19 @@ class _DetailRow extends StatelessWidget {
         const SizedBox(width: AppSpacing.sm),
         Text(
           label,
-          style: GoogleFonts.inter(fontSize: 13, color: colors.textSecondary),
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 13,
+            color: colors.textSecondary,
+          ),
         ),
         const Spacer(),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             fontSize: 13,
-            fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+            fontWeight: isBold ? TypeScale.bold : TypeScale.medium,
             color: colors.textPrimary,
           ),
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Shared scaffold for passport and video review screens.
 ///
@@ -80,8 +80,7 @@ class SharedReviewScaffold extends StatelessWidget {
     return AppBar(
       title: Text(
         'KYC',
-        style: GoogleFonts.poppins(
-          fontWeight: FontWeight.w600,
+        style: AppTypography.heading.copyWith(
           fontSize: 18,
           color: colorScheme.onSurface,
         ),
@@ -122,9 +121,8 @@ class SharedReviewScaffold extends StatelessWidget {
           // Title
           Text(
             title,
-            style: GoogleFonts.inter(
+            style: AppTypography.heading.copyWith(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
               color: colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
@@ -134,7 +132,7 @@ class SharedReviewScaffold extends StatelessWidget {
           // Subtitle
           Text(
             subtitle,
-            style: GoogleFonts.inter(
+            style: AppTypography.body.copyWith(
               fontSize: 13,
               color: colorScheme.onSurface.withValues(alpha: 0.65),
               height: 1.5,
@@ -184,7 +182,7 @@ class SharedReviewScaffold extends StatelessWidget {
           Expanded(
             child: Text(
               errorMessage!,
-              style: GoogleFonts.inter(
+              style: AppTypography.body.copyWith(
                 fontSize: 13,
                 color: colorScheme.onErrorContainer,
               ),
@@ -209,8 +207,7 @@ class SharedReviewScaffold extends StatelessWidget {
             ),
             child: Text(
               'Retake',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w500,
+              style: AppTypography.label.copyWith(
                 fontSize: 14,
               ),
             ),
@@ -229,8 +226,7 @@ class SharedReviewScaffold extends StatelessWidget {
             ),
             child: Text(
               uploadText,
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w500,
+              style: AppTypography.label.copyWith(
                 fontSize: 14,
               ),
             ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 /// Instructions and verification guidance card shown upon reservation confirmation.
@@ -35,7 +37,7 @@ class BookingInstructionsCard extends StatelessWidget {
           Row(
             children: [
               Icon(
-                Icons.security_outlined,
+                AppIcons.shield,
                 color: colors.feedbackWarning,
                 size: 20,
               ),
@@ -43,9 +45,10 @@ class BookingInstructionsCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Verification Required to Check In',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
                     fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: TypeScale.bold,
                     color: colors.textPrimary,
                   ),
                 ),
@@ -55,7 +58,8 @@ class BookingInstructionsCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             '$propertyName requires all arriving guests to complete identity verification before key issuance.',
-            style: GoogleFonts.inter(
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
               fontSize: 12,
               color: colors.textSecondary,
               height: 1.4,
@@ -69,15 +73,16 @@ class BookingInstructionsCard extends StatelessWidget {
               children: [
                 Text(
                   'Verify Your Identity Now',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
                     fontSize: 13,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: TypeScale.bold,
                     color: colors.actionPrimary,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Icon(
-                  Icons.arrow_forward_rounded,
+                  AppIcons.arrowRight,
                   size: 16,
                   color: colors.actionPrimary,
                 ),

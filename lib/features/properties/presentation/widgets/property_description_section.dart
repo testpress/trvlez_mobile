@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Expandable property description section.
 class PropertyDescriptionSection extends StatefulWidget {
@@ -30,9 +30,8 @@ class _PropertyDescriptionSectionState
       children: [
         Text(
           'About Property',
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 18,
-            fontWeight: FontWeight.w700,
             color: colors.textPrimary,
           ),
         ),
@@ -41,7 +40,7 @@ class _PropertyDescriptionSectionState
           text,
           maxLines: _isExpanded ? null : 3,
           overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-          style: GoogleFonts.cabin(
+          style: AppTypography.body.copyWith(
             fontSize: 14,
             color: colors.textSecondary,
             height: 1.5,
@@ -53,9 +52,8 @@ class _PropertyDescriptionSectionState
             onTap: () => setState(() => _isExpanded = !_isExpanded),
             child: Text(
               _isExpanded ? 'Show less' : 'Read more',
-              style: GoogleFonts.nunito(
+              style: AppTypography.heading.copyWith(
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
                 color: colors.actionPrimary,
               ),
             ),

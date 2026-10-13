@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Standard submit button with loading spinner for authentication screens.
 class AuthSubmitButton extends StatelessWidget {
@@ -52,18 +52,16 @@ class AuthSubmitButton extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     loadingLabel,
-                    style: GoogleFonts.nunito(
+                    style: AppTypography.heading.copyWith(
                       fontSize: 14,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
               )
             : Text(
                 label,
-                style: GoogleFonts.nunito(
+                style: AppTypography.heading.copyWith(
                   fontSize: 14,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
       ),

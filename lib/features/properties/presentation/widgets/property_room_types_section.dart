@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/widgets/property_room_type_card.dart';
 
@@ -38,9 +38,8 @@ class PropertyRoomTypesSection extends StatelessWidget {
           children: [
             Text(
               'Available Rooms',
-              style: GoogleFonts.nunito(
+              style: AppTypography.heading.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.w700,
                 color: colors.textPrimary,
               ),
             ),
@@ -73,7 +72,7 @@ class PropertyRoomTypesSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Direct room booking available at check-in.',
-                    style: GoogleFonts.cabin(
+                    style: AppTypography.body.copyWith(
                       fontSize: 13,
                       color: colors.textSecondary,
                     ),

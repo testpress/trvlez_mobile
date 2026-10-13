@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 class VerificationScoreIndicator extends StatelessWidget {
   final double score;
@@ -38,9 +38,8 @@ class VerificationScoreIndicator extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             'Confidence Score: $percentage%',
-            style: GoogleFonts.nunito(
+            style: AppTypography.heading.copyWith(
               fontSize: 14,
-              fontWeight: FontWeight.w700,
               color: color,
             ),
           ),

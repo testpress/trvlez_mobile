@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/nationality_picker_field.dart';
 
@@ -94,7 +95,10 @@ class PersonalDetailsForm extends StatelessWidget {
                 enabled: !isLoading,
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
-                style: GoogleFonts.cabin(fontSize: 15),
+                style: const TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 15,
+                ),
                 decoration: const InputDecoration(
                   hintText: 'Enter your phone number',
                 ),
@@ -165,7 +169,8 @@ class PersonalDetailsForm extends StatelessWidget {
                               : '${selectedDateOfBirth!.toLocal()}'.split(
                                   ' ',
                                 )[0],
-                          style: GoogleFonts.cabin(
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
                             fontSize: 15,
                             color: selectedDateOfBirth == null
                                 ? colors.textSecondary
@@ -175,7 +180,7 @@ class PersonalDetailsForm extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Icon(
-                        Icons.calendar_today,
+                        AppIcons.calendar,
                         color: colors.textSecondary,
                         size: 20,
                       ),
@@ -197,7 +202,10 @@ class PersonalDetailsForm extends StatelessWidget {
                 controller: passportNumberController,
                 enabled: !isLoading,
                 textInputAction: TextInputAction.next,
-                style: GoogleFonts.cabin(fontSize: 15),
+                style: const TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 15,
+                ),
                 decoration: const InputDecoration(
                   hintText: 'Enter your passport number (optional)',
                 ),
@@ -234,7 +242,8 @@ class PersonalDetailsForm extends StatelessWidget {
                               : '${selectedPassportExpiry!.toLocal()}'.split(
                                   ' ',
                                 )[0],
-                          style: GoogleFonts.cabin(
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
                             fontSize: 15,
                             color: selectedPassportExpiry == null
                                 ? colors.textSecondary
@@ -244,7 +253,7 @@ class PersonalDetailsForm extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Icon(
-                        Icons.calendar_today,
+                        AppIcons.calendar,
                         color: colors.textSecondary,
                         size: 20,
                       ),

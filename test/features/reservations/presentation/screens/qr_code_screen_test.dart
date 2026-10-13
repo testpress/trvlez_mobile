@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -103,7 +104,7 @@ void main() {
         expect(find.byType(QrImageView), findsOneWidget);
 
         // Verify countdown badge is rendered
-        expect(find.byIcon(Icons.timer_outlined), findsOneWidget);
+        expect(find.byIcon(AppIcons.clock), findsOneWidget);
         expect(find.textContaining('Valid for'), findsOneWidget);
       },
     );

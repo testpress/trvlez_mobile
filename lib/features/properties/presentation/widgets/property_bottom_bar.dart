@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 
@@ -96,7 +96,7 @@ class PropertyBottomBar extends StatelessWidget {
                 children: [
                   Text(
                     priceLabel,
-                    style: GoogleFonts.cabin(
+                    style: AppTypography.body.copyWith(
                       fontSize: 12,
                       color: colors.textSecondary,
                     ),
@@ -105,9 +105,8 @@ class PropertyBottomBar extends StatelessWidget {
                   ),
                   Text(
                     priceDisplay,
-                    style: GoogleFonts.nunito(
+                    style: AppTypography.heading.copyWith(
                       fontSize: 18,
-                      fontWeight: FontWeight.w800,
                       color: canBook
                           ? colors.actionPrimary
                           : colors.feedbackError,
@@ -145,8 +144,7 @@ class PropertyBottomBar extends StatelessWidget {
                   : const Icon(Icons.arrow_forward, size: 18),
               label: Text(
                 isLoading ? 'Loading...' : 'Book Now',
-                style: GoogleFonts.nunito(
-                  fontWeight: FontWeight.w700,
+                style: AppTypography.heading.copyWith(
                   fontSize: 16,
                 ),
               ),

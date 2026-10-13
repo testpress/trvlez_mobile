@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 
 /// Top section displaying property name, location, and operational highlights.
@@ -25,9 +25,8 @@ class PropertyOverviewSection extends StatelessWidget {
             Expanded(
               child: Text(
                 property.name,
-                style: GoogleFonts.nunito(
+                style: AppTypography.heading.copyWith(
                   fontSize: 22,
-                  fontWeight: FontWeight.w800,
                   color: colors.textPrimary,
                 ),
               ),
@@ -46,9 +45,8 @@ class PropertyOverviewSection extends StatelessWidget {
                 ),
                 child: Text(
                   property.propertyType!.toUpperCase(),
-                  style: GoogleFonts.nunito(
+                  style: AppTypography.label.copyWith(
                     fontSize: 11,
-                    fontWeight: FontWeight.w700,
                     color: colors.actionPrimary,
                   ),
                 ),
@@ -69,7 +67,7 @@ class PropertyOverviewSection extends StatelessWidget {
                 property.locationString.isNotEmpty
                     ? property.locationString
                     : 'Location details upon booking',
-                style: GoogleFonts.cabin(
+                style: AppTypography.body.copyWith(
                   fontSize: 14,
                   color: colors.textSecondary,
                   fontWeight: FontWeight.w500,
@@ -131,7 +129,7 @@ class _InfoBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: GoogleFonts.cabin(
+            style: AppTypography.body.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: colors.textSecondary,

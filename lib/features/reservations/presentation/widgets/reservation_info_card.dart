@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Card container for grouping reservation details under a header title.
 class ReservationInfoCard extends StatelessWidget {
@@ -31,9 +31,8 @@ class ReservationInfoCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.nunito(
+            style: AppTypography.heading.copyWith(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
           ),
@@ -72,7 +71,7 @@ class ReservationInfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.cabin(
+              style: AppTypography.body.copyWith(
                 fontSize: 14,
                 color: colors.textSecondary,
               ),
@@ -81,9 +80,8 @@ class ReservationInfoRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Text(
             value,
-            style: GoogleFonts.cabin(
+            style: AppTypography.label.copyWith(
               fontSize: 14,
-              fontWeight: FontWeight.w600,
               color: colors.textPrimary,
             ),
           ),

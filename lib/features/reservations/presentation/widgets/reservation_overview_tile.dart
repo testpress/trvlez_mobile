@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 /// Card showing reservation property overview and confirmation code.
@@ -52,19 +52,17 @@ class ReservationOverviewTile extends StatelessWidget {
                   reservation.propertySummary.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: AppTypography.heading.copyWith(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
                     color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   reservation.confirmationCode,
-                  style: GoogleFonts.inter(
+                  style: AppTypography.label.copyWith(
                     fontSize: 13,
                     color: colors.actionPrimary,
-                    fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
                 ),

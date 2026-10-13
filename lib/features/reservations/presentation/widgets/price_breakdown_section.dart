@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 
@@ -40,9 +40,8 @@ class PriceBreakdownSection extends StatelessWidget {
       children: [
         Text(
           'Price Summary',
-          style: GoogleFonts.nunito(
+          style: AppTypography.heading.copyWith(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
             color: colors.textPrimary,
           ),
         ),
@@ -71,7 +70,7 @@ class PriceBreakdownSection extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '$count× ${roomType.name} ($numberOfNights night${numberOfNights > 1 ? 's' : ''})',
-                          style: GoogleFonts.cabin(
+                          style: AppTypography.body.copyWith(
                             fontSize: 13,
                             color: colors.textSecondary,
                           ),
@@ -86,9 +85,8 @@ class PriceBreakdownSection extends StatelessWidget {
                                     property.currencyCode,
                               )
                             : 'Unpriced',
-                        style: GoogleFonts.cabin(
+                        style: AppTypography.label.copyWith(
                           fontSize: 13,
-                          fontWeight: FontWeight.w600,
                           color: isPriced
                               ? colors.textPrimary
                               : colors.feedbackError,
@@ -104,9 +102,8 @@ class PriceBreakdownSection extends StatelessWidget {
                 children: [
                   Text(
                     'Estimated Total',
-                    style: GoogleFonts.nunito(
+                    style: AppTypography.heading.copyWith(
                       fontSize: 15,
-                      fontWeight: FontWeight.w700,
                       color: colors.textPrimary,
                     ),
                   ),
@@ -117,9 +114,8 @@ class PriceBreakdownSection extends StatelessWidget {
                             totalEstimatedAmount,
                             currencyCode: property.currencyCode,
                           ),
-                    style: GoogleFonts.nunito(
+                    style: AppTypography.heading.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w800,
                       color: hasInvalidPricingSelected
                           ? colors.feedbackError
                           : colors.actionPrimary,
@@ -131,7 +127,7 @@ class PriceBreakdownSection extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Pricing is unavailable for one or more selected rooms. Please choose a priced room type to proceed.',
-                  style: GoogleFonts.cabin(
+                  style: AppTypography.body.copyWith(
                     fontSize: 11,
                     color: colors.feedbackError,
                   ),

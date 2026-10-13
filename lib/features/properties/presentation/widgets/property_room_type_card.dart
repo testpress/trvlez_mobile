@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 
@@ -64,9 +64,8 @@ class PropertyRoomTypeCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           roomType.name,
-                          style: GoogleFonts.nunito(
+                          style: AppTypography.heading.copyWith(
                             fontSize: 15,
-                            fontWeight: FontWeight.w700,
                             color: isBookable
                                 ? colors.textPrimary
                                 : colors.textDisabled,
@@ -100,9 +99,8 @@ class PropertyRoomTypeCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         'Max ${roomType.maxOccupancy}',
-                        style: GoogleFonts.nunito(
+                        style: AppTypography.label.copyWith(
                           fontSize: 11,
-                          fontWeight: FontWeight.w700,
                           color: isSelected
                               ? colors.textOnAction
                               : colors.actionPrimary,
@@ -123,15 +121,14 @@ class PropertyRoomTypeCard extends StatelessWidget {
                         roomType.pricePerNight!,
                         currencyCode: roomType.currencyCode ?? propertyCurrency,
                       ),
-                      style: GoogleFonts.nunito(
+                      style: AppTypography.heading.copyWith(
                         fontSize: 16,
-                        fontWeight: FontWeight.w800,
                         color: colors.actionPrimary,
                       ),
                     ),
                     TextSpan(
                       text: ' / night',
-                      style: GoogleFonts.cabin(
+                      style: AppTypography.body.copyWith(
                         fontSize: 12,
                         color: colors.textSecondary,
                       ),
@@ -148,9 +145,8 @@ class PropertyRoomTypeCard extends StatelessWidget {
                 ),
                 child: Text(
                   'Pricing unavailable',
-                  style: GoogleFonts.nunito(
+                  style: AppTypography.label.copyWith(
                     fontSize: 11,
-                    fontWeight: FontWeight.w700,
                     color: colors.feedbackError,
                   ),
                 ),
@@ -159,7 +155,7 @@ class PropertyRoomTypeCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 roomType.description,
-                style: GoogleFonts.cabin(
+                style: AppTypography.body.copyWith(
                   fontSize: 13,
                   color: colors.textSecondary,
                 ),
@@ -173,7 +169,7 @@ class PropertyRoomTypeCard extends StatelessWidget {
                   children: [
                     Text(
                       'Adults: ${roomType.maxAdults}',
-                      style: GoogleFonts.cabin(
+                      style: AppTypography.body.copyWith(
                         fontSize: 12,
                         color: colors.textSecondary,
                       ),
@@ -182,7 +178,7 @@ class PropertyRoomTypeCard extends StatelessWidget {
                       const SizedBox(width: 12),
                       Text(
                         'Children: ${roomType.maxChildren}',
-                        style: GoogleFonts.cabin(
+                        style: AppTypography.body.copyWith(
                           fontSize: 12,
                           color: colors.textSecondary,
                         ),
@@ -196,7 +192,7 @@ class PropertyRoomTypeCard extends StatelessWidget {
                       : isSelected
                       ? 'Selected'
                       : 'Tap to select',
-                  style: GoogleFonts.nunito(
+                  style: AppTypography.label.copyWith(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: !isBookable
