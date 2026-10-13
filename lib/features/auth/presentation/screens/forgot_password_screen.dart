@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_alt_line.dart';
 import 'package:trvlez_mobile/core/widgets/brand_screen.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_text_field.dart';
 
-/// Password reset request screen.
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+/// Password reset request screen, supporting both unauthenticated reset
+/// and change password flows for logged-in travelers.
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
+  const ForgotPasswordScreen({
+    super.key,
+    this.email = '',
+    this.isChangePassword,
+  });
+
+  final String email;
+  final bool? isChangePassword;
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final emailController = TextEditingController();
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+  late final TextEditingController emailController;
 
   @override
   void initState() {
     super.initState();
+    emailController = TextEditingController(text: widget.email);
     emailController.addListener(_onTextChanged);
   }
 
@@ -55,6 +67,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final authState = ref.watch(authNotifierProvider).valueOrNull;
+    final isAlreadyLoggedIn =
+        widget.isChangePassword ?? (authState?.isAuthenticated ?? false);
 
     return BrandScreen(
       backgroundAsset: 'assets/art/bg_log_in.svg',
@@ -64,7 +79,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Reset your password',
+            isAlreadyLoggedIn ? 'Change your password' : 'Reset your password',
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 20,
@@ -75,7 +90,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            "We'll email you a code to get back in",
+            isAlreadyLoggedIn
+                ? "We'll email you a code to update your password"
+                : "We'll email you a code to get back in",
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 13,
@@ -110,12 +127,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             onPressed: isEmailValid ? _onSendCode : null,
           ),
 
-          const SizedBox(height: AppSpacing.md),
-
-          BrandAltLine(
-            linkText: 'Back to log in',
-            onTap: () => context.go(AppRoutes.login),
-          ),
+          if (!isAlreadyLoggedIn) ...[
+            const SizedBox(height: AppSpacing.md),
+            BrandAltLine(
+              linkText: 'Back to log in',
+              onTap: () => context.go(AppRoutes.login),
+            ),
+          ],
         ],
       ),
     );

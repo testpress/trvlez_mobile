@@ -82,6 +82,12 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.inkSecondary,
     required this.inkTertiary,
     required this.line,
+
+    // Paper Palette (Findr)
+    required this.paper,
+    required this.paperLine,
+    required this.paperInk,
+    required this.paperInk2,
   });
 
   // ─── Surfaces ────────────────────────────────────────────────────────
@@ -185,6 +191,12 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color inkTertiary;
   final Color line;
 
+  // ─── Paper Palette (Findr) ──────────────────────────────────────────
+  final Color paper;
+  final Color paperLine;
+  final Color paperInk;
+  final Color paperInk2;
+
   // ─── Legacy Compatibility & Convenience Getters ─────────────────────────
   Color get primary => actionPrimary;
   Color get primaryForeground => textOnAction;
@@ -207,10 +219,6 @@ class AppColors extends ThemeExtension<AppColors> {
   Color get okInk => statusSuccessForeground;
   Color get waitFill => statusWarningBackground;
   Color get waitInk => statusWarningForeground;
-  Color get paper => isDark ? Palette.surfaceDark2 : Palette.paper;
-  Color get paperLine => isDark ? Palette.neutral800 : Palette.paperLine;
-  Color get paperInk => isDark ? Palette.inkDark : Palette.paperInk;
-  Color get paperInk2 => isDark ? Palette.ink2Dark : Palette.paperInk2;
   Color get photoChip => isDark ? Palette.neutral800 : Palette.photoChip;
   Color get buttonIdle => isDark ? Palette.neutral800 : Palette.buttonIdle;
   Color get buttonIdleLabel =>
@@ -313,6 +321,12 @@ class AppColors extends ThemeExtension<AppColors> {
     inkSecondary: Palette.ink2,
     inkTertiary: Palette.ink3,
     line: Palette.line,
+
+    // Paper Palette (Findr)
+    paper: Palette.paper,
+    paperLine: Palette.paperLine,
+    paperInk: Palette.paperInk,
+    paperInk2: Palette.paperInk2,
   );
 
   // ─── Dark Preset ────────────────────────────────────────────────────
@@ -383,6 +397,12 @@ class AppColors extends ThemeExtension<AppColors> {
     inkSecondary: Palette.ink2Dark,
     inkTertiary: Palette.ink3Dark,
     line: Palette.line,
+
+    // Paper Palette (Findr)
+    paper: Palette.paperDark,
+    paperLine: Palette.paperLineDark,
+    paperInk: Palette.paperInkDark,
+    paperInk2: Palette.paperInk2Dark,
   );
 
   @override
@@ -447,6 +467,10 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? inkSecondary,
     Color? inkTertiary,
     Color? line,
+    Color? paper,
+    Color? paperLine,
+    Color? paperInk,
+    Color? paperInk2,
   }) {
     return AppColors(
       surface: surface ?? this.surface,
@@ -529,6 +553,10 @@ class AppColors extends ThemeExtension<AppColors> {
       inkSecondary: inkSecondary ?? this.inkSecondary,
       inkTertiary: inkTertiary ?? this.inkTertiary,
       line: line ?? this.line,
+      paper: paper ?? this.paper,
+      paperLine: paperLine ?? this.paperLine,
+      paperInk: paperInk ?? this.paperInk,
+      paperInk2: paperInk2 ?? this.paperInk2,
     );
   }
 
@@ -753,6 +781,10 @@ class AppColors extends ThemeExtension<AppColors> {
           Color.lerp(inkSecondary, other.inkSecondary, t) ?? inkSecondary,
       inkTertiary: Color.lerp(inkTertiary, other.inkTertiary, t) ?? inkTertiary,
       line: Color.lerp(line, other.line, t) ?? line,
+      paper: Color.lerp(paper, other.paper, t) ?? paper,
+      paperLine: Color.lerp(paperLine, other.paperLine, t) ?? paperLine,
+      paperInk: Color.lerp(paperInk, other.paperInk, t) ?? paperInk,
+      paperInk2: Color.lerp(paperInk2, other.paperInk2, t) ?? paperInk2,
     );
   }
 }

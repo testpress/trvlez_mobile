@@ -86,11 +86,18 @@ class AccountScreen extends ConsumerWidget {
               .toUpperCase()
         : 'T';
 
-    final subtitle = (profile?.phone != null && profile!.phone!.isNotEmpty)
-        ? profile.phone!
-        : (profile?.nationality != null && profile!.nationality!.isNotEmpty
-              ? profile.nationality!
-              : (isAuthenticated ? 'Signed in' : 'Guest'));
+    final phone = profile?.phone;
+    final nationality = profile?.nationality;
+    final String subtitle;
+    if (phone != null && phone.isNotEmpty) {
+      subtitle = phone;
+    } else if (nationality != null && nationality.isNotEmpty) {
+      subtitle = nationality;
+    } else if (isAuthenticated) {
+      subtitle = 'Signed in';
+    } else {
+      subtitle = 'Guest';
+    }
 
     return Scaffold(
       backgroundColor: colors.page,
@@ -217,7 +224,10 @@ class AccountScreen extends ConsumerWidget {
                       SettingsRow(
                         icon: AppIcons.key,
                         label: 'Change password',
-                        onTap: () => context.push(AppRoutes.forgotPassword),
+                        onTap: () => context.push(
+                          AppRoutes.forgotPassword,
+                          extra: {'isChangePassword': true},
+                        ),
                       ),
                       SettingsRow(
                         icon: AppIcons.shieldCheck,

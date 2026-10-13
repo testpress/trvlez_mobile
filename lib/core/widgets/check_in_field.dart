@@ -85,6 +85,8 @@ class CheckInField extends StatelessWidget {
                           ),
                           decoration: InputDecoration(
                             isDense: true,
+                            filled: false,
+                            fillColor: Colors.transparent,
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
                             hintText: hint,

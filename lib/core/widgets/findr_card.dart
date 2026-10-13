@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
@@ -89,7 +90,7 @@ class FindrCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 12,
-                        color: colors.paperInk,
+                        color: colors.paperInk2,
                         height: 1.4,
                       ),
                     ),
@@ -108,10 +109,11 @@ class FindrCard extends StatelessWidget {
                   ),
                   child: Text(
                     ctaLabel,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTypography.fontFamily,
                       fontSize: 13,
                       fontWeight: TypeScale.semiBold,
+                      color: colors.textOnAction,
                     ),
                   ),
                 ),
@@ -141,7 +143,7 @@ class FindrHeading extends StatelessWidget {
           height: iconBox,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: colors.surface,
+            color: AppColors.white,
             borderRadius: AppRadius.mdRadius,
             boxShadow: [
               BoxShadow(
@@ -216,7 +218,7 @@ class _FindrEarnedRow extends StatelessWidget {
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 12,
-              color: colors.paperInk,
+              color: colors.paperInk2,
             ),
           ),
         ],
@@ -289,7 +291,7 @@ class _FindrStatItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
             fontSize: 10,
-            color: colors.paperInk.withAlpha(160),
+            color: colors.paperInk2,
           ),
         ),
       ],

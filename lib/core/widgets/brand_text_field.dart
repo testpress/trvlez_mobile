@@ -91,74 +91,89 @@ class _BrandTextFieldState extends State<BrandTextField> {
             ),
           ),
         ),
-        Container(
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          decoration: BoxDecoration(
-            color: colors.brandFieldBackground,
-            borderRadius: AppRadius.pillRadius,
+        TextFormField(
+          controller: _controller,
+          obscureText: widget.obscurable && _obscured,
+          obscuringCharacter: '•',
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          autofillHints: widget.autofillHints,
+          onChanged: widget.onChanged,
+          onFieldSubmitted: (_) => widget.onSubmitted?.call(),
+          validator: widget.validator,
+          cursorColor: colors.brandOnSurface,
+          cursorWidth: 1.5,
+          style: TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            fontSize: 13,
+            fontWeight: TypeScale.regular,
+            color: colors.brandOnSurface,
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _controller,
-                  obscureText: widget.obscurable && _obscured,
-                  obscuringCharacter: '•',
-                  keyboardType: widget.keyboardType,
-                  textInputAction: widget.textInputAction,
-                  autofillHints: widget.autofillHints,
-                  onChanged: widget.onChanged,
-                  onFieldSubmitted: (_) => widget.onSubmitted?.call(),
-                  validator: widget.validator,
-                  cursorColor: colors.brandOnSurface,
-                  cursorWidth: 1.5,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.regular,
-                    color: colors.brandOnSurface,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    focusedErrorBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                    hintText: widget.placeholder,
-                    hintStyle: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 13,
-                      fontWeight: TypeScale.regular,
-                      color: colors.brandSecondaryPlaceholder,
-                    ),
-                  ),
-                ),
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: colors.brandFieldBackground,
+            border: OutlineInputBorder(
+              borderRadius: AppRadius.pillRadius,
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: AppRadius.pillRadius,
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: AppRadius.pillRadius,
+              borderSide: BorderSide(
+                color: colors.brandOnSurface.withValues(alpha: 0.6),
+                width: 1.2,
               ),
-              if (widget.obscurable) ...[
-                const SizedBox(width: AppSpacing.xs),
-                Semantics(
-                  button: true,
-                  label: _obscured ? 'Show password' : 'Hide password',
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => setState(() => _obscured = !_obscured),
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
-                      child: Icon(
-                        _obscured ? AppIcons.eye : AppIcons.eyeOff,
-                        size: 16,
-                        color: isFilled
-                            ? colors.brandOnSurface
-                            : colors.brandSecondaryPlaceholder,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: AppRadius.pillRadius,
+              borderSide: BorderSide(color: colors.brandSecondary, width: 1.5),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: AppRadius.pillRadius,
+              borderSide: BorderSide(color: colors.brandSecondary, width: 1.5),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: 12,
+            ),
+            hintText: widget.placeholder,
+            hintStyle: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 13,
+              fontWeight: TypeScale.regular,
+              color: colors.brandSecondaryPlaceholder,
+            ),
+            errorStyle: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 12,
+              fontWeight: TypeScale.medium,
+              color: colors.brandSecondary,
+              height: 1.3,
+            ),
+            suffixIcon: widget.obscurable
+                ? Semantics(
+                    button: true,
+                    label: _obscured ? 'Show password' : 'Hide password',
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => setState(() => _obscured = !_obscured),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.sm),
+                        child: Icon(
+                          _obscured ? AppIcons.eye : AppIcons.eyeOff,
+                          size: 16,
+                          color: isFilled
+                              ? colors.brandOnSurface
+                              : colors.brandSecondaryPlaceholder,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ],
+                  )
+                : null,
           ),
         ),
       ],

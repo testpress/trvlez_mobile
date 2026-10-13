@@ -196,6 +196,8 @@ class AnywhereField extends StatelessWidget {
         ),
         cursorColor: colors.brandOnSurface,
         decoration: InputDecoration(
+          filled: false,
+          fillColor: Colors.transparent,
           hintText: hint,
           hintStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,

@@ -20,6 +20,24 @@ void main() {
       expect(find.text('Back to log in'), findsOneWidget);
     });
 
+    testWidgets(
+      'ForgotPasswordScreen hides "Back to log in" when in change password mode',
+      (tester) async {
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: MaterialApp(
+              home: ForgotPasswordScreen(isChangePassword: true),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Change your password'), findsOneWidget);
+        expect(find.text('Send code'), findsOneWidget);
+        expect(find.text('Back to log in'), findsNothing);
+      },
+    );
+
     testWidgets('NewPasswordScreen validates password matching', (
       tester,
     ) async {

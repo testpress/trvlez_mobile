@@ -244,10 +244,10 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
             if (type == 'upcoming') ...[
               const SizedBox(height: AppSpacing.lg),
               ElevatedButton.icon(
-                onPressed: () => context.go(AppRoutes.home),
+                onPressed: () => context.push(AppRoutes.ezStays),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.brandPrimary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: colors.textOnAction,
                   shape: RoundedRectangleBorder(
                     borderRadius: AppRadius.fullRadius,
                   ),
@@ -310,7 +310,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                   .fetchReservations(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.brandPrimary,
-                foregroundColor: Colors.white,
+                foregroundColor: colors.textOnAction,
                 shape: RoundedRectangleBorder(
                   borderRadius: AppRadius.fullRadius,
                 ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/my_trips_screen.dart';
@@ -92,6 +94,48 @@ void main() {
         expect(find.text('Upcoming (0)'), findsOneWidget);
       },
     );
+
+    testWidgets('tapping Explore Properties CTA navigates to ezStays', (
+      tester,
+    ) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.reservationsToReturn = [];
+
+      String? pushedLocation;
+      final router = GoRouter(
+        initialLocation: '/bookings',
+        routes: [
+          GoRoute(
+            path: '/bookings',
+            builder: (context, state) => const MyTripsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.ezStays,
+            builder: (context, state) {
+              pushedLocation = AppRoutes.ezStays;
+              return const Scaffold(body: Text('ezStays Screen'));
+            },
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            reservationRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Explore Properties'), findsOneWidget);
+      await tester.tap(find.text('Explore Properties'));
+      await tester.pumpAndSettle();
+
+      expect(pushedLocation, equals(AppRoutes.ezStays));
+      expect(find.text('ezStays Screen'), findsOneWidget);
+    });
 
     testWidgets('renders upcoming reservation card when reservations exist', (
       tester,

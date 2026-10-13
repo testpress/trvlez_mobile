@@ -106,7 +106,6 @@ class _PropertiesListingScreenState
     final properties = propertiesState.valueOrNull ?? [];
     final isLoading = propertiesState.isLoading;
     final error = propertiesState.error;
-    final canPop = Navigator.canPop(context);
 
     return Scaffold(
       backgroundColor: colors.page,
@@ -120,25 +119,29 @@ class _PropertiesListingScreenState
               children: [
                 Row(
                   children: [
-                    if (canPop) ...[
-                      Semantics(
-                        button: true,
-                        label: 'Back',
-                        child: InkWell(
-                          borderRadius: AppRadius.fullRadius,
-                          onTap: () => Navigator.maybePop(context),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: Icon(
-                              AppIcons.arrowLeft,
-                              size: 20,
-                              color: colors.textPrimary,
-                            ),
+                    Semantics(
+                      button: true,
+                      label: 'Back',
+                      child: InkWell(
+                        borderRadius: AppRadius.fullRadius,
+                        onTap: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            context.go(AppRoutes.home);
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            AppIcons.arrowLeft,
+                            size: 20,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                    ],
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
                     EzWord(
                       rest: 'Stays',
                       style: TextStyle(
@@ -183,6 +186,7 @@ class _PropertiesListingScreenState
                           ),
                           decoration: InputDecoration(
                             isDense: true,
+                            filled: false,
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
                             hintText: 'Search properties or cities',
