@@ -206,7 +206,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     CheckInBanner(
                       title: 'Check in for ${nextStay.propertySummary.name}',
                       subtitle: 'Open now · takes 2 minutes',
-                      onTap: () => context.push('/reservations/${nextStay.id}'),
+                      onTap: () {
+                        if (nextStay.status == ReservationStatus.checkedIn) {
+                          context.push(AppRoutes.checkInPassPath(nextStay.id));
+                        } else {
+                          context.push(AppRoutes.checkInStepsPath(nextStay.id));
+                        }
+                      },
                     ),
                     const SizedBox(height: AppSpacing.lg),
                   ],

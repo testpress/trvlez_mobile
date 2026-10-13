@@ -447,37 +447,61 @@ class _ReservationCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (reservation.status.isUpcoming) ...[
+                  if (reservation.status.isUpcoming ||
+                      reservation.status == ReservationStatus.checkedIn) ...[
                     const SizedBox(height: AppSpacing.md),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colors.redTint,
-                        borderRadius: AppRadius.mdRadius,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            AppIcons.doorEnter,
-                            size: 14,
-                            color: colors.brandPrimary,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              'Check in online · Open now · Start',
-                              style: TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                                fontSize: 11,
-                                fontWeight: TypeScale.semiBold,
-                                color: colors.brandPrimary,
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (reservation.status == ReservationStatus.checkedIn) {
+                          context.push(
+                            AppRoutes.checkInPassPath(reservation.id),
+                          );
+                        } else {
+                          context.push(
+                            AppRoutes.checkInStepsPath(reservation.id),
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.redTint,
+                          borderRadius: AppRadius.mdRadius,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              reservation.status == ReservationStatus.checkedIn
+                                  ? AppIcons.qrcode
+                                  : AppIcons.doorEnter,
+                              size: 14,
+                              color: colors.brandPrimary,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                reservation.status == ReservationStatus.checkedIn
+                                    ? 'Digital pass ready · Show pass'
+                                    : 'Check in online · Open now · Start',
+                                style: TextStyle(
+                                  fontFamily: AppTypography.fontFamily,
+                                  fontSize: 11,
+                                  fontWeight: TypeScale.semiBold,
+                                  color: colors.brandPrimary,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                            Icon(
+                              AppIcons.chevronRight,
+                              size: 13,
+                              color: colors.brandPrimary,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

@@ -36,6 +36,32 @@ class AppRoutes {
   static const String bookingCard = '/stays/review/card';
   static const String bookingDone = '/stays/booked';
 
+  // Section 06 · Check-in Flow
+  static const String checkInSteps = '/check-in/:id/steps';
+  static const String checkInVisa = '/check-in/:id/visa';
+  static const String checkInVisaCapture = '/check-in/:id/visa-capture';
+  static const String checkInVisaReview = '/check-in/:id/visa-review';
+  static const String checkInDisclosure = '/check-in/:id/disclosure';
+  static const String checkInDeclined = '/check-in/:id/declined';
+  static const String checkInGuests = '/check-in/:id/guests';
+  static const String checkInQuestions = '/check-in/:id/questions';
+  static const String checkInDone = '/check-in/:id/done';
+  static const String checkInPass = '/check-in/:id/pass';
+  static const String hotelView = '/check-in/:id/hotel-view';
+
+  static String checkInStepsPath(String id) => '/check-in/$id/steps';
+  static String checkInVisaPath(String id) => '/check-in/$id/visa';
+  static String checkInVisaCapturePath(String id) =>
+      '/check-in/$id/visa-capture';
+  static String checkInVisaReviewPath(String id) => '/check-in/$id/visa-review';
+  static String checkInDisclosurePath(String id) => '/check-in/$id/disclosure';
+  static String checkInDeclinedPath(String id) => '/check-in/$id/declined';
+  static String checkInGuestsPath(String id) => '/check-in/$id/guests';
+  static String checkInQuestionsPath(String id) => '/check-in/$id/questions';
+  static String checkInDonePath(String id) => '/check-in/$id/done';
+  static String checkInPassPath(String id) => '/check-in/$id/pass';
+  static String hotelViewPath(String id) => '/check-in/$id/hotel-view';
+
   // Reservations
   static const String createReservation = '/reservations/create';
   static const String reservationDetail = '/reservations/:id';

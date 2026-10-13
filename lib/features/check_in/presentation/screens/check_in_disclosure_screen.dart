@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/error_view.dart';
+import 'package:trvlez_mobile/core/widgets/loading_view.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_widgets.dart';
+import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
+
+/// Screen 5.3: Legal disclosure consent for destination authorities.
+class CheckInDisclosureScreen extends ConsumerWidget {
+  const CheckInDisclosureScreen({
+    super.key,
+    required this.reservationId,
+  });
+
+  final String reservationId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+    final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
+
+    return stateAsync.when(
+      loading: () => Scaffold(
+        backgroundColor: colors.brandSurface,
+        body: const Center(child: LoadingView()),
+      ),
+      error: (err, _) => Scaffold(
+        backgroundColor: colors.brandSurface,
+        body: Center(
+          child: ErrorView(
+            message: err.toString(),
+            onRetry: () =>
+                ref.invalidate(checkInNotifierProvider(reservationId)),
+          ),
+        ),
+      ),
+      data: (details) {
+        final hotel = details.hotel;
+
+        return BrandVerifyScreen(
+          title: 'What Spain needs',
+          backgroundAsset: 'assets/art/bg_checkin_steps.svg',
+          helpArea: ProblemArea.checkIn,
+          onBack: () => context.pop(),
+          isScrollable: true,
+          foot: [
+            AppButton(
+              label: 'Share and continue',
+              variant: AppButtonVariant.brandWhite,
+              enabled: details.disclosureAgreed,
+              onPressed: () {
+                ref
+                    .read(checkInNotifierProvider(reservationId).notifier)
+                    .completeStage(CheckInStage.requirement);
+                context.pushReplacement(
+                  AppRoutes.checkInGuestsPath(reservationId),
+                );
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.md - 2),
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {
+                    ref
+                        .read(checkInNotifierProvider(reservationId).notifier)
+                        .declineCheckIn();
+                    context.push(AppRoutes.checkInDeclinedPath(reservationId));
+                  },
+                  child: Text(
+                    "Not now — I'll check in at the desk",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: AppTypography.fontFamily,
+                      fontSize: 12,
+                      color: colors.brandSecondary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: colors.brandUnderline,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const CheckInNotice(
+              text: "This goes in Who has your details,\nwith today's date.",
+            ),
+          ],
+          children: [
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Approve what we send',
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 22,
+                fontWeight: TypeScale.bold,
+                color: colors.brandOnSurface,
+                letterSpacing: -0.3,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Spanish law names these fields. We send exactly them and nothing else.',
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 12,
+                color: colors.brandSecondaryBody,
+                height: 1.35,
+              ),
+            ),
+            CheckInDisclosureCard(
+              title: 'Sent to $hotel',
+              lines: const [
+                CheckInDisclosureLine('Full name'),
+                CheckInDisclosureLine('Passport number'),
+                CheckInDisclosureLine('Nationality'),
+                CheckInDisclosureLine('Date of birth'),
+                CheckInDisclosureLine('Dates of your stay'),
+              ],
+            ),
+            const CheckInDisclosureCard(
+              title: 'Still not sent',
+              lines: [
+                CheckInDisclosureLine('Your passport scan', shared: false),
+                CheckInDisclosureLine('Your selfie video', shared: false),
+                CheckInDisclosureLine(
+                  'Anything about your other trips',
+                  shared: false,
+                ),
+              ],
+            ),
+            CheckInConsentTick(
+              agreed: details.disclosureAgreed,
+              label: 'I agree to share these details with $hotel for this stay.',
+              onTap: () {
+                ref
+                    .read(checkInNotifierProvider(reservationId).notifier)
+                    .setDisclosureAgreed(!details.disclosureAgreed);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

@@ -151,6 +151,24 @@ class AppColors extends ThemeExtension<AppColors> {
   Color get brandDivider => verificationDivider;
   Color get brandCardIconBackground => verificationCardIconFill;
 
+  // ─── Check-in & Hotel Preview Getters (Section 05) ───────────────────
+  Color get checkInStepPanel => Palette.stepPanel;
+  Color get checkInStepPanelNow => Palette.stepPanelNow;
+  Color get checkInFlagPanel => Palette.flagPanel;
+  Color get checkInRingPanel => Palette.ringPanel;
+  Color get checkInGuestAvatar => Palette.guestAvatar;
+  Color get checkInConsentBox => Palette.consentBox;
+  Color get checkInDisclosureDimIcon => Palette.disclosureDimIcon;
+  Color get checkInDisclosureDimText => Palette.disclosureDimText;
+  Color get checkInPassRef => Palette.passRef;
+
+  Color get hotelScreen => Palette.hotelScreen;
+  Color get hotelLabel => Palette.hotelLabel;
+  Color get hotelMeta => Palette.hotelMeta;
+  Color get hotelLine => Palette.hotelLine;
+  Color get hotelOkFill => Palette.hotelOkFill;
+  Color get hotelOkInk => Palette.hotelOkInk;
+
   // ─── Main App Polish & Surfaces ──────────────────────────────────────
   final Color pageBackground;
   final Color cardBorder;

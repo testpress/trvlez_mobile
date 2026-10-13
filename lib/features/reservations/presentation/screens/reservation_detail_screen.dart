@@ -245,10 +245,15 @@ class _ReservationDetailContent extends ConsumerWidget {
             ReservationActionsCard(
               reservation: activeReservation,
               onCheckIn: () {
-                context.push(
-                  AppRoutes.reservationQrPath(activeReservation.id),
-                  extra: activeReservation,
-                );
+                if (activeReservation.status == ReservationStatus.checkedIn) {
+                  context.push(
+                    AppRoutes.checkInPassPath(activeReservation.id),
+                  );
+                } else {
+                  context.push(
+                    AppRoutes.checkInStepsPath(activeReservation.id),
+                  );
+                }
               },
               onPreArrivalForm: () {
                 context.push(

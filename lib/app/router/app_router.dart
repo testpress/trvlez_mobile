@@ -15,6 +15,17 @@ import 'package:trvlez_mobile/features/booking/presentation/screens/booking_card
 import 'package:trvlez_mobile/features/booking/presentation/screens/booking_dates_screen.dart';
 import 'package:trvlez_mobile/features/booking/presentation/screens/booking_review_screen.dart';
 import 'package:trvlez_mobile/features/booking/presentation/screens/property_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_declined_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_disclosure_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_done_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_guests_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_pass_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_questions_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_steps_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_visa_capture_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_visa_review_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/check_in_visa_screen.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/screens/hotel_view_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -323,6 +334,84 @@ final routerProvider = Provider<GoRouter>((ref) {
             return const MyTripsScreen();
           }
           return PreArrivalFormScreen(reservationId: reservation.id);
+        },
+      ),
+      // ─── Check-in Routes (Section 06) ───────────────────────────
+      GoRoute(
+        path: AppRoutes.checkInSteps,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInStepsScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInVisa,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInVisaScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInVisaCapture,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInVisaCaptureScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInVisaReview,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInVisaReviewScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInDisclosure,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInDisclosureScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInDeclined,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInDeclinedScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInGuests,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInGuestsScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInQuestions,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInQuestionsScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInDone,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInDoneScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.checkInPass,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CheckInPassScreen(reservationId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.hotelView,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return HotelViewScreen(reservationId: id);
         },
       ),
       // ─── Profile & Verification Routes ──────────────────────────
