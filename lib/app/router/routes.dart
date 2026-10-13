@@ -85,17 +85,11 @@ class AppRoutes {
   static String disputeStatusPath(String id) => '/dispute/$id/status';
 
   // Reservations
-  static const String createReservation = '/reservations/create';
   static const String reservationDetail = '/reservations/:id';
-  static const String reservationQr = '/reservations/:id/qr';
   static const String reservationForm = '/reservations/:id/form';
-  static const String bookingConfirmation = '/reservations/:id/confirmation';
 
   static String reservationDetailPath(String id) => '/reservations/$id';
-  static String reservationQrPath(String id) => '/reservations/$id/qr';
   static String reservationFormPath(String id) => '/reservations/$id/form';
-  static String bookingConfirmationPath(String id) =>
-      '/reservations/$id/confirmation';
 
   // Profile Setup
   static const String profileSetup = '/profile-setup';

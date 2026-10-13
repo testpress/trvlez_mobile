@@ -43,14 +43,10 @@ import 'package:trvlez_mobile/features/profile/presentation/screens/account_scre
 import 'package:trvlez_mobile/features/profile/presentation/screens/close_account_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/profile_setup_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 import 'package:trvlez_mobile/features/properties/presentation/screens/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/screens/booking_confirmation_screen.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/screens/create_reservation_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/my_trips_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/pre_arrival_form_screen.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/screens/qr_code_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/saved/presentation/screens/saved_screen.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_passport_service_impl.dart';
@@ -58,11 +54,9 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/chip_data_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/confirm_details_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/screens/mrz_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_failed_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_final_check_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_intro_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_result_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_scan_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_capture_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_failed_screen.dart';
@@ -240,42 +234,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       // ─── Reservation Routes ─────────────────────────────────────
       GoRoute(
-        path: AppRoutes.createReservation,
-        builder: (context, state) {
-          Property? property;
-          String? selectedRoomTypeId;
-          if (state.extra is Property) {
-            property = state.extra as Property;
-          } else if (state.extra is Map<String, dynamic>) {
-            final map = state.extra as Map<String, dynamic>;
-            property = map['property'] as Property?;
-            selectedRoomTypeId = map['selectedRoomTypeId'] as String?;
-          }
-          final propertyId =
-              property?.id ?? state.uri.queryParameters['property_id'] ?? '';
-          if (property == null && propertyId.isEmpty) {
-            return const PropertiesListingScreen();
-          }
-          return Consumer(
-            builder: (context, ref, _) {
-              final phone = ref
-                  .watch(currentProfileProvider)
-                  .valueOrNull
-                  ?.phone;
-              return CreateReservationScreen(
-                property: property,
-                propertyId: propertyId.isNotEmpty ? propertyId : null,
-                initialRoomTypeId: selectedRoomTypeId,
-                propertyLoader: (id) => ref
-                    .read(propertiesRepositoryProvider)
-                    .getPropertyDetail(id),
-                initialPhone: phone,
-              );
-            },
-          );
-        },
-      ),
-      GoRoute(
         path: AppRoutes.reservationDetail,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
@@ -295,46 +253,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
-      GoRoute(
-        path: AppRoutes.bookingConfirmation,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? '';
-          final reservation = state.extra is Reservation
-              ? state.extra as Reservation
-              : (state.extra is Map<String, dynamic>
-                    ? (state.extra as Map<String, dynamic>)['reservation']
-                          as Reservation?
-                    : null);
-          if (reservation == null && id.isEmpty) {
-            return const MyTripsScreen();
-          }
-          return BookingConfirmationScreen(
-            reservationId: reservation?.id ?? id,
-            reservation: reservation,
-            repository: ref.read(reservationRepositoryProvider),
-          );
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.reservationQr,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? '';
-          final reservation = state.extra is Reservation
-              ? state.extra as Reservation
-              : (state.extra is Map<String, dynamic>
-                    ? (state.extra as Map<String, dynamic>)['reservation']
-                          as Reservation?
-                    : null);
-          if (reservation == null && id.isEmpty) {
-            return const MyTripsScreen();
-          }
-          return QrCodeScreen(
-            reservationId: reservation?.id ?? id,
-            reservation: reservation,
-            repository: ref.read(reservationRepositoryProvider),
-          );
-        },
-      ),
+
       GoRoute(
         path: AppRoutes.reservationForm,
         builder: (context, state) {
