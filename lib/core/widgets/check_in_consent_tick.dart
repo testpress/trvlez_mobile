@@ -44,7 +44,9 @@ class CheckInConsentTick extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: agreed ? colors.brandOnSurface : null,
                   border: Border.all(
-                    color: agreed ? colors.brandOnSurface : colors.checkInConsentBox,
+                    color: agreed
+                        ? colors.brandOnSurface
+                        : colors.checkInConsentBox,
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.circular(AppRadius.xs + 1),

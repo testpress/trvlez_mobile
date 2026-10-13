@@ -10,18 +10,15 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_field.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_flag_callout.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_field.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_flag_callout.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/disputes/presentation/providers/dispute_providers.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.3b: Written explanation and photo evidence collection.
 class DisputeDetailScreen extends ConsumerStatefulWidget {
-  const DisputeDetailScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const DisputeDetailScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -177,7 +174,9 @@ class _AttachRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  count > 0 ? '$count of 3 photos added' : 'Add photos · optional',
+                  count > 0
+                      ? '$count of 3 photos added'
+                      : 'Add photos · optional',
                   style: TextStyle(
                     fontFamily: AppTypography.fontFamily,
                     fontSize: 13,

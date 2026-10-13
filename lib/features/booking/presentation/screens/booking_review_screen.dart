@@ -47,9 +47,7 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            e.toString().replaceAll('Exception: ', ''),
-          ),
+          content: Text(e.toString().replaceAll('Exception: ', '')),
           behavior: SnackBarBehavior.floating,
         ),
       );

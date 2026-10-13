@@ -67,8 +67,9 @@ class CheckInField extends StatelessWidget {
               ),
             ),
             child: Row(
-              crossAxisAlignment:
-                  tall ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+              crossAxisAlignment: tall
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: tall && controller != null

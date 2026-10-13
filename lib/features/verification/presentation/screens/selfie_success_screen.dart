@@ -63,20 +63,13 @@ class _SelfieSuccessScreenState extends State<SelfieSuccessScreen> {
               shape: BoxShape.circle,
               color: colors.brandOnSurface,
             ),
-            child: Icon(
-              AppIcons.check,
-              size: 34.0,
-              color: colors.brandPrimary,
-            ),
+            child: Icon(AppIcons.check, size: 34.0, color: colors.brandPrimary),
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
         const VerifyProgressTrio(
           labels: ['Upload', 'Check'],
-          states: [
-            TrioState.done,
-            TrioState.done,
-          ],
+          states: [TrioState.done, TrioState.done],
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(

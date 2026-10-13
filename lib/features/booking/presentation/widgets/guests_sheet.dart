@@ -10,7 +10,8 @@ import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_stepper.dart';
 
 /// Opens the modal bottom sheet for selecting guest counts.
-Future<void> showGuestsSheet(BuildContext context) => showModalBottomSheet<void>(
+Future<void> showGuestsSheet(BuildContext context) =>
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -32,9 +33,7 @@ class GuestsSheet extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(18.0),
-          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(18.0)),
         ),
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.md,

@@ -75,9 +75,7 @@ class PropertyFootBar extends StatelessWidget {
               ),
             ],
             BookingAppButton(
-              label: draft.chosen.isEmpty
-                  ? 'Select a room'
-                  : 'Review booking',
+              label: draft.chosen.isEmpty ? 'Select a room' : 'Review booking',
               onPressed: draft.canReview
                   ? () => context.push(AppRoutes.bookingReview)
                   : null,

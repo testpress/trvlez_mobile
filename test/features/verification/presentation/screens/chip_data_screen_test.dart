@@ -127,38 +127,39 @@ void main() {
     },
   );
 
-  testWidgets('falls back to chip photo placeholder when faceImageBytes is null', (
-    tester,
-  ) async {
-    final resultWithoutImage = NfcPassportResult(
-      rawDgBytesBase64: {'dg1': 'dummy'},
-      authMethod: NfcAuthMethod.bac,
-      availableDataGroups: ['dg1'],
-      parsedMrz: testMrz,
-      faceImageBytes: null,
-    );
+  testWidgets(
+    'falls back to chip photo placeholder when faceImageBytes is null',
+    (tester) async {
+      final resultWithoutImage = NfcPassportResult(
+        rawDgBytesBase64: {'dg1': 'dummy'},
+        authMethod: NfcAuthMethod.bac,
+        availableDataGroups: ['dg1'],
+        parsedMrz: testMrz,
+        faceImageBytes: null,
+      );
 
-    final container = ProviderContainer();
-    container
-        .read(verificationNotifierProvider.notifier)
-        .setNfcResult(resultWithoutImage);
+      final container = ProviderContainer();
+      container
+          .read(verificationNotifierProvider.notifier)
+          .setNfcResult(resultWithoutImage);
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(home: ChipDataScreen()),
-      ),
-    );
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: ChipDataScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // Verify no Image widget
-    expect(find.byType(Image), findsNothing);
+      // Verify no Image widget
+      expect(find.byType(Image), findsNothing);
 
-    // Verify provenance badge is displayed
-    expect(find.text('From the chip'), findsOneWidget);
+      // Verify provenance badge is displayed
+      expect(find.text('From the chip'), findsOneWidget);
 
-    // Verify details still shown
-    expect(find.text('JOHN DOE'), findsOneWidget);
-    expect(find.text('USA'), findsOneWidget);
-  });
+      // Verify details still shown
+      expect(find.text('JOHN DOE'), findsOneWidget);
+      expect(find.text('USA'), findsOneWidget);
+    },
+  );
 }

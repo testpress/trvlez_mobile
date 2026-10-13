@@ -51,11 +51,7 @@ class AnywhereRow extends StatelessWidget {
                   color: colors.checkInRingPanel,
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
-                child: Icon(
-                  icon,
-                  size: 14,
-                  color: colors.brandOnSurface,
-                ),
+                child: Icon(icon, size: 14, color: colors.brandOnSurface),
               ),
               const SizedBox(width: AppSpacing.sm + 2),
               Expanded(
@@ -123,11 +119,7 @@ class AnywhereRow extends StatelessWidget {
 
 /// Form field label on red surface.
 class AnywhereLabel extends StatelessWidget {
-  const AnywhereLabel({
-    super.key,
-    required this.text,
-    this.hint,
-  });
+  const AnywhereLabel({super.key, required this.text, this.hint});
 
   final String text;
   final String? hint;
@@ -137,10 +129,7 @@ class AnywhereLabel extends StatelessWidget {
     final colors = context.colors;
 
     return Padding(
-      padding: const EdgeInsets.only(
-        top: AppSpacing.md,
-        bottom: AppSpacing.xs,
-      ),
+      padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xs),
       child: Text.rich(
         TextSpan(
           children: [
@@ -194,10 +183,7 @@ class AnywhereField extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.brandFieldBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(
-          color: colors.brandBorderSubtle,
-          width: 1,
-        ),
+        border: Border.all(color: colors.brandBorderSubtle, width: 1),
       ),
       child: TextField(
         controller: controller,

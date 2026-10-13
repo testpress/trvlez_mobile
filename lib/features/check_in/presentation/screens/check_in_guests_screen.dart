@@ -19,10 +19,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.4: Overview of travelers on the booking and invitation status for additional guests.
 class CheckInGuestsScreen extends ConsumerWidget {
-  const CheckInGuestsScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInGuestsScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -59,9 +56,12 @@ class CheckInGuestsScreen extends ConsumerWidget {
       data: (details) {
         final adults = details.numberOfGuests > 0 ? details.numberOfGuests : 2;
         final invitedAdults = details.invitedAdults;
-        final allInvited = adults <= 1 ||
-            List.generate(adults - 1, (i) => i + 1)
-                .every((idx) => invitedAdults.contains(idx));
+        final allInvited =
+            adults <= 1 ||
+            List.generate(
+              adults - 1,
+              (i) => i + 1,
+            ).every((idx) => invitedAdults.contains(idx));
 
         void onwards() {
           ref
@@ -110,9 +110,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
               variant: AppButtonVariant.brandOutline,
               onPressed: onwards,
             ),
-            const CheckInNotice(
-              text: "Each guest's documents stay their own.",
-            ),
+            const CheckInNotice(text: "Each guest's documents stay their own."),
           ],
           children: [
             const SizedBox(height: AppSpacing.sm),

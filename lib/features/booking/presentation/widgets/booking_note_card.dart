@@ -25,12 +25,7 @@ class BookingNoteCard extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        marginTop,
-        AppSpacing.md,
-        0,
-      ),
+      margin: EdgeInsets.fromLTRB(AppSpacing.md, marginTop, AppSpacing.md, 0),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: amber
           ? BoxDecoration(

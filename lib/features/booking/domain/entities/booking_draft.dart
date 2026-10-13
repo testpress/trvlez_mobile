@@ -38,20 +38,19 @@ class BookingDraft {
     bool? cardAdded,
     String? heroImageUrl,
     String? currencyCode,
-  }) =>
-      BookingDraft(
-        propertyId: propertyId,
-        propertyName: propertyName,
-        propertyPlace: propertyPlace,
-        propertyTag: propertyTag,
-        propertyNightly: propertyNightly,
-        heroImageUrl: heroImageUrl ?? this.heroImageUrl,
-        currencyCode: currencyCode ?? this.currencyCode,
-        range: range ?? this.range,
-        guests: guests ?? this.guests,
-        picks: picks ?? this.picks,
-        cardAdded: cardAdded ?? this.cardAdded,
-      );
+  }) => BookingDraft(
+    propertyId: propertyId,
+    propertyName: propertyName,
+    propertyPlace: propertyPlace,
+    propertyTag: propertyTag,
+    propertyNightly: propertyNightly,
+    heroImageUrl: heroImageUrl ?? this.heroImageUrl,
+    currencyCode: currencyCode ?? this.currencyCode,
+    range: range ?? this.range,
+    guests: guests ?? this.guests,
+    picks: picks ?? this.picks,
+    cardAdded: cardAdded ?? this.cardAdded,
+  );
 
   List<RoomPick> get chosen => picks.where((p) => p.quantity > 0).toList();
 
@@ -81,7 +80,6 @@ class BookingDraft {
   bool get splits => ranges.length > 1;
 
   List<List<RoomPick>> split() => [
-        for (final r in ranges)
-          chosen.where((p) => p.range.sameAs(r)).toList(),
-      ];
+    for (final r in ranges) chosen.where((p) => p.range.sameAs(r)).toList(),
+  ];
 }

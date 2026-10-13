@@ -8,10 +8,10 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_field.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_option_picker_sheet.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_field.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_option_picker_sheet.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.2c: Dates and guest count selection for external stay.
@@ -30,12 +30,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
     '28 Nov – 2 Dec',
   ];
 
-  static const _guestOptions = [
-    '1 adult',
-    '2 adults',
-    '3 adults',
-    '4 adults',
-  ];
+  static const _guestOptions = ['1 adult', '2 adults', '3 adults', '4 adults'];
 
   String _selectedDates = '';
   int _selectedGuests = 2;
@@ -68,10 +63,9 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
           label: 'Continue',
           variant: AppButtonVariant.brandWhite,
           onPressed: () {
-            ref.read(anywhereDraftProvider.notifier).setStay(
-                  dates: _selectedDates,
-                  guests: _selectedGuests,
-                );
+            ref
+                .read(anywhereDraftProvider.notifier)
+                .setStay(dates: _selectedDates, guests: _selectedGuests);
             context.push(AppRoutes.anywhereTold);
           },
         ),
@@ -123,7 +117,8 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
         // Guest count selection
         CheckInField(
           label: 'How many guests?',
-          value: '$_selectedGuests ${_selectedGuests == 1 ? 'adult' : 'adults'}',
+          value:
+              '$_selectedGuests ${_selectedGuests == 1 ? 'adult' : 'adults'}',
           onTap: () async {
             final picked = await showCheckInOptionPicker(
               context,
@@ -133,7 +128,8 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
                   '$_selectedGuests ${_selectedGuests == 1 ? 'adult' : 'adults'}',
             );
             if (picked != null) {
-              final count = int.tryParse(picked.split(' ').first) ?? _selectedGuests;
+              final count =
+                  int.tryParse(picked.split(' ').first) ?? _selectedGuests;
               setState(() => _selectedGuests = count);
             }
           },

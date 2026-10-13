@@ -13,39 +13,35 @@ enum GuestKind {
 /// The counts of guests attending a stay.
 /// Adults verify identity in-app; children are checked in at reception.
 class GuestCounts {
-  const GuestCounts({
-    this.adults = 2,
-    this.children = 0,
-    this.infants = 0,
-  });
+  const GuestCounts({this.adults = 2, this.children = 0, this.infants = 0});
 
   final int adults;
   final int children;
   final int infants;
 
   int of(GuestKind kind) => switch (kind) {
-        GuestKind.adults => adults,
-        GuestKind.children => children,
-        GuestKind.infants => infants,
-      };
+    GuestKind.adults => adults,
+    GuestKind.children => children,
+    GuestKind.infants => infants,
+  };
 
   GuestCounts withKind(GuestKind kind, int value) => switch (kind) {
-        GuestKind.adults => GuestCounts(
-            adults: value,
-            children: children,
-            infants: infants,
-          ),
-        GuestKind.children => GuestCounts(
-            adults: adults,
-            children: value,
-            infants: infants,
-          ),
-        GuestKind.infants => GuestCounts(
-            adults: adults,
-            children: children,
-            infants: value,
-          ),
-      };
+    GuestKind.adults => GuestCounts(
+      adults: value,
+      children: children,
+      infants: infants,
+    ),
+    GuestKind.children => GuestCounts(
+      adults: adults,
+      children: value,
+      infants: infants,
+    ),
+    GuestKind.infants => GuestCounts(
+      adults: adults,
+      children: children,
+      infants: value,
+    ),
+  };
 
   /// The minimum count allowed for each kind. At least 1 adult is required.
   int floorFor(GuestKind kind) => kind == GuestKind.adults ? 1 : 0;

@@ -48,8 +48,8 @@ class DisputeDraft {
 
 final disputeDraftProvider =
     StateNotifierProvider<DisputeDraftNotifier, DisputeDraft>((ref) {
-  return DisputeDraftNotifier();
-});
+      return DisputeDraftNotifier();
+    });
 
 class DisputeDraftNotifier extends StateNotifier<DisputeDraft> {
   DisputeDraftNotifier() : super(const DisputeDraft());
@@ -89,8 +89,8 @@ class DisputeDraftNotifier extends StateNotifier<DisputeDraft> {
 
 final disputesProvider =
     StateNotifierProvider<DisputesNotifier, Map<String, DisputeRecord>>((ref) {
-  return DisputesNotifier();
-});
+      return DisputesNotifier();
+    });
 
 class DisputesNotifier extends StateNotifier<Map<String, DisputeRecord>> {
   DisputesNotifier() : super({});
@@ -108,10 +108,7 @@ class DisputesNotifier extends StateNotifier<Map<String, DisputeRecord>> {
       status: 'holding',
     );
 
-    state = {
-      ...state,
-      draft.reservationId: record,
-    };
+    state = {...state, draft.reservationId: record};
   }
 
   void withdrawDispute(String reservationId) {
@@ -127,10 +124,7 @@ class DisputesNotifier extends StateNotifier<Map<String, DisputeRecord>> {
         raisedAt: current.raisedAt,
         status: 'withdrawn',
       );
-      state = {
-        ...state,
-        reservationId: updated,
-      };
+      state = {...state, reservationId: updated};
     }
   }
 }

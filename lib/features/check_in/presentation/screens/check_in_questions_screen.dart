@@ -16,10 +16,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.5: Property arrival time, guest count, and optional traveler notes form.
 class CheckInQuestionsScreen extends ConsumerStatefulWidget {
-  const CheckInQuestionsScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInQuestionsScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -40,12 +37,7 @@ class _CheckInQuestionsScreenState
     "I'm not sure yet",
   ];
 
-  static const _guestOptions = [
-    '1 adult',
-    '2 adults',
-    '3 adults',
-    '4 adults',
-  ];
+  static const _guestOptions = ['1 adult', '2 adults', '3 adults', '4 adults'];
 
   String _arrival = 'Around 6pm';
   int _guests = 2;
@@ -78,8 +70,8 @@ class _CheckInQuestionsScreenState
         body: Center(
           child: ErrorView(
             message: err.toString(),
-            onRetry: () => ref
-                .invalidate(checkInNotifierProvider(widget.reservationId)),
+            onRetry: () =>
+                ref.invalidate(checkInNotifierProvider(widget.reservationId)),
           ),
         ),
       ),
@@ -172,7 +164,8 @@ class _CheckInQuestionsScreenState
                   current: '$_guests ${_guests == 1 ? 'adult' : 'adults'}',
                 );
                 if (picked != null && mounted) {
-                  final count = int.tryParse(picked.split(' ').first) ?? _guests;
+                  final count =
+                      int.tryParse(picked.split(' ').first) ?? _guests;
                   setState(() => _guests = count);
                 }
               },

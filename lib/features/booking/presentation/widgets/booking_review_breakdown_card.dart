@@ -54,10 +54,7 @@ class BookingReviewBreakdownCard extends StatelessWidget {
                 currencyCode: draft.currencyCode,
               ),
             ),
-          BookingSummaryRow(
-            label: 'Guests',
-            value: draft.guests.summary,
-          ),
+          BookingSummaryRow(label: 'Guests', value: draft.guests.summary),
           BookingSummaryRow(
             label: 'Total',
             value: PriceFormatter.formatPrice(

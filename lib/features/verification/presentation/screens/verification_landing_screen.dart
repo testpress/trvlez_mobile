@@ -187,9 +187,7 @@ class _VerificationLandingScreenState
             isDone: i < doneCount,
             isActive: i == doneCount,
             stepData: _steps[i],
-            onTap: i <= doneCount
-                ? () => context.push(_steps[i].route)
-                : null,
+            onTap: i <= doneCount ? () => context.push(_steps[i].route) : null,
           ),
         ],
       ],

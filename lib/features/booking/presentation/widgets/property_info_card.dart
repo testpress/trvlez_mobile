@@ -47,11 +47,7 @@ class PropertyInfoCard extends StatelessWidget {
           const SizedBox(height: 4),
           Row(
             children: [
-              Icon(
-                AppIcons.mapPin,
-                size: 14.0,
-                color: colors.inkSecondary,
-              ),
+              Icon(AppIcons.mapPin, size: 14.0, color: colors.inkSecondary),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -69,10 +65,7 @@ class PropertyInfoCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8.0,
-              vertical: 3.0,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
             decoration: BoxDecoration(
               color: colors.redTint,
               borderRadius: AppRadius.pillRadius,

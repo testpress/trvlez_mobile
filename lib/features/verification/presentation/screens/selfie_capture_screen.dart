@@ -22,10 +22,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Features a centered 158x210 face oval with smooth progress ring, front camera feed,
 /// elapsed timer counting up to 10 seconds, and round shutter control.
 class SelfieCaptureScreen extends ConsumerStatefulWidget {
-  const SelfieCaptureScreen({
-    super.key,
-    required this.cameraService,
-  });
+  const SelfieCaptureScreen({super.key, required this.cameraService});
 
   final CameraService cameraService;
 

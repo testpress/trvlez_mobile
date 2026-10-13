@@ -32,7 +32,10 @@ class _VerifyWobbleState extends State<VerifyWobble>
   void initState() {
     super.initState();
     if (!WidgetsBinding
-        .instance.platformDispatcher.accessibilityFeatures.disableAnimations) {
+        .instance
+        .platformDispatcher
+        .accessibilityFeatures
+        .disableAnimations) {
       _controller.forward();
     }
   }

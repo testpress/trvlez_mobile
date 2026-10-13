@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:trvlez_mobile/core/widgets/status_pill.dart';
+import 'package:meta/meta.dart';
+
+/// State of a recommendation in the Findr review pipeline.
+enum FindrRecommendationState { awaiting, confirmed, declined }
 
 /// A single hotel recommendation made through Findr.
 @immutable
@@ -14,7 +16,7 @@ class FindrRecommendation {
   final String name;
   final String when;
   final String status;
-  final StatusPillState state;
+  final FindrRecommendationState state;
 }
 
 /// A payout record in the Findr programme.

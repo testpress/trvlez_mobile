@@ -69,11 +69,7 @@ class CheckInStepTile extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: isDone
-                    ? Icon(
-                        AppIcons.check,
-                        size: 14,
-                        color: colors.brandPrimary,
-                      )
+                    ? Icon(AppIcons.check, size: 14, color: colors.brandPrimary)
                     : Text(
                         '$number',
                         style: TextStyle(

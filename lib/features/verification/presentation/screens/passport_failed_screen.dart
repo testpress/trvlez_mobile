@@ -19,10 +19,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Features a single-play 800ms wobble illustration, trio progress marking the failed stage,
 /// supportive guidance blaming the lighting rather than the traveler, and clear recovery actions.
 class PassportFailedScreen extends ConsumerWidget {
-  const PassportFailedScreen({
-    super.key,
-    this.failureReason,
-  });
+  const PassportFailedScreen({super.key, this.failureReason});
 
   final String? failureReason;
 
@@ -63,11 +60,7 @@ class PassportFailedScreen extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         const VerifyProgressTrio(
           labels: ['Upload', 'Check', 'Read'],
-          states: [
-            TrioState.done,
-            TrioState.done,
-            TrioState.failed,
-          ],
+          states: [TrioState.done, TrioState.done, TrioState.failed],
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(

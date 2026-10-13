@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
@@ -23,15 +24,10 @@ import 'package:trvlez_mobile/features/booking/presentation/widgets/property_inf
 import 'package:trvlez_mobile/features/booking/presentation/widgets/property_picture_band.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/room_dates_sheet.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 
 /// Screen displaying property details, date selection, guest counts, and bookable room types.
 class PropertyScreen extends ConsumerWidget {
-  const PropertyScreen({
-    super.key,
-    this.property,
-    this.propertyId,
-  });
+  const PropertyScreen({super.key, this.property, this.propertyId});
 
   final Property? property;
   final String? propertyId;
@@ -55,9 +51,7 @@ class PropertyScreen extends ConsumerWidget {
           body: const Column(
             children: [
               _PropertyHeader(),
-              Expanded(
-                child: Center(child: CircularProgressIndicator()),
-              ),
+              Expanded(child: Center(child: CircularProgressIndicator())),
             ],
           ),
         ),
@@ -124,11 +118,7 @@ class _PropertyHeader extends StatelessWidget {
               onTap: () => context.pop(),
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.xs),
-                child: Icon(
-                  AppIcons.arrowLeft,
-                  size: 20.0,
-                  color: colors.ink,
-                ),
+                child: Icon(AppIcons.arrowLeft, size: 20.0, color: colors.ink),
               ),
             ),
           ),

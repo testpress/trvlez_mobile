@@ -8,11 +8,11 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_segmented_control.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 import 'package:trvlez_mobile/core/widgets/heart_button.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
-import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 
 /// Session provider tracking IDs of properties saved by the traveler.
 final savedPropertyIdsProvider = StateProvider<Set<String>>(

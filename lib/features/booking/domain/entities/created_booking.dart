@@ -31,8 +31,9 @@ class CreatedBooking {
   int get total => picks.fold(0, (sum, p) => sum + p.total);
 
   String get roomLine => picks
-      .map((p) =>
-          p.quantity == 1 ? p.type.name : '${p.type.name} × ${p.quantity}')
+      .map(
+        (p) => p.quantity == 1 ? p.type.name : '${p.type.name} × ${p.quantity}',
+      )
       .join(', ');
 
   String get dateAndGuests =>

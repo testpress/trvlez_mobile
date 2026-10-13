@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 /// How the check-in message reaches the property.
 enum AnywhereRoute {
@@ -23,31 +23,28 @@ enum AnywhereStatus {
 
 extension AnywhereStatusCopy on AnywhereStatus {
   String get pill => switch (this) {
-        AnywhereStatus.sent => 'Sent',
-        AnywhereStatus.noted => 'Noted',
-        AnywhereStatus.desk => 'Desk',
-      };
+    AnywhereStatus.sent => 'Sent',
+    AnywhereStatus.noted => 'Noted',
+    AnywhereStatus.desk => 'Desk',
+  };
 
   String get stripTitle => switch (this) {
-        AnywhereStatus.sent => 'Your verified pass',
-        AnywhereStatus.noted => 'They are expecting you',
-        AnywhereStatus.desk => 'Your verified pass',
-      };
+    AnywhereStatus.sent => 'Your verified pass',
+    AnywhereStatus.noted => 'They are expecting you',
+    AnywhereStatus.desk => 'Your verified pass',
+  };
 
   String get stripBody => switch (this) {
-        AnywhereStatus.sent => 'Show it at the desk',
-        AnywhereStatus.noted => 'Show your pass at the desk',
-        AnywhereStatus.desk => 'Show it if they ask',
-      };
+    AnywhereStatus.sent => 'Show it at the desk',
+    AnywhereStatus.noted => 'Show your pass at the desk',
+    AnywhereStatus.desk => 'Show it if they ask',
+  };
 }
 
 /// A directory hotel entry that can be searched or selected.
 @immutable
 class HotelDirectoryItem {
-  const HotelDirectoryItem({
-    required this.name,
-    required this.place,
-  });
+  const HotelDirectoryItem({required this.name, required this.place});
 
   final String name;
   final String place;
@@ -87,12 +84,13 @@ class AnywhereStay {
       '$dates · $guests ${guests == 1 ? 'guest' : 'guests'}';
 
   String get note => switch (status) {
-        AnywhereStatus.sent => route == AnywhereRoute.onTrvlez
-            ? 'Waiting in their TRVLez dashboard.'
-            : 'Emailed $sentOn. They have not replied.',
-        AnywhereStatus.noted =>
-          'Noted by $notedBy, $notedOn. Your booking is still with the hotel.',
-        AnywhereStatus.desk =>
-          'Hotel requested in-person check-in. Show your passport at the desk.',
-      };
+    AnywhereStatus.sent =>
+      route == AnywhereRoute.onTrvlez
+          ? 'Waiting in their TRVLez dashboard.'
+          : 'Emailed $sentOn. They have not replied.',
+    AnywhereStatus.noted =>
+      'Noted by $notedBy, $notedOn. Your booking is still with the hotel.',
+    AnywhereStatus.desk =>
+      'Hotel requested in-person check-in. Show your passport at the desk.',
+  };
 }

@@ -24,8 +24,18 @@ class ChipDataScreen extends ConsumerWidget {
   const ChipDataScreen({super.key});
 
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   static String _formatDate(DateTime? d) {
@@ -74,11 +84,7 @@ class ChipDataScreen extends ConsumerWidget {
               shape: BoxShape.circle,
               color: colors.brandOnSurface,
             ),
-            child: Icon(
-              AppIcons.nfc,
-              size: 34.0,
-              color: colors.brandPrimary,
-            ),
+            child: Icon(AppIcons.nfc, size: 34.0, color: colors.brandPrimary),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -155,7 +161,9 @@ class ChipDataScreen extends ConsumerWidget {
                               vertical: 2.0,
                             ),
                             decoration: BoxDecoration(
-                              color: colors.brandOnSurface.withValues(alpha: 0.2),
+                              color: colors.brandOnSurface.withValues(
+                                alpha: 0.2,
+                              ),
                               borderRadius: BorderRadius.circular(AppRadius.xs),
                             ),
                             child: Row(
@@ -185,11 +193,7 @@ class ChipDataScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              Divider(
-                height: 1.0,
-                thickness: 1.0,
-                color: colors.brandDivider,
-              ),
+              Divider(height: 1.0, thickness: 1.0, color: colors.brandDivider),
               Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.md,
@@ -200,10 +204,7 @@ class ChipDataScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    VerifyDetailRow(
-                      label: 'Nationality',
-                      value: nationality,
-                    ),
+                    VerifyDetailRow(label: 'Nationality', value: nationality),
                     VerifyDetailRow(
                       label: 'Date of birth',
                       value: dobFormatted,
@@ -225,7 +226,9 @@ class ChipDataScreen extends ConsumerWidget {
           label: 'Submit verification',
           variant: AppButtonVariant.brandWhite,
           onPressed: () {
-            ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
+            ref
+                .read(verificationNotifierProvider.notifier)
+                .submitVerificationAsync();
             context.pushReplacement(AppRoutes.nfcFinalCheck);
           },
         ),

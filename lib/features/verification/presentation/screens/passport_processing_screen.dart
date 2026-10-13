@@ -118,7 +118,10 @@ class _PassportProcessingScreenState
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
 
-    ref.listen<VerificationState>(verificationNotifierProvider, (previous, next) {
+    ref.listen<VerificationState>(verificationNotifierProvider, (
+      previous,
+      next,
+    ) {
       _handleStateTransition(next);
     });
 

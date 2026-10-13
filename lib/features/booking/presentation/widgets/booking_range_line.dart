@@ -32,7 +32,8 @@ class BookingRangeLine extends StatelessWidget {
       TextSpan(
         children: [
           TextSpan(
-            text: '${DateFormatter.dayMonth(r.from)} – ${DateFormatter.dayMonth(r.to)} · ',
+            text:
+                '${DateFormatter.dayMonth(r.from)} – ${DateFormatter.dayMonth(r.to)} · ',
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 14.0,

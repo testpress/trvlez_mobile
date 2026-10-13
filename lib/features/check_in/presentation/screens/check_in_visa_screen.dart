@@ -19,10 +19,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.2a: Visa document guidelines and capture method selection.
 class CheckInVisaScreen extends ConsumerWidget {
-  const CheckInVisaScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInVisaScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -40,10 +37,9 @@ class CheckInVisaScreen extends ConsumerWidget {
       } catch (_) {}
     }
 
-    ref.read(checkInNotifierProvider(reservationId).notifier).setVisaSource(
-          source,
-          pickedPath,
-        );
+    ref
+        .read(checkInNotifierProvider(reservationId).notifier)
+        .setVisaSource(source, pickedPath);
 
     if (context.mounted) {
       context.push(AppRoutes.checkInVisaReviewPath(reservationId));
@@ -64,9 +60,8 @@ class CheckInVisaScreen extends ConsumerWidget {
         AppButton(
           label: 'Open camera',
           variant: AppButtonVariant.brandWhite,
-          onPressed: () => context.push(
-            AppRoutes.checkInVisaCapturePath(reservationId),
-          ),
+          onPressed: () =>
+              context.push(AppRoutes.checkInVisaCapturePath(reservationId)),
         ),
         const SizedBox(height: AppSpacing.sm),
         Row(

@@ -150,10 +150,7 @@ class BrandVerifyScreen extends StatelessWidget {
                           )
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ...children,
-                              const Spacer(),
-                            ],
+                            children: [...children, const Spacer()],
                           ),
                   ),
 

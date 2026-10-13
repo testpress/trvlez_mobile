@@ -8,9 +8,9 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/widgets/anywhere_widgets.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.2a: Search for partner properties or begin manual property registration.
@@ -41,9 +41,11 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
     final colors = context.colors;
     final query = _searchController.text.trim().toLowerCase();
     final results = kHotelDirectory
-        .where((h) =>
-            h.name.toLowerCase().contains(query) ||
-            h.place.toLowerCase().contains(query))
+        .where(
+          (h) =>
+              h.name.toLowerCase().contains(query) ||
+              h.place.toLowerCase().contains(query),
+        )
         .toList();
 
     return BrandVerifyScreen(
@@ -53,9 +55,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
       onBack: () => context.pop(),
       isScrollable: true,
       foot: const [
-        CheckInNotice(
-          text: 'Nothing reaches any hotel until you confirm it.',
-        ),
+        CheckInNotice(text: 'Nothing reaches any hotel until you confirm it.'),
       ],
       children: [
         const SizedBox(height: AppSpacing.sm),

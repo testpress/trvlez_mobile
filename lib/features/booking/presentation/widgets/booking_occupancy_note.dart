@@ -27,8 +27,8 @@ class BookingOccupancyNote extends StatelessWidget {
     final text = rooms == 0
         ? 'Pick a room. You have $needed to sleep.'
         : ok
-            ? '$rooms ${rooms == 1 ? 'room' : 'rooms'} · sleep $sleeps · you have $needed'
-            : '$rooms ${rooms == 1 ? 'room' : 'rooms'} sleep $sleeps. You have $needed.';
+        ? '$rooms ${rooms == 1 ? 'room' : 'rooms'} · sleep $sleeps · you have $needed'
+        : '$rooms ${rooms == 1 ? 'room' : 'rooms'} sleep $sleeps. You have $needed.';
 
     return Container(
       margin: const EdgeInsets.fromLTRB(

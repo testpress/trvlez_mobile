@@ -41,7 +41,9 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
         _handleFailure(state);
       } else if (state.phase != VerificationPhase.submitting &&
           state.phase != VerificationPhase.verifying) {
-        ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
+        ref
+            .read(verificationNotifierProvider.notifier)
+            .submitVerificationAsync();
       }
     });
   }
@@ -95,7 +97,10 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
 
-    ref.listen<VerificationState>(verificationNotifierProvider, (previous, next) {
+    ref.listen<VerificationState>(verificationNotifierProvider, (
+      previous,
+      next,
+    ) {
       if (next.phase == VerificationPhase.verified) {
         _navigateToSuccess();
       } else if (next.phase == VerificationPhase.verificationFailed) {
@@ -142,12 +147,24 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
         const SizedBox(height: AppSpacing.md),
         VerifyStatusRows(
           rows: [
-            const VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
-            const VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
+            const VerifyStatusRow(
+              title: 'Your details',
+              state: VerifyRowStatus.done,
+            ),
+            const VerifyStatusRow(
+              title: 'Passport photo',
+              state: VerifyRowStatus.done,
+            ),
             const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
             if (!state.isNfcSkipped)
-              const VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
-            const VerifyStatusRow(title: 'Final check', state: VerifyRowStatus.running),
+              const VerifyStatusRow(
+                title: 'Chip scan',
+                state: VerifyRowStatus.done,
+              ),
+            const VerifyStatusRow(
+              title: 'Final check',
+              state: VerifyRowStatus.running,
+            ),
           ],
         ),
         if (state.phase == VerificationPhase.error) ...[

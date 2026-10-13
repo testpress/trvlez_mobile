@@ -64,8 +64,8 @@ class AnywhereDraft {
 
 final anywhereDraftProvider =
     StateNotifierProvider<AnywhereDraftNotifier, AnywhereDraft>((ref) {
-  return AnywhereDraftNotifier(ref);
-});
+      return AnywhereDraftNotifier(ref);
+    });
 
 class AnywhereDraftNotifier extends StateNotifier<AnywhereDraft> {
   AnywhereDraftNotifier(this.ref) : super(const AnywhereDraft());
@@ -124,8 +124,8 @@ class AnywhereDraftNotifier extends StateNotifier<AnywhereDraft> {
 
 final anywhereStaysProvider =
     StateNotifierProvider<AnywhereStaysNotifier, List<AnywhereStay>>((ref) {
-  return AnywhereStaysNotifier();
-});
+      return AnywhereStaysNotifier();
+    });
 
 class AnywhereStaysNotifier extends StateNotifier<List<AnywhereStay>> {
   AnywhereStaysNotifier() : super(const []);

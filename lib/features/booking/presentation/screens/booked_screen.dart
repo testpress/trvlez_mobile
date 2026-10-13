@@ -25,8 +25,9 @@ class BookedScreen extends ConsumerWidget {
     final made = ref.watch(lastCreatedBookingsProvider);
 
     final total = made.fold<int>(0, (sum, b) => sum + b.total);
-    final deadline =
-        made.isEmpty ? null : made.first.range.freeCancellationUntil;
+    final deadline = made.isEmpty
+        ? null
+        : made.first.range.freeCancellationUntil;
     final currencyCode = made.isNotEmpty
         ? (made.first.reservation?.currencyCode ?? 'GBP')
         : 'GBP';
@@ -73,7 +74,9 @@ class BookedScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.md),
                   Center(
                     child: Text(
-                      made.length > 1 ? "You're booked, twice" : "You're booked",
+                      made.length > 1
+                          ? "You're booked, twice"
+                          : "You're booked",
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 20.0,

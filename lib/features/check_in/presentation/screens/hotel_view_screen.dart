@@ -115,7 +115,7 @@ class HotelViewScreen extends ConsumerWidget {
                           dates: details.datesFormatted,
                           roomType: details.reservation.rooms.isNotEmpty
                               ? (details.reservation.rooms.first.roomTypeName ??
-                                  'Standard Room')
+                                    'Standard Room')
                               : 'Standard Room',
                         ),
                         const SizedBox(height: AppSpacing.lg),
@@ -381,7 +381,11 @@ class _RegistrationFormSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(AppIcons.alertTriangle, size: 16, color: colors.feedbackWarning),
+              Icon(
+                AppIcons.alertTriangle,
+                size: 16,
+                color: colors.feedbackWarning,
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(

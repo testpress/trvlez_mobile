@@ -98,16 +98,28 @@ class NfcFailedScreen extends ConsumerWidget {
     }
     if (_isSelfie) {
       return [
-        const VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.done),
-        const VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.done),
+        const VerifyStatusRow(
+          title: 'Your details',
+          state: VerifyRowStatus.done,
+        ),
+        const VerifyStatusRow(
+          title: 'Passport photo',
+          state: VerifyRowStatus.done,
+        ),
         const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.redo),
         if (!isNfcSkipped)
-          const VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
+          const VerifyStatusRow(
+            title: 'Chip scan',
+            state: VerifyRowStatus.done,
+          ),
       ];
     }
     return [
       const VerifyStatusRow(title: 'Your details', state: VerifyRowStatus.redo),
-      const VerifyStatusRow(title: 'Passport photo', state: VerifyRowStatus.redo),
+      const VerifyStatusRow(
+        title: 'Passport photo',
+        state: VerifyRowStatus.redo,
+      ),
       const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
       if (!isNfcSkipped)
         const VerifyStatusRow(title: 'Chip scan', state: VerifyRowStatus.done),
@@ -187,10 +199,7 @@ class NfcFailedScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        VerifyStatusRows(
-          dimCompleted: true,
-          rows: rows,
-        ),
+        VerifyStatusRows(dimCompleted: true, rows: rows),
         const SizedBox(height: AppSpacing.md),
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),

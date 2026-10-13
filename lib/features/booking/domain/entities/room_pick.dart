@@ -48,9 +48,8 @@ class BookingRoomCatalogue {
       final active = property.roomTypes.where((rt) => rt.isActive).toList();
       final roomsToUse = active.isNotEmpty ? active : property.roomTypes;
       return roomsToUse.map((rt) {
-        final price = rt.pricePerNight?.round() ??
-            property.pricePerNight?.round() ??
-            100;
+        final price =
+            rt.pricePerNight?.round() ?? property.pricePerNight?.round() ?? 100;
         return BookingRoomType(
           id: rt.id,
           name: rt.name,
@@ -65,17 +64,17 @@ class BookingRoomCatalogue {
   }
 
   static List<BookingRoomType> forNightly(String propertyId, int nightly) => [
-        BookingRoomType(
-          id: '$propertyId-r1',
-          name: 'Room type one',
-          sleeps: 2,
-          nightly: nightly > 0 ? nightly : 240,
-        ),
-        BookingRoomType(
-          id: '$propertyId-r2',
-          name: 'Room type two',
-          sleeps: 4,
-          nightly: ((nightly > 0 ? nightly : 240) * 1.42).round(),
-        ),
-      ];
+    BookingRoomType(
+      id: '$propertyId-r1',
+      name: 'Room type one',
+      sleeps: 2,
+      nightly: nightly > 0 ? nightly : 240,
+    ),
+    BookingRoomType(
+      id: '$propertyId-r2',
+      name: 'Room type two',
+      sleeps: 4,
+      nightly: ((nightly > 0 ? nightly : 240) * 1.42).round(),
+    ),
+  ];
 }

@@ -64,16 +64,22 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final mrz = state.mrzExtractionResult;
 
-    final firstName = mrz?.firstName?.isNotEmpty == true ? mrz!.firstName! : '—';
+    final firstName = mrz?.firstName?.isNotEmpty == true
+        ? mrz!.firstName!
+        : '—';
     final lastName = mrz?.lastName?.isNotEmpty == true ? mrz!.lastName! : '—';
     final docNumber = mrz?.documentNumber?.isNotEmpty == true
         ? mrz!.documentNumber!
         : (state.extractedDocumentNumber?.isNotEmpty == true
-            ? state.extractedDocumentNumber!
-            : '—');
-    final nationality = mrz?.nationality?.isNotEmpty == true ? mrz!.nationality! : '—';
+              ? state.extractedDocumentNumber!
+              : '—');
+    final nationality = mrz?.nationality?.isNotEmpty == true
+        ? mrz!.nationality!
+        : '—';
     final dob = mrz?.dateOfBirth?.isNotEmpty == true ? mrz!.dateOfBirth! : '—';
-    final expiry = mrz?.dateOfExpiry?.isNotEmpty == true ? mrz!.dateOfExpiry! : '—';
+    final expiry = mrz?.dateOfExpiry?.isNotEmpty == true
+        ? mrz!.dateOfExpiry!
+        : '—';
     final sex = mrz?.sex?.isNotEmpty == true ? mrz!.sex! : '—';
 
     final rows = <(String, String)>[
@@ -124,10 +130,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
         ),
         const SizedBox(height: AppSpacing.md),
         Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 4.0,
-            horizontal: 13.0,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 13.0),
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
             borderRadius: BorderRadius.circular(AppRadius.md),

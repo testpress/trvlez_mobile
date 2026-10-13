@@ -10,21 +10,18 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_widgets.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 5.6a: Check-in completion celebrating successful arrival with offline QR pass.
 class CheckInDoneScreen extends ConsumerWidget {
-  const CheckInDoneScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInDoneScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -178,9 +175,7 @@ class _ReferenceRow extends StatelessWidget {
       margin: const EdgeInsets.only(top: AppSpacing.sm),
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: colors.checkInPassRef, width: 1),
-        ),
+        border: Border(top: BorderSide(color: colors.checkInPassRef, width: 1)),
       ),
       child: Row(
         children: [

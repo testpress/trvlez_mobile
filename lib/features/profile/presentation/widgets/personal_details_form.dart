@@ -95,6 +95,7 @@ class PersonalDetailsForm extends StatelessWidget {
                 enabled: !isLoading,
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.telephoneNumber],
                 style: const TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 15,

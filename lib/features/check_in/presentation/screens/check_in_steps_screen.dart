@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
@@ -17,10 +18,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 /// Screen 5.1: The primary check-in overview displaying hotel summary,
 /// flag requirement callout, and 4-step sequence.
 class CheckInStepsScreen extends ConsumerWidget {
-  const CheckInStepsScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInStepsScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -32,9 +30,10 @@ class CheckInStepsScreen extends ConsumerWidget {
 
   String _routeFor(CheckInStage stage, CheckInRequirement requirement) {
     return switch (stage) {
-      CheckInStage.requirement => requirement == CheckInRequirement.visa
-          ? AppRoutes.checkInVisaPath(reservationId)
-          : AppRoutes.checkInDisclosurePath(reservationId),
+      CheckInStage.requirement =>
+        requirement == CheckInRequirement.visa
+            ? AppRoutes.checkInVisaPath(reservationId)
+            : AppRoutes.checkInDisclosurePath(reservationId),
       CheckInStage.questions => AppRoutes.checkInQuestionsPath(reservationId),
       CheckInStage.key => AppRoutes.checkInDonePath(reservationId),
     };
@@ -55,7 +54,8 @@ class CheckInStepsScreen extends ConsumerWidget {
         body: Center(
           child: ErrorView(
             message: err.toString(),
-            onRetry: () => ref.invalidate(checkInNotifierProvider(reservationId)),
+            onRetry: () =>
+                ref.invalidate(checkInNotifierProvider(reservationId)),
           ),
         ),
       ),
@@ -136,9 +136,8 @@ class CheckInStepsScreen extends ConsumerWidget {
               state: _stateFor(step, CheckInStage.questions),
               title: 'A few questions',
               subtitle: 'Arrival time and anything they should know',
-              onTap: () => context.push(
-                AppRoutes.checkInQuestionsPath(reservationId),
-              ),
+              onTap: () =>
+                  context.push(AppRoutes.checkInQuestionsPath(reservationId)),
             ),
 
             // Step 4: Key code
@@ -147,13 +146,19 @@ class CheckInStepsScreen extends ConsumerWidget {
               state: _stateFor(step, CheckInStage.key),
               title: 'Get your key code',
               subtitle: 'Show it at the desk',
-              onTap: () => context.push(
-                AppRoutes.checkInDonePath(reservationId),
-              ),
+              onTap: () =>
+                  context.push(AppRoutes.checkInDonePath(reservationId)),
             ),
           ],
         );
       },
     );
   }
+}
+
+extension on CheckInRequirement {
+  IconData get flagIcon => switch (this) {
+    CheckInRequirement.visa => AppIcons.fileText,
+    CheckInRequirement.disclosure => AppIcons.scale,
+  };
 }

@@ -28,10 +28,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// MRZ box, live camera feed support with SVG fallback, square shutter capture button,
 /// and support for gallery fallback.
 class PassportCaptureScreen extends ConsumerStatefulWidget {
-  const PassportCaptureScreen({
-    super.key,
-    required this.cameraService,
-  });
+  const PassportCaptureScreen({super.key, required this.cameraService});
 
   final CameraService cameraService;
 
@@ -116,7 +113,9 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to capture photo. Try again.')),
+            const SnackBar(
+              content: Text('Failed to capture photo. Try again.'),
+            ),
           );
         }
       } finally {
@@ -230,11 +229,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              AppIcons.numbers,
-              size: 14.0,
-              color: colors.brandSecondary,
-            ),
+            Icon(AppIcons.numbers, size: 14.0, color: colors.brandSecondary),
             const SizedBox(width: AppSpacing.xs),
             Flexible(
               child: Text(

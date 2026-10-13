@@ -22,7 +22,10 @@ class _VerifyNfcPulseState extends State<VerifyNfcPulse>
   static const _ease = Cubic(0.3, 0.6, 0.4, 1.0);
 
   bool get _reducedMotion => WidgetsBinding
-      .instance.platformDispatcher.accessibilityFeatures.disableAnimations;
+      .instance
+      .platformDispatcher
+      .accessibilityFeatures
+      .disableAnimations;
 
   @override
   void initState() {

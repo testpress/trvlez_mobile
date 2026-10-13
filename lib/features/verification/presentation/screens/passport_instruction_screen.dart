@@ -108,7 +108,8 @@ class PassportInstructionScreen extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         const BrandSecurityNote(
-          text: 'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
+          text:
+              'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
         ),
       ],
     );

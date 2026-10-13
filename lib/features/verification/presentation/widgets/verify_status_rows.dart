@@ -20,7 +20,7 @@ class VerifyStatusItem {
 /// Convenience sub-type allowing `VerifyStatusRow(title: '...', state: ...)` syntax.
 class VerifyStatusRow extends VerifyStatusItem {
   const VerifyStatusRow({required String title, required VerifyRowStatus state})
-      : super(title, state);
+    : super(title, state);
 }
 
 /// Checklist rows indicating completion states across passport, selfie, chip, and final check.

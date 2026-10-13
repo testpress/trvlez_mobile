@@ -446,8 +446,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           final reason = extra is String
               ? extra
               : (extra is Map<String, dynamic>
-                  ? extra['reason'] as String?
-                  : null);
+                    ? extra['reason'] as String?
+                    : null);
           return PassportFailedScreen(failureReason: reason);
         },
       ),
@@ -479,8 +479,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           final reason = extra is String
               ? extra
               : (extra is Map<String, dynamic>
-                  ? extra['reason'] as String?
-                  : null);
+                    ? extra['reason'] as String?
+                    : null);
           return SelfieFailedScreen(failureReason: reason);
         },
       ),

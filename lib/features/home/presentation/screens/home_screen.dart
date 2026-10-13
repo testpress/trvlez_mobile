@@ -10,11 +10,11 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
-import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
-import 'package:trvlez_mobile/features/findr/presentation/screens/join_findr_sheet.dart';
+import 'package:trvlez_mobile/core/widgets/findr_card.dart';
+import 'package:trvlez_mobile/core/widgets/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/check_in_banner.dart';
-import 'package:trvlez_mobile/features/home/presentation/widgets/findr_card.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/home_location_row.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/home_section_header.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/home_wordmark_row.dart';
@@ -22,7 +22,7 @@ import 'package:trvlez_mobile/features/home/presentation/widgets/location_picker
 import 'package:trvlez_mobile/features/home/presentation/widgets/next_stay_row.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/notifications_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/service_grid.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
+import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 /// The central Home Hub screen displaying wordmark, location, service cards,
 /// Findr loyalty card, and next stay previews.

@@ -8,17 +8,14 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_flag_callout.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_flag_callout.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/disputes/presentation/providers/dispute_providers.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.3d: Active dispute review and case withdrawal screen.
 class DisputeStatusScreen extends ConsumerWidget {
-  const DisputeStatusScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const DisputeStatusScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -96,10 +93,7 @@ class DisputeStatusScreen extends ConsumerWidget {
           value: (dispute?.reason ?? DisputeReason.somethingElse).title,
         ),
         if (dispute != null && dispute.words.trim().isNotEmpty)
-          _StatusDetailRow(
-            label: 'You said',
-            value: dispute.words.trim(),
-          ),
+          _StatusDetailRow(label: 'You said', value: dispute.words.trim()),
         if (dispute != null && dispute.photoCount > 0)
           _StatusDetailRow(
             label: 'Photos',

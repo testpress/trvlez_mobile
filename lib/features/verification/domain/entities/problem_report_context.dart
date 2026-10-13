@@ -75,10 +75,7 @@ enum ProblemArea {
 
 /// Identifies where in the application a problem was reported from.
 class ProblemReportContext {
-  const ProblemReportContext({
-    required this.area,
-    required this.screen,
-  });
+  const ProblemReportContext({required this.area, required this.screen});
 
   final ProblemArea area;
   final String screen;

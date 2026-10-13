@@ -49,14 +49,18 @@ class CheckInGuestRow extends StatelessWidget {
                 height: 34,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: ready ? colors.brandOnSurface : colors.checkInGuestAvatar,
+                  color: ready
+                      ? colors.brandOnSurface
+                      : colors.checkInGuestAvatar,
                   shape: BoxShape.circle,
                 ),
                 child: initials == null
                     ? Icon(
                         AppIcons.user,
                         size: 16,
-                        color: ready ? colors.brandPrimary : colors.brandOnSurface,
+                        color: ready
+                            ? colors.brandPrimary
+                            : colors.brandOnSurface,
                       )
                     : Text(
                         initials!,
@@ -64,7 +68,9 @@ class CheckInGuestRow extends StatelessWidget {
                           fontFamily: AppTypography.fontFamily,
                           fontSize: 12,
                           fontWeight: TypeScale.bold,
-                          color: ready ? colors.brandActionLabel : colors.brandOnSurface,
+                          color: ready
+                              ? colors.brandActionLabel
+                              : colors.brandOnSurface,
                         ),
                       ),
               ),
@@ -102,7 +108,9 @@ class CheckInGuestRow extends StatelessWidget {
                   vertical: 3.5,
                 ),
                 decoration: BoxDecoration(
-                  color: ready ? colors.brandOnSurface : colors.checkInGuestAvatar,
+                  color: ready
+                      ? colors.brandOnSurface
+                      : colors.checkInGuestAvatar,
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
                 child: Text(
@@ -111,7 +119,9 @@ class CheckInGuestRow extends StatelessWidget {
                     fontFamily: AppTypography.fontFamily,
                     fontSize: 11,
                     fontWeight: TypeScale.bold,
-                    color: ready ? colors.brandActionLabel : colors.brandOnSurface,
+                    color: ready
+                        ? colors.brandActionLabel
+                        : colors.brandOnSurface,
                   ),
                 ),
               ),

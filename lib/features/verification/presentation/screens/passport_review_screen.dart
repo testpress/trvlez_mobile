@@ -107,9 +107,7 @@ class PassportReviewScreen extends ConsumerWidget {
           },
         ),
         const SizedBox(height: AppSpacing.sm),
-        const BrandSecurityNote(
-          text: 'Nothing is sent until you tap upload.',
-        ),
+        const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );
   }

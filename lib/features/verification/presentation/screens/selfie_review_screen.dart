@@ -125,8 +125,8 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                     child: SizedBox(
                       width: 126.0,
                       height: 168.0,
-                      child: controller != null &&
-                              controller.value.isInitialized
+                      child:
+                          controller != null && controller.value.isInitialized
                           ? AspectRatio(
                               aspectRatio: controller.value.aspectRatio,
                               child: VideoPlayer(controller),
@@ -198,9 +198,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
           },
         ),
         const SizedBox(height: AppSpacing.sm),
-        const BrandSecurityNote(
-          text: 'Nothing is sent until you tap upload.',
-        ),
+        const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );
   }

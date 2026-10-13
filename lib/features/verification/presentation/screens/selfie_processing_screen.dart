@@ -57,8 +57,7 @@ class _SelfieProcessingScreenState
     return switch (phase) {
       VerificationPhase.uploading => 0,
       VerificationPhase.checkingVideoQuality => 1,
-      VerificationPhase.uploadSuccess ||
-      VerificationPhase.verified => 2,
+      VerificationPhase.uploadSuccess || VerificationPhase.verified => 2,
       _ => 0,
     };
   }
@@ -92,10 +91,7 @@ class _SelfieProcessingScreenState
     } else if (next.phase == VerificationPhase.videoQualityFailed ||
         next.phase == VerificationPhase.error) {
       _hasNavigated = true;
-      context.pushReplacement(
-        AppRoutes.selfieFailed,
-        extra: next.errorMessage,
-      );
+      context.pushReplacement(AppRoutes.selfieFailed, extra: next.errorMessage);
     } else if (next.phase == VerificationPhase.verified) {
       _hasNavigated = true;
       context.pushReplacement(AppRoutes.verificationSuccess);
@@ -107,7 +103,10 @@ class _SelfieProcessingScreenState
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
 
-    ref.listen<VerificationState>(verificationNotifierProvider, (previous, next) {
+    ref.listen<VerificationState>(verificationNotifierProvider, (
+      previous,
+      next,
+    ) {
       _handleStateTransition(next);
     });
 

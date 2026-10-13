@@ -22,8 +22,18 @@ class VerificationSuccessScreen extends ConsumerWidget {
   const VerificationSuccessScreen({super.key});
 
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   static const _unlocks = [
@@ -35,10 +45,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
       title: 'Walk past the front desk',
       subtitle: 'Check in online, collect your keys',
     ),
-    (
-      title: 'Findr',
-      subtitle: 'Open to you now',
-    ),
+    (title: 'Findr', subtitle: 'Open to you now'),
   ];
 
   @override
@@ -110,10 +117,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 12.0,
-            horizontal: 14.0,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 14.0),
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -193,7 +197,8 @@ class VerificationSuccessScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         const BrandSecurityNote(
-          text: 'You control who sees your details.\nManage it any time in Account.',
+          text:
+              'You control who sees your details.\nManage it any time in Account.',
         ),
       ],
     );

@@ -17,10 +17,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.7: Calm decline state confirming that checking in at the front desk is fine.
 class CheckInDeclinedScreen extends ConsumerWidget {
-  const CheckInDeclinedScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInDeclinedScreen({super.key, required this.reservationId});
 
   final String reservationId;
 

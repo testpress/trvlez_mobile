@@ -17,4 +17,3 @@ extension AppThemeContext on BuildContext {
   /// Access the active typography [TextTheme].
   TextTheme get text => Theme.of(this).textTheme;
 }
-

@@ -29,7 +29,9 @@ void main() {
   }
 
   group('PassportInstructionScreen', () {
-    testWidgets('renders Verification header and stepper at step 0', (tester) async {
+    testWidgets('renders Verification header and stepper at step 0', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -48,10 +50,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Passport photo'), findsOneWidget);
-      expect(
-        find.textContaining('We need both of these'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('We need both of these'), findsOneWidget);
       expect(find.text('Photo page'), findsOneWidget);
       expect(find.text('Code lines'), findsOneWidget);
       expect(

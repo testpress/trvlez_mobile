@@ -28,9 +28,7 @@ class VerificationStatusActions extends ConsumerWidget {
             icon: const Icon(Icons.refresh_rounded),
             label: Text(
               'Re-submit Documents',
-              style: AppTypography.label.copyWith(
-                fontSize: 16,
-              ),
+              style: AppTypography.label.copyWith(fontSize: 16),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.onSurface,
@@ -56,9 +54,7 @@ class VerificationStatusActions extends ConsumerWidget {
             icon: const Icon(Icons.support_agent_rounded),
             label: Text(
               'Contact Support',
-              style: AppTypography.label.copyWith(
-                fontSize: 14,
-              ),
+              style: AppTypography.label.copyWith(fontSize: 14),
             ),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),

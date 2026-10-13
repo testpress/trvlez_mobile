@@ -62,9 +62,7 @@ class BookingPickRow extends StatelessWidget {
                     fontWeight: isPlaceholder
                         ? TypeScale.regular
                         : TypeScale.bold,
-                    color: isPlaceholder
-                        ? colors.textDisabled
-                        : colors.ink,
+                    color: isPlaceholder ? colors.textDisabled : colors.ink,
                   ),
                 ),
               ),

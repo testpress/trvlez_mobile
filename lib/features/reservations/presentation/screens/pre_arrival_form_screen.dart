@@ -142,14 +142,12 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
       bottomNavigationBar: isReadOnly
           ? null
           : Container(
-              padding: const EdgeInsets.all(AppSpacing.screenPadding).copyWith(
-                top: AppSpacing.md,
-              ),
+              padding: const EdgeInsets.all(
+                AppSpacing.screenPadding,
+              ).copyWith(top: AppSpacing.md),
               decoration: BoxDecoration(
                 color: colors.surface,
-                border: Border(
-                  top: BorderSide(color: colors.borderSubtle),
-                ),
+                border: Border(top: BorderSide(color: colors.borderSubtle)),
               ),
               child: SafeArea(
                 child: Row(

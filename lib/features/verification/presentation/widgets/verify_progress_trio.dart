@@ -79,15 +79,15 @@ class VerifyProgressTrio extends StatelessWidget {
                   child: switch (states[i]) {
                     TrioState.waiting => const SizedBox.shrink(),
                     TrioState.done => Icon(
-                        AppIcons.check,
-                        size: 13.0,
-                        color: colors.brandPrimary,
-                      ),
+                      AppIcons.check,
+                      size: 13.0,
+                      color: colors.brandPrimary,
+                    ),
                     TrioState.failed => Icon(
-                        AppIcons.close,
-                        size: 13.0,
-                        color: colors.brandActionLabel,
-                      ),
+                      AppIcons.close,
+                      size: 13.0,
+                      color: colors.brandActionLabel,
+                    ),
                   },
                 ),
                 const SizedBox(height: 7.0),

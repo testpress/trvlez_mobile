@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -14,7 +15,6 @@ import 'package:trvlez_mobile/features/booking/presentation/providers/booking_pr
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_button.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_light_field.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_note_card.dart';
-import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Screen collecting and tokenizing payment card details for a reservation.
 class BookingCardScreen extends ConsumerStatefulWidget {
@@ -38,10 +38,10 @@ class _BookingCardScreenState extends ConsumerState<BookingCardScreen> {
     final nfc = verState.nfcResult;
     final firstName = nfc?.parsedMrz?.firstName ?? mrz?.firstName;
     final lastName = nfc?.parsedMrz?.lastName ?? mrz?.lastName;
-    final fullName = [firstName, lastName]
-        .whereType<String>()
-        .where((s) => s.isNotEmpty)
-        .join(' ');
+    final fullName = [
+      firstName,
+      lastName,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
 
     _nameController = TextEditingController(text: fullName);
     for (final c in [
@@ -269,11 +269,7 @@ class _CardAssuranceNotice extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            AppIcons.shieldCheck,
-            size: 16.0,
-            color: colors.okInk,
-          ),
+          Icon(AppIcons.shieldCheck, size: 16.0, color: colors.okInk),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(

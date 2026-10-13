@@ -7,13 +7,14 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart'
+    show findrPortfolioProvider;
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_big_ring.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_flag_callout.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_big_ring.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_flag_callout.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
-import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.2e: Submission confirmation for check-in anywhere request.

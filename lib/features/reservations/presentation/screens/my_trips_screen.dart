@@ -9,11 +9,11 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
-import 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart';
-import 'package:trvlez_mobile/features/disputes/presentation/providers/dispute_providers.dart';
+import 'package:trvlez_mobile/features/anywhere/domain/entities/anywhere_stay.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 
 /// Displays the traveler's reservations and booking history.
@@ -152,9 +152,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
             children: [
               _buildEmptyState(emptyType),
               const SizedBox(height: AppSpacing.md),
-              _AddStayRow(
-                onTap: () => context.push(AppRoutes.anywhereFind),
-              ),
+              _AddStayRow(onTap: () => context.push(AppRoutes.anywhereFind)),
             ],
           ),
         );
@@ -182,9 +180,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
               _AnywhereCard(stay: stay),
               const SizedBox(height: AppSpacing.md),
             ],
-            _AddStayRow(
-              onTap: () => context.push(AppRoutes.anywhereFind),
-            ),
+            _AddStayRow(onTap: () => context.push(AppRoutes.anywhereFind)),
             const SizedBox(height: AppSpacing.md),
           ],
         ],
@@ -517,7 +513,8 @@ class _ReservationCard extends ConsumerWidget {
                             const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Text(
-                                reservation.status == ReservationStatus.checkedIn
+                                reservation.status ==
+                                        ReservationStatus.checkedIn
                                     ? 'Digital pass ready · Show pass'
                                     : 'Check in online · Open now · Start',
                                 style: TextStyle(
@@ -556,8 +553,9 @@ class _ReservationCard extends ConsumerWidget {
                           color: colors.statusWarningBackground,
                           borderRadius: AppRadius.mdRadius,
                           border: Border.all(
-                            color: colors.statusWarningForeground
-                                .withValues(alpha: 0.3),
+                            color: colors.statusWarningForeground.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                         ),
                         child: Row(
@@ -601,7 +599,8 @@ class _ReservationCard extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  ] else if (dispute != null && dispute.status == 'withdrawn') ...[
+                  ] else if (dispute != null &&
+                      dispute.status == 'withdrawn') ...[
                     const SizedBox(height: AppSpacing.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -633,13 +632,16 @@ class _ReservationCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                  ] else if (reservation.status == ReservationStatus.checkedIn ||
+                  ] else if (reservation.status ==
+                          ReservationStatus.checkedIn ||
                       reservation.status == ReservationStatus.checkedOut) ...[
                     const SizedBox(height: AppSpacing.sm),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        ref.read(disputeDraftProvider.notifier).initDraft(
+                        ref
+                            .read(disputeDraftProvider.notifier)
+                            .initDraft(
                               reservationId: reservation.id,
                               bookingReference: reservation.confirmationCode,
                               hotel: reservation.propertySummary.name,
@@ -777,20 +779,13 @@ class _AnywhereCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              StatusPill(
-                label: pillLabel,
-                state: pillState,
-              ),
+              StatusPill(label: pillLabel, state: pillState),
             ],
           ),
           const Divider(height: AppSpacing.md),
           Row(
             children: [
-              Icon(
-                AppIcons.calendar,
-                size: 13,
-                color: colors.brandPrimary,
-              ),
+              Icon(AppIcons.calendar, size: 13, color: colors.brandPrimary),
               const SizedBox(width: 6),
               Text(
                 stay.dates,
@@ -851,11 +846,7 @@ class _AnywhereCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
-                  AppIcons.info,
-                  size: 12,
-                  color: colors.inkTertiary,
-                ),
+                Icon(AppIcons.info, size: 12, color: colors.inkTertiary),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -944,11 +935,7 @@ class _AddStayRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              Icon(
-                AppIcons.chevronRight,
-                size: 16,
-                color: colors.inkTertiary,
-              ),
+              Icon(AppIcons.chevronRight, size: 16, color: colors.inkTertiary),
             ],
           ),
         ),
@@ -956,4 +943,3 @@ class _AddStayRow extends StatelessWidget {
     );
   }
 }
-

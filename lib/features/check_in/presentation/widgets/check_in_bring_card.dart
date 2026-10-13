@@ -63,11 +63,7 @@ class CheckInBringCard extends StatelessWidget {
             if (i > 0) const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
-                Icon(
-                  lines[i].icon,
-                  size: 14,
-                  color: colors.brandSecondary,
-                ),
+                Icon(lines[i].icon, size: 14, color: colors.brandSecondary),
                 const SizedBox(width: AppSpacing.sm + 1),
                 Expanded(
                   child: Text.rich(

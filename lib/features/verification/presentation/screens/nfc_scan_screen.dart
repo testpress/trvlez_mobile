@@ -13,10 +13,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 
 /// Active scan screen for reading the passport NFC chip with real-time hardware interaction.
 class NfcScanScreen extends ConsumerStatefulWidget {
-  const NfcScanScreen({
-    super.key,
-    required this.nfcService,
-  });
+  const NfcScanScreen({super.key, required this.nfcService});
 
   final NfcPassportService nfcService;
 
@@ -41,14 +38,20 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
 
   void _startScan() async {
     final state = ref.read(verificationNotifierProvider);
-    final docNumber = state.extractedDocumentNumber ??
+    final docNumber =
+        state.extractedDocumentNumber ??
         state.mrzExtractionResult?.documentNumber;
-    final dob = state.extractedDateOfBirth ??
+    final dob =
+        state.extractedDateOfBirth ??
         _parseDate(state.mrzExtractionResult?.dateOfBirth);
-    final expiry = state.extractedDateOfExpiry ??
+    final expiry =
+        state.extractedDateOfExpiry ??
         _parseDate(state.mrzExtractionResult?.dateOfExpiry);
 
-    if (docNumber == null || docNumber.isEmpty || dob == null || expiry == null) {
+    if (docNumber == null ||
+        docNumber.isEmpty ||
+        dob == null ||
+        expiry == null) {
       if (mounted) {
         context.pushReplacement(
           AppRoutes.passportFailed,
@@ -129,9 +132,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const Center(
-          child: VerifyNfcPulse(),
-        ),
+        const Center(child: VerifyNfcPulse()),
         const SizedBox(height: AppSpacing.lg),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),

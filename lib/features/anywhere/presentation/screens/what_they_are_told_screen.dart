@@ -9,11 +9,11 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_consent_tick.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_disclosure_card.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_flag_callout.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_consent_tick.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_disclosure_card.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_flag_callout.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.2d: Transparent disclosure overview of what will be transmitted.
@@ -51,9 +51,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
             context.pushReplacement(AppRoutes.anywhereSent);
           },
         ),
-        const CheckInNotice(
-          text: 'This does not book or confirm anything.',
-        ),
+        const CheckInNotice(text: 'This does not book or confirm anything.'),
       ],
       children: [
         const SizedBox(height: AppSpacing.sm),
@@ -69,9 +67,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          byEmail
-              ? 'By email, to ${draft.email}'
-              : 'In the $hotel dashboard',
+          byEmail ? 'By email, to ${draft.email}' : 'In the $hotel dashboard',
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
             fontSize: 12,
@@ -90,7 +86,10 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
             CheckInDisclosureLine('That TRVLez has verified your ID'),
             CheckInDisclosureLine('Your passport number', shared: false),
             CheckInDisclosureLine('Your documents or photo', shared: false),
-            CheckInDisclosureLine('Anyone else staying with you', shared: false),
+            CheckInDisclosureLine(
+              'Anyone else staying with you',
+              shared: false,
+            ),
           ],
         ),
 

@@ -22,7 +22,10 @@ class _VerifyHourglassState extends State<VerifyHourglass>
   );
 
   bool get _reducedMotion => WidgetsBinding
-      .instance.platformDispatcher.accessibilityFeatures.disableAnimations;
+      .instance
+      .platformDispatcher
+      .accessibilityFeatures
+      .disableAnimations;
 
   @override
   void initState() {

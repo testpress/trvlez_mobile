@@ -3,11 +3,7 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Large translucent circle with centered icon (e.g. store icon on declined screen).
 class CheckInBigRing extends StatelessWidget {
-  const CheckInBigRing({
-    super.key,
-    required this.icon,
-    this.marginTop = 48.0,
-  });
+  const CheckInBigRing({super.key, required this.icon, this.marginTop = 48.0});
 
   final IconData icon;
   final double marginTop;
@@ -27,11 +23,7 @@ class CheckInBigRing extends StatelessWidget {
             color: colors.checkInRingPanel,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            icon,
-            size: 34.0,
-            color: colors.brandOnSurface,
-          ),
+          child: Icon(icon, size: 34.0, color: colors.brandOnSurface),
         ),
       ),
     );

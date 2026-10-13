@@ -18,10 +18,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.2b: Document camera viewfinder for capturing the visa page.
 class CheckInVisaCaptureScreen extends ConsumerStatefulWidget {
-  const CheckInVisaCaptureScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInVisaCaptureScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -113,10 +110,7 @@ class _CheckInVisaCaptureScreenState
       helpArea: ProblemArea.checkIn,
       onBack: () => context.pop(),
       foot: [
-        BrandShutter(
-          square: true,
-          onPressed: _handleCapture,
-        ),
+        BrandShutter(square: true, onPressed: _handleCapture),
         const SizedBox(height: AppSpacing.sm),
       ],
       children: [
@@ -152,10 +146,7 @@ class _CheckInVisaCaptureScreenState
             decoration: BoxDecoration(
               color: colors.brandCardBackground,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(
-                color: colors.brandBorderSubtle,
-                width: 1.5,
-              ),
+              border: Border.all(color: colors.brandBorderSubtle, width: 1.5),
             ),
             clipBehavior: Clip.antiAlias,
             child: AspectRatio(

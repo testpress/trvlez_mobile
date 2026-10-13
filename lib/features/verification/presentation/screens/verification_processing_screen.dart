@@ -393,9 +393,7 @@ class _VerificationProcessingScreenState
               ),
               TextSpan(
                 text: 'Whatsapp',
-                style: AppTypography.label.copyWith(
-                  color: AppColors.success,
-                ),
+                style: AppTypography.label.copyWith(color: AppColors.success),
               ),
             ],
           ),

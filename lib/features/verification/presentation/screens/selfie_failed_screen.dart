@@ -19,10 +19,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Features a wobbling face illustration, 2-stage trio with check failure,
 /// compassionate lighting explanation, and retry/tips actions.
 class SelfieFailedScreen extends ConsumerWidget {
-  const SelfieFailedScreen({
-    super.key,
-    this.failureReason,
-  });
+  const SelfieFailedScreen({super.key, this.failureReason});
 
   final String? failureReason;
 
@@ -63,10 +60,7 @@ class SelfieFailedScreen extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         const VerifyProgressTrio(
           labels: ['Upload', 'Check'],
-          states: [
-            TrioState.done,
-            TrioState.failed,
-          ],
+          states: [TrioState.done, TrioState.failed],
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(

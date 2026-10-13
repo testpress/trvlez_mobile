@@ -47,9 +47,7 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
         ),
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(18.0),
-          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(18.0)),
         ),
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.md,

@@ -9,11 +9,12 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart'
+    show reservationListProvider;
 import 'package:trvlez_mobile/features/profile/presentation/widgets/account_profile_header.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/verified_card.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/verify_prompt_card.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 
 /// The Account screen showing traveler identity status, settings categories, and account controls.
 class AccountScreen extends ConsumerWidget {

@@ -41,11 +41,7 @@ class NfcIntroScreen extends ConsumerWidget {
               shape: BoxShape.circle,
               color: colors.brandCardIconBackground,
             ),
-            child: Icon(
-              AppIcons.nfc,
-              size: 28.0,
-              color: colors.brandOnSurface,
-            ),
+            child: Icon(AppIcons.nfc, size: 28.0, color: colors.brandOnSurface),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -104,7 +100,9 @@ class NfcIntroScreen extends ConsumerWidget {
             if (status != NfcDeviceStatus.available) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('NFC is not supported or enabled on this device.'),
+                  content: Text(
+                    'NFC is not supported or enabled on this device.',
+                  ),
                 ),
               );
             }
@@ -117,7 +115,9 @@ class NfcIntroScreen extends ConsumerWidget {
           variant: AppButtonVariant.brandOutline,
           onPressed: () {
             ref.read(verificationNotifierProvider.notifier).skipNfc();
-            ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
+            ref
+                .read(verificationNotifierProvider.notifier)
+                .submitVerificationAsync();
             context.pushReplacement(AppRoutes.nfcFinalCheck);
           },
         ),

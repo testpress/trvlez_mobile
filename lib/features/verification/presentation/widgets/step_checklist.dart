@@ -145,10 +145,7 @@ class StepRow extends StatelessWidget {
             ),
             child: Text(
               statusLabel,
-              style: AppTypography.label.copyWith(
-                fontSize: 12,
-                color: color,
-              ),
+              style: AppTypography.label.copyWith(fontSize: 12, color: color),
             ),
           ),
         ],

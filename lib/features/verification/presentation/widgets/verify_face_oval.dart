@@ -52,7 +52,8 @@ class VerifyFaceOval extends StatelessWidget {
                 height: height,
                 child: ColoredBox(
                   color: colors.brandShotBackdrop,
-                  child: previewChild ??
+                  child:
+                      previewChild ??
                       SvgPicture.asset(
                         'assets/art/camera_face.svg',
                         fit: BoxFit.cover,

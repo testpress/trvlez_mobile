@@ -21,10 +21,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.2c: Document review before forwarding to the hotel.
 class CheckInVisaReviewScreen extends ConsumerWidget {
-  const CheckInVisaReviewScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInVisaReviewScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -54,20 +51,20 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
 
         final (subtitle, icon, sourceLabel) = switch (source) {
           VisaSource.camera => (
-              'Both dates readable? No glare?',
-              AppIcons.camera,
-              'Photographed just now',
-            ),
+            'Both dates readable? No glare?',
+            AppIcons.camera,
+            'Photographed just now',
+          ),
           VisaSource.file => (
-              'Is this the right page?',
-              AppIcons.paperclip,
-              'Attached from your phone',
-            ),
+            'Is this the right page?',
+            AppIcons.paperclip,
+            'Attached from your phone',
+          ),
           VisaSource.pdf => (
-              'Is this the right document?',
-              AppIcons.fileText,
-              'Uploaded as a PDF',
-            ),
+            'Is this the right document?',
+            AppIcons.fileText,
+            'Uploaded as a PDF',
+          ),
         };
 
         return BrandVerifyScreen(
@@ -143,10 +140,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
                 child: AspectRatio(
                   aspectRatio: 1 / 1.05,
                   child: imagePath != null && File(imagePath).existsSync()
-                      ? Image.file(
-                          File(imagePath),
-                          fit: BoxFit.cover,
-                        )
+                      ? Image.file(File(imagePath), fit: BoxFit.cover)
                       : SvgPicture.asset(
                           'assets/art/camera_passport.svg',
                           fit: BoxFit.cover,

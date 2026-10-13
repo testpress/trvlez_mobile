@@ -108,8 +108,8 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                     _showingQrCode
                         ? 'Let them scan this'
                         : (widget.adultIndex > 1
-                            ? 'Invite adult ${widget.adultIndex + 1}'
-                            : 'Invite second guest'),
+                              ? 'Invite adult ${widget.adultIndex + 1}'
+                              : 'Invite second guest'),
                     style: TextStyle(
                       fontFamily: AppTypography.fontFamily,
                       fontSize: 18,
@@ -206,8 +206,9 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                                 color: _copied
                                     ? colors.statusSuccessBackground
                                     : colors.actionPrimary,
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.pill),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.pill,
+                                ),
                               ),
                               child: Text(
                                 _copied ? 'Copied' : 'Copy',

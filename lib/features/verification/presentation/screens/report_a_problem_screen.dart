@@ -15,10 +15,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 /// Features multi-select complaint tags, context notes with smart auto-ticking,
 /// and a prominent fraud safety warning.
 class ReportAProblemScreen extends StatefulWidget {
-  const ReportAProblemScreen({
-    super.key,
-    this.contextData,
-  });
+  const ReportAProblemScreen({super.key, this.contextData});
 
   final ProblemReportContext? contextData;
 
@@ -232,10 +229,14 @@ class _ProblemChip extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
           decoration: BoxDecoration(
-            color: isSelected ? colors.brandOnSurface : colors.brandCardBackground,
+            color: isSelected
+                ? colors.brandOnSurface
+                : colors.brandCardBackground,
             borderRadius: BorderRadius.circular(AppRadius.pill),
             border: Border.all(
-              color: isSelected ? colors.brandOnSurface : colors.brandBorderSubtle,
+              color: isSelected
+                  ? colors.brandOnSurface
+                  : colors.brandBorderSubtle,
               width: 1.0,
             ),
           ),

@@ -10,20 +10,17 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_widgets.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 5.6b: The reusable digital hotel pass with guest portrait, ID verification badge, and QR code.
 class CheckInPassScreen extends ConsumerWidget {
-  const CheckInPassScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInPassScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -63,9 +60,7 @@ class CheckInPassScreen extends ConsumerWidget {
           onBack: () => context.pop(),
           isScrollable: true,
           foot: const [
-            CheckInNotice(
-              text: 'Works offline. Expires when you check out.',
-            ),
+            CheckInNotice(text: 'Works offline. Expires when you check out.'),
           ],
           children: [
             const SizedBox(height: AppSpacing.sm),
@@ -149,8 +144,9 @@ class CheckInPassScreen extends ConsumerWidget {
                                 ),
                                 decoration: BoxDecoration(
                                   color: colors.redTint,
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.pill),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.pill,
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -253,9 +249,8 @@ class CheckInPassScreen extends ConsumerWidget {
             // Link: See what the hotel gets
             Center(
               child: GestureDetector(
-                onTap: () => context.push(
-                  AppRoutes.hotelViewPath(reservationId),
-                ),
+                onTap: () =>
+                    context.push(AppRoutes.hotelViewPath(reservationId)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -162,28 +162,29 @@ void main() {
   });
 
   test(
-      'addBookingCard and confirmBooking flow adds to reservations and resets draft',
-      () async {
-    final notifier = container.read(bookingDraftProvider.notifier);
-    notifier.beginBooking(testProperty);
+    'addBookingCard and confirmBooking flow adds to reservations and resets draft',
+    () async {
+      final notifier = container.read(bookingDraftProvider.notifier);
+      notifier.beginBooking(testProperty);
 
-    final range = BookingDateRange(
-      DateTime(2026, 12, 1),
-      DateTime(2026, 12, 4),
-    );
-    notifier.setBookingRange(range);
-    notifier.setRoomQuantity('rt-1', 1);
+      final range = BookingDateRange(
+        DateTime(2026, 12, 1),
+        DateTime(2026, 12, 4),
+      );
+      notifier.setBookingRange(range);
+      notifier.setRoomQuantity('rt-1', 1);
 
-    expect(container.read(bookingDraftProvider)!.canReview, isTrue);
-    expect(container.read(bookingDraftProvider)!.canConfirm, isFalse);
+      expect(container.read(bookingDraftProvider)!.canReview, isTrue);
+      expect(container.read(bookingDraftProvider)!.canConfirm, isFalse);
 
-    notifier.addBookingCard();
-    expect(container.read(bookingDraftProvider)!.canConfirm, isTrue);
+      notifier.addBookingCard();
+      expect(container.read(bookingDraftProvider)!.canConfirm, isTrue);
 
-    final created = await notifier.confirmBooking();
-    expect(created.length, 1);
-    expect(created.first.confirmationCode, 'TZ-CONF-123');
-    expect(container.read(bookingDraftProvider), isNull);
-    expect(container.read(lastCreatedBookingsProvider).length, 1);
-  });
+      final created = await notifier.confirmBooking();
+      expect(created.length, 1);
+      expect(created.first.confirmationCode, 'TZ-CONF-123');
+      expect(container.read(bookingDraftProvider), isNull);
+      expect(container.read(lastCreatedBookingsProvider).length, 1);
+    },
+  );
 }

@@ -38,10 +38,7 @@ class VerificationScoreIndicator extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             'Confidence Score: $percentage%',
-            style: AppTypography.heading.copyWith(
-              fontSize: 14,
-              color: color,
-            ),
+            style: AppTypography.heading.copyWith(fontSize: 14, color: color),
           ),
         ],
       ),

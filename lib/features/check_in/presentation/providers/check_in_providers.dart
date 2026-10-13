@@ -1,19 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/features/check_in/domain/entities/check_in_details.dart';
 import 'package:trvlez_mobile/features/check_in/domain/entities/check_in_stage.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
+import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 export 'package:trvlez_mobile/features/check_in/domain/entities/check_in_details.dart';
 export 'package:trvlez_mobile/features/check_in/domain/entities/check_in_stage.dart';
 
 /// Provider family for checking in to a specific reservation.
-final checkInNotifierProvider = AutoDisposeAsyncNotifierProviderFamily<
-  CheckInNotifier,
-  CheckInDetails,
-  String
->(() => CheckInNotifier());
+final checkInNotifierProvider =
+    AutoDisposeAsyncNotifierProviderFamily<
+      CheckInNotifier,
+      CheckInDetails,
+      String
+    >(() => CheckInNotifier());
 
 class CheckInNotifier
     extends AutoDisposeFamilyAsyncNotifier<CheckInDetails, String> {
@@ -32,7 +34,8 @@ class CheckInNotifier
     final location = matched.propertySummary.locationString.toLowerCase();
     final name = matched.propertySummary.name.toLowerCase();
 
-    final isSpain = country == 'ES' ||
+    final isSpain =
+        country == 'ES' ||
         location.contains('spain') ||
         location.contains('barcelona') ||
         name.contains('gràcia') ||
@@ -57,10 +60,7 @@ class CheckInNotifier
     final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(
-      current.copyWith(
-        visaSource: source,
-        visaImagePath: path,
-      ),
+      current.copyWith(visaSource: source, visaImagePath: path),
     );
   }
 
@@ -117,17 +117,12 @@ class CheckInNotifier
     if (current == null) return;
 
     state = AsyncData(
-      current.copyWith(
-        isDone: true,
-        currentStage: CheckInStage.key,
-      ),
+      current.copyWith(isDone: true, currentStage: CheckInStage.key),
     );
 
     // Trigger token generation in the background
     try {
-      await ref
-          .read(checkInTokenProvider(arg).notifier)
-          .generateCheckInToken();
+      await ref.read(checkInTokenProvider(arg).notifier).generateCheckInToken();
     } catch (_) {
       // Backend may fail if KYC not verified or offline;
       // state remains offline-capable per design specifications.

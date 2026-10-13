@@ -38,13 +38,15 @@ class BookingMonthGrid extends StatelessWidget {
     }
 
     for (var day = 1; day <= daysInMonth; day++) {
-      cells.add(_DayCell(
-        date: DateTime(month.year, month.month, day),
-        from: from,
-        to: to,
-        earliest: earliest,
-        onTap: onTapDay,
-      ));
+      cells.add(
+        _DayCell(
+          date: DateTime(month.year, month.month, day),
+          from: from,
+          to: to,
+          earliest: earliest,
+          onTap: onTapDay,
+        ),
+      );
     }
 
     return Column(
@@ -116,19 +118,22 @@ class _DayCell extends StatelessWidget {
     final colors = context.colors;
     final past = date.isBefore(earliest);
 
-    final isFrom = from != null &&
+    final isFrom =
+        from != null &&
         date.year == from?.year &&
         date.month == from?.month &&
         date.day == from?.day;
 
-    final isTo = to != null &&
+    final isTo =
+        to != null &&
         date.year == to?.year &&
         date.month == to?.month &&
         date.day == to?.day;
 
     final fromDate = from;
     final toDate = to;
-    final between = fromDate != null &&
+    final between =
+        fromDate != null &&
         toDate != null &&
         date.isAfter(fromDate) &&
         date.isBefore(toDate);
@@ -174,8 +179,8 @@ class _DayCell extends StatelessWidget {
                 color: end
                     ? colors.brandOnSurface
                     : past
-                        ? colors.textDisabled
-                        : colors.ink,
+                    ? colors.textDisabled
+                    : colors.ink,
               ),
             ),
           ),

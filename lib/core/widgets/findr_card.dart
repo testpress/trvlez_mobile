@@ -5,7 +5,6 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/palette.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 enum FindrState { locked, notJoined, active }
@@ -82,15 +81,15 @@ class FindrCard extends StatelessWidget {
                     dueDate: dueDate,
                   ),
                 ] else
-                  const Padding(
-                    padding: EdgeInsets.only(top: AppSpacing.sm),
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.sm),
                     child: Text(
                       'Know a hotel worth staying in? Recommend it. When they '
                       'join TRVLez, you earn a share of what they book.',
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 12,
-                        color: Palette.paperInk,
+                        color: colors.paperInk,
                         height: 1.4,
                       ),
                     ),
@@ -126,11 +125,7 @@ class FindrCard extends StatelessWidget {
 }
 
 class FindrHeading extends StatelessWidget {
-  const FindrHeading({
-    super.key,
-    this.prefix = 'Find',
-    this.iconBox = 32,
-  });
+  const FindrHeading({super.key, this.prefix = 'Find', this.iconBox = 32});
 
   final String prefix;
   final double iconBox;
@@ -156,7 +151,11 @@ class FindrHeading extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(AppIcons.mapSearch, size: iconBox * 0.5, color: colors.brandPrimary),
+          child: Icon(
+            AppIcons.mapSearch,
+            size: iconBox * 0.5,
+            color: colors.brandPrimary,
+          ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Text.rich(
@@ -164,11 +163,11 @@ class FindrHeading extends StatelessWidget {
             children: [
               TextSpan(
                 text: prefix,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 16,
                   fontWeight: TypeScale.bold,
-                  color: Palette.paperInk,
+                  color: colors.paperInk,
                 ),
               ),
               TextSpan(
@@ -195,6 +194,7 @@ class _FindrEarnedRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       child: Row(
@@ -203,20 +203,20 @@ class _FindrEarnedRow extends StatelessWidget {
         children: [
           Text(
             earned,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 22,
               fontWeight: TypeScale.extraBold,
-              color: Palette.paperInk,
+              color: colors.paperInk,
             ),
           ),
           const SizedBox(width: 6),
-          const Text(
+          Text(
             'earned so far',
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 12,
-              color: Palette.paperInk,
+              color: colors.paperInk,
             ),
           ),
         ],
@@ -269,17 +269,18 @@ class _FindrStatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: AppTypography.fontFamily,
             fontSize: 13,
             fontWeight: TypeScale.bold,
-            color: Palette.paperInk,
+            color: colors.paperInk,
           ),
         ),
         const SizedBox(height: 1),
@@ -288,7 +289,7 @@ class _FindrStatItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
             fontSize: 10,
-            color: Palette.paperInk.withAlpha(160),
+            color: colors.paperInk.withAlpha(160),
           ),
         ),
       ],

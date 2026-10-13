@@ -30,10 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  meta: ^1.15.0
 
   # Networking
   dio: ^5.7.0
@@ -41,20 +38,15 @@ dependencies:
   # State Management & DI
   flutter_riverpod: ^2.6.1
 
-  # Typography — Google Fonts (Nunito, Cabin)
-  google_fonts: ^6.2.1
-
   # Secure storage for auth tokens
   flutter_secure_storage: ^9.2.4
   go_router: ^17.2.3
   camera: ^0.12.0+1
-  path_provider: ^2.1.5
   video_player: ^2.11.1
   flutter_svg: ^2.3.0
   shared_preferences: ^2.5.5
   image_picker: ^1.2.2
   image: ^4.9.1
-  image_cropper: ^12.2.1
   qr_flutter: ^4.1.0
 
   # NFC Passport Reading (ICAO 9303 ePassport)
@@ -91,9 +83,6 @@ flutter:
   assets:
     - assets/art/
     - assets/logo.svg
-    - assets/Mobile-bg.png
-    - assets/splash_icons_bg_white.png
-    - assets/frame.png
 
   fonts:
     - family: Poppins

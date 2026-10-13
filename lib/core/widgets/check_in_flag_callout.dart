@@ -28,22 +28,21 @@ class CheckInFlagCallout extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.only(top: marginTop),
-      padding: EdgeInsets.all(centreIcon ? AppSpacing.sm + 1 : AppSpacing.sm + 2),
+      padding: EdgeInsets.all(
+        centreIcon ? AppSpacing.sm + 1 : AppSpacing.sm + 2,
+      ),
       decoration: BoxDecoration(
         color: colors.checkInFlagPanel,
         borderRadius: BorderRadius.circular(AppRadius.md - 1),
       ),
       child: Row(
-        crossAxisAlignment:
-            centreIcon ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: centreIcon
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.only(top: centreIcon ? 0 : 1.5),
-            child: Icon(
-              icon,
-              size: 14,
-              color: colors.brandSecondary,
-            ),
+            child: Icon(icon, size: 14, color: colors.brandSecondary),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(

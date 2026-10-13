@@ -8,18 +8,16 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart'
+    show reservationListProvider;
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_notice.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/disputes/presentation/providers/dispute_providers.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 6.3a: Categorized reason selection for raising a stay complaint.
 class DisputeReasonScreen extends ConsumerWidget {
-  const DisputeReasonScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const DisputeReasonScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -28,7 +26,9 @@ class DisputeReasonScreen extends ConsumerWidget {
     final colors = context.colors;
     final reservationsState = ref.watch(reservationListProvider);
     final allReservations = reservationsState.valueOrNull ?? [];
-    final reservation = allReservations.where((r) => r.id == reservationId).firstOrNull;
+    final reservation = allReservations
+        .where((r) => r.id == reservationId)
+        .firstOrNull;
 
     final hotel = reservation?.propertySummary.name ?? 'Hotel';
     final refCode = reservation?.confirmationCode ?? reservationId;
@@ -38,10 +38,12 @@ class DisputeReasonScreen extends ConsumerWidget {
     final window = reservation == null
         ? DisputeWindow.open
         : (now.isBefore(reservation.checkInDate)
-            ? DisputeWindow.beforeArrival
-            : (now.isAfter(reservation.checkOutDate.add(const Duration(hours: 48)))
-                ? DisputeWindow.closed
-                : DisputeWindow.open));
+              ? DisputeWindow.beforeArrival
+              : (now.isAfter(
+                      reservation.checkOutDate.add(const Duration(hours: 48)),
+                    )
+                    ? DisputeWindow.closed
+                    : DisputeWindow.open));
 
     final reasons = DisputeReasonCopy.forWindow(window);
 
@@ -85,7 +87,9 @@ class DisputeReasonScreen extends ConsumerWidget {
           _ReasonRow(
             reason: reason,
             onTap: () {
-              ref.read(disputeDraftProvider.notifier).initDraft(
+              ref
+                  .read(disputeDraftProvider.notifier)
+                  .initDraft(
                     reservationId: reservationId,
                     bookingReference: refCode,
                     hotel: hotel,
@@ -177,4 +181,13 @@ class _ReasonRow extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on DisputeReason {
+  IconData get icon => switch (this) {
+    DisputeReason.notAsBooked => AppIcons.alertTriangle,
+    DisputeReason.couldNotGetIn => AppIcons.doorEnter,
+    DisputeReason.wrongAmount => AppIcons.receipt,
+    DisputeReason.somethingElse => AppIcons.messageCircle,
+  };
 }

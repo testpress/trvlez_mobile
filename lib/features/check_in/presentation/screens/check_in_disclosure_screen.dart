@@ -16,10 +16,7 @@ import 'package:trvlez_mobile/features/verification/domain/entities/problem_repo
 
 /// Screen 5.3: Legal disclosure consent for destination authorities.
 class CheckInDisclosureScreen extends ConsumerWidget {
-  const CheckInDisclosureScreen({
-    super.key,
-    required this.reservationId,
-  });
+  const CheckInDisclosureScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
@@ -139,7 +136,8 @@ class CheckInDisclosureScreen extends ConsumerWidget {
             ),
             CheckInConsentTick(
               agreed: details.disclosureAgreed,
-              label: 'I agree to share these details with $hotel for this stay.',
+              label:
+                  'I agree to share these details with $hotel for this stay.',
               onTap: () {
                 ref
                     .read(checkInNotifierProvider(reservationId).notifier)

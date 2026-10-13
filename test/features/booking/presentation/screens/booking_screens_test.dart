@@ -16,10 +16,7 @@ Widget _buildTestApp({
 }) {
   return ProviderScope(
     overrides: overrides,
-    child: MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: child,
-    ),
+    child: MaterialApp(theme: AppTheme.lightTheme, home: child),
   );
 }
 
@@ -48,11 +45,7 @@ void main() {
 
   group('PropertyScreen', () {
     testWidgets('renders empty state when no draft exists', (tester) async {
-      await tester.pumpWidget(
-        _buildTestApp(
-          child: const PropertyScreen(),
-        ),
-      );
+      await tester.pumpWidget(_buildTestApp(child: const PropertyScreen()));
       await tester.pumpAndSettle();
 
       expect(
@@ -145,11 +138,7 @@ void main() {
 
   group('BookingCardScreen', () {
     testWidgets('renders card fields and Save card CTA', (tester) async {
-      await tester.pumpWidget(
-        _buildTestApp(
-          child: const BookingCardScreen(),
-        ),
-      );
+      await tester.pumpWidget(_buildTestApp(child: const BookingCardScreen()));
       await tester.pumpAndSettle();
 
       expect(find.text('Payment'), findsOneWidget);

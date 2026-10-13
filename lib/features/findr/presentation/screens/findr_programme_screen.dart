@@ -8,9 +8,9 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/findr_card.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
-import 'package:trvlez_mobile/features/home/presentation/widgets/findr_card.dart';
 
 /// Screen 4.1: The Findr rewards & referral programme dashboard.
 class FindrProgrammeScreen extends ConsumerWidget {
@@ -237,7 +237,11 @@ class _RecommendationCard extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           StatusPill(
             label: recommendation.status,
-            state: recommendation.state,
+            state: switch (recommendation.state) {
+              FindrRecommendationState.awaiting => StatusPillState.awaiting,
+              FindrRecommendationState.confirmed => StatusPillState.confirmed,
+              FindrRecommendationState.declined => StatusPillState.cancelled,
+            },
           ),
         ],
       ),
@@ -259,9 +263,7 @@ class _PayoutRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: payout.last
             ? null
-            : Border(
-                bottom: BorderSide(color: colors.line, width: 1),
-              ),
+            : Border(bottom: BorderSide(color: colors.line, width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

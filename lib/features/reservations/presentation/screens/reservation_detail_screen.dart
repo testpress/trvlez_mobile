@@ -251,9 +251,7 @@ class _ReservationDetailContent extends ConsumerWidget {
               reservation: activeReservation,
               onCheckIn: () {
                 if (activeReservation.status == ReservationStatus.checkedIn) {
-                  context.push(
-                    AppRoutes.checkInPassPath(activeReservation.id),
-                  );
+                  context.push(AppRoutes.checkInPassPath(activeReservation.id));
                 } else {
                   context.push(
                     AppRoutes.checkInStepsPath(activeReservation.id),

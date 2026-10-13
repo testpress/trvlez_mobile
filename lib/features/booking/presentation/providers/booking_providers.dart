@@ -1,13 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/booking_date_range.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/booking_draft.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/created_booking.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/guest_counts.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/room_pick.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 export 'package:trvlez_mobile/features/booking/domain/entities/booking_date_range.dart';
 export 'package:trvlez_mobile/features/booking/domain/entities/booking_draft.dart';
@@ -16,12 +14,14 @@ export 'package:trvlez_mobile/features/booking/domain/entities/guest_counts.dart
 export 'package:trvlez_mobile/features/booking/domain/entities/room_pick.dart';
 
 /// Holds the most recently finalized bookings for display on the confirmation screen.
-final lastCreatedBookingsProvider =
-    StateProvider<List<CreatedBooking>>((ref) => []);
+final lastCreatedBookingsProvider = StateProvider<List<CreatedBooking>>(
+  (ref) => [],
+);
 
 /// Notifier managing the in-flight booking draft.
-final bookingDraftProvider =
-    NotifierProvider<BookingNotifier, BookingDraft?>(BookingNotifier.new);
+final bookingDraftProvider = NotifierProvider<BookingNotifier, BookingDraft?>(
+  BookingNotifier.new,
+);
 
 class BookingNotifier extends Notifier<BookingDraft?> {
   @override
@@ -79,10 +79,7 @@ class BookingNotifier extends Notifier<BookingDraft?> {
       return pick;
     }).toList();
 
-    state = current.copyWith(
-      range: range,
-      picks: updatedPicks,
-    );
+    state = current.copyWith(range: range, picks: updatedPicks);
   }
 
   /// Updates the guest counts.
@@ -143,15 +140,17 @@ class BookingNotifier extends Notifier<BookingDraft?> {
     final nfc = verState.nfcResult;
     final givenName = nfc?.parsedMrz?.firstName ?? mrz?.firstName;
     final lastName = nfc?.parsedMrz?.lastName ?? mrz?.lastName;
-    final verName = [givenName, lastName]
-        .whereType<String>()
-        .where((s) => s.isNotEmpty)
-        .join(' ');
+    final verName = [
+      givenName,
+      lastName,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
 
     final profile = ref.read(currentProfileProvider).valueOrNull;
     final guestName = verName.isNotEmpty
         ? verName
-        : (profile?.phone?.isNotEmpty == true ? 'Traveler' : 'Primary Traveler');
+        : (profile?.phone?.isNotEmpty == true
+              ? 'Traveler'
+              : 'Primary Traveler');
 
     final repository = ref.read(reservationRepositoryProvider);
 
@@ -190,8 +189,9 @@ class BookingNotifier extends Notifier<BookingDraft?> {
         checkOutDate: checkOutExact.toIso8601String(),
         guestName: guestName,
         guestPhone: profile?.phone,
-        numberOfGuests:
-            draft.guests.sleepingCount > 0 ? draft.guests.sleepingCount : 1,
+        numberOfGuests: draft.guests.sleepingCount > 0
+            ? draft.guests.sleepingCount
+            : 1,
         roomTypeIds: roomTypeIds,
       );
 

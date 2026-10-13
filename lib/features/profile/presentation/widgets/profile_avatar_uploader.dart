@@ -28,8 +28,28 @@ class ProfileAvatarUploader extends StatelessWidget {
                 border: Border.all(color: colors.borderDefault, width: 2),
               ),
               child: ClipOval(
-                child: avatarUrl != null && avatarUrl!.isNotEmpty
-                    ? Image.network(avatarUrl!, fit: BoxFit.cover)
+                child: (avatarUrl != null && avatarUrl!.isNotEmpty)
+                    ? Image.network(
+                        avatarUrl!,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return Center(
+                            child: SizedBox.square(
+                              dimension: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colors.brandPrimary,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.person_rounded,
+                          size: 48,
+                          color: colors.textSecondary,
+                        ),
+                      )
                     : Icon(
                         Icons.person_rounded,
                         size: 48,
@@ -37,26 +57,31 @@ class ProfileAvatarUploader extends StatelessWidget {
                       ),
               ),
             ),
-            GestureDetector(
-              onTap: onUploadTap,
-              child: Container(
-                padding: const EdgeInsets.all(AppSpacing.xs + 2),
-                decoration: BoxDecoration(
-                  color: colors.actionPrimary,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: colors.surface, width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.textPrimary.withAlpha(20),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.camera_alt_rounded,
-                  size: 16,
-                  color: colors.textOnAction,
+            Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: onUploadTap,
+                child: Container(
+                  padding: const EdgeInsets.all(AppSpacing.xs + 2),
+                  decoration: BoxDecoration(
+                    color: colors.actionPrimary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: colors.surface, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.textPrimary.withAlpha(20),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.camera_alt_rounded,
+                    size: 16,
+                    color: colors.textOnAction,
+                  ),
                 ),
               ),
             ),
