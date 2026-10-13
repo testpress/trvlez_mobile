@@ -9,10 +9,12 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_big_ring.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_widgets.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_bring_card.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 5.7: Calm decline state confirming that checking in at the front desk is fine.

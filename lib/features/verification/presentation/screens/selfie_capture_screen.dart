@@ -11,6 +11,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
@@ -188,7 +189,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
         ),
       ],
       foot: [
-        VerifyShutter(
+        BrandShutter(
           square: false,
           recording: _isRecording,
           onPressed: _isRecording ? _stopRecording : _startRecording,

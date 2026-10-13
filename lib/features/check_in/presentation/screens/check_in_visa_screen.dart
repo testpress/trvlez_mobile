@@ -13,8 +13,9 @@ import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_pointer_pair.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
-import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_widgets.dart';
+import 'package:trvlez_mobile/features/check_in/presentation/widgets/check_in_alt_action.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// Screen 5.2a: Visa document guidelines and capture method selection.

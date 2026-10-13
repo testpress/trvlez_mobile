@@ -15,12 +15,12 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Capture screen for the passport photo page.
 ///
@@ -265,7 +265,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         ),
       ],
       foot: [
-        VerifyShutter(
+        BrandShutter(
           square: true,
           onPressed: _isCapturing ? null : _capturePhoto,
         ),

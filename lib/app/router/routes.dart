@@ -117,6 +117,3 @@ class AppRoutes {
   static const String verificationProcessing = '/verification/processing';
   static const String verificationSuccess = '/verification/success';
 }
-
-/// Alias for [AppRoutes] per architecture guidelines.
-typedef Routes = AppRoutes;

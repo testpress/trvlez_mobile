@@ -8,11 +8,11 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Instruction screen introducing passport chip scanning.
 ///
@@ -69,7 +69,7 @@ class NfcIntroScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyInfoCard(
+        const BrandInfoCard(
           heading: "You'll need",
           borderRadius: 12.0,
           paddingVertical: 10.0,
@@ -77,11 +77,11 @@ class NfcIntroScreen extends ConsumerWidget {
           itemGap: 8.0,
           iconSize: 13.0,
           bullets: [
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.deviceMobile,
               text: 'A phone with NFC switched on',
             ),
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.id,
               text: 'A passport with the chip symbol on the cover',
             ),

@@ -7,10 +7,10 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Instruction screen preparing the traveler for the selfie video recording.
 ///
@@ -72,7 +72,7 @@ class SelfieInstructionScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyInfoCard(
+        const BrandInfoCard(
           heading: 'Please make sure',
           borderRadius: 12.0,
           paddingVertical: 10.0,
@@ -80,15 +80,15 @@ class SelfieInstructionScreen extends StatelessWidget {
           itemGap: 8.0,
           iconSize: 13.0,
           bullets: [
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.bulb,
               text: "You're in a well-lit room, with light on your face",
             ),
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.userCircle,
               text: 'Your whole face is inside the oval',
             ),
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.eyeglassOff,
               text: 'No glasses, hat or face covering',
             ),

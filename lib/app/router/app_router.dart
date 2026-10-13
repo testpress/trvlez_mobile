@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/widgets/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/screens/anywhere_sent_screen.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/screens/find_hotel_screen.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/screens/hotel_details_screen.dart';
@@ -36,7 +37,6 @@ import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_rai
 import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_reason_screen.dart';
 import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_status_screen.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_programme_screen.dart';
-import 'package:trvlez_mobile/features/findr/presentation/screens/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/account_screen.dart';

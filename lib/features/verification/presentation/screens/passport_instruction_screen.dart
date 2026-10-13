@@ -8,10 +8,11 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
+import 'package:trvlez_mobile/core/widgets/brand_pointer_pair.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
-import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
 /// Instruction screen guiding the user on how to take an acceptable passport photo.
 ///
@@ -71,29 +72,29 @@ class PassportInstructionScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyPointerPair(
+        const BrandPointerPair(
           items: [
             ('1', 'Photo page', 'Your picture and details, sharp'),
             ('2', 'Code lines', 'Every character, nothing cropped'),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyInfoCard(
+        const BrandInfoCard(
           borderRadius: 13.0,
           paddingVertical: 11.0,
           paddingHorizontal: 12.0,
           itemGap: 8.0,
           iconSize: 13.0,
           bullets: [
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.bulb,
               text: 'Well lit, no glare or flash reflection',
             ),
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.crop,
               text: 'All four corners of the page inside the frame',
             ),
-            VerifyBullet(
+            BrandBullet(
               icon: AppIcons.handStop,
               text: 'No fingers or shadows across either part',
             ),
