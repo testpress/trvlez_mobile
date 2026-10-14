@@ -128,6 +128,20 @@ class AccountScreen extends ConsumerWidget {
                           : 'Passport approved',
                       onTap: () => context.push(AppRoutes.verificationStatus),
                     )
+                  else if (verificationState.isProcessing)
+                    VerifiedCard(
+                      title: 'Verification in review',
+                      detail: 'Our system is reviewing your documents',
+                      icon: AppIcons.clock,
+                      onTap: () => context.push(AppRoutes.verificationStatus),
+                    )
+                  else if (verificationState.isFailed)
+                    VerifiedCard(
+                      title: 'Verification needs attention',
+                      detail: 'Tap to view details and re-submit',
+                      icon: AppIcons.alertTriangle,
+                      onTap: () => context.push(AppRoutes.verificationStatus),
+                    )
                   else
                     VerifyPromptCard(
                       onStart: () =>
@@ -163,7 +177,15 @@ class AccountScreen extends ConsumerWidget {
                       SettingsRow(
                         icon: AppIcons.id,
                         label: 'Identity & documents',
-                        onTap: () => context.push(AppRoutes.verificationStatus),
+                        onTap: () {
+                          if (verified ||
+                              verificationState.isProcessing ||
+                              verificationState.isFailed) {
+                            context.push(AppRoutes.verificationStatus);
+                          } else {
+                            context.push(AppRoutes.verificationLanding);
+                          }
+                        },
                       ),
                       SettingsRow(
                         icon: AppIcons.download,

@@ -193,6 +193,91 @@ void main() {
       },
     );
 
+    testWidgets(
+      'AccountScreen renders in-review verification state without start verification button',
+      (tester) async {
+        const mockProfile = Profile(
+          id: 'usr-1',
+          onboardingStep: 'submitted',
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              travelerVerificationStateProvider.overrideWithValue(
+                TravelerVerificationState.submitted,
+              ),
+              currentProfileProvider.overrideWith(
+                () => _FakeProfileNotifier(mockProfile),
+              ),
+            ],
+            child: const MaterialApp(home: AccountScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Verification in review'), findsOneWidget);
+        expect(find.text('Our system is reviewing your documents'), findsOneWidget);
+        expect(find.text('Start verification'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'AccountScreen renders needs-attention verification state when failed',
+      (tester) async {
+        const mockProfile = Profile(
+          id: 'usr-1',
+          onboardingStep: 'submitted',
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              travelerVerificationStateProvider.overrideWithValue(
+                TravelerVerificationState.failed,
+              ),
+              currentProfileProvider.overrideWith(
+                () => _FakeProfileNotifier(mockProfile),
+              ),
+            ],
+            child: const MaterialApp(home: AccountScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Verification needs attention'), findsOneWidget);
+        expect(find.text('Start verification'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'AccountScreen renders start verification prompt for unverified traveler',
+      (tester) async {
+        const mockProfile = Profile(
+          id: 'usr-1',
+          onboardingStep: 'profile_complete',
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              travelerVerificationStateProvider.overrideWithValue(
+                TravelerVerificationState.profileComplete,
+              ),
+              currentProfileProvider.overrideWith(
+                () => _FakeProfileNotifier(mockProfile),
+              ),
+            ],
+            child: const MaterialApp(home: AccountScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Verify your identity'), findsOneWidget);
+        expect(find.text('Start verification'), findsOneWidget);
+      },
+    );
+
     testWidgets('SavedScreen renders segmented categories and empty state', (
       tester,
     ) async {

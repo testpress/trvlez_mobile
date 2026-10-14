@@ -67,7 +67,20 @@ class VerificationSuccessScreen extends ConsumerWidget {
         ? '${_months[parsedMrz.dateOfExpiry.month - 1]} ${parsedMrz.dateOfExpiry.year}'
         : (mrz?.dateOfExpiry ?? '');
 
-    return BrandVerifyScreen(
+    void navigateHome() {
+      ref.invalidate(currentProfileProvider);
+      ref.invalidate(verificationStatusProvider);
+      ref.read(authNotifierProvider.notifier).refreshVerificationState();
+      context.go(AppRoutes.home);
+    }
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        navigateHome();
+      },
+      child: BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_success.svg',
       title: 'Verification',
       helpLine: false,
@@ -194,12 +207,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
         AppButton(
           label: 'Start exploring',
           variant: AppButtonVariant.brandWhite,
-          onPressed: () {
-            ref.invalidate(currentProfileProvider);
-            ref.invalidate(verificationStatusProvider);
-            ref.read(authNotifierProvider.notifier).refreshVerificationState();
-            context.go(AppRoutes.home);
-          },
+          onPressed: navigateHome,
         ),
         const SizedBox(height: AppSpacing.sm),
         const BrandSecurityNote(
@@ -207,6 +215,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
               'You control who sees your details.\nManage it any time in Account.',
         ),
       ],
-    );
+    ),
+  );
   }
 }

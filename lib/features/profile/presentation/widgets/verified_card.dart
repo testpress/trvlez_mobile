@@ -6,26 +6,40 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
-/// Card displayed on the Account screen when identity verification is active.
+/// Card displayed on the Account screen when identity verification is active, in review, or needs attention.
 class VerifiedCard extends StatelessWidget {
-  const VerifiedCard({super.key, required this.detail, this.onTap});
+  const VerifiedCard({
+    super.key,
+    required this.detail,
+    this.title = 'Identity verified',
+    this.icon = AppIcons.rosetteDiscountCheck,
+    this.backgroundColor,
+    this.accentColor,
+    this.onTap,
+  });
 
   final String detail;
+  final String title;
+  final IconData icon;
+  final Color? backgroundColor;
+  final Color? accentColor;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final cardBg = backgroundColor ?? colors.redTint;
+    final primary = accentColor ?? colors.brandPrimary;
 
     return Semantics(
       button: true,
-      label: 'Identity verified. $detail.',
+      label: '$title. $detail.',
       child: InkWell(
         borderRadius: AppRadius.cardRadius,
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: colors.redTint,
+            color: cardBg,
             borderRadius: AppRadius.cardRadius,
           ),
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -36,11 +50,11 @@ class VerifiedCard extends StatelessWidget {
                 height: 32,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: colors.brandPrimary,
+                  color: primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  AppIcons.rosetteDiscountCheck,
+                child: Icon(
+                  icon,
                   size: 18,
                   color: Colors.white,
                 ),
@@ -52,12 +66,12 @@ class VerifiedCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Identity verified',
+                      title,
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 13,
                         fontWeight: TypeScale.bold,
-                        color: colors.brandPrimary,
+                        color: primary,
                       ),
                     ),
                     const SizedBox(height: 1),
@@ -66,13 +80,13 @@ class VerifiedCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 11,
-                        color: colors.brandPrimary.withAlpha(200),
+                        color: primary.withAlpha(200),
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(AppIcons.chevronRight, size: 16, color: colors.brandPrimary),
+              Icon(AppIcons.chevronRight, size: 16, color: primary),
             ],
           ),
         ),

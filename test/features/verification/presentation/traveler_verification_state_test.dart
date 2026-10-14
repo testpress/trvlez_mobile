@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
-import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 import '../../../fixtures/fake_verification_repository.dart';
@@ -117,6 +116,69 @@ void main() {
 
         final state = container.read(travelerVerificationStateProvider);
         expect(state, equals(TravelerVerificationState.verified));
+      },
+    );
+
+    test(
+      'returns submitted when verificationStatus reports isProcessing',
+      () async {
+        fakeRepo.verificationStatus = const VerificationStatus(
+          sessionId: 'session-proc',
+          status: 'processing',
+        );
+
+        final container = ProviderContainer(
+          overrides: [
+            verificationRepositoryProvider.overrideWithValue(fakeRepo),
+            currentProfileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const Profile(
+                  id: 'prof-1',
+                  onboardingStep: 'profile_complete',
+                ),
+              ),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await container.read(verificationStatusProvider.future);
+
+        final state = container.read(travelerVerificationStateProvider);
+        expect(state, equals(TravelerVerificationState.submitted));
+        expect(state.isProcessing, isTrue);
+      },
+    );
+
+    test(
+      'returns failed when verificationStatus reports isFailed',
+      () async {
+        fakeRepo.verificationStatus = const VerificationStatus(
+          sessionId: 'session-fail',
+          status: 'failed',
+          errorReason: 'Passport image blurry',
+        );
+
+        final container = ProviderContainer(
+          overrides: [
+            verificationRepositoryProvider.overrideWithValue(fakeRepo),
+            currentProfileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const Profile(
+                  id: 'prof-1',
+                  onboardingStep: 'profile_complete',
+                ),
+              ),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await container.read(verificationStatusProvider.future);
+
+        final state = container.read(travelerVerificationStateProvider);
+        expect(state, equals(TravelerVerificationState.failed));
+        expect(state.isFailed, isTrue);
       },
     );
 

@@ -116,13 +116,18 @@ final travelerVerificationStateProvider = Provider<TravelerVerificationState>((
   // Derive effective state from the verification flow notifier
   var state = verificationState.effectiveState(baseState);
 
-  // If the server-side verification status endpoint reports verified/failed, respect it
-  if (verificationStatus?.isVerified == true) {
-    state = TravelerVerificationState.verified;
-  } else if (verificationStatus?.isFailed == true &&
-      (state == TravelerVerificationState.submitted ||
-          baseState == TravelerVerificationState.submitted)) {
-    state = TravelerVerificationState.failed;
+  // If the server-side verification status endpoint reports status, respect it
+  if (verificationStatus != null) {
+    if (verificationStatus.isVerified) {
+      state = TravelerVerificationState.verified;
+    } else if (verificationStatus.isFailed) {
+      state = TravelerVerificationState.failed;
+    } else if (verificationStatus.isProcessing) {
+      state = TravelerVerificationState.submitted;
+    } else if (verificationStatus.isUploaded &&
+        state == TravelerVerificationState.profilePending) {
+      state = TravelerVerificationState.documentsUploaded;
+    }
   }
 
   return state;

@@ -55,6 +55,11 @@ class VerificationStatusScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.verificationJobId != null) {
+        ref
+            .read(verificationNotifierProvider.notifier)
+            .startPollingVerificationJob(widget.verificationJobId!);
+      }
       // Reconcile with backend to recover state after process death,
       // resume polling if processing, and update verification status.
       ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
@@ -75,42 +80,22 @@ class VerificationStatusScreenState
         .fetchVerificationStatus();
   }
 
-  /// Derives the effective verification state.
-  TravelerVerificationState get effectiveState {
-    final profile = ref.read(currentProfileProvider).valueOrNull;
-    final profileState =
-        profile?.verificationState ?? TravelerVerificationState.submitted;
-    return ref
-        .read(verificationNotifierProvider.notifier)
-        .effectiveState(profileState);
-  }
-
-  double? get activeVerificationScore {
-    final state = ref.read(verificationNotifierProvider);
-    return state.jobResult?.verificationScore ??
-        state.submitResult?.verificationScore;
-  }
-
-  String? get failedStep =>
-      ref.read(verificationNotifierProvider).verificationStatus?.failedStep;
-
-  String? get errorReason {
-    final state = ref.read(verificationNotifierProvider);
-    final reason = state.verificationStatus?.errorReason ?? state.errorMessage;
-    if (reason == uiMitigation) return null;
-    return reason;
-  }
-
-  String? get uiMitigation =>
-      ref.read(verificationNotifierProvider).verificationStatus?.uiMitigation;
-
   @override
   Widget build(BuildContext context) {
     final profileState = ref.watch(currentProfileProvider);
+    final verificationState = ref.watch(verificationNotifierProvider);
+    final state = ref.watch(travelerVerificationStateProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final state = effectiveState;
     final config = StatusConfig.from(state, context);
+
+    final activeVerificationScore = verificationState.jobResult?.verificationScore ??
+        verificationState.submitResult?.verificationScore;
+    final failedStep = verificationState.verificationStatus?.failedStep;
+    final reason = verificationState.verificationStatus?.errorReason ??
+        verificationState.errorMessage;
+    final uiMitigation = verificationState.verificationStatus?.uiMitigation;
+    final errorReason = reason == uiMitigation ? null : reason;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -211,7 +196,7 @@ class VerificationStatusScreenState
                           if (activeVerificationScore != null) ...[
                             const SizedBox(height: 16),
                             VerificationScoreIndicator(
-                              score: activeVerificationScore!,
+                              score: activeVerificationScore,
                               isVerified:
                                   state == TravelerVerificationState.verified,
                             ),
@@ -220,14 +205,8 @@ class VerificationStatusScreenState
                           // ── Step Checklist ────────────────────────────
                           StepChecklist(
                             state: state,
-                            isNfcSkipped: ref
-                                .read(verificationNotifierProvider)
-                                .isNfcSkipped,
-                            hasNfcResult:
-                                ref
-                                    .read(verificationNotifierProvider)
-                                    .nfcResult !=
-                                null,
+                            isNfcSkipped: verificationState.isNfcSkipped,
+                            hasNfcResult: verificationState.nfcResult != null,
                           ),
                           const SizedBox(height: 24),
                           // ── Info Card ─────────────────────────────────

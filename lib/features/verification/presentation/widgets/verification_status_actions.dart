@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Primary action buttons on the verification status screen.
@@ -67,7 +67,12 @@ class VerificationStatusActions extends ConsumerWidget {
 
     if (state.isVerified) {
       return ElevatedButton.icon(
-        onPressed: () => context.go(AppRoutes.home),
+        onPressed: () {
+          ref.invalidate(currentProfileProvider);
+          ref.invalidate(verificationStatusProvider);
+          ref.read(authNotifierProvider.notifier).refreshVerificationState();
+          context.go(AppRoutes.home);
+        },
         icon: const Icon(Icons.explore_rounded),
         label: Text(
           'Start Exploring',

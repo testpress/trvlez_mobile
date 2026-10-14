@@ -181,7 +181,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   isVerified
                       ? 'ID verified — book without re-checking'
-                      : 'Verify once, book without re-checking',
+                      : (verificationState.isProcessing
+                          ? 'Verification in review · usually under a minute'
+                          : 'Verify once, book without re-checking'),
                   style: TextStyle(
                     fontFamily: AppTypography.fontFamily,
                     fontSize: 12,
@@ -268,7 +270,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     dueDate: findrPortfolio.dueDate,
                     onCta: () {
                       if (findrCardState == FindrState.locked) {
-                        context.push(AppRoutes.verificationLanding);
+                        if (verificationState.isProcessing) {
+                          context.push(AppRoutes.verificationStatus);
+                        } else {
+                          context.push(AppRoutes.verificationLanding);
+                        }
                       } else if (findrCardState == FindrState.notJoined) {
                         showJoinFindrSheet(context);
                       } else {
