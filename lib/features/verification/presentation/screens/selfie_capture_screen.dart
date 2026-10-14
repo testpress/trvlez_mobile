@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
@@ -20,8 +21,9 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 
 /// Capture screen for the traveler's selfie video liveness verification.
 ///
-/// Features a centered 158x210 face oval with smooth progress ring, front camera feed,
-/// elapsed timer counting up to 10 seconds, and round shutter control.
+/// Features an ergonomic face oval with smooth progress ring, front camera feed,
+/// elapsed timer counting up to 10 seconds, face alignment guidance, round shutter control,
+/// and support for gallery video upload fallback.
 class SelfieCaptureScreen extends ConsumerStatefulWidget {
   const SelfieCaptureScreen({super.key, required this.cameraService});
 
@@ -41,6 +43,8 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
   Timer? _timer;
 
   static const int kSelfieSeconds = 10;
+  static const double kOvalWidth = 224.0;
+  static const double kOvalHeight = 296.0;
 
   @override
   void initState() {
@@ -81,11 +85,15 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     if (_isRecording) return;
 
     final cam = _cameraController;
-    if (cam != null && cam.value.isInitialized) {
-      try {
-        await cam.startVideoRecording();
-      } catch (_) {}
+    if (cam == null || !cam.value.isInitialized) {
+      // If camera preview is inactive (e.g. simulator), open gallery picker fallback
+      await _pickFromGallery();
+      return;
     }
+
+    try {
+      await cam.startVideoRecording();
+    } catch (_) {}
 
     setState(() {
       _isRecording = true;
@@ -134,6 +142,22 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     }
   }
 
+  Future<void> _pickFromGallery() async {
+    if (_isRecording) return;
+
+    try {
+      final File? video = await widget.cameraService.pickVideoFromGallery();
+      if (video != null && mounted) {
+        ref.read(verificationNotifierProvider.notifier).setVideo(video);
+        if (mounted) {
+          context.push(AppRoutes.selfieReview);
+        }
+      }
+    } catch (_) {
+      // Gallery picker dismissed or unavailable
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -146,10 +170,10 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
       isScrollable: true,
       onBack: _isRecording ? null : () => context.pop(),
       body: [
-        const VerificationStepper(current: 2, circleSize: 23.0),
-        const SizedBox(height: AppSpacing.md),
+        const VerificationStepper(current: 2, circleSize: 22.0),
+        const SizedBox(height: AppSpacing.sm),
         Text(
-          'Centre your face',
+          _isRecording ? 'Keep still' : 'Centre your face',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
@@ -161,7 +185,9 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Hold still until the ring fills.',
+          _isRecording
+              ? 'Hold steady until the progress ring completes.'
+              : 'Hold still until the ring fills.',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
@@ -170,21 +196,80 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.sm),
         Center(
           child: VerifyFaceOval(
-            width: 158.0,
-            height: 210.0,
+            width: kOvalWidth,
+            height: kOvalHeight,
             progress: _progress.clamp(0.0, 1.0),
             previewChild: _isCameraInitialized && cam != null
-                ? CameraPreview(cam)
+                ? ClipRect(
+                    child: SizedBox.expand(
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: cam.value.previewSize != null
+                              ? cam.value.previewSize!.height
+                              : kOvalWidth,
+                          height: cam.value.previewSize != null
+                              ? cam.value.previewSize!.width
+                              : kOvalHeight,
+                          child: CameraPreview(cam),
+                        ),
+                      ),
+                    ),
+                  )
                 : null,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.xs),
         Center(
           child: VerifyRecordingTime(
             seconds: _elapsed.clamp(0, kSelfieSeconds),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              _isRecording ? AppIcons.video : AppIcons.moodSmile,
+              size: 14.0,
+              color: colors.brandSecondary,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Flexible(
+              child: Text(
+                _isRecording
+                    ? 'Recording video... stay centered'
+                    : 'Good lighting • Eye level • No accessories',
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 11.5,
+                  fontWeight: TypeScale.regular,
+                  color: colors.brandSecondaryBody,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Center(
+          child: TextButton.icon(
+            onPressed: _isRecording ? null : _pickFromGallery,
+            icon: Icon(
+              AppIcons.photo,
+              size: 14.0,
+              color: colors.brandSecondaryBody,
+            ),
+            label: Text(
+              'Upload from photo library',
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontSize: 11.0,
+                color: colors.brandSecondaryBody,
+              ),
+            ),
           ),
         ),
       ],

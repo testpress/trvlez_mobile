@@ -4,49 +4,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
-/// The 158x210 ellipse front-camera viewfinder with 9px translucent halo and progress arc.
+/// An ergonomic front-camera viewfinder oval with translucent halo,
+/// subtle face alignment guidance marks, and smooth progress arc.
 class VerifyFaceOval extends StatelessWidget {
   const VerifyFaceOval({
     super.key,
     this.previewChild,
     this.progress,
-    this.width = 158.0,
-    this.height = 210.0,
+    this.width = 224.0,
+    this.height = 296.0,
+    this.showGuidanceGuides = true,
   });
 
   final Widget? previewChild;
   final double? progress;
   final double width;
   final double height;
+  final bool showGuidanceGuides;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     const stroke = 2.5;
+    final isRecording = progress != null && progress! > 0;
 
     return Center(
       child: SizedBox(
-        width: width + 18.0,
-        height: height + 18.0,
+        width: width + 20.0,
+        height: height + 20.0,
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // 9px outer halo
-            Container(
+            // Outer halo with subtle glow when actively recording
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
               width: width + 18.0,
               height: height + 18.0,
               decoration: BoxDecoration(
-                color: colors.brandOnSurface.withValues(alpha: 0.1),
+                color: colors.brandOnSurface.withValues(
+                  alpha: isRecording ? 0.16 : 0.08,
+                ),
                 borderRadius: BorderRadius.all(
                   Radius.elliptical((width + 18.0) / 2, (height + 18.0) / 2),
                 ),
               ),
             ),
             // Clipped front camera or illustration
-            ClipRRect(
-              borderRadius: BorderRadius.all(
-                Radius.elliptical(width / 2, height / 2),
-              ),
+            ClipOval(
               child: SizedBox(
                 width: width,
                 height: height,
@@ -61,6 +65,21 @@ class VerifyFaceOval extends StatelessWidget {
                 ),
               ),
             ),
+            // Face guidance overlay (eye-level alignment notches)
+            if (showGuidanceGuides)
+              IgnorePointer(
+                child: SizedBox(
+                  width: width,
+                  height: height,
+                  child: CustomPaint(
+                    painter: _FaceGuidancePainter(
+                      color: colors.brandOnSurface.withValues(
+                        alpha: isRecording ? 0.22 : 0.40,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             // Progress ring
             SizedBox(
               width: width + stroke,
@@ -69,7 +88,7 @@ class VerifyFaceOval extends StatelessWidget {
                 painter: _OvalRingPainter(
                   progress: progress,
                   stroke: stroke,
-                  ringColor: colors.brandOnSurface.withValues(alpha: 0.55),
+                  ringColor: colors.brandOnSurface.withValues(alpha: 0.45),
                   activeColor: colors.brandOnSurface,
                 ),
               ),
@@ -79,6 +98,71 @@ class VerifyFaceOval extends StatelessWidget {
       ),
     );
   }
+}
+
+class _FaceGuidancePainter extends CustomPainter {
+  const _FaceGuidancePainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final rx = size.width / 2;
+    final ry = size.height / 2;
+
+    // Eye level is approximately at 42% of the vertical frame
+    final eyeY = size.height * 0.42;
+    final dyNorm = (eyeY - cy) / ry;
+    final dySq = dyNorm * dyNorm;
+
+    if (dySq < 1.0) {
+      final dxAtY = rx * math.sqrt(1.0 - dySq);
+      const tickLength = 10.0;
+
+      // Left eye-level tick
+      final leftX = cx - dxAtY;
+      canvas.drawLine(
+        Offset(leftX, eyeY),
+        Offset(leftX + tickLength, eyeY),
+        paint,
+      );
+
+      // Right eye-level tick
+      final rightX = cx + dxAtY;
+      canvas.drawLine(
+        Offset(rightX - tickLength, eyeY),
+        Offset(rightX, eyeY),
+        paint,
+      );
+    }
+
+    // Top head guideline notch
+    const notchLen = 8.0;
+    canvas.drawLine(
+      Offset(cx, 10.0),
+      Offset(cx, 10.0 + notchLen),
+      paint,
+    );
+
+    // Bottom chin guideline notch
+    canvas.drawLine(
+      Offset(cx, size.height - 10.0 - notchLen),
+      Offset(cx, size.height - 10.0),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_FaceGuidancePainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _OvalRingPainter extends CustomPainter {
@@ -114,7 +198,7 @@ class _OvalRingPainter extends CustomPainter {
       false,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = stroke
+        ..strokeWidth = stroke + 0.5
         ..strokeCap = StrokeCap.round
         ..color = activeColor,
     );

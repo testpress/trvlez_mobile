@@ -19,7 +19,7 @@ import 'package:video_player/video_player.dart';
 
 /// Screen allowing the traveler to review their recorded selfie video prior to upload.
 ///
-/// Features video playback within a 126x168 oval, scrub track, and upload/re-record actions.
+/// Features video playback within an ergonomic face oval, scrub track, and upload/re-record actions.
 class SelfieReviewScreen extends ConsumerStatefulWidget {
   const SelfieReviewScreen({super.key});
 
@@ -30,6 +30,9 @@ class SelfieReviewScreen extends ConsumerStatefulWidget {
 class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   VideoPlayerController? _videoController;
   bool _isPlaying = false;
+
+  static const double kReviewWidth = 210.0;
+  static const double kReviewHeight = 280.0;
 
   @override
   void initState() {
@@ -48,12 +51,25 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
       _videoController = controller;
       await controller.initialize();
       await controller.setLooping(true);
+      controller.addListener(_onVideoUpdate);
       if (mounted) setState(() {});
     } catch (_) {}
   }
 
+  void _onVideoUpdate() {
+    if (!mounted) return;
+    final isPlaying = _videoController?.value.isPlaying ?? false;
+    if (_isPlaying != isPlaying) {
+      setState(() => _isPlaying = isPlaying);
+    } else {
+      // Re-render for smooth progress bar update during playback
+      setState(() {});
+    }
+  }
+
   @override
   void dispose() {
+    _videoController?.removeListener(_onVideoUpdate);
     _videoController?.dispose();
     super.dispose();
   }
@@ -64,10 +80,8 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
 
     if (controller.value.isPlaying) {
       controller.pause();
-      setState(() => _isPlaying = false);
     } else {
       controller.play();
-      setState(() => _isPlaying = true);
     }
   }
 
@@ -76,6 +90,15 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
     final colors = context.colors;
     final controller = _videoController;
     final notifier = ref.read(verificationNotifierProvider.notifier);
+
+    final position = controller?.value.position ?? Duration.zero;
+    final duration = controller?.value.duration ?? const Duration(seconds: 10);
+    final progress = duration.inMilliseconds > 0
+        ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
+        : 0.0;
+
+    final seconds = position.inSeconds.clamp(0, 59);
+    final timeStr = '0:${seconds.toString().padLeft(2, '0')}';
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_capture.svg',
@@ -98,7 +121,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Watch it back before you upload. Your face should stay inside the oval throughout.',
+          'Watch it back before you upload. Make sure your face is clearly visible, well-lit, and centered throughout.',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
@@ -121,31 +144,75 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
               children: [
                 GestureDetector(
                   onTap: _togglePlayback,
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: 126.0,
-                      height: 168.0,
-                      child:
-                          controller != null && controller.value.isInitialized
-                          ? AspectRatio(
-                              aspectRatio: controller.value.aspectRatio,
-                              child: VideoPlayer(controller),
-                            )
-                          : SvgPicture.asset(
-                              'assets/art/selfie_video.svg',
-                              width: 126.0,
-                              height: 168.0,
-                              fit: BoxFit.contain,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Outer halo matching capture aesthetic
+                      Container(
+                        width: kReviewWidth + 14.0,
+                        height: kReviewHeight + 14.0,
+                        decoration: BoxDecoration(
+                          color: colors.brandOnSurface.withValues(alpha: 0.08),
+                          borderRadius: const BorderRadius.all(
+                            Radius.elliptical(
+                              (kReviewWidth + 14.0) / 2,
+                              (kReviewHeight + 14.0) / 2,
                             ),
-                    ),
+                          ),
+                        ),
+                      ),
+                      // Clipped oval video player with cover fit
+                      ClipOval(
+                        child: SizedBox(
+                          width: kReviewWidth,
+                          height: kReviewHeight,
+                          child:
+                              controller != null &&
+                                  controller.value.isInitialized
+                              ? FittedBox(
+                                  fit: BoxFit.cover,
+                                  child: SizedBox(
+                                    width: controller.value.size.width > 0
+                                        ? controller.value.size.width
+                                        : kReviewWidth,
+                                    height: controller.value.size.height > 0
+                                        ? controller.value.size.height
+                                        : kReviewHeight,
+                                    child: VideoPlayer(controller),
+                                  ),
+                                )
+                              : SvgPicture.asset(
+                                  'assets/art/selfie_video.svg',
+                                  width: kReviewWidth,
+                                  height: kReviewHeight,
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                      ),
+                      // Play overlay button when paused
+                      if (!_isPlaying)
+                        Container(
+                          width: 48.0,
+                          height: 48.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: colors.brandSurface.withValues(alpha: 0.7),
+                          ),
+                          child: Icon(
+                            Icons.play_arrow_rounded,
+                            size: 32.0,
+                            color: colors.brandOnSurface,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xs),
+                const SizedBox(height: AppSpacing.sm),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '0:10',
+                      timeStr,
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 11.5,
@@ -154,12 +221,19 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    Container(
-                      width: 96.0,
-                      height: 3.0,
-                      decoration: BoxDecoration(
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
+                      child: Container(
+                        width: 120.0,
+                        height: 3.5,
                         color: colors.brandScrubTrack,
-                        borderRadius: BorderRadius.circular(AppRadius.xs),
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: progress,
+                          child: Container(
+                            color: colors.brandOnSurface,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
