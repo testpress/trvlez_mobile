@@ -3,15 +3,19 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart'
+    show authNotifierProvider;
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart'
+    show currentProfileProvider;
 import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_polling_service.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart'
-    show verificationRepositoryProvider;
+    show verificationRepositoryProvider, verificationStatusProvider;
 import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 
 class VerificationNotifier extends Notifier<VerificationState> {
@@ -38,6 +42,13 @@ class VerificationNotifier extends Notifier<VerificationState> {
     TravelerVerificationState profileState,
   ) => state.effectiveState(profileState);
 
+  /// Synchronizes app-wide profile and KYC states upon verification approval.
+  void _notifyVerificationApproved() {
+    ref.invalidate(currentProfileProvider);
+    ref.invalidate(verificationStatusProvider);
+    ref.read(authNotifierProvider.notifier).refreshVerificationState();
+  }
+
   // ─── Backend Reconciliation ──────────────────────────────────────
 
   /// Reconciles local state with the backend's source of truth.
@@ -53,9 +64,21 @@ class VerificationNotifier extends Notifier<VerificationState> {
     _isReconciling = true;
 
     try {
+      final profile = ref.read(currentProfileProvider).valueOrNull;
+      if (profile?.verificationState == TravelerVerificationState.verified) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+        return;
+      }
+
       final repository = ref.read(verificationRepositoryProvider);
       final verificationStatus = await repository.getVerificationStatus();
       state = state.copyWith(verificationStatus: verificationStatus);
+
+      if (verificationStatus.isVerified) {
+        state = state.copyWith(phase: VerificationPhase.verified);
+        _notifyVerificationApproved();
+        return;
+      }
 
       if (!verificationStatus.hasActiveSession) {
         // No session exists — fresh start is valid
@@ -63,11 +86,6 @@ class VerificationNotifier extends Notifier<VerificationState> {
       }
 
       final serverStatus = verificationStatus.status;
-
-      if (verificationStatus.isVerified) {
-        state = state.copyWith(phase: VerificationPhase.verified);
-        return;
-      }
 
       if (verificationStatus.isFailed) {
         state = state.copyWith(
@@ -303,6 +321,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       final apiException = ApiException.from(e);
       if (apiException?.isAlreadyVerified == true) {
         state = state.copyWith(phase: VerificationPhase.verified);
+        _notifyVerificationApproved();
         return;
       }
       if (apiException?.isAlreadySubmitted == true) {
@@ -335,6 +354,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       final apiException = ApiException.from(e);
       if (apiException?.isAlreadyVerified == true) {
         state = state.copyWith(phase: VerificationPhase.verified);
+        _notifyVerificationApproved();
         return;
       }
 
@@ -393,6 +413,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       final apiException = ApiException.from(e);
       if (apiException?.isAlreadyVerified == true) {
         state = state.copyWith(phase: VerificationPhase.verified);
+        _notifyVerificationApproved();
         return;
       }
       if (apiException?.isAlreadySubmitted == true) {
@@ -432,6 +453,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
       if (submitResult.isVerified) {
         state = state.copyWith(phase: VerificationPhase.verified);
+        _notifyVerificationApproved();
       } else if (submitResult.isFailed) {
         state = state.copyWith(
           phase: VerificationPhase.verificationFailed,
@@ -451,6 +473,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       if (apiException != null && apiException.isConflict) {
         if (apiException.isAlreadyVerified) {
           state = state.copyWith(phase: VerificationPhase.verified);
+          _notifyVerificationApproved();
           return;
         }
         // "Already submitted" or "Already processing" — reconcile to get
@@ -483,8 +506,9 @@ class VerificationNotifier extends Notifier<VerificationState> {
     _pollingService.startPolling(
       jobId: jobId,
       onUpdate: (pollingResult, domainStatus) {
+        final isVerified = pollingResult.isVerified;
         state = state.copyWith(
-          phase: pollingResult.isVerified
+          phase: isVerified
               ? VerificationPhase.verified
               : (pollingResult.isFailed
                     ? VerificationPhase.verificationFailed
@@ -498,6 +522,9 @@ class VerificationNotifier extends Notifier<VerificationState> {
           // Update verification status if available (for failedStep, uiMitigation)
           verificationStatus: domainStatus ?? state.verificationStatus,
         );
+        if (isVerified) {
+          _notifyVerificationApproved();
+        }
       },
       onTimeout: () {
         state = state.copyWith(

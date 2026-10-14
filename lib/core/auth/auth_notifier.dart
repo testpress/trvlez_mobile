@@ -40,9 +40,20 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     final token = await tokenStorage.getToken();
     final isAuthenticated = token != null;
 
+    TravelerVerificationState initialState =
+        TravelerVerificationState.profilePending;
+    if (isAuthenticated) {
+      try {
+        final profile = await ref.read(profileRepositoryProvider).getProfile();
+        initialState = profile.verificationState;
+      } catch (_) {
+        // Fallback to profilePending if profile cannot be fetched immediately
+      }
+    }
+
     return AuthState(
       isAuthenticated: isAuthenticated,
-      verificationState: TravelerVerificationState.profilePending,
+      verificationState: initialState,
     );
   }
 
@@ -89,21 +100,31 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 /// Computes the active traveler verification state.
 ///
 /// Combines the profile's onboarding step with the verification session status
-/// so that a submitted session marked as failed in the verification service
-/// transitions the state to [TravelerVerificationState.failed].
+/// and the verification flow notifier so that verified or failed transitions
+/// are immediately reflected across the entire application.
 final travelerVerificationStateProvider = Provider<TravelerVerificationState>((
   ref,
 ) {
   final profileState = ref.watch(currentProfileProvider);
   final profile = profileState.valueOrNull;
+  final baseState =
+      profile?.verificationState ?? TravelerVerificationState.profilePending;
+
+  final verificationState = ref.watch(verificationNotifierProvider);
   final verificationStatus = ref.watch(verificationStatusProvider).valueOrNull;
 
-  TravelerVerificationState state =
-      profile?.verificationState ?? TravelerVerificationState.profilePending;
-  if (state == TravelerVerificationState.submitted &&
-      verificationStatus?.isFailed == true) {
+  // Derive effective state from the verification flow notifier
+  var state = verificationState.effectiveState(baseState);
+
+  // If the server-side verification status endpoint reports verified/failed, respect it
+  if (verificationStatus?.isVerified == true) {
+    state = TravelerVerificationState.verified;
+  } else if (verificationStatus?.isFailed == true &&
+      (state == TravelerVerificationState.submitted ||
+          baseState == TravelerVerificationState.submitted)) {
     state = TravelerVerificationState.failed;
   }
+
   return state;
 });
 

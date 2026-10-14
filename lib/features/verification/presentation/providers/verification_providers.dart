@@ -26,13 +26,14 @@ final verificationNotifierProvider =
       return VerificationNotifier();
     });
 
-/// Future provider fetching current verification status when in submitted step.
+/// Future provider fetching current verification status from the server.
 final verificationStatusProvider =
     FutureProvider.autoDispose<VerificationStatus?>((ref) async {
       final profileState = ref.watch(currentProfileProvider);
-      final profile = profileState.value;
+      final profile = profileState.valueOrNull;
 
-      if (profile?.verificationState == TravelerVerificationState.submitted) {
+      if (profile != null &&
+          profile.verificationState != TravelerVerificationState.profilePending) {
         try {
           final repository = ref.read(verificationRepositoryProvider);
           return await repository.getVerificationStatus();

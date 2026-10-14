@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -193,7 +194,12 @@ class VerificationSuccessScreen extends ConsumerWidget {
         AppButton(
           label: 'Start exploring',
           variant: AppButtonVariant.brandWhite,
-          onPressed: () => context.go(AppRoutes.home),
+          onPressed: () {
+            ref.invalidate(currentProfileProvider);
+            ref.invalidate(verificationStatusProvider);
+            ref.read(authNotifierProvider.notifier).refreshVerificationState();
+            context.go(AppRoutes.home);
+          },
         ),
         const SizedBox(height: AppSpacing.sm),
         const BrandSecurityNote(

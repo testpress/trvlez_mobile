@@ -8,6 +8,8 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/brand_wordmark.dart';
@@ -60,19 +62,37 @@ class _VerificationLandingScreenState
     });
   }
 
-  int _calculateDoneSteps(VerificationState state) {
-    if (state.phase == VerificationPhase.verified) return 4;
-    if (state.nfcResult != null || state.isNfcSkipped) return 3;
+  int _calculateDoneSteps({
+    required VerificationState state,
+    required TravelerVerificationState travelerState,
+  }) {
+    if (state.phase == VerificationPhase.verified ||
+        state.verificationStatus?.isVerified == true ||
+        travelerState.isVerified) {
+      return 4;
+    }
+    if (state.phase == VerificationPhase.submitting ||
+        state.phase == VerificationPhase.verifying ||
+        state.jobResult != null ||
+        travelerState == TravelerVerificationState.submitted ||
+        state.nfcResult != null ||
+        state.isNfcSkipped) {
+      return 4;
+    }
     if (state.capturedVideo != null ||
-        state.phase == VerificationPhase.videoQualityFailed ||
-        state.phase == VerificationPhase.submitting ||
-        state.phase == VerificationPhase.verifying) {
+        state.phase == VerificationPhase.uploadSuccess ||
+        travelerState == TravelerVerificationState.documentsUploaded) {
+      return 3;
+    }
+    if (state.phase == VerificationPhase.mrzReviewed ||
+        travelerState == TravelerVerificationState.passportReviewed) {
       return 2;
     }
-    if (state.mrzExtractionResult != null ||
+    if (state.capturedImage != null ||
+        state.mrzExtractionResult != null ||
         state.extractedDocumentNumber != null ||
-        state.phase == VerificationPhase.mrzReviewed ||
-        state.phase == VerificationPhase.confirmingMrz) {
+        state.phase == VerificationPhase.confirmingMrz ||
+        state.imageQualityResult?.isAcceptable == true) {
       return 1;
     }
     return 0;
@@ -82,7 +102,20 @@ class _VerificationLandingScreenState
   Widget build(BuildContext context) {
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
-    final doneCount = _calculateDoneSteps(state).clamp(0, 4);
+    final travelerState = ref.watch(travelerVerificationStateProvider);
+    final isVerified = travelerState.isVerified ||
+        state.phase == VerificationPhase.verified ||
+        state.verificationStatus?.isVerified == true;
+    final isSubmitted = travelerState.isProcessing ||
+        state.phase == VerificationPhase.submitting ||
+        state.phase == VerificationPhase.verifying;
+
+    final doneCount = _calculateDoneSteps(
+      state: state,
+      travelerState: travelerState,
+    ).clamp(0, 4);
+
+    final isFlowFinished = isVerified || isSubmitted || doneCount >= 4;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_verification_landing.svg',
@@ -99,35 +132,81 @@ class _VerificationLandingScreenState
         VerificationStepper(current: doneCount, circleSize: 26.0),
         const SizedBox(height: AppSpacing.md),
 
-        // Welcome Header with Wordmark inline
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 6.0,
-          children: [
-            Text(
-              'Welcome to',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 18.0,
-                fontWeight: TypeScale.bold,
-                color: colors.brandOnSurface,
-                height: 1.2,
-              ),
+        // Welcome Header
+        if (isVerified) ...[
+          Text(
+            'Identity verified',
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 18.0,
+              fontWeight: TypeScale.bold,
+              color: colors.brandOnSurface,
+              height: 1.2,
             ),
-            const BrandWordmark(planeWidth: 12.0, gap: 3.0, fontSize: 18.0),
-          ],
-        ),
-        const SizedBox(height: 4.0),
-        Text(
-          'Verify your identity to unlock full access.',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
-            color: colors.brandSecondaryBody,
-            height: 1.4,
           ),
-        ),
+          const SizedBox(height: 4.0),
+          Text(
+            'Your identity has been confirmed. You have full access.',
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 12.0,
+              fontWeight: TypeScale.regular,
+              color: colors.brandSecondaryBody,
+              height: 1.4,
+            ),
+          ),
+        ] else if (isSubmitted) ...[
+          Text(
+            'Verification in review',
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 18.0,
+              fontWeight: TypeScale.bold,
+              color: colors.brandOnSurface,
+              height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            'All documents submitted. We are reviewing your details.',
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 12.0,
+              fontWeight: TypeScale.regular,
+              color: colors.brandSecondaryBody,
+              height: 1.4,
+            ),
+          ),
+        ] else ...[
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 6.0,
+            children: [
+              Text(
+                'Welcome to',
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 18.0,
+                  fontWeight: TypeScale.bold,
+                  color: colors.brandOnSurface,
+                  height: 1.2,
+                ),
+              ),
+              const BrandWordmark(planeWidth: 12.0, gap: 3.0, fontSize: 18.0),
+            ],
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            'Verify your identity to unlock full access.',
+            style: TextStyle(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 12.0,
+              fontWeight: TypeScale.regular,
+              color: colors.brandSecondaryBody,
+              height: 1.4,
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.md),
 
         // Progress indicators
@@ -185,14 +264,29 @@ class _VerificationLandingScreenState
           _StepCard(
             index: i,
             isDone: i < doneCount,
-            isActive: i == doneCount,
+            isActive: !isFlowFinished && i == doneCount,
             stepData: _steps[i],
-            onTap: i <= doneCount ? () => context.push(_steps[i].route) : null,
+            onTap: (!isFlowFinished && i == doneCount)
+                ? () => context.push(_steps[i].route)
+                : null,
           ),
         ],
       ],
-      foot: const [
-        BrandSecurityNote(
+      foot: [
+        if (isVerified)
+          AppButton(
+            label: 'View verification status',
+            variant: AppButtonVariant.brandWhite,
+            onPressed: () => context.push(AppRoutes.verificationStatus),
+          )
+        else if (isSubmitted)
+          AppButton(
+            label: 'Check status',
+            variant: AppButtonVariant.brandWhite,
+            onPressed: () => context.push(AppRoutes.verificationStatus),
+          ),
+        if (isVerified || isSubmitted) const SizedBox(height: AppSpacing.sm),
+        const BrandSecurityNote(
           text:
               'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
           fontSize: 10.0,

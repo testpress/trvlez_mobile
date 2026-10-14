@@ -144,8 +144,11 @@ class VerificationState {
       if (status.isFailed) {
         return TravelerVerificationState.failed;
       }
-      if (!status.isProcessing) {
-        return TravelerVerificationState.verificationStarted;
+      if (status.isProcessing) {
+        return TravelerVerificationState.submitted;
+      }
+      if (status.isUploaded) {
+        return TravelerVerificationState.documentsUploaded;
       }
     }
 
