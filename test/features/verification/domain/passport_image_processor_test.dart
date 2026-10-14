@@ -145,5 +145,196 @@ void main() {
       // frame). With the fix, the crop exactly matches the overlay frame,
       // giving the passport more pixels after downscaling.
     });
+
+    test(
+      'crops passport frame from portrait capture on mobile portrait screen with exact ICAO aspect ratio',
+      () async {
+        // Standard mobile camera: 3024x4032 portrait capture
+        final testImage = img.Image(width: 3024, height: 4032);
+        img.fill(testImage, color: img.ColorRgb8(10, 50, 100));
+
+        final testFile = File('${tempDir.path}/portrait_mobile_capture.jpg');
+        testFile.writeAsBytesSync(img.encodeJpg(testImage));
+
+        // Viewport: 320x336 (1:1.05 aspect mobile card)
+        const double sw = 320.0;
+        const double sh = 336.0;
+        const double frameWidth = 284.0;
+        const double frameHeight = frameWidth / (125.0 / 88.0); // ~199.94
+        const double frameCenterX = sw / 2; // 160.0
+        const double frameCenterY = sh / 2; // 168.0
+
+        final params = {
+          'path': testFile.path,
+          'sw': sw,
+          'sh': sh,
+          'frameWidth': frameWidth,
+          'frameHeight': frameHeight,
+          'frameCenterX': frameCenterX,
+          'frameCenterY': frameCenterY,
+          'previewAR': 3.0 / 4.0, // 3:4 portrait preview
+        };
+
+        final croppedFile = await cropAndOptimizePassportImage(params);
+        expect(croppedFile, isNotNull);
+
+        final croppedBytes = croppedFile!.readAsBytesSync();
+        final croppedImg = img.decodeImage(croppedBytes)!;
+
+        // Verify dimensions and normalization
+        expect(croppedImg.width, greaterThan(0));
+        expect(croppedImg.height, greaterThan(0));
+        expect(croppedImg.width, lessThanOrEqualTo(1920));
+
+        // Cropped image MUST preserve the natural rectangular aspect ratio (~1.42)
+        final cropAR = croppedImg.width / croppedImg.height;
+        expect(cropAR, closeTo(125.0 / 88.0, 0.05));
+
+        // It MUST NOT be forced into a square (0.95-1.05)
+        expect(cropAR, isNot(closeTo(1.0, 0.15)));
+      },
+    );
+
+    test(
+      'normalizes inverted previewAR when caller passes landscape cam.value.aspectRatio in portrait mode',
+      () async {
+        // CameraX / AVFoundation reports aspectRatio as width/height (>1.0 e.g. 1.3333)
+        // even when device is held in portrait
+        final testImage = img.Image(width: 3024, height: 4032);
+        img.fill(testImage, color: img.ColorRgb8(30, 80, 40));
+
+        final testFile = File('${tempDir.path}/cam_ar_raw_capture.jpg');
+        testFile.writeAsBytesSync(img.encodeJpg(testImage));
+
+        const double sw = 320.0;
+        const double sh = 336.0;
+        const double frameWidth = 284.0;
+        const double frameHeight = frameWidth / (125.0 / 88.0);
+
+        final params = {
+          'path': testFile.path,
+          'sw': sw,
+          'sh': sh,
+          'frameWidth': frameWidth,
+          'frameHeight': frameHeight,
+          'frameCenterX': 160.0,
+          'frameCenterY': 168.0,
+          // Un-normalized sensor AR (> 1.0) while screen is portrait (sw < sh)
+          'previewAR': 4.0 / 3.0,
+        };
+
+        final croppedFile = await cropAndOptimizePassportImage(params);
+        expect(croppedFile, isNotNull);
+
+        final croppedBytes = croppedFile!.readAsBytesSync();
+        final croppedImg = img.decodeImage(croppedBytes)!;
+
+        final cropAR = croppedImg.width / croppedImg.height;
+        expect(cropAR, closeTo(125.0 / 88.0, 0.05));
+      },
+    );
+
+    test(
+      'rotates unrotated landscape sensor image to portrait when captured on portrait device',
+      () async {
+        // Sensor captured 4032x3024 (landscape) while device was portrait
+        final testImage = img.Image(width: 4032, height: 3024);
+        img.fill(testImage, color: img.ColorRgb8(100, 100, 200));
+
+        final testFile = File('${tempDir.path}/unrotated_sensor_capture.jpg');
+        testFile.writeAsBytesSync(img.encodeJpg(testImage));
+
+        const double sw = 360.0;
+        const double sh = 640.0;
+        const double frameWidth = 320.0;
+        const double frameHeight = frameWidth / (125.0 / 88.0);
+
+        final params = {
+          'path': testFile.path,
+          'sw': sw,
+          'sh': sh,
+          'frameWidth': frameWidth,
+          'frameHeight': frameHeight,
+          'frameCenterX': 180.0,
+          'frameCenterY': 320.0,
+        };
+
+        final croppedFile = await cropAndOptimizePassportImage(params);
+        expect(croppedFile, isNotNull);
+
+        final croppedBytes = croppedFile!.readAsBytesSync();
+        final croppedImg = img.decodeImage(croppedBytes)!;
+
+        expect(croppedImg.width, greaterThan(0));
+        expect(croppedImg.height, greaterThan(0));
+
+        // Result should preserve ICAO passport aspect ratio
+        final cropAR = croppedImg.width / croppedImg.height;
+        expect(cropAR, closeTo(125.0 / 88.0, 0.08));
+      },
+    );
+
+    test(
+      'respects custom frameCenterY vertical offset in portrait capture',
+      () async {
+        final testImage = img.Image(width: 3000, height: 4000);
+        img.fill(testImage, color: img.ColorRgb8(200, 100, 50));
+
+        final testFile = File('${tempDir.path}/custom_center_capture.jpg');
+        testFile.writeAsBytesSync(img.encodeJpg(testImage));
+
+        // Screen: 360x600, Frame center at y=250 instead of 300
+        final params = {
+          'path': testFile.path,
+          'sw': 360.0,
+          'sh': 600.0,
+          'frameWidth': 300.0,
+          'frameHeight': 300.0 / (125.0 / 88.0),
+          'frameCenterX': 180.0,
+          'frameCenterY': 250.0,
+        };
+
+        final croppedFile = await cropAndOptimizePassportImage(params);
+        expect(croppedFile, isNotNull);
+
+        final croppedBytes = croppedFile!.readAsBytesSync();
+        final croppedImg = img.decodeImage(croppedBytes)!;
+
+        expect(croppedImg.width, greaterThan(0));
+        expect(croppedImg.height, greaterThan(0));
+        final cropAR = croppedImg.width / croppedImg.height;
+        expect(cropAR, closeTo(125.0 / 88.0, 0.05));
+      },
+    );
+
+    test(
+      'safely clamps crop coordinates when frame reaches viewport boundaries',
+      () async {
+        final testImage = img.Image(width: 2000, height: 2000);
+        img.fill(testImage, color: img.ColorRgb8(50, 50, 50));
+
+        final testFile = File('${tempDir.path}/boundary_capture.jpg');
+        testFile.writeAsBytesSync(img.encodeJpg(testImage));
+
+        // Viewport with extreme frame width matching viewport exactly
+        final params = {
+          'path': testFile.path,
+          'sw': 300.0,
+          'sh': 300.0,
+          'frameWidth': 300.0,
+          'frameHeight': 300.0,
+          'frameCenterX': 150.0,
+          'frameCenterY': 150.0,
+        };
+
+        final croppedFile = await cropAndOptimizePassportImage(params);
+        expect(croppedFile, isNotNull);
+
+        final croppedBytes = croppedFile!.readAsBytesSync();
+        final croppedImg = img.decodeImage(croppedBytes)!;
+        expect(croppedImg.width, greaterThan(0));
+        expect(croppedImg.height, greaterThan(0));
+      },
+    );
   });
 }

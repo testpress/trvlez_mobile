@@ -7,6 +7,7 @@ class PassportCropParams {
   final double frameWidth;
   final double frameHeight;
   final double frameCenterX;
+  final double? frameCenterY;
 
   /// The camera preview's aspect ratio (width / height) as reported by the
   /// camera controller. Used to correctly map overlay-frame screen coordinates
@@ -21,6 +22,7 @@ class PassportCropParams {
     required this.frameWidth,
     required this.frameHeight,
     required this.frameCenterX,
+    this.frameCenterY,
     this.previewAspectRatio,
   });
 
@@ -31,18 +33,20 @@ class PassportCropParams {
     'frameWidth': frameWidth,
     'frameHeight': frameHeight,
     'frameCenterX': frameCenterX,
+    if (frameCenterY != null) 'frameCenterY': frameCenterY,
     'previewAR': previewAspectRatio,
   };
 
   factory PassportCropParams.fromMap(Map<String, dynamic> map) {
     return PassportCropParams(
       imagePath: map['path'] as String,
-      screenWidth: map['sw'] as double,
-      screenHeight: map['sh'] as double,
-      frameWidth: map['frameWidth'] as double,
-      frameHeight: map['frameHeight'] as double,
-      frameCenterX: map['frameCenterX'] as double,
-      previewAspectRatio: map['previewAR'] as double?,
+      screenWidth: (map['sw'] as num).toDouble(),
+      screenHeight: (map['sh'] as num).toDouble(),
+      frameWidth: (map['frameWidth'] as num).toDouble(),
+      frameHeight: (map['frameHeight'] as num).toDouble(),
+      frameCenterX: (map['frameCenterX'] as num).toDouble(),
+      frameCenterY: (map['frameCenterY'] as num?)?.toDouble(),
+      previewAspectRatio: (map['previewAR'] as num?)?.toDouble(),
     );
   }
 }

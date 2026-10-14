@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
@@ -21,11 +20,12 @@ import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_framing_guide.dart';
 
 /// Capture screen for the passport photo page.
 ///
-/// Features a dedicated 1:1.05 aspect camera frame with corner guides and dashed
-/// MRZ box, live camera feed support with SVG fallback, square shutter capture button,
+/// Features an ICAO Doc 9303 TD3 (125mm x 88mm) framing guide with four corner guides
+/// and dashed MRZ alignment box, live camera feed support with SVG fallback, square shutter capture button,
 /// and support for gallery fallback.
 class PassportCaptureScreen extends ConsumerStatefulWidget {
   const PassportCaptureScreen({super.key, required this.cameraService});
@@ -41,6 +41,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   CameraController? _controller;
   bool _isCameraInitialized = false;
   bool _isCapturing = false;
+  Size _viewportSize = const Size(320.0, 336.0);
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -93,14 +94,28 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       setState(() => _isCapturing = true);
       try {
         final XFile file = await cam.takePicture();
+        final viewportSize = _viewportSize;
+        final frameRect =
+            PassportFramingGuide.calculatePassportFrame(viewportSize);
+
+        // Compute effective preview aspect ratio matching the viewport orientation.
+        // CameraController.value.aspectRatio is sensor width / sensor height (> 1.0).
+        // In portrait mode (sw < sh), the effective preview aspect ratio is 1.0 / camAR.
+        final camAR = cam.value.aspectRatio;
+        final double previewAR =
+            (viewportSize.width < viewportSize.height && camAR > 1.0)
+                ? (1.0 / camAR)
+                : camAR;
+
         final cropParams = PassportCropParams(
           imagePath: file.path,
-          screenWidth: 300,
-          screenHeight: 400,
-          frameWidth: 260,
-          frameHeight: 273,
-          frameCenterX: 150,
-          previewAspectRatio: cam.value.aspectRatio,
+          screenWidth: viewportSize.width,
+          screenHeight: viewportSize.height,
+          frameWidth: frameRect.width,
+          frameHeight: frameRect.height,
+          frameCenterX: frameRect.center.dx,
+          frameCenterY: frameRect.center.dy,
+          previewAspectRatio: previewAR,
         );
 
         ref
@@ -137,19 +152,9 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       );
 
       if (image != null && mounted) {
-        final cropParams = PassportCropParams(
-          imagePath: image.path,
-          screenWidth: 300,
-          screenHeight: 400,
-          frameWidth: 260,
-          frameHeight: 273,
-          frameCenterX: 150,
-          previewAspectRatio: 1.0,
-        );
-
         ref
             .read(verificationNotifierProvider.notifier)
-            .setImage(File(image.path), cropParams: cropParams);
+            .setImage(File(image.path));
 
         if (mounted) {
           context.push(AppRoutes.passportReview);
@@ -206,19 +211,53 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
                 borderRadius: BorderRadius.circular(AppRadius.md),
                 child: Container(
                   color: colors.brandShotBackdrop.withValues(alpha: 0.35),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (_isCameraInitialized && cam != null)
-                        CameraPreview(cam)
-                      else
-                        SvgPicture.asset(
-                          'assets/art/camera_passport.svg',
-                          fit: BoxFit.cover,
-                        ),
-                      // Framing overlay guide with corners and dashed MRZ box
-                      _buildFramingGuide(colors),
-                    ],
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final viewportSize = Size(
+                        constraints.maxWidth,
+                        constraints.maxHeight,
+                      );
+                      _viewportSize = viewportSize;
+
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          if (_isCameraInitialized && cam != null)
+                            ClipRect(
+                              child: SizedBox.expand(
+                                child: FittedBox(
+                                  fit: BoxFit.cover,
+                                  child: SizedBox(
+                                    width: cam.value.previewSize != null
+                                        ? (viewportSize.width <
+                                                viewportSize.height
+                                            ? cam.value.previewSize!.height
+                                            : cam.value.previewSize!.width)
+                                        : viewportSize.width,
+                                    height: cam.value.previewSize != null
+                                        ? (viewportSize.width <
+                                                viewportSize.height
+                                            ? cam.value.previewSize!.width
+                                            : cam.value.previewSize!.height)
+                                        : viewportSize.height,
+                                    child: CameraPreview(cam),
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            SvgPicture.asset(
+                              'assets/art/camera_passport.svg',
+                              fit: BoxFit.cover,
+                            ),
+                          // Framing overlay guide with ICAO TD3 aspect ratio, corners, and dashed MRZ box
+                          PassportFramingGuide(
+                            viewportSize: viewportSize,
+                            colors: colors,
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -308,41 +347,6 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildFramingGuide(AppColors colors) {
-    return IgnorePointer(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: colors.brandBorderSubtle,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Container(
-              height: 48.0,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: colors.brandSecondary.withValues(alpha: 0.8),
-                  style: BorderStyle.solid,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.circular(AppRadius.xs),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

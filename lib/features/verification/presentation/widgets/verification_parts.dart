@@ -4,6 +4,7 @@
 /// adhering to Clean Architecture and Code Standards (files <= 300 lines).
 library;
 
+export 'passport_framing_guide.dart';
 export 'verify_detail_row.dart';
 export 'verify_face_oval.dart';
 export 'verify_hourglass.dart';

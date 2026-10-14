@@ -10,13 +10,18 @@ import 'package:image/image.dart' as img;
 /// preview vs 4:3 capture).
 Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
   final String imagePath = params['path'] as String;
-  final double sw = params['sw'] as double;
-  final double sh = params['sh'] as double;
-  final double frameWidth = params['frameWidth'] as double;
-  final double frameHeight = params['frameHeight'] as double;
-  final double frameCenterX = (params['frameCenterX'] as double?) ?? (sw / 2);
+  final double sw = (params['sw'] as num).toDouble();
+  final double sh = (params['sh'] as num).toDouble();
+  final double frameWidth = (params['frameWidth'] as num).toDouble();
+  final double frameHeight = (params['frameHeight'] as num).toDouble();
+  final double frameCenterX =
+      ((params['frameCenterX'] as num?)?.toDouble()) ?? (sw / 2);
+  final double frameCenterY =
+      ((params['frameCenterY'] as num?)?.toDouble()) ?? (sh / 2);
 
-  final bytes = File(imagePath).readAsBytesSync();
+  final file = File(imagePath);
+  if (!file.existsSync()) return null;
+  final bytes = file.readAsBytesSync();
   img.Image? originalImage = img.decodeImage(bytes);
 
   if (originalImage != null) {
@@ -26,14 +31,27 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
     if (sw > sh && originalImage.width < originalImage.height) {
       originalImage = img.copyRotate(originalImage, angle: 90);
     }
+    // If device was in portrait but captured image is landscape, rotate to match
+    if (sw < sh && originalImage.width > originalImage.height) {
+      originalImage = img.copyRotate(originalImage, angle: 90);
+    }
 
     final double iw = originalImage.width.toDouble();
     final double ih = originalImage.height.toDouble();
 
     // Read the preview aspect ratio. Falls back to the captured image AR
     // when unavailable (e.g. gallery-picked images), which makes the mapping
-    // an identity — equivalent to the old behaviour.
-    final double previewAR = (params['previewAR'] as double?) ?? (iw / ih);
+    // an identity.
+    double previewAR =
+        ((params['previewAR'] as num?)?.toDouble()) ?? (iw / ih);
+
+    // Normalize preview aspect ratio orientation to match screen/viewport orientation (sw vs sh)
+    if (sw < sh && previewAR > 1.0) {
+      previewAR = 1.0 / previewAR;
+    } else if (sw > sh && previewAR < 1.0) {
+      previewAR = 1.0 / previewAR;
+    }
+
     final double captureAR = iw / ih;
 
     // --- Step 1: Screen → Preview normalized coordinates (0–1) ---
@@ -49,7 +67,7 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
     final double offY = (displayH - sh) / 2;
 
     final double normCenterX = (frameCenterX + offX) / displayW;
-    final double normCenterY = (sh / 2 + offY) / displayH;
+    final double normCenterY = (frameCenterY + offY) / displayH;
     final double normW = frameWidth / displayW;
     final double normH = frameHeight / displayH;
 
@@ -89,12 +107,17 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
     final double cropX = cropCenterX - cropW / 2;
     final double cropY = cropCenterY - cropH / 2;
 
+    final int safeX = cropX.round().clamp(0, originalImage.width - 1);
+    final int safeY = cropY.round().clamp(0, originalImage.height - 1);
+    final int safeW = cropW.round().clamp(1, originalImage.width - safeX);
+    final int safeH = cropH.round().clamp(1, originalImage.height - safeY);
+
     img.Image croppedImage = img.copyCrop(
       originalImage,
-      x: cropX.toInt().clamp(0, originalImage.width - 1),
-      y: cropY.toInt().clamp(0, originalImage.height - 1),
-      width: cropW.toInt().clamp(1, originalImage.width),
-      height: cropH.toInt().clamp(1, originalImage.height),
+      x: safeX,
+      y: safeY,
+      width: safeW,
+      height: safeH,
     );
 
     // Normalize resolution: standard passport page needs ~300-400 DPI (~1800-1920px width).
