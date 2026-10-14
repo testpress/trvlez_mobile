@@ -201,12 +201,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
           final property = state.extra as Property?;
-          if (property == null && id.isEmpty) {
+          final propertyId = property?.id ?? id;
+          if (propertyId.isEmpty) {
             return const PropertiesListingScreen();
           }
           return PropertyScreen(
             property: property,
-            propertyId: property?.id ?? id,
+            propertyId: propertyId,
           );
         },
       ),

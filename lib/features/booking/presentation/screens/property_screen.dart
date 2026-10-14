@@ -34,17 +34,28 @@ class PropertyScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (property != null) {
+    // 1. If property was passed with its room types already loaded, use it directly.
+    if (property != null && property!.roomTypes.isNotEmpty) {
       final currentDraft = ref.read(bookingDraftProvider);
-      final prop = property;
-      if (prop != null &&
-          (currentDraft == null || currentDraft.propertyId != prop.id)) {
+      final prop = property!;
+      if (currentDraft == null || currentDraft.propertyId != prop.id) {
         Future.microtask(() {
           ref.read(bookingDraftProvider.notifier).beginBooking(prop);
         });
       }
-    } else if (propertyId != null && propertyId!.isNotEmpty) {
-      final propAsync = ref.watch(propertyDetailNotifierProvider(propertyId!));
+      final draft = ref.watch(bookingDraftProvider);
+      if (draft == null) {
+        return const BookingNoSelectionView();
+      }
+      return _PropertyContent(draft: draft);
+    }
+
+    // 2. Otherwise resolve the property ID to fetch full details including real room types.
+    final targetId =
+        (property?.id.isNotEmpty == true) ? property!.id : propertyId;
+
+    if (targetId != null && targetId.isNotEmpty) {
+      final propAsync = ref.watch(propertyDetailNotifierProvider(targetId));
       return propAsync.when(
         loading: () => Scaffold(
           backgroundColor: context.colors.page,
@@ -62,12 +73,24 @@ class PropertyScreen extends ConsumerWidget {
               const _PropertyHeader(),
               Expanded(
                 child: Center(
-                  child: Text(
-                    'Failed to load property details.',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      color: context.colors.inkSecondary,
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Failed to load property details.',
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          color: context.colors.inkSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      ElevatedButton(
+                        onPressed: () => ref.refresh(
+                          propertyDetailNotifierProvider(targetId),
+                        ),
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -77,7 +100,8 @@ class PropertyScreen extends ConsumerWidget {
         data: (loadedProp) {
           final currentDraft = ref.read(bookingDraftProvider);
           if (currentDraft == null ||
-              currentDraft.propertyId != loadedProp.id) {
+              currentDraft.propertyId != loadedProp.id ||
+              (currentDraft.picks.isEmpty && loadedProp.roomTypes.isNotEmpty)) {
             Future.microtask(() {
               ref.read(bookingDraftProvider.notifier).beginBooking(loadedProp);
             });
@@ -91,12 +115,11 @@ class PropertyScreen extends ConsumerWidget {
       );
     }
 
+    // 3. Fall back to existing active draft or empty selection state
     final draft = ref.watch(bookingDraftProvider);
-
     if (draft == null) {
       return const BookingNoSelectionView();
     }
-
     return _PropertyContent(draft: draft);
   }
 }
@@ -237,8 +260,26 @@ class _PropertyContent extends ConsumerWidget {
                       sleeps: draft.sleeps,
                       needed: draft.guests.sleepingCount,
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    for (final pick in draft.picks)
+                    if (draft.picks.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.lg,
+                        ),
+                        child: Center(
+                          child: Text(
+                            'No bookable rooms are currently available for this property.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: AppTypography.fontFamily,
+                              fontSize: 14.0,
+                              color: colors.inkSecondary,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      for (final pick in draft.picks)
                       BookingRoomCard(
                         pick: pick,
                         differs: !pick.range.sameAs(range),

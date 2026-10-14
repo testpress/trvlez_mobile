@@ -9,6 +9,26 @@ import 'package:trvlez_mobile/features/booking/presentation/screens/booking_date
 import 'package:trvlez_mobile/features/booking/presentation/screens/booking_review_screen.dart';
 import 'package:trvlez_mobile/features/booking/presentation/screens/property_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
+import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
+import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
+
+class _MockPropertiesRepository extends Fake implements PropertiesRepository {
+  List<Property> propertiesToReturn = [];
+
+  @override
+  Future<List<Property>> getProperties({
+    int skip = 0,
+    int limit = 50,
+    String? search,
+    String? city,
+    String? propertyType,
+  }) async => propertiesToReturn;
+
+  @override
+  Future<Property> getPropertyDetail(String id) async {
+    return propertiesToReturn.firstWhere((p) => p.id == id);
+  }
+}
 
 Widget _buildTestApp({
   required Widget child,
@@ -83,6 +103,59 @@ void main() {
       expect(find.text('Deluxe Sea View'), findsOneWidget);
       expect(find.text('Select a room'), findsOneWidget);
     });
+
+    testWidgets(
+      'fetches full property details and real room types when property has empty roomTypes',
+      (tester) async {
+        const listingProperty = Property(
+          id: 'prop-1',
+          name: 'Seaside Grand Resort',
+          city: 'Nice',
+          countryCode: 'FR',
+          shortDescription: 'Nice hotel',
+          longDescription: 'Nice hotel description',
+          heroImageUrl: 'https://example.com/hero.jpg',
+          pricePerNight: 200,
+          roomTypes: [], // Empty, as returned by /properties/listing
+        );
+
+        final mockRepo = _MockPropertiesRepository();
+        mockRepo.propertiesToReturn = [testProperty];
+
+        await tester.pumpWidget(
+          _buildTestApp(
+            overrides: [
+              propertiesRepositoryProvider.overrideWithValue(mockRepo),
+            ],
+            child: const PropertyScreen(
+              property: listingProperty,
+              propertyId: 'prop-1',
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Seaside Grand Resort'), findsOneWidget);
+        expect(find.text('Rooms'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders empty selection view when propertyId is empty',
+      (tester) async {
+        await tester.pumpWidget(
+          _buildTestApp(
+            child: const PropertyScreen(propertyId: ''),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text('Open a property from ezStays or Saved to start a booking.'),
+          findsOneWidget,
+        );
+      },
+    );
   });
 
   group('BookingDatesScreen', () {

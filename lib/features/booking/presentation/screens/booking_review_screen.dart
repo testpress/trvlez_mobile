@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -45,9 +46,12 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
       }
     } catch (e) {
       if (!mounted) return;
+      final String message = e is AppException
+          ? e.message
+          : e.toString().replaceAll(RegExp(r'^[A-Za-z]*Exception:\s*'), '');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.toString().replaceAll('Exception: ', '')),
+          content: Text(message),
           behavior: SnackBarBehavior.floating,
         ),
       );
