@@ -33,13 +33,27 @@ class _PassportProcessingScreenState
   bool _hasNavigated = false;
   Timer? _successTimer;
 
+  bool _isTerminalPhase(VerificationPhase phase) {
+    return phase == VerificationPhase.uploadSuccess ||
+        phase == VerificationPhase.imageQualityFailed ||
+        phase == VerificationPhase.mrzExtractionFailed ||
+        phase == VerificationPhase.error ||
+        phase == VerificationPhase.verified;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final state = ref.read(verificationNotifierProvider);
       if (state.capturedImage == null) {
         context.pushReplacement(AppRoutes.passportCapture);
+        return;
+      }
+      // If state already reached a terminal phase before or during mount, transition immediately
+      if (_isTerminalPhase(state.phase)) {
+        _handleStateTransition(state);
         return;
       }
       // If upload hasn't started yet, trigger it now
@@ -105,7 +119,7 @@ class _PassportProcessingScreenState
       _hasNavigated = true;
       context.pushReplacement(
         AppRoutes.passportFailed,
-        extra: next.errorMessage,
+        extra: {'reason': next.errorMessage, 'phase': next.phase.name},
       );
     } else if (next.phase == VerificationPhase.verified) {
       _hasNavigated = true;

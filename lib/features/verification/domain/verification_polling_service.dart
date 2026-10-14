@@ -26,10 +26,12 @@ class VerificationPollingService {
       VerificationStatus? domainStatus,
     )
     onUpdate,
+    void Function()? onTimeout,
   }) async {
     _isPolling = true;
     int currentInterval = initialIntervalSeconds;
     int totalElapsed = 0;
+    bool completed = false;
 
     while (_isPolling && totalElapsed < maxDurationSeconds) {
       await Future.delayed(Duration(seconds: currentInterval));
@@ -56,6 +58,7 @@ class VerificationPollingService {
         onUpdate(jobResult, status);
 
         if (jobResult.isComplete) {
+          completed = true;
           _isPolling = false;
           break;
         }
@@ -69,7 +72,12 @@ class VerificationPollingService {
       }
     }
 
+    final timedOut =
+        _isPolling && totalElapsed >= maxDurationSeconds && !completed;
     _isPolling = false;
+    if (timedOut) {
+      onTimeout?.call();
+    }
   }
 
   void stopPolling() {

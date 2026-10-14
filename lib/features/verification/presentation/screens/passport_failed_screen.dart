@@ -19,16 +19,32 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Features a single-play 800ms wobble illustration, trio progress marking the failed stage,
 /// supportive guidance blaming the lighting rather than the traveler, and clear recovery actions.
 class PassportFailedScreen extends ConsumerWidget {
-  const PassportFailedScreen({super.key, this.failureReason});
+  const PassportFailedScreen({
+    super.key,
+    this.failureReason,
+    this.failurePhase,
+  });
 
   final String? failureReason;
+  final VerificationPhase? failurePhase;
 
-  String _getExplanation(String? errorFromState) {
+  String _getExplanation(VerificationState state) {
     if (failureReason != null && failureReason!.isNotEmpty) {
       return failureReason!;
     }
-    if (errorFromState != null && errorFromState.isNotEmpty) {
-      return errorFromState;
+    final effectivePhase = failurePhase ?? state.phase;
+    if (effectivePhase == VerificationPhase.imageQualityFailed) {
+      if (state.imageQualityResult?.uiGuidance != null &&
+          state.imageQualityResult!.uiGuidance!.isNotEmpty) {
+        return state.imageQualityResult!.uiGuidance!;
+      }
+      if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+        return state.errorMessage!;
+      }
+      return "Your passport photo isn't clear enough. Please ensure good lighting and no glare or blur.";
+    }
+    if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+      return state.errorMessage!;
     }
     return "We couldn't read the two lines at the bottom of the page. A little more light usually fixes it.";
   }
@@ -37,6 +53,10 @@ class PassportFailedScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final state = ref.watch(verificationNotifierProvider);
+    final effectivePhase = failurePhase ?? state.phase;
+    final trioStates = effectivePhase == VerificationPhase.imageQualityFailed
+        ? const [TrioState.done, TrioState.failed, TrioState.waiting]
+        : const [TrioState.done, TrioState.done, TrioState.failed];
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_flow.svg',
@@ -58,9 +78,9 @@ class PassportFailedScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        const VerifyProgressTrio(
-          labels: ['Upload', 'Check', 'Read'],
-          states: [TrioState.done, TrioState.done, TrioState.failed],
+        VerifyProgressTrio(
+          labels: const ['Upload', 'Check', 'Read'],
+          states: trioStates,
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
@@ -78,7 +98,7 @@ class PassportFailedScreen extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Text(
-            _getExplanation(state.errorMessage),
+            _getExplanation(state),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,

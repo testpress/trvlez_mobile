@@ -78,7 +78,10 @@ class VerificationNotifier extends Notifier<VerificationState> {
       }
 
       if (verificationStatus.isProcessing) {
-        final jobId = verificationStatus.verificationJobId;
+        final jobId =
+            verificationStatus.verificationJobId ??
+            state.jobResult?.id ??
+            state.submitResult?.verificationJobId;
         if (jobId != null) {
           state = state.copyWith(phase: VerificationPhase.verifying);
           _startPollingForJob(jobId);
@@ -102,7 +105,10 @@ class VerificationNotifier extends Notifier<VerificationState> {
       if (serverStatus == 'submitted') {
         // Submitted but not yet processing — treat like processing
         state = state.copyWith(phase: VerificationPhase.verifying);
-        final jobId = verificationStatus.verificationJobId;
+        final jobId =
+            verificationStatus.verificationJobId ??
+            state.jobResult?.id ??
+            state.submitResult?.verificationJobId;
         if (jobId != null) {
           _startPollingForJob(jobId);
         }
@@ -483,9 +489,21 @@ class VerificationNotifier extends Notifier<VerificationState> {
               : (pollingResult.isFailed
                     ? VerificationPhase.verificationFailed
                     : VerificationPhase.verifying),
+          errorMessage: pollingResult.isFailed
+              ? (pollingResult.errorMessage ??
+                    domainStatus?.errorReason ??
+                    'Identity verification was unsuccessful. Please try again.')
+              : null,
           jobResult: pollingResult,
           // Update verification status if available (for failedStep, uiMitigation)
           verificationStatus: domainStatus ?? state.verificationStatus,
+        );
+      },
+      onTimeout: () {
+        state = state.copyWith(
+          phase: VerificationPhase.error,
+          errorMessage:
+              'Verification is taking longer than expected. Please check your status in a few moments.',
         );
       },
     );

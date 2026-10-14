@@ -30,18 +30,29 @@ class _SelfieProcessingScreenState
   bool _hasNavigated = false;
   Timer? _successTimer;
 
+  bool _isTerminalPhase(VerificationPhase phase) {
+    return phase == VerificationPhase.uploadSuccess ||
+        phase == VerificationPhase.videoQualityFailed ||
+        phase == VerificationPhase.error ||
+        phase == VerificationPhase.verified;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final state = ref.read(verificationNotifierProvider);
       if (state.capturedVideo == null) {
         context.pushReplacement(AppRoutes.selfieCapture);
         return;
       }
+      if (_isTerminalPhase(state.phase)) {
+        _handleStateTransition(state);
+        return;
+      }
       // If upload hasn't started yet, trigger it now
-      if (state.phase != VerificationPhase.uploading &&
-          state.phase != VerificationPhase.checkingVideoQuality) {
+      if (state.phase == VerificationPhase.idle) {
         ref.read(verificationNotifierProvider.notifier).uploadSelfie();
       }
     });

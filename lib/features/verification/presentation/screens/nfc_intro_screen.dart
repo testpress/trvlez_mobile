@@ -97,14 +97,25 @@ class NfcIntroScreen extends ConsumerWidget {
             final status = await nfcService.getNfcStatus();
             if (!context.mounted) return;
 
-            if (status != NfcDeviceStatus.available) {
+            if (status == NfcDeviceStatus.unsupported) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
-                    'NFC is not supported or enabled on this device.',
+                    'NFC is not supported on this device. You can skip chip scan below.',
                   ),
                 ),
               );
+              return;
+            }
+            if (status == NfcDeviceStatus.disabled) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'NFC is turned off. Please enable NFC in device settings or skip chip scan.',
+                  ),
+                ),
+              );
+              return;
             }
             context.push(AppRoutes.nfcScan);
           },

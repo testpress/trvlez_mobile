@@ -75,6 +75,7 @@ import 'package:trvlez_mobile/features/verification/presentation/screens/verific
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_status_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_success_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
+import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 
 /// Adapter to trigger GoRouter refresh when AuthState changes
 class RouterNotifier extends ChangeNotifier {
@@ -449,12 +450,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.passportFailed,
         builder: (context, state) {
           final extra = state.extra;
-          final reason = extra is String
-              ? extra
-              : (extra is Map<String, dynamic>
-                    ? extra['reason'] as String?
-                    : null);
-          return PassportFailedScreen(failureReason: reason);
+          String? reason;
+          String? phase;
+          if (extra is String) {
+            reason = extra;
+          } else if (extra is Map<String, dynamic>) {
+            reason = extra['reason'] as String?;
+            phase = extra['phase'] as String?;
+          }
+          return PassportFailedScreen(
+            failureReason: reason,
+            failurePhase: phase != null
+                ? VerificationPhase.values
+                      .where((p) => p.name == phase)
+                      .firstOrNull
+                : null,
+          );
         },
       ),
       GoRoute(

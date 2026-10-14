@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
@@ -71,21 +72,32 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
           if (!mounted) return;
           setState(() {
             _isReading = true;
-            _progress = (progressEvent.percentage / 100.0).clamp(0.08, 1.0);
+            final rawPercent = progressEvent.percentage > 1.0
+                ? progressEvent.percentage / 100.0
+                : progressEvent.percentage;
+            _progress = rawPercent.clamp(0.08, 1.0);
           });
         },
       );
       if (!mounted) return;
       ref.read(verificationNotifierProvider.notifier).setNfcResult(result);
       context.pushReplacement(AppRoutes.chipData);
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
+      final reason = e is NfcError
+          ? e.message
+          : "We couldn't read the chip inside your passport.";
+      final mitigation = e is NfcError
+          ? (e.userGuidance ?? e.technicalDetails)
+          : null;
       context.pushReplacement(
         AppRoutes.nfcFailed,
         extra: {
           'failedStepTitle': 'Chip scan',
           'redoButtonLabel': 'Try chip scan again',
           'redoRoute': AppRoutes.nfcScan,
+          'reason': reason,
+          'mitigation': mitigation,
         },
       );
     }
