@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 
 /// Structured exception for API errors.
 ///
@@ -65,6 +66,7 @@ class ApiException implements Exception {
   ]) {
     final apiException = from(error);
     if (apiException != null) return apiException.message;
+    if (error is AppException) return error.message;
     if (error is Exception) return fallback;
     return fallback;
   }
