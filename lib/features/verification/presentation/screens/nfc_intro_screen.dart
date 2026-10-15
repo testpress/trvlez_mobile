@@ -1,9 +1,11 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
@@ -18,7 +20,205 @@ import 'package:trvlez_mobile/features/verification/presentation/providers/verif
 ///
 /// Corresponds to Step 4 of verification. Explains on-device chip security.
 class NfcIntroScreen extends ConsumerWidget {
-  const NfcIntroScreen({super.key});
+  const NfcIntroScreen({super.key, this.nfcService});
+
+  final NfcPassportService? nfcService;
+
+  void _showUnsupportedSheet(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 36.0,
+                  height: 4.0,
+                  margin: const EdgeInsets.only(
+                    top: AppSpacing.sm,
+                    bottom: AppSpacing.md,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.line,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 56.0,
+                  height: 56.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.surfaceSubtle,
+                  ),
+                  child: Icon(
+                    AppIcons.nfc,
+                    size: 28.0,
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'NFC Not Supported',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 18.0,
+                  fontWeight: TypeScale.bold,
+                  color: colors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'This device does not have NFC hardware, which is required to scan passport chips. You can continue verification without chip scanning.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 13.0,
+                  fontWeight: TypeScale.regular,
+                  color: colors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppButton(
+                label: 'Continue without chip scan',
+                variant: AppButtonVariant.primary,
+                onPressed: () {
+                  Navigator.pop(sheetContext);
+                  ref.read(verificationNotifierProvider.notifier).skipNfc();
+                  ref
+                      .read(verificationNotifierProvider.notifier)
+                      .submitVerificationAsync();
+                  context.pushReplacement(AppRoutes.nfcFinalCheck);
+                },
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              AppButton(
+                label: 'Cancel',
+                variant: AppButtonVariant.secondary,
+                onPressed: () => Navigator.pop(sheetContext),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDisabledSheet(BuildContext context) {
+    final colors = context.colors;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 36.0,
+                  height: 4.0,
+                  margin: const EdgeInsets.only(
+                    top: AppSpacing.sm,
+                    bottom: AppSpacing.md,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.line,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 56.0,
+                  height: 56.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.surfaceSubtle,
+                  ),
+                  child: Icon(
+                    AppIcons.nfc,
+                    size: 28.0,
+                    color: colors.textPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Enable NFC to Continue',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 18.0,
+                  fontWeight: TypeScale.bold,
+                  color: colors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'NFC is turned off on your device. To scan your passport chip, please enable NFC in your device settings.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: AppTypography.fontFamily,
+                  fontSize: 13.0,
+                  fontWeight: TypeScale.regular,
+                  color: colors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppButton(
+                label: 'Open NFC Settings',
+                variant: AppButtonVariant.primary,
+                onPressed: () async {
+                  Navigator.pop(sheetContext);
+                  try {
+                    await AppSettings.openAppSettings(
+                      type: AppSettingsType.nfc,
+                    );
+                  } catch (_) {
+                    try {
+                      await AppSettings.openAppSettings(
+                        type: AppSettingsType.settings,
+                      );
+                    } catch (_) {}
+                  }
+                },
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              AppButton(
+                label: 'Cancel',
+                variant: AppButtonVariant.secondary,
+                onPressed: () => Navigator.pop(sheetContext),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -93,43 +293,20 @@ class NfcIntroScreen extends ConsumerWidget {
           label: 'Start scan',
           variant: AppButtonVariant.brandWhite,
           onPressed: () async {
-            final nfcService = ref.read(nfcPassportServiceProvider);
-            final status = await nfcService.getNfcStatus();
+            final NfcPassportService activeNfcService =
+                nfcService ?? ref.read(nfcPassportServiceProvider);
+            final status = await activeNfcService.getNfcStatus();
             if (!context.mounted) return;
 
             if (status == NfcDeviceStatus.unsupported) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'NFC is not supported on this device. You can skip chip scan below.',
-                  ),
-                ),
-              );
+              _showUnsupportedSheet(context, ref);
               return;
             }
             if (status == NfcDeviceStatus.disabled) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'NFC is turned off. Please enable NFC in device settings or skip chip scan.',
-                  ),
-                ),
-              );
+              _showDisabledSheet(context);
               return;
             }
             context.push(AppRoutes.nfcScan);
-          },
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        AppButton(
-          label: 'Skip chip scan',
-          variant: AppButtonVariant.brandOutline,
-          onPressed: () {
-            ref.read(verificationNotifierProvider.notifier).skipNfc();
-            ref
-                .read(verificationNotifierProvider.notifier)
-                .submitVerificationAsync();
-            context.pushReplacement(AppRoutes.nfcFinalCheck);
           },
         ),
         const SizedBox(height: AppSpacing.sm),

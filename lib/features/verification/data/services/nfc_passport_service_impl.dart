@@ -22,22 +22,30 @@ class NfcPassportServiceImpl implements NfcPassportService {
   /// Checks if the current device has NFC hardware and if it is enabled.
   @override
   Future<NfcDeviceStatus> getNfcStatus() async {
-    try {
-      final status = await NfcProvider.nfcStatus;
-      if (status == NfcStatus.enabled) {
-        return NfcDeviceStatus.available;
-      } else if (status == NfcStatus.disabled) {
-        return NfcDeviceStatus.disabled;
-      } else {
+    for (int attempt = 0; attempt < 2; attempt++) {
+      try {
+        final status = await NfcProvider.nfcStatus;
+        if (status == NfcStatus.enabled) {
+          return NfcDeviceStatus.available;
+        } else if (status == NfcStatus.disabled) {
+          return NfcDeviceStatus.disabled;
+        } else {
+          return NfcDeviceStatus.unsupported;
+        }
+      } on PlatformException catch (e) {
+        _log.warning('NfcProvider platform exception (attempt $attempt): $e');
+        if (attempt == 0 &&
+            (e.code == '500' || e.message?.contains('activity') == true)) {
+          await Future.delayed(const Duration(milliseconds: 200));
+          continue;
+        }
+        return NfcDeviceStatus.unsupported;
+      } catch (e) {
+        _log.warning('Error checking NFC status: $e');
         return NfcDeviceStatus.unsupported;
       }
-    } on PlatformException catch (e) {
-      _log.warning('NfcProvider platform exception: $e');
-      return NfcDeviceStatus.unsupported;
-    } catch (e) {
-      _log.warning('Error checking NFC status: $e');
-      return NfcDeviceStatus.unsupported;
     }
+    return NfcDeviceStatus.unsupported;
   }
 
   /// Initiates a reading session with the passport chip.
@@ -57,6 +65,22 @@ class NfcPassportServiceImpl implements NfcPassportService {
     String currentReadStep = 'connecting';
 
     try {
+      // Pre-check NFC status so disabled NFC is immediately prompted rather than misreported
+      final deviceStatus = await getNfcStatus();
+      if (deviceStatus == NfcDeviceStatus.disabled) {
+        throw const NfcError(
+          type: NfcErrorType.nfcDisabled,
+          message: 'NFC is turned off. Please enable it in device settings.',
+          isRetryable: true,
+        );
+      } else if (deviceStatus == NfcDeviceStatus.unsupported) {
+        throw const NfcError(
+          type: NfcErrorType.nfcNotAvailable,
+          message: 'Your device does not support NFC.',
+          isRetryable: false,
+        );
+      }
+
       // 1. Connection
       onProgress(
         const NfcReadProgress(

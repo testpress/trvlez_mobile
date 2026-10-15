@@ -1,5 +1,6 @@
 import 'package:dmrtd/dmrtd.dart';
 import 'package:dmrtd/src/proto/iso7816/response_apdu.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_error_mapper.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
@@ -174,6 +175,31 @@ void main() {
       final nfcError = NfcErrorMapper.fromException(error);
 
       expect(nfcError.type, NfcErrorType.cancelled);
+    });
+
+    test(
+      'maps PlatformException 404 (NFC not available) to nfcDisabled instead of falsely assuming unsupported',
+      () {
+        final error = PlatformException(
+          code: '404',
+          message: 'NFC not available',
+        );
+        final nfcError = NfcErrorMapper.fromException(error);
+
+        expect(nfcError.type, NfcErrorType.nfcDisabled);
+        expect(nfcError.message, contains('turned off'));
+      },
+    );
+
+    test('maps PlatformException with not supported message to nfcNotAvailable', () {
+      final error = PlatformException(
+        code: 'NOT_SUPPORTED',
+        message: 'This device does not support NFC.',
+      );
+      final nfcError = NfcErrorMapper.fromException(error);
+
+      expect(nfcError.type, NfcErrorType.nfcNotAvailable);
+      expect(nfcError.isRetryable, isFalse);
     });
   });
 }

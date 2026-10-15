@@ -33,7 +33,8 @@ class NfcErrorMapper {
     // --- String-based matching for all other exceptions ---
 
     if (errorString.contains('not supported') ||
-        errorString.contains('not available')) {
+        errorString.contains('not_supported') ||
+        errorString.contains('unsupported')) {
       return NfcError(
         type: NfcErrorType.nfcNotAvailable,
         message: 'Your device does not support NFC.',
@@ -42,10 +43,11 @@ class NfcErrorMapper {
       );
     }
 
-    if (errorString.contains('disabled')) {
+    if (errorString.contains('disabled') ||
+        errorString.contains('404')) {
       return NfcError(
         type: NfcErrorType.nfcDisabled,
-        message: 'NFC is disabled. Please enable it in your device settings.',
+        message: 'NFC is turned off. Please enable it in your device settings.',
         technicalDetails: error.toString(),
       );
     }
@@ -364,7 +366,8 @@ class NfcErrorMapper {
     final combined = '$code $errorMessage';
 
     if (combined.contains('not supported') ||
-        combined.contains('not available')) {
+        combined.contains('not_supported') ||
+        combined.contains('unsupported')) {
       return NfcError(
         type: NfcErrorType.nfcNotAvailable,
         message: 'Your device does not support NFC.',
@@ -373,10 +376,12 @@ class NfcErrorMapper {
       );
     }
 
-    if (combined.contains('disabled')) {
+    if (combined.contains('disabled') ||
+        code == '404' ||
+        errorMessage.contains('nfc not available')) {
       return NfcError(
         type: NfcErrorType.nfcDisabled,
-        message: 'NFC is disabled. Please enable it in your device settings.',
+        message: 'NFC is turned off. Please enable it in your device settings.',
         technicalDetails: error.toString(),
       );
     }

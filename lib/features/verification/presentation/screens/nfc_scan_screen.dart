@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
@@ -66,6 +67,36 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
     }
 
     try {
+      final nfcStatus = await widget.nfcService.getNfcStatus();
+      if (!mounted) return;
+
+      if (nfcStatus == NfcDeviceStatus.unsupported) {
+        context.pushReplacement(
+          AppRoutes.nfcFailed,
+          extra: {
+            'failedStepTitle': 'Chip scan',
+            'reason': 'This device does not support NFC chip scanning.',
+            'mitigation': 'You can skip chip scan and continue verification.',
+          },
+        );
+        return;
+      }
+
+      if (nfcStatus == NfcDeviceStatus.disabled) {
+        context.pushReplacement(
+          AppRoutes.nfcFailed,
+          extra: {
+            'failedStepTitle': 'Chip scan',
+            'redoButtonLabel': 'Try chip scan again',
+            'redoRoute': AppRoutes.nfcScan,
+            'reason': 'NFC is turned off on your device.',
+            'mitigation':
+                'Please enable NFC in your device settings before trying again.',
+          },
+        );
+        return;
+      }
+
       final result = await widget.nfcService.readPassport(
         documentNumber: docNumber,
         dateOfBirth: dob,
@@ -207,26 +238,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
           ),
         ),
       ],
-      foot: [
-        Center(
-          child: TextButton(
-            onPressed: () {
-              ref.read(verificationNotifierProvider.notifier).skipNfc();
-              ref
-                  .read(verificationNotifierProvider.notifier)
-                  .submitVerificationAsync();
-              context.pushReplacement(AppRoutes.nfcFinalCheck);
-            },
-            child: Text(
-              'Skip chip scan',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13.0,
-                color: colors.brandSecondary,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ),
+      foot: const [
+        BrandSecurityNote(
+          text: 'Read on your phone.\nNever shared with external AI.',
         ),
       ],
     );
