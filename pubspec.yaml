@@ -83,6 +83,7 @@ flutter:
   assets:
     - assets/art/
     - assets/logo.svg
+    - assets/splash_logo.png
 
   fonts:
     - family: Poppins
@@ -109,5 +110,7 @@ flutter_launcher_icons:
 
 flutter_native_splash:
   color: "#ffffff"
+  image: "assets/splash_logo.png"
   android_12:
     color: "#ffffff"
+    image: "assets/splash_logo.png"
