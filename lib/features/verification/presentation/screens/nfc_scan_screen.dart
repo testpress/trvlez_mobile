@@ -9,6 +9,7 @@ import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
+import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
@@ -23,8 +24,9 @@ class NfcScanScreen extends ConsumerStatefulWidget {
 }
 
 class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
-  double _progress = 0.08;
+  double _progress = 0.0;
   bool _isReading = false;
+  String _stepDescription = '';
 
   @override
   void initState() {
@@ -71,11 +73,13 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
         onProgress: (progressEvent) {
           if (!mounted) return;
           setState(() {
-            _isReading = true;
+            _isReading = progressEvent.currentStep != NfcReadStep.connecting ||
+                progressEvent.percentage > 0.0;
             final rawPercent = progressEvent.percentage > 1.0
                 ? progressEvent.percentage / 100.0
                 : progressEvent.percentage;
-            _progress = rawPercent.clamp(0.08, 1.0);
+            _progress = rawPercent.clamp(0.0, 1.0);
+            _stepDescription = progressEvent.description;
           });
         },
       );
@@ -152,24 +156,52 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.xs),
-                child: LinearProgressIndicator(
-                  value: _progress,
-                  minHeight: 5.0,
-                  backgroundColor: colors.verificationProgressTrack,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    colors.brandOnSurface,
-                  ),
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.0, end: _progress),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, _) {
+                    return LinearProgressIndicator(
+                      value: value,
+                      minHeight: 5.0,
+                      backgroundColor: colors.verificationProgressTrack,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        colors.brandOnSurface,
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              Text(
-                '${(_progress * 100).toInt()}%',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11.0,
-                  fontWeight: TypeScale.medium,
-                  color: colors.brandSecondaryBody,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      _isReading && _stepDescription.isNotEmpty
+                          ? _stepDescription
+                          : 'Ready to scan',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 11.5,
+                        fontWeight: TypeScale.medium,
+                        color: colors.brandSecondaryBody,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (_isReading)
+                    Text(
+                      '${(_progress * 100).toInt()}%',
+                      style: TextStyle(
+                        fontFamily: AppTypography.fontFamily,
+                        fontSize: 11.5,
+                        fontWeight: TypeScale.bold,
+                        color: colors.brandOnSurface,
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
