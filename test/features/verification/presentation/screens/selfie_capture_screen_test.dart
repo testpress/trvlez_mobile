@@ -70,7 +70,7 @@ void main() {
 
   group('SelfieCaptureScreen', () {
     testWidgets(
-      'renders capture guidance, ergonomic face oval, and gallery upload button',
+      'renders capture guidance, ergonomic face oval, and no gallery upload option',
       (tester) async {
         final camService = MockSelfieCameraService();
         await tester.pumpWidget(createTestWidget(cameraService: camService));
@@ -83,7 +83,7 @@ void main() {
           find.text('Good lighting • Eye level • No accessories'),
           findsOneWidget,
         );
-        expect(find.text('Upload from photo library'), findsOneWidget);
+        expect(find.text('Upload from photo library'), findsNothing);
 
         // Verify face oval is rendered with comfortable proportions
         final faceOvalFinder = find.byType(VerifyFaceOval);
@@ -100,40 +100,7 @@ void main() {
     );
 
     testWidgets(
-      'tapping Upload from photo library picks video and routes to SelfieReviewScreen',
-      (tester) async {
-        final dummyVideo = File('test_selfie.mp4');
-        final camService = MockSelfieCameraService(galleryFile: dummyVideo);
-        final container = ProviderContainer();
-
-        await tester.pumpWidget(
-          createTestWidget(
-            cameraService: camService,
-            container: container,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        final galleryButtonFinder = find.text('Upload from photo library');
-        expect(galleryButtonFinder, findsOneWidget);
-
-        await tester.ensureVisible(galleryButtonFinder);
-        await tester.tap(galleryButtonFinder);
-        await tester.pumpAndSettle();
-
-        expect(camService.pickVideoCalled, isTrue);
-        expect(
-          container.read(verificationNotifierProvider).capturedVideo?.path,
-          equals('test_selfie.mp4'),
-        );
-        expect(find.text('Selfie Review Screen'), findsOneWidget);
-
-        container.dispose();
-      },
-    );
-
-    testWidgets(
-      'tapping shutter when camera is inactive invokes gallery fallback',
+      'tapping shutter when camera is inactive does not pick from gallery or route',
       (tester) async {
         final dummyVideo = File('fallback_selfie.mp4');
         final camService = MockSelfieCameraService(galleryFile: dummyVideo);
@@ -153,12 +120,12 @@ void main() {
         await tester.tap(shutterFinder);
         await tester.pumpAndSettle();
 
-        expect(camService.pickVideoCalled, isTrue);
+        expect(camService.pickVideoCalled, isFalse);
         expect(
-          container.read(verificationNotifierProvider).capturedVideo?.path,
-          equals('fallback_selfie.mp4'),
+          container.read(verificationNotifierProvider).capturedVideo,
+          isNull,
         );
-        expect(find.text('Selfie Review Screen'), findsOneWidget);
+        expect(find.text('Selfie Review Screen'), findsNothing);
 
         container.dispose();
       },

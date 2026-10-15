@@ -22,8 +22,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Capture screen for the traveler's selfie video liveness verification.
 ///
 /// Features an ergonomic face oval with smooth progress ring, front camera feed,
-/// elapsed timer counting up to 10 seconds, face alignment guidance, round shutter control,
-/// and support for gallery video upload fallback.
+/// elapsed timer counting up to 10 seconds, face alignment guidance, and round shutter control.
 class SelfieCaptureScreen extends ConsumerStatefulWidget {
   const SelfieCaptureScreen({super.key, required this.cameraService});
 
@@ -85,11 +84,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     if (_isRecording) return;
 
     final cam = _cameraController;
-    if (cam == null || !cam.value.isInitialized) {
-      // If camera preview is inactive (e.g. simulator), open gallery picker fallback
-      await _pickFromGallery();
-      return;
-    }
+    if (cam == null || !cam.value.isInitialized) return;
 
     try {
       await cam.startVideoRecording();
@@ -142,21 +137,6 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     }
   }
 
-  Future<void> _pickFromGallery() async {
-    if (_isRecording) return;
-
-    try {
-      final File? video = await widget.cameraService.pickVideoFromGallery();
-      if (video != null && mounted) {
-        ref.read(verificationNotifierProvider.notifier).setVideo(video);
-        if (mounted) {
-          context.push(AppRoutes.selfieReview);
-        }
-      }
-    } catch (_) {
-      // Gallery picker dismissed or unavailable
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,25 +233,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.xs),
-        Center(
-          child: TextButton.icon(
-            onPressed: _isRecording ? null : _pickFromGallery,
-            icon: Icon(
-              AppIcons.photo,
-              size: 14.0,
-              color: colors.brandSecondaryBody,
-            ),
-            label: Text(
-              'Upload from photo library',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 11.0,
-                color: colors.brandSecondaryBody,
-              ),
-            ),
-          ),
-        ),
+
       ],
       foot: [
         BrandShutter(
