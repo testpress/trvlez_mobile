@@ -5,7 +5,6 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -112,19 +111,16 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
       backgroundAsset: 'assets/art/bg_nfc.svg',
       title: 'Verification',
       helpLine: false,
-      isScrollable: true,
+      isScrollable: false,
       body: [
         const VerificationStepper(current: 4, circleSize: 22.0),
-        const SizedBox(height: AppSpacing.lg),
+        const Spacer(flex: 1),
         const Center(child: VerifyHourglass()),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Text(
           'Checking everything',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -135,16 +131,13 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
           child: Text(
             "Usually under a minute. You can close the app — we'll let you know.",
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         VerifyStatusRows(
           rows: [
             const VerifyStatusRow(
@@ -181,10 +174,7 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
                 Text(
                   state.errorMessage ?? 'Submission encountered an issue.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12.0,
-                    fontWeight: TypeScale.medium,
+                  style: context.text.labelMedium?.copyWith(
                     color: colors.brandOnSurface,
                   ),
                 ),
@@ -216,13 +206,11 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
+                  style: context.text.bodySmall?.copyWith(
                     color: colors.brandSecondaryBody,
                   ),
                   children: [

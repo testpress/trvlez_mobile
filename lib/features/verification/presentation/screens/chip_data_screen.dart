@@ -9,8 +9,6 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -71,30 +69,31 @@ class ChipDataScreen extends ConsumerWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_chip_data.svg',
       title: 'Chip scan',
-      isScrollable: true,
+      isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        const SizedBox(height: AppSpacing.lg),
+        const Spacer(flex: 1),
         Center(
           child: Container(
-            width: 66.0,
-            height: 66.0,
+            width: AppSpacing.xxl + AppSpacing.md,
+            height: AppSpacing.xxl + AppSpacing.md,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: colors.brandOnSurface,
             ),
-            child: Icon(AppIcons.nfc, size: 34.0, color: colors.brandPrimary),
+            child: Icon(
+              AppIcons.nfc,
+              size: AppSpacing.xl,
+              color: colors.brandPrimary,
+            ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Text(
           'Chip data received',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -103,14 +102,11 @@ class ChipDataScreen extends ConsumerWidget {
         Text(
           "This is what your passport's chip holds. Check it looks right.",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Container(
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
@@ -129,14 +125,14 @@ class ChipDataScreen extends ConsumerWidget {
                       child: faceBytes != null
                           ? Image.memory(
                               faceBytes,
-                              width: 52.0,
-                              height: 66.0,
+                              width: AppSpacing.xxl + AppSpacing.xs,
+                              height: AppSpacing.xxl + AppSpacing.md,
                               fit: BoxFit.cover,
                             )
                           : SvgPicture.asset(
                               'assets/art/chip_photo.svg',
-                              width: 52.0,
-                              height: 66.0,
+                              width: AppSpacing.xxl + AppSpacing.xs,
+                              height: AppSpacing.xxl + AppSpacing.md,
                               fit: BoxFit.cover,
                             ),
                     ),
@@ -147,18 +143,15 @@ class ChipDataScreen extends ConsumerWidget {
                         children: [
                           Text(
                             displayName,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 15.0,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.titleMedium?.copyWith(
                               color: colors.brandOnSurface,
                             ),
                           ),
                           const SizedBox(height: AppSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 6.0,
-                              vertical: 2.0,
+                              horizontal: AppSpacing.sm - 2,
+                              vertical: AppSpacing.xs / 2,
                             ),
                             decoration: BoxDecoration(
                               color: colors.brandOnSurface.withValues(
@@ -171,16 +164,13 @@ class ChipDataScreen extends ConsumerWidget {
                               children: [
                                 Icon(
                                   AppIcons.nfc,
-                                  size: 11.0,
+                                  size: AppSpacing.sm + AppSpacing.xs / 2,
                                   color: colors.brandOnSurface,
                                 ),
-                                const SizedBox(width: 4.0),
+                                const SizedBox(width: AppSpacing.xs),
                                 Text(
                                   'From the chip',
-                                  style: TextStyle(
-                                    fontFamily: AppTypography.fontFamily,
-                                    fontSize: 10.0,
-                                    fontWeight: TypeScale.medium,
+                                  style: context.text.labelSmall?.copyWith(
                                     color: colors.brandOnSurface,
                                   ),
                                 ),

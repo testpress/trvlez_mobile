@@ -7,8 +7,6 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -28,6 +26,7 @@ class NfcIntroScreen extends ConsumerWidget {
     final colors = context.colors;
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
@@ -73,10 +72,7 @@ class NfcIntroScreen extends ConsumerWidget {
               Text(
                 'NFC Not Supported',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 18.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.headlineSmall?.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -84,10 +80,7 @@ class NfcIntroScreen extends ConsumerWidget {
               Text(
                 'This device does not have NFC hardware, which is required to scan passport chips. You can continue verification without chip scanning.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 13.0,
-                  fontWeight: TypeScale.regular,
+                style: context.text.bodyMedium?.copyWith(
                   color: colors.textSecondary,
                   height: 1.4,
                 ),
@@ -123,6 +116,7 @@ class NfcIntroScreen extends ConsumerWidget {
     final colors = context.colors;
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
@@ -168,10 +162,7 @@ class NfcIntroScreen extends ConsumerWidget {
               Text(
                 'Enable NFC to Continue',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 18.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.headlineSmall?.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -179,10 +170,7 @@ class NfcIntroScreen extends ConsumerWidget {
               Text(
                 'NFC is turned off on your device. To scan your passport chip, please enable NFC in your device settings.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 13.0,
-                  fontWeight: TypeScale.regular,
+                style: context.text.bodyMedium?.copyWith(
                   color: colors.textSecondary,
                   height: 1.4,
                 ),
@@ -227,31 +215,32 @@ class NfcIntroScreen extends ConsumerWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc.svg',
       title: 'Verification',
-      isScrollable: true,
+      isScrollable: false,
       onBack: () => context.pop(),
       body: [
         const VerificationStepper(current: 3, circleSize: 22.0),
-        const SizedBox(height: AppSpacing.lg),
+        const Spacer(flex: 1),
         Center(
           child: Container(
-            width: 60.0,
-            height: 60.0,
+            width: AppSpacing.xxl + AppSpacing.md,
+            height: AppSpacing.xxl + AppSpacing.md,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: colors.brandCardIconBackground,
             ),
-            child: Icon(AppIcons.nfc, size: 28.0, color: colors.brandOnSurface),
+            child: Icon(
+              AppIcons.nfc,
+              size: AppSpacing.xl - 4,
+              color: colors.brandOnSurface,
+            ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Text(
           'Scan the chip',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -260,22 +249,14 @@ class NfcIntroScreen extends ConsumerWidget {
         Text(
           'Your passport has a secure chip. Reading it is the strongest check there is, and it takes seconds.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.4,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         const BrandInfoCard(
           heading: "You'll need",
-          borderRadius: 12.0,
-          paddingVertical: 10.0,
-          paddingHorizontal: 12.0,
-          itemGap: 8.0,
-          iconSize: 13.0,
           bullets: [
             BrandBullet(
               icon: AppIcons.deviceMobile,

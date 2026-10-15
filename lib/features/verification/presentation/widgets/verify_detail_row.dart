@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Key-value detail row with bottom hairline divider (for Confirm Details / Chip Data).
@@ -26,7 +25,7 @@ class VerifyDetailRow extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
       decoration: BoxDecoration(
         border: _effectiveLast
             ? null
@@ -41,10 +40,7 @@ class VerifyDetailRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondaryBody,
             ),
           ),
@@ -55,9 +51,7 @@ class VerifyDetailRow extends StatelessWidget {
               textAlign: TextAlign.right,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12.5,
+              style: context.text.labelMedium?.copyWith(
                 fontWeight: TypeScale.semiBold,
                 color: colors.brandOnSurface,
               ),

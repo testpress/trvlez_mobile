@@ -6,7 +6,6 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -84,14 +83,14 @@ class VerificationSuccessScreen extends ConsumerWidget {
       backgroundAsset: 'assets/art/bg_success.svg',
       title: 'Verification',
       helpLine: false,
-      isScrollable: true,
+      isScrollable: false,
       body: [
         const VerificationStepper(current: 4, circleSize: 23.0),
-        const SizedBox(height: AppSpacing.lg),
+        const Spacer(flex: 1),
         Center(
           child: Container(
-            width: 86.0,
-            height: 86.0,
+            width: AppSpacing.xxl + AppSpacing.xl + AppSpacing.xs,
+            height: AppSpacing.xxl + AppSpacing.xl + AppSpacing.xs,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -99,19 +98,16 @@ class VerificationSuccessScreen extends ConsumerWidget {
             ),
             child: Icon(
               AppIcons.rosetteDiscountCheck,
-              size: 44.0,
+              size: AppSpacing.xxl - 4,
               color: colors.brandPrimary,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Text(
           "You're verified",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -122,16 +118,16 @@ class VerificationSuccessScreen extends ConsumerWidget {
               ? '$displayName · passport valid to $expiryFormatted'
               : displayName,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 14.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.md - 4,
+            horizontal: AppSpacing.md - 2,
+          ),
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -142,9 +138,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
             children: [
               Text(
                 'What this unlocks',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12.5,
+                style: context.text.titleSmall?.copyWith(
                   fontWeight: TypeScale.semiBold,
                   color: colors.brandOnSurface,
                 ),
@@ -156,8 +150,8 @@ class VerificationSuccessScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 16.0,
-                      height: 16.0,
+                      width: AppSpacing.md,
+                      height: AppSpacing.md,
                       margin: const EdgeInsets.only(top: 2.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -166,7 +160,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
                       ),
                       child: Icon(
                         AppIcons.check,
-                        size: 10.0,
+                        size: AppSpacing.sm + 2,
                         color: colors.brandPrimary,
                       ),
                     ),
@@ -177,19 +171,14 @@ class VerificationSuccessScreen extends ConsumerWidget {
                         children: [
                           Text(
                             _unlocks[i].title,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 12.0,
+                            style: context.text.labelMedium?.copyWith(
                               fontWeight: TypeScale.semiBold,
                               color: colors.brandOnSurface,
                             ),
                           ),
                           Text(
                             _unlocks[i].subtitle,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 11.0,
-                              fontWeight: TypeScale.regular,
+                            style: context.text.bodySmall?.copyWith(
                               color: colors.brandSecondaryBody,
                             ),
                           ),

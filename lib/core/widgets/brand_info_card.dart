@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// A single bullet item inside an instruction card.
@@ -23,11 +23,11 @@ class BrandInfoCard extends StatelessWidget {
     super.key,
     required this.bullets,
     this.heading,
-    this.borderRadius = 14.0,
-    this.paddingVertical = 12.0,
-    this.paddingHorizontal = 13.0,
-    this.itemGap = 9.0,
-    this.iconSize = 14.0,
+    this.borderRadius = AppRadius.md14,
+    this.paddingVertical = AppSpacing.md - 4,
+    this.paddingHorizontal = AppSpacing.md - 3,
+    this.itemGap = AppSpacing.sm + 1,
+    this.iconSize = AppSpacing.md - 2,
   });
 
   final List<BrandBullet> bullets;
@@ -59,9 +59,7 @@ class BrandInfoCard extends StatelessWidget {
           if (currentHeading != null) ...[
             Text(
               currentHeading,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12.0,
+              style: context.text.labelMedium?.copyWith(
                 fontWeight: TypeScale.semiBold,
                 color: colors.brandOnSurface,
               ),
@@ -85,9 +83,7 @@ class BrandInfoCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     bullets[i].text,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 11.5,
+                    style: context.text.bodySmall?.copyWith(
                       fontWeight: bullets[i].emphasis
                           ? TypeScale.medium
                           : TypeScale.regular,

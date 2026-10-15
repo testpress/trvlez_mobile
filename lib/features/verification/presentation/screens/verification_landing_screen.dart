@@ -6,7 +6,6 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -127,30 +126,24 @@ class _VerificationLandingScreenState
           context.go(AppRoutes.home);
         }
       },
-      isScrollable: true,
+      isScrollable: false,
       body: [
         VerificationStepper(current: doneCount, circleSize: 26.0),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 2),
 
         // Welcome Header
         if (isVerified) ...[
           Text(
             'Identity verified',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 18.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.headlineSmall?.copyWith(
               color: colors.brandOnSurface,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 4.0),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             'Your identity has been confirmed. You have full access.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
@@ -158,21 +151,15 @@ class _VerificationLandingScreenState
         ] else if (isSubmitted) ...[
           Text(
             'Verification in review',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 18.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.headlineSmall?.copyWith(
               color: colors.brandOnSurface,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 4.0),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             'All documents submitted. We are reviewing your details.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
@@ -180,14 +167,11 @@ class _VerificationLandingScreenState
         ] else ...[
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 6.0,
+            spacing: AppSpacing.sm - 2,
             children: [
               Text(
                 'Welcome to',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 18.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.headlineSmall?.copyWith(
                   color: colors.brandOnSurface,
                   height: 1.2,
                 ),
@@ -195,19 +179,16 @@ class _VerificationLandingScreenState
               const BrandWordmark(planeWidth: 12.0, gap: 3.0, fontSize: 18.0),
             ],
           ),
-          const SizedBox(height: 4.0),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             'Verify your identity to unlock full access.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
           ),
         ],
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 2),
 
         // Progress indicators
         Row(
@@ -215,27 +196,23 @@ class _VerificationLandingScreenState
           children: [
             Text(
               '$doneCount of 4 steps completed',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 11.5,
+              style: context.text.bodySmall?.copyWith(
                 fontWeight: TypeScale.medium,
                 color: colors.brandOnSurface,
               ),
             ),
             Text(
               '${(doneCount / 4 * 100).round()}%',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 11.5,
+              style: context.text.bodySmall?.copyWith(
                 fontWeight: TypeScale.semiBold,
                 color: colors.brandSecondary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 6.0),
+        const SizedBox(height: AppSpacing.sm - 2),
         Container(
-          height: 5.0,
+          height: AppSpacing.xs + 1,
           decoration: BoxDecoration(
             color: colors.verificationProgressTrack,
             borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -256,11 +233,10 @@ class _VerificationLandingScreenState
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
 
         // 4 Step Cards
         for (int i = 0; i < _steps.length; i++) ...[
-          if (i > 0) const SizedBox(height: AppSpacing.sm),
+          const Spacer(flex: 1),
           _StepCard(
             index: i,
             isDone: i < doneCount,
@@ -328,15 +304,15 @@ class _StepCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(14.0),
+          borderRadius: BorderRadius.circular(AppRadius.md14),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: const EdgeInsets.all(AppSpacing.cardPadding - 4),
             decoration: BoxDecoration(
               color: isActive
                   ? colors.verificationCardActiveFill
                   : colors.brandCardBackground,
-              borderRadius: BorderRadius.circular(14.0),
+              borderRadius: BorderRadius.circular(AppRadius.md14),
               border: isActive
                   ? Border.all(color: colors.brandOnSurface, width: 1.5)
                   : null,
@@ -344,8 +320,8 @@ class _StepCard extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 36.0,
-                  height: 36.0,
+                  width: AppSpacing.xl,
+                  height: AppSpacing.xl,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -355,13 +331,13 @@ class _StepCard extends StatelessWidget {
                   ),
                   child: Icon(
                     icon,
-                    size: 16.0,
+                    size: AppSpacing.md - 1,
                     color: (isActive || isDone)
                         ? colors.brandPrimary
                         : colors.verificationStepInactiveText,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.md),
+                const SizedBox(width: AppSpacing.itemGap + 3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,24 +345,19 @@ class _StepCard extends StatelessWidget {
                     children: [
                       Text(
                         stepData.title,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 13.5,
+                        style: context.text.titleSmall?.copyWith(
                           fontWeight: TypeScale.semiBold,
                           color: isLocked
                               ? colors.verificationCardLockedTitle
                               : colors.brandOnSurface,
                         ),
                       ),
-                      const SizedBox(height: 2.0),
+                      const SizedBox(height: AppSpacing.xs / 2),
                       Text(
                         stepData.subtitle,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 11.0,
-                          fontWeight: TypeScale.regular,
+                        style: context.text.bodySmall?.copyWith(
                           color: isLocked
                               ? colors.verificationCardLockedSubtitle
                               : colors.brandSecondaryBody,
@@ -400,7 +371,7 @@ class _StepCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.xs),
                   Icon(
                     AppIcons.chevronRight,
-                    size: 18.0,
+                    size: AppSpacing.md - 1,
                     color: colors.brandOnSurface,
                   ),
                 ],

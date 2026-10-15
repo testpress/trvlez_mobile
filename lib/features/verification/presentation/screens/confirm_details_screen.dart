@@ -5,8 +5,6 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -95,20 +93,16 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_flow.svg',
       title: 'Verification',
-      helpLine: false,
-      isScrollable: true,
+      isScrollable: false,
       onBack: () => context.pop(),
       body: [
         const VerificationStepper(current: 1, circleSize: 24.0),
-        const SizedBox(height: AppSpacing.lg),
+        const Spacer(flex: 1),
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
             'Confirm your details',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 20.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.headlineMedium?.copyWith(
               color: colors.brandOnSurface,
               letterSpacing: -0.2,
             ),
@@ -119,18 +113,18 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
           alignment: Alignment.centerLeft,
           child: Text(
             "We read these from your passport. Check they're right before we continue.",
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 13.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.xs,
+            horizontal: AppSpacing.md - 3,
+          ),
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -176,13 +170,11 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
+                  style: context.text.bodySmall?.copyWith(
                     color: colors.brandSecondaryBody,
                   ),
                   children: [
@@ -192,7 +184,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
                       style: TextStyle(
                         color: colors.brandSecondary,
                         decoration: TextDecoration.underline,
-                        fontWeight: TypeScale.medium,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

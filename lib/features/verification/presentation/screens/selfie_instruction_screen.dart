@@ -4,8 +4,6 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -26,15 +24,15 @@ class SelfieInstructionScreen extends StatelessWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_selfie_intro.svg',
       title: 'Verification',
-      isScrollable: true,
+      isScrollable: false,
       onBack: () => context.pop(),
       body: [
         const VerificationStepper(current: 2, circleSize: 22.0),
-        const SizedBox(height: AppSpacing.lg),
+        const Spacer(flex: 1),
         Center(
           child: Container(
-            width: 54.0,
-            height: 54.0,
+            width: AppSpacing.xxl + AppSpacing.sm,
+            height: AppSpacing.xxl + AppSpacing.sm,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -42,19 +40,16 @@ class SelfieInstructionScreen extends StatelessWidget {
             ),
             child: Icon(
               AppIcons.moodSmile,
-              size: 26.0,
+              size: AppSpacing.lg + 2,
               color: colors.brandOnSurface,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         Text(
           'Selfie check',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -63,22 +58,14 @@ class SelfieInstructionScreen extends StatelessWidget {
         Text(
           "A few seconds of video, to confirm you're the person in the passport photo.",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.4,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const Spacer(flex: 1),
         const BrandInfoCard(
           heading: 'Please make sure',
-          borderRadius: 12.0,
-          paddingVertical: 10.0,
-          paddingHorizontal: 12.0,
-          itemGap: 8.0,
-          iconSize: 13.0,
           bullets: [
             BrandBullet(
               icon: AppIcons.bulb,
