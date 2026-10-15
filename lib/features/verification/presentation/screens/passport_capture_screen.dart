@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,6 +20,7 @@ import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
+import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/passport_framing_guide.dart';
 
@@ -118,9 +120,29 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           previewAspectRatio: previewAR,
         );
 
+        // Immediately crop the captured photo to strictly the guidance frame
+        // so that the surrounding table/background is discarded
+        final croppedFile = await compute(
+          cropAndOptimizePassportImage,
+          cropParams.toMap(),
+        );
+
+        final passportFile = croppedFile ?? File(file.path);
+
+        // Retrieve or generate the cropped MRZ region strip from the passport image
+        final mrzPath = passportFile.path
+            .replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+        File? mrzFile = File(mrzPath);
+        if (!mrzFile.existsSync()) {
+          mrzFile = await compute<String, File?>(
+            cropMrzRegionFromPath,
+            passportFile.path,
+          );
+        }
+
         ref
             .read(verificationNotifierProvider.notifier)
-            .setImage(File(file.path), cropParams: cropParams);
+            .setImage(passportFile, mrzImage: mrzFile);
 
         if (mounted) {
           context.push(AppRoutes.passportReview);
@@ -152,9 +174,15 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       );
 
       if (image != null && mounted) {
+        final passportFile = File(image.path);
+        final mrzFile = await compute<String, File?>(
+          cropMrzRegionFromPath,
+          passportFile.path,
+        );
+
         ref
             .read(verificationNotifierProvider.notifier)
-            .setImage(File(image.path));
+            .setImage(passportFile, mrzImage: mrzFile);
 
         if (mounted) {
           context.push(AppRoutes.passportReview);

@@ -147,9 +147,16 @@ class VerificationNotifier extends Notifier<VerificationState> {
     } catch (_) {}
   }
 
-  void setImage(File image, {PassportCropParams? cropParams}) {
+  void setImage(
+    File image, {
+    File? mrzImage,
+    List<String>? mrzLines,
+    PassportCropParams? cropParams,
+  }) {
     state = state.copyWith(
       capturedImage: image,
+      mrzImage: mrzImage,
+      mrzLines: mrzLines,
       cropParams: cropParams,
       clearCropParams: cropParams == null,
       phase: VerificationPhase.idle,
@@ -158,8 +165,17 @@ class VerificationNotifier extends Notifier<VerificationState> {
   }
 
   void clearImage() {
+    try {
+      final mrz = state.mrzImage;
+      if (mrz != null && mrz.existsSync()) {
+        mrz.deleteSync();
+      }
+    } catch (_) {}
+
     state = state.copyWith(
       clearImage: true,
+      clearMrzImage: true,
+      clearMrzLines: true,
       clearCropParams: true,
       phase: VerificationPhase.idle,
       clearError: true,
@@ -189,6 +205,12 @@ class VerificationNotifier extends Notifier<VerificationState> {
     stopPolling();
     _isSubmitting = false;
     _isReconciling = false;
+    try {
+      final mrz = state.mrzImage;
+      if (mrz != null && mrz.existsSync()) {
+        mrz.deleteSync();
+      }
+    } catch (_) {}
     state = const VerificationState();
   }
 
@@ -241,10 +263,19 @@ class VerificationNotifier extends Notifier<VerificationState> {
       }
     }
 
+    // Clean up local ephemeral MRZ preview cut zone as it was only for user review acceptance
+    try {
+      final mrz = state.mrzImage;
+      if (mrz != null && mrz.existsSync()) {
+        mrz.deleteSync();
+      }
+    } catch (_) {}
+
     state = state.copyWith(
       phase: VerificationPhase.uploading,
       uploadProgress: 0.0,
       clearError: true,
+      clearMrzImage: true,
     );
 
     try {

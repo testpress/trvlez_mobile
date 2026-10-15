@@ -134,7 +134,52 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
     final jpgBytes = img.encodeJpg(croppedImage, quality: 100);
     final jpgPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_cropped.jpg');
     final jpgFile = File(jpgPath)..writeAsBytesSync(jpgBytes);
+
+    // Also extract and save the enlarged MRZ code lines region (bottom ~27% of passport)
+    final int mrzTop =
+        (croppedImage.height * 0.73).round().clamp(0, croppedImage.height - 1);
+    final int mrzHeight = croppedImage.height - mrzTop;
+    final img.Image mrzCrop = img.copyCrop(
+      croppedImage,
+      x: 0,
+      y: mrzTop,
+      width: croppedImage.width,
+      height: mrzHeight,
+    );
+    final mrzBytes = img.encodeJpg(mrzCrop, quality: 100);
+    final mrzPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+    File(mrzPath).writeAsBytesSync(mrzBytes);
+
     return jpgFile;
   }
   return null;
+}
+
+/// Crops the bottom ~27% of a passport image (the MRZ area) and saves as `_mrz_cropped.jpg`.
+File? cropMrzRegionFromPath(String imagePath) {
+  final file = File(imagePath);
+  if (!file.existsSync()) return null;
+
+  final bytes = file.readAsBytesSync();
+  final originalImage = img.decodeImage(bytes);
+  if (originalImage == null) return null;
+
+  final baked = img.bakeOrientation(originalImage);
+
+  final int mrzTop =
+      (baked.height * 0.73).round().clamp(0, baked.height - 1);
+  final int mrzHeight = baked.height - mrzTop;
+
+  final img.Image mrzCrop = img.copyCrop(
+    baked,
+    x: 0,
+    y: mrzTop,
+    width: baked.width,
+    height: mrzHeight,
+  );
+
+  final mrzBytes = img.encodeJpg(mrzCrop, quality: 100);
+  final mrzPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+  final mrzFile = File(mrzPath)..writeAsBytesSync(mrzBytes);
+  return mrzFile;
 }

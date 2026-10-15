@@ -70,5 +70,74 @@ void main() {
 
       container.dispose();
     });
+
+    testWidgets('renders enlarged cropped MRZ image when mrzImage is present', (
+      tester,
+    ) async {
+      final testImg = img.Image(width: 500, height: 352);
+      img.fill(testImg, color: img.ColorRgb8(100, 150, 200));
+      final testFile = File('${tempDir.path}/passport.jpg');
+      testFile.writeAsBytesSync(img.encodeJpg(testImg));
+
+      final mrzImg = img.Image(width: 500, height: 95);
+      img.fill(mrzImg, color: img.ColorRgb8(20, 20, 20));
+      final mrzFile = File('${tempDir.path}/passport_mrz_cropped.jpg');
+      mrzFile.writeAsBytesSync(img.encodeJpg(mrzImg));
+
+      final container = ProviderContainer();
+      container.read(verificationNotifierProvider.notifier).setImage(
+            testFile,
+            mrzImage: mrzFile,
+          );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: PassportReviewScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Code lines, enlarged'), findsOneWidget);
+      expect(find.text('Can you read every character?'), findsOneWidget);
+      // Should find two Image widgets: the passport shot and the enlarged MRZ strip
+      expect(find.byType(Image), findsNWidgets(2));
+      // Should not contain dummy British passport text
+      expect(find.textContaining('OKAFOR'), findsNothing);
+
+      container.dispose();
+    });
+
+    testWidgets('renders monospace MRZ text lines when mrzLines are present', (
+      tester,
+    ) async {
+      const line1 = 'P<INDTESTER<<PRIYA<<<<<<<<<<<<<<<<<<<<<<<<<<';
+      const line2 = 'Z1234567<4IND9501018F3012312<<<<<<<<<<<<<<6';
+
+      final container = ProviderContainer();
+      container.read(verificationNotifierProvider.notifier).setImage(
+            File('${tempDir.path}/dummy.jpg'),
+            mrzLines: const [line1, line2],
+          );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: PassportReviewScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(line1), findsOneWidget);
+      expect(find.text(line2), findsOneWidget);
+      // Should not show dummy placeholder data
+      expect(find.textContaining('OKAFOR'), findsNothing);
+
+      container.dispose();
+    });
   });
 }

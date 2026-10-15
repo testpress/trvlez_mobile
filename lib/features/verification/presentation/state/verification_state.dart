@@ -51,6 +51,8 @@ class VerificationState {
 
   // MRZ State
   final MrzExtractionResult? mrzExtractionResult;
+  final File? mrzImage;
+  final List<String>? mrzLines;
 
   // NFC State
   final NfcPassportResult? nfcResult;
@@ -72,6 +74,8 @@ class VerificationState {
     this.imageQualityResult,
     this.videoQualityResult,
     this.mrzExtractionResult,
+    this.mrzImage,
+    this.mrzLines,
     this.nfcResult,
     this.isNfcSkipped = false,
     this.extractedDocumentNumber,
@@ -172,6 +176,10 @@ class VerificationState {
     ImageQualityResult? imageQualityResult,
     VideoQualityResult? videoQualityResult,
     MrzExtractionResult? mrzExtractionResult,
+    File? mrzImage,
+    bool clearMrzImage = false,
+    List<String>? mrzLines,
+    bool clearMrzLines = false,
     NfcPassportResult? nfcResult,
     bool clearNfcResult = false,
     bool? isNfcSkipped,
@@ -192,6 +200,8 @@ class VerificationState {
       imageQualityResult: imageQualityResult ?? this.imageQualityResult,
       videoQualityResult: videoQualityResult ?? this.videoQualityResult,
       mrzExtractionResult: mrzExtractionResult ?? this.mrzExtractionResult,
+      mrzImage: (clearMrzImage || clearImage) ? null : (mrzImage ?? this.mrzImage),
+      mrzLines: (clearMrzLines || clearImage) ? null : (mrzLines ?? this.mrzLines),
       nfcResult: clearNfcResult ? null : (nfcResult ?? this.nfcResult),
       isNfcSkipped: isNfcSkipped ?? this.isNfcSkipped,
       extractedDocumentNumber:

@@ -88,7 +88,10 @@ class PassportReviewScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const VerifyZoomPanel(),
+        VerifyZoomPanel(
+          mrzImage: state.mrzImage,
+          mrzLines: state.mrzLines,
+        ),
       ],
       foot: [
         AppButton(
