@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/app/router/app_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/welcome_screen.dart';
@@ -188,6 +189,36 @@ void main() {
 
         // Should be on login screen
         expect(find.text('Welcome back'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Calling onLoginSuccess navigates user from login screen to Home',
+      (tester) async {
+        final fakeStorage = FakeSecureStorage();
+        final tokenStorage = TokenStorage(storage: fakeStorage);
+
+        await tester.pumpWidget(createTestApp(tokenStorage: tokenStorage));
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pumpAndSettle();
+
+        final BuildContext context = tester.element(find.byType(WelcomeScreen));
+        final container = ProviderScope.containerOf(context);
+        final router = container.read(routerProvider);
+
+        router.go(AppRoutes.login);
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Welcome back'), findsOneWidget);
+
+        // Perform login success
+        await container.read(authNotifierProvider.notifier).onLoginSuccess();
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pumpAndSettle();
+
+        // Should no longer be on login screen
+        expect(find.text('Welcome back'), findsNothing);
       },
     );
   });

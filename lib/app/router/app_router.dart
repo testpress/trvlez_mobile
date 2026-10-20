@@ -81,7 +81,13 @@ import 'package:trvlez_mobile/features/verification/presentation/state/verificat
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
   RouterNotifier(this._ref) {
-    _ref.listen(authNotifierProvider, (_, _) => notifyListeners());
+    _ref.listen(authNotifierProvider, (previous, next) {
+      // Do not notify during transient loading states without values
+      // to prevent premature redirection before auth state is resolved.
+      if (!next.isLoading || next.hasValue) {
+        notifyListeners();
+      }
+    });
   }
 }
 
@@ -99,7 +105,13 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: AppRoutes.welcome,
     refreshListenable: routerNotifier,
     redirect: (context, state) {
-      final authState = ref.read(authNotifierProvider).valueOrNull;
+      final authAsync = ref.read(authNotifierProvider);
+      // Wait for auth initialization if in-flight on startup without a value
+      if (authAsync.isLoading && !authAsync.hasValue) {
+        return null;
+      }
+
+      final authState = authAsync.valueOrNull;
       final isAuthenticated = authState?.isAuthenticated ?? false;
 
       final location = state.matchedLocation;

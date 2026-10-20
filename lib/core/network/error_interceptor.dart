@@ -51,6 +51,13 @@ class ErrorInterceptor extends Interceptor {
     }
   }
 
+  bool _isAuthEndpoint(String path) {
+    return path.contains('/login') ||
+        path.contains('/signup') ||
+        path.contains('/password-recovery') ||
+        path.contains('/reset-password');
+  }
+
   ApiException _handleBadResponse(DioException err) {
     final response = err.response;
     if (response == null) {
@@ -58,11 +65,25 @@ class ErrorInterceptor extends Interceptor {
     }
 
     final statusCode = response.statusCode ?? 500;
+    final path = err.requestOptions.path;
 
-    // 401 — notify auth state and throw
+    // 401 on protected endpoints — notify auth state (session expired) and throw
     if (statusCode == 401) {
-      onUnauthorized();
-      return ApiException.unauthorized();
+      if (!_isAuthEndpoint(path)) {
+        onUnauthorized();
+        return ApiException.unauthorized();
+      }
+
+      // On auth endpoints, 401 represents invalid credentials or rejected authentication,
+      // NOT an expired session. Do not invoke logout; parse the server error message.
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        return _parseApiError(statusCode, data);
+      }
+      return const ApiException(
+        'Incorrect email or password.',
+        statusCode: 401,
+      );
     }
 
     // Try to parse FastAPI error body

@@ -30,7 +30,7 @@ class LoginNotifier extends AutoDisposeAsyncNotifier<void> {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(authRepositoryProvider);
       await repository.login(email: email, password: password);
-      ref.invalidate(authNotifierProvider);
+      await ref.read(authNotifierProvider.notifier).onLoginSuccess();
     });
   }
 

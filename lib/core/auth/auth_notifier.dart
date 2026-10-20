@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
@@ -71,6 +73,21 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     } catch (_) {
       // Silently fail — existing state remains valid
     }
+  }
+
+  /// Sets authenticated state upon successful login.
+  ///
+  /// Atomically updates [state] to [AsyncData] with [AuthState.isAuthenticated]
+  /// set to `true`, avoiding intermediate unauthenticated / loading flickers,
+  /// and initiates an asynchronous refresh of verification state.
+  Future<void> onLoginSuccess() async {
+    state = const AsyncData(
+      AuthState(
+        isAuthenticated: true,
+        verificationState: TravelerVerificationState.profilePending,
+      ),
+    );
+    unawaited(refreshVerificationState());
   }
 
   /// Logs the user out by deleting the token and invalidating state.
