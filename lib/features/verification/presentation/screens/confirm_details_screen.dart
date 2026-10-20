@@ -150,7 +150,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
         ),
         const SizedBox(height: AppSpacing.xs),
         AppButton(
-          label: 'Re-upload passport',
+          label: 'Retake passport photo',
           variant: AppButtonVariant.brandOutline,
           onPressed: () {
             notifier.clearImage();

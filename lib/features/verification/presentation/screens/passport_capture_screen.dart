@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
@@ -27,8 +26,7 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/passpor
 /// Capture screen for the passport photo page.
 ///
 /// Features an ICAO Doc 9303 TD3 (125mm x 88mm) framing guide with four corner guides
-/// and dashed MRZ alignment box, live camera feed support with SVG fallback, square shutter capture button,
-/// and support for gallery fallback.
+/// and dashed MRZ alignment box, live camera feed support with SVG fallback, and square shutter capture button.
 class PassportCaptureScreen extends ConsumerStatefulWidget {
   const PassportCaptureScreen({super.key, required this.cameraService});
 
@@ -44,7 +42,6 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   bool _isCameraInitialized = false;
   bool _isCapturing = false;
   Size _viewportSize = const Size(320.0, 336.0);
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -92,104 +89,72 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     if (_isCapturing) return;
 
     final cam = _controller;
-    if (cam != null && cam.value.isInitialized) {
-      setState(() => _isCapturing = true);
-      try {
-        final XFile file = await cam.takePicture();
-        final viewportSize = _viewportSize;
-        final frameRect =
-            PassportFramingGuide.calculatePassportFrame(viewportSize);
+    if (cam == null || !cam.value.isInitialized) return;
 
-        // Compute effective preview aspect ratio matching the viewport orientation.
-        // CameraController.value.aspectRatio is sensor width / sensor height (> 1.0).
-        // In portrait mode (sw < sh), the effective preview aspect ratio is 1.0 / camAR.
-        final camAR = cam.value.aspectRatio;
-        final double previewAR =
-            (viewportSize.width < viewportSize.height && camAR > 1.0)
-                ? (1.0 / camAR)
-                : camAR;
-
-        final cropParams = PassportCropParams(
-          imagePath: file.path,
-          screenWidth: viewportSize.width,
-          screenHeight: viewportSize.height,
-          frameWidth: frameRect.width,
-          frameHeight: frameRect.height,
-          frameCenterX: frameRect.center.dx,
-          frameCenterY: frameRect.center.dy,
-          previewAspectRatio: previewAR,
-        );
-
-        // Immediately crop the captured photo to strictly the guidance frame
-        // so that the surrounding table/background is discarded
-        final croppedFile = await compute(
-          cropAndOptimizePassportImage,
-          cropParams.toMap(),
-        );
-
-        final passportFile = croppedFile ?? File(file.path);
-
-        // Retrieve or generate the cropped MRZ region strip from the passport image
-        final mrzPath = passportFile.path
-            .replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
-        File? mrzFile = File(mrzPath);
-        if (!mrzFile.existsSync()) {
-          mrzFile = await compute<String, File?>(
-            cropMrzRegionFromPath,
-            passportFile.path,
-          );
-        }
-
-        ref
-            .read(verificationNotifierProvider.notifier)
-            .setImage(passportFile, mrzImage: mrzFile);
-
-        if (mounted) {
-          context.push(AppRoutes.passportReview);
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to capture photo. Try again.'),
-            ),
-          );
-        }
-      } finally {
-        if (mounted) setState(() => _isCapturing = false);
-      }
-    } else {
-      // If camera preview is inactive (e.g. simulator), open gallery or use sample capture
-      await _pickFromGallery();
-    }
-  }
-
-  Future<void> _pickFromGallery() async {
+    setState(() => _isCapturing = true);
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 90,
+      final XFile file = await cam.takePicture();
+      final viewportSize = _viewportSize;
+      final frameRect =
+          PassportFramingGuide.calculatePassportFrame(viewportSize);
+
+      // Compute effective preview aspect ratio matching the viewport orientation.
+      // CameraController.value.aspectRatio is sensor width / sensor height (> 1.0).
+      // In portrait mode (sw < sh), the effective preview aspect ratio is 1.0 / camAR.
+      final camAR = cam.value.aspectRatio;
+      final double previewAR =
+          (viewportSize.width < viewportSize.height && camAR > 1.0)
+              ? (1.0 / camAR)
+              : camAR;
+
+      final cropParams = PassportCropParams(
+        imagePath: file.path,
+        screenWidth: viewportSize.width,
+        screenHeight: viewportSize.height,
+        frameWidth: frameRect.width,
+        frameHeight: frameRect.height,
+        frameCenterX: frameRect.center.dx,
+        frameCenterY: frameRect.center.dy,
+        previewAspectRatio: previewAR,
       );
 
-      if (image != null && mounted) {
-        final passportFile = File(image.path);
-        final mrzFile = await compute<String, File?>(
+      // Immediately crop the captured photo to strictly the guidance frame
+      // so that the surrounding table/background is discarded
+      final croppedFile = await compute(
+        cropAndOptimizePassportImage,
+        cropParams.toMap(),
+      );
+
+      final passportFile = croppedFile ?? File(file.path);
+
+      // Retrieve or generate the cropped MRZ region strip from the passport image
+      final mrzPath = passportFile.path
+          .replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+      File? mrzFile = File(mrzPath);
+      if (!mrzFile.existsSync()) {
+        mrzFile = await compute<String, File?>(
           cropMrzRegionFromPath,
           passportFile.path,
         );
-
-        ref
-            .read(verificationNotifierProvider.notifier)
-            .setImage(passportFile, mrzImage: mrzFile);
-
-        if (mounted) {
-          context.push(AppRoutes.passportReview);
-        }
       }
-    } catch (_) {
-      // Gallery picker dismissed or unavailable
+
+      ref
+          .read(verificationNotifierProvider.notifier)
+          .setImage(passportFile, mrzImage: mrzFile);
+
+      if (mounted) {
+        context.push(AppRoutes.passportReview);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to capture photo. Try again.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isCapturing = false);
     }
   }
 
@@ -311,25 +276,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.xs),
-        Center(
-          child: TextButton.icon(
-            onPressed: _pickFromGallery,
-            icon: Icon(
-              AppIcons.photo,
-              size: 14.0,
-              color: colors.brandSecondaryBody,
-            ),
-            label: Text(
-              'Upload from photo library',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 11.0,
-                color: colors.brandSecondaryBody,
-              ),
-            ),
-          ),
-        ),
+
       ],
       foot: [
         BrandShutter(

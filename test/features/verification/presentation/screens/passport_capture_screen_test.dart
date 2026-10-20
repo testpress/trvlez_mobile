@@ -47,7 +47,7 @@ void main() {
   }
 
   group('PassportCaptureScreen', () {
-    testWidgets('renders capture guidance, framing guide, and shutter button', (
+    testWidgets('renders capture guidance, framing guide, and shutter button without upload option', (
       tester,
     ) async {
       await tester.pumpWidget(createTestWidget());
@@ -60,7 +60,7 @@ void main() {
         find.text('Keep the dashed box over the code lines'),
         findsOneWidget,
       );
-      expect(find.text('Upload from photo library'), findsOneWidget);
+      expect(find.text('Upload from photo library'), findsNothing);
 
       // Verify the ICAO TD3 passport framing guide is rendered in the tree
       expect(find.byType(PassportFramingGuide), findsOneWidget);
@@ -86,6 +86,27 @@ void main() {
       // Verify frame aspect ratio is strictly ICAO TD3 (125mm / 88mm ~ 1.42)
       final ar = frameRect.width / frameRect.height;
       expect(ar, closeTo(125.0 / 88.0, 0.01));
+    });
+
+    testWidgets('does not show photo library upload option (live capture only)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Upload from photo library'), findsNothing);
+    });
+
+    testWidgets('shutter press does not trigger gallery when camera is uninitialized', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(BrandShutter));
+      await tester.pump();
+
+      expect(find.text('Passport Review Screen'), findsNothing);
     });
   });
 }
