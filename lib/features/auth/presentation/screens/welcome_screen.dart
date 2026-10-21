@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,6 +31,13 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   static const _totalDuration = Duration(milliseconds: 3000);
+
+  // Design artboard reference specifications from the design repository
+  static const double _artW = 236.0;
+  static const double _artH = 472.0;
+  static const double _typeReferenceWidth = 212.0;
+  static const double _typeShrinkFloor = 0.88;
+  static const double _maxScale = 3.0;
 
   late final AnimationController _controller;
   late final Animation<double> _plane;
@@ -95,6 +104,23 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           final screenHeight = constraints.maxHeight;
           final screenWidth = constraints.maxWidth;
 
+          // Compute device-to-artboard scale matching the design repository
+          final layout = math.min(
+            math.min(screenWidth / _artW, screenHeight / _artH),
+            _maxScale,
+          );
+          final reference = math.min(
+            screenWidth / _typeReferenceWidth,
+            _maxScale,
+          );
+          final type = layout.clamp(reference * _typeShrinkFloor, reference);
+
+          // 39px font size on the 236 artboard expressed against reference type
+          final wordmarkFontSize = (39.0 * _typeReferenceWidth / _artW) * type;
+          final planeWidth = 26.0 * layout;
+          final wordmarkGap = 8.0 * layout;
+          final planeOffset = 270.0 * layout;
+
           return AnimatedBuilder(
             animation: _controller,
             builder: (context, _) => Stack(
@@ -135,67 +161,76 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Positioned.fill(
                   child: Center(
                     child: Transform.translate(
-                      offset: Offset(0, -screenHeight * 0.28 * _lift.value),
+                      offset: Offset(
+                        0,
+                        -screenHeight * (124.0 / _artH) * _lift.value,
+                      ),
                       child: Transform.scale(
-                        scale: 1.0 - (0.12 * _lift.value),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // "TRVL"
-                            Opacity(
-                              opacity: _trvl.value,
-                              child: Transform.translate(
-                                offset: Offset(-20 * (1 - _trvl.value), 0),
-                                child: Text(
-                                  'TRVL',
-                                  style: TextStyle(
-                                    fontFamily: AppTypography.fontFamily,
-                                    fontSize: 34,
-                                    fontWeight: TypeScale.bold,
-                                    letterSpacing: 0.5,
-                                    height: 1.0,
-                                    color: colors.brandOnSurface,
+                        scale: 1.0 - (0.1 * _lift.value),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // "TRVL"
+                              Opacity(
+                                opacity: _trvl.value,
+                                child: Transform.translate(
+                                  offset: Offset(-15 * (1 - _trvl.value), 0),
+                                  child: Text(
+                                    'TRVL',
+                                    style: TextStyle(
+                                      fontFamily: AppTypography.fontFamily,
+                                      fontSize: wordmarkFontSize,
+                                      fontWeight: TypeScale.bold,
+                                      letterSpacing: 0.5,
+                                      height: 1.0,
+                                      color: colors.brandOnSurface,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            // Plane Glyph
-                            Opacity(
-                              opacity: _plane.value,
-                              child: Transform.translate(
-                                offset: Offset(-240 * (1 - _plane.value), 0),
-                                child: SvgPicture.asset(
-                                  'assets/art/plane_glyph.svg',
-                                  width: 24,
-                                  colorFilter: ColorFilter.mode(
-                                    colors.brandSecondary,
-                                    BlendMode.srcIn,
+                              SizedBox(width: wordmarkGap),
+                              // Plane Glyph
+                              Opacity(
+                                opacity: _plane.value,
+                                child: Transform.translate(
+                                  offset: Offset(
+                                    -planeOffset * (1 - _plane.value),
+                                    0,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/art/plane_glyph.svg',
+                                    width: planeWidth,
+                                    colorFilter: ColorFilter.mode(
+                                      colors.brandSecondary,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            // "ez"
-                            Opacity(
-                              opacity: _ez.value,
-                              child: Transform.translate(
-                                offset: Offset(20 * (1 - _ez.value), 0),
-                                child: Text(
-                                  'ez',
-                                  style: TextStyle(
-                                    fontFamily: AppTypography.fontFamily,
-                                    fontSize: 34,
-                                    fontWeight: TypeScale.bold,
-                                    letterSpacing: 0.5,
-                                    height: 1.0,
-                                    color: colors.brandSecondary,
+                              SizedBox(width: wordmarkGap),
+                              // "ez"
+                              Opacity(
+                                opacity: _ez.value,
+                                child: Transform.translate(
+                                  offset: Offset(15 * (1 - _ez.value), 0),
+                                  child: Text(
+                                    'ez',
+                                    style: TextStyle(
+                                      fontFamily: AppTypography.fontFamily,
+                                      fontSize: wordmarkFontSize,
+                                      fontWeight: TypeScale.bold,
+                                      letterSpacing: 0.5,
+                                      height: 1.0,
+                                      color: colors.brandSecondary,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
