@@ -200,7 +200,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
 
-            SizedBox(height: space.stackHero),
+            const Spacer(),
 
             // ── Security Note ────────────────────────────────────────────
             const BrandSecurityNote(

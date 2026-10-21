@@ -52,7 +52,7 @@ class PassportInstructionScreen extends StatelessWidget {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'We need both of these. Most retakes happen because the bottom two lines were cut off.',
           textAlign: TextAlign.center,
@@ -64,7 +64,7 @@ class PassportInstructionScreen extends StatelessWidget {
             height: 1.4,
           ),
         ),
-        SizedBox(height: space.stackFormField),
+        SizedBox(height: space.stackSection),
         Center(
           child: SvgPicture.asset(
             'assets/art/passport_diagram.svg',

@@ -48,7 +48,7 @@ class AnywhereSentScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         const CheckInBigRing(icon: AppIcons.check),
         SizedBox(height: space.stackFormField),
         Text(
@@ -62,7 +62,7 @@ class AnywhereSentScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'Your pass proves TRVLez has verified who you are.',
           textAlign: TextAlign.center,
@@ -78,7 +78,7 @@ class AnywhereSentScreen extends ConsumerWidget {
           lead: 'Not confirmed yet. ',
           body:
               '$hotel has to reply, and we will tell you the moment they do. Show your pass at the desk — they may still ask for your passport.',
-          marginTop: space.stackText,
+          marginTop: space.stackFormField,
         ),
       ],
     );

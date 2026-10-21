@@ -54,7 +54,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
         const CheckInNotice(text: 'This does not book or confirm anything.'),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'What they are told',
           style: TextStyle(
@@ -65,7 +65,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           byEmail ? 'By email, to ${draft.email}' : 'In the $hotel dashboard',
           style: TextStyle(
@@ -75,7 +75,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
             height: 1.35,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackFormField),
 
         // Disclosure card of sent vs withheld fields
         const CheckInDisclosureCard(
@@ -112,6 +112,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
 
         CheckInConsentTick(
           agreed: _agreed,
+          marginTop: space.stackSection,
           label: 'Send this to $hotel',
           onTap: () => setState(() => _agreed = !_agreed),
         ),

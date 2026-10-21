@@ -37,8 +37,8 @@ class CheckInGuestRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          margin: EdgeInsets.only(top: space.stackItem),
-          padding: space.insetCardCompact,
+          margin: EdgeInsets.only(top: space.stackFormField),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.checkInStepPanel,
             borderRadius: shape.radiusControl,

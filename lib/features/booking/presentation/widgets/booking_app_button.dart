@@ -36,7 +36,7 @@ class BookingAppButton extends StatelessWidget {
           borderRadius: shape.radiusPill,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+            constraints: BoxConstraints(minHeight: sizes.controlLg),
             width: double.infinity,
             padding: EdgeInsets.symmetric(
               vertical: paddingVertical ?? space.insetInput.top,

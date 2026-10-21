@@ -107,14 +107,16 @@ class _BrandTextFieldState extends State<BrandTextField> {
           validator: widget.validator,
           cursorColor: colors.brandOnSurface,
           cursorWidth: shape.borderMedium,
+          cursorHeight: sizes.iconMd,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
-            fontSize: 13,
+            fontSize: 14.5,
             fontWeight: TypeScale.regular,
             color: colors.brandOnSurface,
+            height: 1.25,
           ),
           decoration: InputDecoration(
-            isDense: true,
+            isDense: false,
             filled: true,
             fillColor: colors.brandFieldBackground,
             border: OutlineInputBorder(
@@ -148,14 +150,15 @@ class _BrandTextFieldState extends State<BrandTextField> {
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: space.insetCard.left,
-              vertical: space.inlineButtonGroup,
+              vertical: space.stackFormField,
             ),
             hintText: widget.placeholder,
             hintStyle: TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
+              fontSize: 14.5,
               fontWeight: TypeScale.regular,
               color: colors.brandSecondaryPlaceholder,
+              height: 1.25,
             ),
             errorStyle: TextStyle(
               fontFamily: AppTypography.fontFamily,
@@ -163,6 +166,10 @@ class _BrandTextFieldState extends State<BrandTextField> {
               fontWeight: TypeScale.medium,
               color: colors.brandSecondary,
               height: 1.3,
+            ),
+            suffixIconConstraints: BoxConstraints(
+              minWidth: sizes.controlLg,
+              minHeight: sizes.controlLg,
             ),
             suffixIcon: widget.obscurable
                 ? Semantics(
@@ -172,7 +179,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () => setState(() => _obscured = !_obscured),
                       child: Padding(
-                        padding: EdgeInsets.only(right: space.inlineIconLabel),
+                        padding: EdgeInsets.only(right: space.inlineItem),
                         child: Icon(
                           _obscured ? AppIcons.eye : AppIcons.eyeOff,
                           size: sizes.iconSm,

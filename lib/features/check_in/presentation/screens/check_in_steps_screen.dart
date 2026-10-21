@@ -70,7 +70,7 @@ class CheckInStepsScreen extends ConsumerWidget {
           backgroundAsset: 'assets/art/bg_checkin_steps.svg',
           helpArea: ProblemArea.checkIn,
           onBack: () => context.pop(),
-          isScrollable: true,
+          isScrollable: false,
           foot: [
             AppButton(
               label: 'Continue',
@@ -80,7 +80,7 @@ class CheckInStepsScreen extends ConsumerWidget {
             CheckInNotice(text: requirement.notice),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackFormField),
             Text(
               details.hotel,
               style: TextStyle(
@@ -91,7 +91,7 @@ class CheckInStepsScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               details.summary,
               style: TextStyle(
@@ -101,15 +101,16 @@ class CheckInStepsScreen extends ConsumerWidget {
                 height: 1.35,
               ),
             ),
+            const Spacer(flex: 1),
 
             // Callout carries the requirement information
             CheckInFlagCallout(
               icon: requirement.flagIcon,
               lead: requirement.flagLead,
               body: requirement.flagBody,
-              marginTop: space.stackFormField,
+              marginTop: space.stackItem,
             ),
-            SizedBox(height: space.stackText),
+            const Spacer(flex: 1),
 
             // Step 1: Already verified
             const CheckInStepTile(
@@ -151,6 +152,7 @@ class CheckInStepsScreen extends ConsumerWidget {
               onTap: () =>
                   context.push(AppRoutes.checkInDonePath(reservationId)),
             ),
+            const Spacer(flex: 2),
           ],
         );
       },

@@ -109,7 +109,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
             ),
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -122,10 +122,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
         ),
         const Spacer(flex: 1),
         Container(
-          padding: EdgeInsets.symmetric(
-            vertical: space.stackText,
-            horizontal: space.inlineButtonGroup,
-          ),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
             borderRadius: shape.radiusControl,

@@ -75,7 +75,7 @@ class SelfieFailedScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: space.stackItem),
           child: Text(
@@ -100,14 +100,14 @@ class SelfieFailedScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.selfieCapture);
           },
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackItem),
         AppButton(
           label: 'See the tips again',
           variant: AppButtonVariant.brandOutline,
           onPressed: () =>
               context.pushReplacement(AppRoutes.selfieInstructions),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         Center(
           child: InkWell(
             onTap: () {

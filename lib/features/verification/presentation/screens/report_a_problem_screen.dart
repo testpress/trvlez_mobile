@@ -93,7 +93,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        SizedBox(height: space.stackFormField),
+        SizedBox(height: space.stackSection),
         Text(
           'Tell us what went wrong',
           style: TextStyle(
@@ -104,7 +104,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           "We'll attach your step, device model and app version so support has context.",
           style: TextStyle(

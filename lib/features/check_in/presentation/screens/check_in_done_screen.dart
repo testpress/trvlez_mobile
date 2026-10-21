@@ -79,7 +79,7 @@ class CheckInDoneScreen extends ConsumerWidget {
             ),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackSection),
             // White check circle
             Center(
               child: Container(
@@ -109,7 +109,7 @@ class CheckInDoneScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               'Collect your keys and go straight up. Nothing else needed.',
               textAlign: TextAlign.center,

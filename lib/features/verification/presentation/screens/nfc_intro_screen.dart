@@ -253,7 +253,7 @@ class NfcIntroScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'Your passport has a secure chip. Reading it is the strongest check there is, and it takes seconds.',
           textAlign: TextAlign.center,
@@ -298,7 +298,7 @@ class NfcIntroScreen extends ConsumerWidget {
             context.push(AppRoutes.nfcScan);
           },
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         const BrandSecurityNote(
           text: 'Read on your phone.\nNever shared with external AI.',
         ),

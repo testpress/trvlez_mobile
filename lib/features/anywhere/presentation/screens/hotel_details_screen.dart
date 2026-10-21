@@ -83,7 +83,7 @@ class _HotelDetailsScreenState extends ConsumerState<HotelDetailsScreen> {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'Which hotel?',
           style: TextStyle(
@@ -94,7 +94,7 @@ class _HotelDetailsScreenState extends ConsumerState<HotelDetailsScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'We will write to them and ask them to accept your digital pass.',
           style: TextStyle(

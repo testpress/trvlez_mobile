@@ -56,7 +56,7 @@ class DisputeStatusScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'Payment on hold',
           style: TextStyle(
@@ -67,7 +67,7 @@ class DisputeStatusScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           '$hotel · raised $raisedText',
           style: TextStyle(
@@ -77,14 +77,13 @@ class DisputeStatusScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        SizedBox(height: space.stackText),
 
         CheckInFlagCallout(
           icon: AppIcons.clock,
           lead: "We're looking into it. ",
           body:
               'Your payment stays with us until this is closed. We will email you before anything changes.',
-          marginTop: space.stackItem,
+          marginTop: space.stackFormField,
         ),
         SizedBox(height: space.stackFormField),
 

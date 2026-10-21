@@ -59,7 +59,7 @@ class DisputeReasonScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'What went wrong?',
           style: TextStyle(
@@ -70,7 +70,7 @@ class DisputeReasonScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'Pick the closest one. You can explain in your own words next.',
           style: TextStyle(
@@ -80,7 +80,7 @@ class DisputeReasonScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackFormField),
 
         for (final reason in reasons)
           _ReasonRow(
@@ -122,7 +122,7 @@ class _ReasonRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          margin: EdgeInsets.only(top: space.stackItem),
+          margin: EdgeInsets.only(top: space.stackFormField),
           padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.checkInStepPanel,

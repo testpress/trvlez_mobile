@@ -35,8 +35,8 @@ class BookingLightField extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.only(
-            top: space.stackItem,
-            bottom: space.stackText,
+            top: space.stackFormField,
+            bottom: space.stackTight,
           ),
           child: Text(
             label,
@@ -49,8 +49,11 @@ class BookingLightField extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
-          padding: EdgeInsets.symmetric(horizontal: space.insetCard.left),
+          constraints: BoxConstraints(minHeight: sizes.controlXl),
+          padding: EdgeInsets.symmetric(
+            horizontal: space.insetCard.left,
+            vertical: space.stackItem,
+          ),
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
             color: colors.surface,
@@ -65,7 +68,7 @@ class BookingLightField extends StatelessWidget {
             cursorColor: colors.brandPrimary,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 14.0,
+              fontSize: 14.5,
               fontWeight: TypeScale.medium,
               color: colors.ink,
             ),
@@ -78,7 +81,7 @@ class BookingLightField extends StatelessWidget {
               hintText: hint,
               hintStyle: TextStyle(
                 fontFamily: AppTypography.fontFamily,
-                fontSize: 14.0,
+                fontSize: 14.5,
                 color: colors.textDisabled,
               ),
             ),

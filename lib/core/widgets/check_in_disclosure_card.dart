@@ -33,8 +33,8 @@ class CheckInDisclosureCard extends StatelessWidget {
     final sizes = context.sizes;
 
     return Container(
-      margin: EdgeInsets.only(top: marginTop ?? space.stackTight),
-      padding: space.insetCardCompact,
+      margin: EdgeInsets.only(top: marginTop ?? space.stackFormField),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.checkInStepPanel,
         borderRadius: shape.radiusControl,
@@ -47,14 +47,14 @@ class CheckInDisclosureCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
             ),
           ),
-          SizedBox(height: space.stackItem),
+          SizedBox(height: space.inlineButtonGroup),
           for (int i = 0; i < lines.length; i++) ...[
-            if (i > 0) SizedBox(height: space.stackTight),
+            if (i > 0) SizedBox(height: space.inlineIconLabel),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

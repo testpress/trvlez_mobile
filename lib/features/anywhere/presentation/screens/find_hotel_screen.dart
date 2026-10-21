@@ -58,7 +58,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
         CheckInNotice(text: 'Nothing reaches any hotel until you confirm it.'),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'Find your hotel',
           style: TextStyle(
@@ -69,7 +69,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'You do not need to have booked through us. Being verified is enough.',
           style: TextStyle(
@@ -79,7 +79,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
             height: 1.35,
           ),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
 
         // Search input
         AnywhereField(
@@ -88,7 +88,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
           icon: AppIcons.search,
           onClear: _searchController.clear,
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackFormField),
 
         // Partner hotel results
         for (final hotel in results)

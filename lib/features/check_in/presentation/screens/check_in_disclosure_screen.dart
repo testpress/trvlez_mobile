@@ -94,7 +94,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
             ),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackSection),
             Text(
               'Approve what we send',
               style: TextStyle(
@@ -105,7 +105,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               'Spanish law names these fields. We send exactly them and nothing else.',
               style: TextStyle(
@@ -115,6 +115,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
                 height: 1.35,
               ),
             ),
+            SizedBox(height: space.stackFormField),
             CheckInDisclosureCard(
               title: 'Sent to $hotel',
               lines: const [
@@ -138,6 +139,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
             ),
             CheckInConsentTick(
               agreed: details.disclosureAgreed,
+              marginTop: space.stackSection,
               label:
                   'I agree to share these details with $hotel for this stay.',
               onTap: () {

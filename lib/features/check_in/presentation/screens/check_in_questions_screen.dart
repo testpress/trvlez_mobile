@@ -114,7 +114,7 @@ class _CheckInQuestionsScreenState
             ),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackSection),
             Text(
               'A few questions',
               style: TextStyle(
@@ -125,7 +125,7 @@ class _CheckInQuestionsScreenState
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               'So the hotel has your room ready when you arrive.',
               style: TextStyle(
@@ -135,7 +135,7 @@ class _CheckInQuestionsScreenState
                 height: 1.35,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackFormField),
 
             // Arrival time picker
             CheckInField(

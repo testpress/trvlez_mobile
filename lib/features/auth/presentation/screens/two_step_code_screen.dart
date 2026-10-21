@@ -222,7 +222,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
                   ),
           ),
 
-          SizedBox(height: space.stackPageBottom),
+          const Spacer(),
 
           const BrandSecurityNote(text: 'Codes expire after 10 minutes.'),
 

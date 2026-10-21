@@ -37,7 +37,7 @@ class BookingAppOutline extends StatelessWidget {
             onTap: onPressed,
             borderRadius: shape.radiusPill,
             child: Container(
-              constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+              constraints: BoxConstraints(minHeight: sizes.controlLg),
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: space.insetControlMd.top),
               alignment: Alignment.center,

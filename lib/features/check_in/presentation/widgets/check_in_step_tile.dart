@@ -82,7 +82,7 @@ class CheckInStepTile extends StatelessWidget {
                         '$number',
                         style: TextStyle(
                           fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
+                          fontSize: 13,
                           fontWeight: TypeScale.bold,
                           color: isNow
                               ? colors.brandActionLabel
@@ -90,7 +90,7 @@ class CheckInStepTile extends StatelessWidget {
                         ),
                       ),
               ),
-              SizedBox(width: space.inlineIconLabel),
+              SizedBox(width: space.inlineButtonGroup),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +100,7 @@ class CheckInStepTile extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: TypeScale.semiBold,
                         color: colors.brandOnSurface,
                       ),
@@ -110,7 +110,7 @@ class CheckInStepTile extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                        fontSize: 12,
                         color: colors.brandSecondaryBody,
                       ),
                     ),

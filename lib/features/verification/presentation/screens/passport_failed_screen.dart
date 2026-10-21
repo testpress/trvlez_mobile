@@ -95,7 +95,7 @@ class PassportFailedScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: space.stackItem),
           child: Text(
@@ -120,14 +120,14 @@ class PassportFailedScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportCapture);
           },
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackItem),
         AppButton(
           label: 'See the tips again',
           variant: AppButtonVariant.brandOutline,
           onPressed: () =>
               context.pushReplacement(AppRoutes.passportInstructions),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         Center(
           child: InkWell(
             onTap: () {

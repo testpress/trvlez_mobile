@@ -124,7 +124,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             onSubmitted: isFormFilled ? _onSubmit : null,
           ),
 
-          SizedBox(height: space.stackPageBottom),
+          const Spacer(),
 
           const BrandSecurityNote(
             text:

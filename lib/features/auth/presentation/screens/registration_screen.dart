@@ -203,7 +203,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               onSubmitted: onSubmit,
             ),
 
-            SizedBox(height: space.stackHero),
+            const Spacer(),
 
             // ── Security Note ────────────────────────────────────────────
             const BrandSecurityNote(

@@ -74,7 +74,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'Your stay',
           style: TextStyle(
@@ -85,7 +85,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           hotelSubtitle,
           style: TextStyle(
@@ -95,7 +95,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
             height: 1.35,
           ),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
 
         // Date selection
         CheckInField(

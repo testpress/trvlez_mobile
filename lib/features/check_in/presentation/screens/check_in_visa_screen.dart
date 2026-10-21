@@ -89,7 +89,7 @@ class CheckInVisaScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'Your visa',
           textAlign: TextAlign.center,
@@ -101,7 +101,7 @@ class CheckInVisaScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           "Photograph the visa page in your passport, or the sticker if it's separate.",
           textAlign: TextAlign.center,
@@ -131,7 +131,7 @@ class CheckInVisaScreen extends ConsumerWidget {
             ('2', 'The dates', 'Valid from and valid to, both readable'),
           ],
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
 
         // Info card with bullets
         const BrandInfoCard(

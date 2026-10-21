@@ -71,7 +71,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         Text(
           'Tell us what happened',
           style: TextStyle(
@@ -82,7 +82,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           '${reason.title} · ${draft.hotel}',
           style: TextStyle(
@@ -92,7 +92,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
             height: 1.35,
           ),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
 
         // Text input for explanation
         CheckInField(
@@ -147,7 +147,7 @@ class _AttachRow extends StatelessWidget {
     final full = count >= 3;
 
     return Container(
-      margin: EdgeInsets.only(top: space.stackItem),
+      margin: EdgeInsets.only(top: space.stackFormField),
       padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.checkInStepPanel,

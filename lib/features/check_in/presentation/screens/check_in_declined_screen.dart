@@ -57,7 +57,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
               variant: AppButtonVariant.brandWhite,
               onPressed: () => context.go(AppRoutes.bookings),
             ),
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackFormField),
             AppButton(
               label: 'Review what Spain needs',
               variant: AppButtonVariant.brandOutline,
@@ -83,7 +83,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               "That's absolutely fine. Your booking is unaffected — ${details.hotel} is expecting you.",
               textAlign: TextAlign.center,
@@ -94,7 +94,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
                 height: 1.35,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackFormField),
             CheckInBringCard(
               title: 'Take with you',
               lines: [

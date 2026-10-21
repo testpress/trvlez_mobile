@@ -55,10 +55,10 @@ class CheckInField extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
           child: Container(
-            height: tall ? sizes.pulseIndicator : sizes.controlMd,
+            height: tall ? sizes.thumbPhotoSm : sizes.controlXl,
             padding: EdgeInsets.symmetric(
-              horizontal: space.insetInput.left,
-              vertical: tall ? space.stackItem : 0,
+              horizontal: space.insetCard.left,
+              vertical: tall ? space.stackFormField : 0,
             ),
             alignment: tall ? Alignment.topLeft : Alignment.centerLeft,
             decoration: BoxDecoration(
@@ -79,8 +79,9 @@ class CheckInField extends StatelessWidget {
                           cursorColor: colors.brandOnSurface,
                           style: TextStyle(
                             fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
+                            fontSize: 14.5,
                             color: colors.brandOnSurface,
+                            height: 1.25,
                           ),
                           decoration: InputDecoration(
                             isDense: true,
@@ -91,8 +92,9 @@ class CheckInField extends StatelessWidget {
                             hintText: hint,
                             hintStyle: TextStyle(
                               fontFamily: AppTypography.fontFamily,
-                              fontSize: 13,
+                              fontSize: 14.5,
                               color: colors.brandSecondaryPlaceholder,
+                              height: 1.25,
                             ),
                           ),
                         )
@@ -100,10 +102,11 @@ class CheckInField extends StatelessWidget {
                           value,
                           style: TextStyle(
                             fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
+                            fontSize: 14.5,
                             color: filled
                                 ? colors.brandOnSurface
                                 : colors.brandSecondaryPlaceholder,
+                            height: 1.25,
                           ),
                         ),
                 ),

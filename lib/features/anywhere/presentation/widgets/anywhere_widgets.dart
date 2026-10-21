@@ -36,7 +36,7 @@ class AnywhereRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          margin: EdgeInsets.only(top: space.stackItem),
+          margin: EdgeInsets.only(top: space.stackFormField),
           padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.checkInStepPanel,
@@ -202,19 +202,22 @@ class AnywhereField extends StatelessWidget {
         keyboardType: keyboard,
         style: TextStyle(
           fontFamily: AppTypography.fontFamily,
-          fontSize: 13,
+          fontSize: 14.5,
           fontWeight: TypeScale.medium,
           color: colors.brandOnSurface,
+          height: 1.25,
         ),
         cursorColor: colors.brandOnSurface,
+        cursorHeight: sizes.iconMd,
         decoration: InputDecoration(
           filled: false,
           fillColor: Colors.transparent,
           hintText: hint,
           hintStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
-            fontSize: 13,
+            fontSize: 14.5,
             color: colors.brandSecondaryPlaceholder,
+            height: 1.25,
           ),
           prefixIcon: icon != null
               ? Icon(icon, size: sizes.iconSm, color: colors.brandSecondaryBody)
@@ -230,7 +233,10 @@ class AnywhereField extends StatelessWidget {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: space.insetInput,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: space.insetCard.left,
+            vertical: space.stackFormField,
+          ),
         ),
       ),
     );

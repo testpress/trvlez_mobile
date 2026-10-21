@@ -47,7 +47,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackSection),
         const CheckInBigRing(icon: AppIcons.check),
         SizedBox(height: space.stackFormField),
         Text(
@@ -61,7 +61,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'Your payment for $hotel is on hold while we look into this.',
           textAlign: TextAlign.center,
@@ -103,7 +103,7 @@ class _DisputeDetailRow extends StatelessWidget {
     final shape = context.shape;
 
     return Container(
-      margin: EdgeInsets.only(top: space.stackItem),
+      margin: EdgeInsets.only(top: space.stackFormField),
       padding: EdgeInsets.symmetric(vertical: space.stackText),
       decoration: BoxDecoration(
         border: last

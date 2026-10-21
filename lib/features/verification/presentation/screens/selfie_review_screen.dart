@@ -120,7 +120,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'Watch it back before you upload. Make sure your face is clearly visible, well-lit, and centered throughout.',
           textAlign: TextAlign.center,
@@ -132,7 +132,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             height: 1.4,
           ),
         ),
-        SizedBox(height: space.stackFormField),
+        SizedBox(height: space.stackSection),
         Center(
           child: Container(
             padding: EdgeInsets.all(space.inlineMicro),
@@ -261,7 +261,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             context.pushReplacement(AppRoutes.selfieProcessing);
           },
         ),
-        SizedBox(height: space.inlineMicro),
+        SizedBox(height: space.stackItem),
         AppButton(
           label: 'Record again',
           variant: AppButtonVariant.brandOutline,
@@ -270,7 +270,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             context.pushReplacement(AppRoutes.selfieCapture);
           },
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );

@@ -49,7 +49,7 @@ class PassportReviewScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           'Both parts need to be sharp. Look closely before you upload.',
           textAlign: TextAlign.center,
@@ -60,7 +60,7 @@ class PassportReviewScreen extends ConsumerWidget {
             color: colors.brandSecondaryBody,
           ),
         ),
-        SizedBox(height: space.stackFormField),
+        SizedBox(height: space.stackSection),
         Center(
           child: Container(
             padding: EdgeInsets.all(space.inlineMicro),
@@ -97,7 +97,7 @@ class PassportReviewScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportProcessing);
           },
         ),
-        SizedBox(height: space.inlineMicro),
+        SizedBox(height: space.stackItem),
         AppButton(
           label: 'Retake photo',
           variant: AppButtonVariant.brandOutline,
@@ -106,7 +106,7 @@ class PassportReviewScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportCapture);
           },
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );

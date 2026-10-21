@@ -87,7 +87,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
                 );
               },
             ),
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackFormField),
             AppButton(
               label: 'Take it again',
               variant: AppButtonVariant.brandOutline,
@@ -100,7 +100,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
             ),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackSection),
             Text(
               'Check it before we send it',
               textAlign: TextAlign.center,
@@ -112,7 +112,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               subtitle,
               textAlign: TextAlign.center,

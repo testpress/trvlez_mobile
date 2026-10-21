@@ -55,7 +55,7 @@ class SelfieInstructionScreen extends StatelessWidget {
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           "A few seconds of video, to confirm you're the person in the passport photo.",
           textAlign: TextAlign.center,

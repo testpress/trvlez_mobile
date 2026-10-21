@@ -143,7 +143,7 @@ class _VerificationLandingScreenState
               height: 1.2,
             ),
           ),
-          SizedBox(height: space.stackText),
+          SizedBox(height: space.stackTight),
           Text(
             'Your identity has been confirmed. You have full access.',
             style: context.text.labelMedium?.copyWith(
@@ -159,7 +159,7 @@ class _VerificationLandingScreenState
               height: 1.2,
             ),
           ),
-          SizedBox(height: space.stackText),
+          SizedBox(height: space.stackTight),
           Text(
             'All documents submitted. We are reviewing your details.',
             style: context.text.labelMedium?.copyWith(
@@ -186,7 +186,7 @@ class _VerificationLandingScreenState
               ),
             ],
           ),
-          SizedBox(height: space.stackText),
+          SizedBox(height: space.stackTight),
           Text(
             'Verify your identity to unlock full access.',
             style: context.text.labelMedium?.copyWith(
@@ -317,7 +317,7 @@ class _StepCard extends StatelessWidget {
           borderRadius: shape.radiusControl,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
-            padding: space.insetCardCompact,
+            padding: space.insetCard,
             decoration: BoxDecoration(
               color: isActive
                   ? colors.verificationCardActiveFill

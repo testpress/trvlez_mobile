@@ -115,7 +115,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
             const CheckInNotice(text: "Each guest's documents stay their own."),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackSection),
             Text(
               "Who's staying",
               style: TextStyle(
@@ -126,7 +126,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               "The hotel needs ID for every adult guest. Each person verifies themselves — you won't see their documents.",
               style: TextStyle(
@@ -136,7 +136,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
                 height: 1.35,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackFormField),
 
             // Booker Row
             CheckInGuestRow(

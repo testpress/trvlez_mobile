@@ -102,9 +102,25 @@ class BrandScreen extends StatelessWidget {
                 // ── Screen Body ─────────────────────────────────────────────
                 Expanded(
                   child: isScrollable
-                      ? SingleChildScrollView(
-                          padding: effectivePadding,
-                          child: body,
+                      ? LayoutBuilder(
+                          builder: (context, constraints) {
+                            final resolvedPadding = effectivePadding.resolve(
+                              Directionality.maybeOf(context) ??
+                                  TextDirection.ltr,
+                            );
+                            return SingleChildScrollView(
+                              padding: effectivePadding,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight -
+                                      resolvedPadding.vertical,
+                                ),
+                                child: IntrinsicHeight(
+                                  child: body,
+                                ),
+                              ),
+                            );
+                          },
                         )
                       : Padding(padding: effectivePadding, child: body),
                 ),

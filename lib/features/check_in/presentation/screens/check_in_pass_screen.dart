@@ -64,7 +64,7 @@ class CheckInPassScreen extends ConsumerWidget {
             CheckInNotice(text: 'Works offline. Expires when you check out.'),
           ],
           children: [
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackSection),
             Text(
               'Show this at the desk',
               textAlign: TextAlign.center,
@@ -76,7 +76,7 @@ class CheckInPassScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               'Collect your keys and go straight up.',
               textAlign: TextAlign.center,
