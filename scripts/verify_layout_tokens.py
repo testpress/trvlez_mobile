@@ -14,8 +14,6 @@ import sys
 # Allowed directories/files where primitives/tokens are defined
 ALLOWED_PATHS = {
     'lib/core/design_tokens',
-    'lib/app/theme/tokens/app_spacing.dart',
-    'lib/app/theme/tokens/app_radius.dart',
 }
 
 EXCLUDED_FILE_SUFFIXES = (

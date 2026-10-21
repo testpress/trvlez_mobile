@@ -9,7 +9,7 @@ Goal: no widget contains a raw layout number. Every spacing, size, and corner va
 a token whose NAME says what it is for, not how big it is.
 
 Bad:  `EdgeInsets.all(15)`, `SizedBox(height: 24)`, `BorderRadius.circular(10)`, `Size(120, 42)`
-Good: `context.space.insetCard`, `context.space.stackFormField`, `context.shape.radiusSurface`, `context.size.controlMd`
+Good: `context.space.insetCard`, `context.space.stackFormField`, `context.shape.radiusSurface`, `context.sizes.controlMd`
 
 ## 1. Token architecture (3 tiers)
 
@@ -52,7 +52,7 @@ Spacing tokens are for padding, margin and gaps only; never for width/height/off
 Prefer `Column/Row(spacing: ...)` (Flutter 3.27+) or a `Gap`-style widget over scattered `SizedBox`.
 Check the project's Flutter SDK version before using `spacing:`.
 
-### Sizing (`context.size.*`)
+### Sizing (`context.sizes.*`)
 | Role | Examples |
 |---|---|
 | `control{Sm,Md,Lg}` | height of buttons, text fields, chips |
@@ -128,9 +128,15 @@ class AppSpace extends ThemeExtension<AppSpace> {
 
 // tokens_context.dart
 extension TokensContext on BuildContext {
-  AppSpace get space => Theme.of(this).extension<AppSpace>()!;
-  AppSize get size => Theme.of(this).extension<AppSize>()!;
-  AppShape get shape => Theme.of(this).extension<AppShape>()!;
+  AppSpace get space =>
+      Theme.of(this).extension<AppSpace>() ?? AppSpace.comfortable;
+
+  /// Prefer `context.sizes` over `context.size` to avoid shadowing Flutter's `BuildContext.size`.
+  AppSize get sizes => Theme.of(this).extension<AppSize>() ?? AppSize.regular;
+  AppSize get size => Theme.of(this).extension<AppSize>() ?? AppSize.regular;
+
+  AppShape get shape =>
+      Theme.of(this).extension<AppShape>() ?? AppShape.standard;
 }
 ```
 

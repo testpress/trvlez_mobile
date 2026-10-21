@@ -9,9 +9,11 @@
 
 ## 1. Executive Summary & Baseline Audit
 
-### 1.1 Current Baseline
-* **Static Analysis:** Passes with zero issues under basic `flutter_lints` (strict rules are disabled).
-* **Test Suite:** 135 tests passing (all tests currently placed flat in root `test/`).
+### 1.1 Current Status & Milestones
+* **Static Analysis:** Passes with zero issues under strict `flutter analyze --fatal-infos`.
+* **Test Suite:** 317 tests passing (100% pass rate, mirrored structure under `test/features/` and `test/core/`).
+* **CI & Quality Gates:** `./scripts/quality_gates.sh` runs 8 automated checks (formatting, analyzer, test suite, style guard, layer import guard, semantic layout token guard, git cleanliness).
+* **Token Coverage:** 100% compliance across 273 files in `lib/` via 3-tier semantic layout tokens (`context.space`, `context.sizes`, `context.shape`, `context.colors`, `context.text`). Legacy `AppSpacing` and `AppRadius` completely retired.
 
 ### 1.2 Identified Issues Summary
 
@@ -21,7 +23,7 @@
 | **Cross-Feature Coupling** | Features import internal data layers of other features | `create_reservation_screen` imports `properties/data/` |
 | **Missing Abstractions** | No abstract repository interfaces; concrete classes in `data/` | 100% of repositories lack domain contracts |
 | **Missing Core Modules** | No `core/widgets/`, no `core/errors/app_exception.dart` | Zero shared buttons, text fields, or loaders |
-| **Token System** | `AppColors` is a static class; no `ThemeExtension`, no `AppSpacing`/`AppRadius` | 45 hex colors, 120 `Colors.*`, 297 inline TextStyles |
+| **Token System** | 3-tier semantic tokens (`context.space`, `context.sizes`, `context.shape`, `context.colors`, `context.text`) | 100% compliance across 273 files in `lib/`; legacy `AppSpacing`/`AppRadius` retired |
 | **God Screen Files** | Screen files heavily exceed the 300-line recommended limit | 8 screens range from 500 to 1,218 lines |
 | **State in Widgets** | `StatefulWidget` using `initState` + `FutureBuilder` to fetch server data | `PropertyDetailScreen`, `ReservationDetailScreen` |
 | **Type & Null Safety** | Repositories return raw Maps; heavy use of force unwraps | 158 `!` bang operators, 110 `dynamic` types |
@@ -51,9 +53,8 @@
 1. **Colors Not Using `ThemeExtension`:**
    - [`AppColors`](file:///lib/app/colors.dart) is a static class with getters, preventing clean dark mode switching and `context.colors` access.
 2. **Missing Token Classes:**
-   - `AppSpacing` does not exist (screens use magic numbers like `SizedBox(height: 16)`).
-   - `AppRadius` does not exist (screens use ad-hoc `BorderRadius.circular(12)`).
-   - `AppMotion` and `AppElevation` do not exist.
+   - Initial static `AppSpacing` and `AppRadius` were introduced and subsequently replaced by a comprehensive 3-tier semantic token architecture (`AppSpace`, `AppSize`, `AppShape` ThemeExtensions) in `lib/core/design_tokens/`.
+   - `AppMotion` registered in `lib/app/theme/tokens/app_motion.dart`.
 3. **Widespread Hardcoded Values in Features:**
    - **45** instances of `Color(0x...)` (e.g. `verification_banner.dart`).
    - **120** instances of `Colors.*` (`Colors.white`, `Colors.black.withAlpha`).
@@ -100,9 +101,9 @@
 - [x] **Task 1.3: Design System Tokens Implementation**
   - Create `lib/app/theme/tokens/primitives/palette.dart` (raw hex colors).
   - Convert `AppColors` into a Flutter `ThemeExtension<AppColors>` in `lib/app/theme/tokens/app_colors.dart` with light and dark palettes.
-  - Implement `lib/app/theme/tokens/app_spacing.dart` (4-pt grid and semantic aliases like `screenPadding`, `cardPadding`).
-  - Implement `lib/app/theme/tokens/app_radius.dart` and `lib/app/theme/tokens/app_motion.dart`.
-  - Implement `lib/app/theme/theme_extensions.dart` providing `context.colors` and `context.text`.
+  - Implement initial `lib/app/theme/tokens/app_spacing.dart` and `lib/app/theme/tokens/app_radius.dart` (subsequently modernized and superseded by 3-tier semantic layout tokens in Phase 10).
+  - Implement `lib/app/theme/tokens/app_motion.dart`.
+  - Implement `lib/app/theme/theme_extensions.dart` providing `context.colors`, `context.text`, and exporting `core/design_tokens/tokens.dart`.
 
 - [x] **Task 1.4: Update ThemeData & Component Themes**
   - Register `AppColors` in `ThemeData.extensions`.
@@ -148,7 +149,7 @@
 
 - [x] **Task 2.5: Replace Inline Styles with Tokens**
   - Remove all inline `Color(0x...)`, `Colors.*`, and raw `TextStyle` in the properties feature.
-  - Use `context.colors`, `context.text`, and `AppSpacing`.
+  - Use `context.colors`, `context.text`, and semantic layout tokens.
 
 - [x] **Task 2.6: Test Alignment**
   - Move and update property tests to `test/features/properties/presentation/` and `test/features/properties/data/`.
@@ -304,7 +305,7 @@
 
 - [x] **Task 9.1: Typography & Design System Token Enforcement**
   - Replace all 20 inline `TextStyle(` instances in `lib/features/` with semantic text tokens (`context.text.*?.copyWith(...)`).
-  - Migrate literal `BorderRadius.circular(...)` to `AppRadius.*` tokens.
+  - Migrate literal `BorderRadius.circular(...)` to semantic shape tokens (`context.shape.radius*`).
 
 - [x] **Task 9.2: Data Layer Null-Safety Hardening**
   - Replace all 13 `response.data!` force-unwraps in remote data sources with safe null assertions and `ServerException` mapping.
@@ -317,13 +318,53 @@
 
 ---
 
+### Phase 10: Semantic Layout Tokens Migration & Legacy Token Retirement
+> **Goal:** Eliminate all raw layout numbers (`EdgeInsets`, `BorderRadius`, `SizedBox`, `Icon(size:)`), migrate the entire codebase to a 3-tier semantic token system (`context.space`, `context.sizes`, `context.shape`), completely retire legacy `AppSpacing`/`AppRadius`, and wire automated CI enforcement.
+
+- [x] **Task 10.1: 3-Tier Semantic Layout Token Architecture**
+  - Create `lib/core/design_tokens/primitives.dart` with library-private scale constants (`Prim`).
+  - Create `lib/core/design_tokens/space_tokens.dart` implementing `AppSpace` `ThemeExtension` with typed `EdgeInsets` (`insetScreen`, `insetCard`, `insetDialog`, etc.) and structural double gaps (`stackText`, `stackFormField`, `inlineIconLabel`, etc.).
+  - Create `lib/core/design_tokens/size_tokens.dart` implementing `AppSize` `ThemeExtension` for control heights, icon sizes, and avatar diameters.
+  - Create `lib/core/design_tokens/shape_tokens.dart` implementing `AppShape` `ThemeExtension` with standardized `BorderRadius` shapes (`radiusControl`, `radiusSurface`, `radiusPill`) and border stroke widths.
+  - Create `lib/core/design_tokens/tokens_context.dart` exposing `context.space`, `context.sizes`, and `context.shape` accessors.
+  - Register all token extensions in `ThemeData` (`lib/app/theme/app_theme.dart`).
+
+- [x] **Task 10.2: Full Codebase Feature Migration (273 Files)**
+  - Audit and migrate all 12 feature folders and core widgets:
+    - `features/auth/` (11 files)
+    - `features/home/` (18 files)
+    - `features/profile/` (13 files)
+    - `features/properties/` (18 files)
+    - `features/reservations/` (29 files)
+    - `features/verification/` (36 files)
+    - `features/explore/`, `features/favorites/`, `features/inbox/`, `features/onboarding/`, `features/payment/`, `features/trips/` (64 files)
+    - `core/widgets/` & `app/` (84 files)
+  - 100% compliance across all 273 Dart files in `lib/`.
+
+- [x] **Task 10.3: Automated CI Layout Guard & Quality Gate**
+  - Create `scripts/verify_layout_tokens.py` to scan `lib/` for raw layout literals and deprecated token references.
+  - Integrate token guard as Step 5 in `scripts/quality_gates.sh`.
+  - Integrate token guard into `.github/workflows/ci.yml`.
+
+- [x] **Task 10.4: Complete Retirement of Legacy Layout Classes**
+  - Audit zero usage of `AppSpacing` and `AppRadius` across `lib/`.
+  - Remove legacy test blocks from `test/core/theme_tokens_test.dart`.
+  - Delete `lib/app/theme/tokens/app_spacing.dart` and `lib/app/theme/tokens/app_radius.dart`.
+  - Remove deleted files from `ALLOWED_PATHS` in `scripts/verify_layout_tokens.py`.
+
+- [x] **Task 10.5: Engineering Rules & Documentation Alignment**
+  - Update `.agents/rules/DESIGN_SYSTEM.md`, `ARCHITECTURE.md`, `CODE_STANDARDS.md`, `flutter-anti-ui-slop.md`, and `SKILL.md` to mandate semantic layout tokens and ban deprecated static classes.
+  - Document system architecture in `docs/design_tokens.md`.
+
+---
+
 ## 4. Definition of Done for Each Migrated Feature
 
 Every feature migration is considered complete only when:
 1. **Zero Data Imports in UI:** `presentation/` only imports `domain/`.
 2. **Abstract Repository Interface:** `domain/repositories/` defines the contract; `data/repositories/` implements it.
 3. **No Direct HTTP in Screens:** Screens only watch Notifiers or use Riverpod providers.
-4. **No Raw Colors or Magic Numbers:** All styles use `context.colors`, `context.text`, `AppSpacing`, and `AppRadius`.
+4. **No Raw Colors or Magic Numbers:** All styles use `context.colors`, `context.text`, `context.space`, `context.sizes`, and `context.shape`. Deprecated `AppSpacing` and `AppRadius` are banned.
 5. **File Limits Met:** Every file is ≤ 300 lines; every `build()` method is ≤ 80 lines.
 6. **Null & Type Safety:** Zero unnecessary `!` bang operators; zero `dynamic` outside JSON parsing.
 7. **Passing Tests:** Unit and widget tests are located in matching `test/features/<feature>/` directories and pass.

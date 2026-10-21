@@ -4,8 +4,6 @@ import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_motion.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/palette.dart';
 
 void main() {
@@ -14,22 +12,6 @@ void main() {
       expect(Palette.red600, const Color(0xFFD61F26));
       expect(Palette.neutral0, const Color(0xFFFFFFFF));
       expect(Palette.green600, const Color(0xFF16A34A));
-    });
-
-    test('AppSpacing maintains 4-pt grid system', () {
-      expect(AppSpacing.xs, 4.0);
-      expect(AppSpacing.sm, 8.0);
-      expect(AppSpacing.md, 16.0);
-      expect(AppSpacing.lg, 24.0);
-      expect(AppSpacing.xl, 32.0);
-      expect(AppSpacing.xxl, 48.0);
-      expect(AppSpacing.screenPadding, AppSpacing.md);
-    });
-
-    test('AppRadius provides standardized border radiuses', () {
-      expect(AppRadius.card, BorderRadius.circular(24.0));
-      expect(AppRadius.button, BorderRadius.circular(12.0));
-      expect(AppRadius.input, BorderRadius.circular(12.0));
     });
 
     test('AppMotion provides standard durations and curves', () {

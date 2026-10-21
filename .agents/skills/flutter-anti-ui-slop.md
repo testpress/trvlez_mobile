@@ -14,7 +14,7 @@ If a UI choice exists because "it looks modern" or "it works for most apps," it 
 
 ## 3. FLUTTER LAYOUT & SPACING DISCIPLINE
 *   **Dynamic Padding Over Hardcoded Clones:** Never reuse `EdgeInsets.all(8.0)` or `16.0` everywhere. Use structured horizontal/vertical spacing. Differentiate content grouping padding (dense, e.g., 8–12) from section edge margins (spacious, e.g., 20–24).
-*   **No Spacing Magic Numbers:** Do not scatter arbitrary `SizedBox(height: 12)`. Use a design-system-driven spacing alias or extension (e.g., `context.space.medium` or `AppSpacing.md`).
+*   **No Spacing or Layout Magic Numbers:** Do not scatter arbitrary `SizedBox(height: 12)` or `EdgeInsets.all(16)`. Use semantic layout tokens from the design system extension (e.g., `context.space.stackFormField`, `context.space.insetCard`, `context.sizes.iconMd`, `context.shape.radiusSurface`). Deprecated static classes like `AppSpacing` and `AppRadius` are banned.
 *   **Layout Safety & Overflows:** Every scrollable or dynamic layout must gracefully accommodate changing viewports. Never risk a `Bottom Overflowed by XX Pixels` asset error.
     * Use `LayoutBuilder` or `MediaQuery` intelligently to scale constraints.
     * Wrap vertical form entry columns in a `SingleChildScrollView` + `SafeArea`.

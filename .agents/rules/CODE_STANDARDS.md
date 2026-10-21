@@ -122,7 +122,7 @@ void dispose() {
 
 ### 4.5 Styling & Responsiveness
 - Consume colors via `context.colors.*` and typography via `context.text.*`.
-- Spacing from `AppSpacing` (e.g. `SizedBox(height: AppSpacing.md)`).
+- Layout tokens from `context.space`, `context.sizes`, and `context.shape` (e.g. `SizedBox(height: context.space.stackFormField)` or `Column(spacing: context.space.stackItem)`). Never use raw numbers or deprecated `AppSpacing`/`AppRadius`.
 - Prefer `SizedBox`, `Padding`, and `Align` over generic `Container` widgets.
 - Use `MediaQuery.sizeOf(context)` or `LayoutBuilder` for screen-size adaptivity.
 

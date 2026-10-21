@@ -226,7 +226,7 @@ class OrdersScreen extends ConsumerWidget {
 1. **One public widget per file:** Filename matches class name in snake_case.
 2. **Classes over methods:** Use widget classes, not `_buildWidget()` methods.
 3. **Short build methods:** Keep `build()` under ~80 lines. Split if larger.
-4. **No magic styling:** Use semantic tokens (`context.colors`, `context.text`, `AppSpacing`, `AppRadius`). Never hardcode hex values or raw font sizes.
+4. **No magic styling:** Use semantic tokens (`context.colors`, `context.text`, `context.space`, `context.sizes`, `context.shape`). Never hardcode hex values, raw font sizes, or raw layout numbers.
 5. **StatefulWidget is only for local UI state:** (e.g. text controllers). Server data belongs in Notifiers.
 6. **Async safety:** Guard context across async gaps: `if (!context.mounted) return;`.
 7. **Side-effects:** Use `ref.listen` in screens for snackbars or navigation; never in Notifiers.
@@ -275,7 +275,7 @@ ProviderScope(
 | Parsing JSON in screens or controllers | Parse in `data/models/*_dto.dart` |
 | Using `FutureBuilder` for server data in screens | Watch `AsyncNotifierProvider` with `.when()` |
 | 500+ line screen files with private helpers | Split into standalone widgets in `presentation/widgets/` |
-| Hardcoded colors/styles (`Color(0x...)`, `Colors.*`) | Use `context.colors`, `context.text`, `AppSpacing` |
+| Hardcoded layout numbers, colors, or styles | Use `context.colors`, `context.text`, `context.space`, `context.sizes`, `context.shape` |
 | Returning `Map<String, dynamic>` from repository | Return strongly typed domain entities |
 | Presentation importing `data/` directly | Presentation imports `domain/repositories/` interface |
 | Feature A importing Feature B internals | Share via `core/` or domain model |
