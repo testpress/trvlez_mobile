@@ -93,6 +93,48 @@ void main() {
     );
 
     testWidgets(
+      'HomeScreen renders Verification in review on FindrCard when verification is processing',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              travelerVerificationStateProvider.overrideWithValue(
+                TravelerVerificationState.submitted,
+              ),
+            ],
+            child: const MaterialApp(home: HomeScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(FindrCard), findsOneWidget);
+        expect(find.text('Verification in review'), findsOneWidget);
+        expect(find.text('Start verification'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'HomeScreen renders Start verification on FindrCard when traveler is unverified',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              travelerVerificationStateProvider.overrideWithValue(
+                TravelerVerificationState.profileComplete,
+              ),
+            ],
+            child: const MaterialApp(home: HomeScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(FindrCard), findsOneWidget);
+        expect(find.text('Start verification'), findsOneWidget);
+        expect(find.text('Verification in review'), findsNothing);
+      },
+    );
+
+    testWidgets(
       'MainScaffold renders all 4 tab destinations and handles navigation',
       (tester) async {
         final router = GoRouter(

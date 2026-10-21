@@ -1,7 +1,5 @@
 /// Which of the four steps the traveller is currently on.
-///
-/// Step 1 (Identity) is already done for a verified traveler.
-enum CheckInStage { requirement, questions, key }
+enum CheckInStage { identity, requirement, questions, key }
 
 /// What this destination needs before online check-in completes.
 enum CheckInRequirement {

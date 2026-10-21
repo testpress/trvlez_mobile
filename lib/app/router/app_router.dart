@@ -55,7 +55,6 @@ import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.
 import 'package:trvlez_mobile/features/verification/presentation/screens/chip_data_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/confirm_details_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_failed_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_final_check_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_intro_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_scan_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_capture_screen.dart';
@@ -70,11 +69,9 @@ import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_processing_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_review_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/selfie_success_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/screens/verification_final_check_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_landing_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/screens/verification_processing_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/screens/verification_status_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_success_screen.dart';
-import 'package:trvlez_mobile/features/verification/presentation/state/processing_stage.dart';
 import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 
 /// Adapter to trigger GoRouter refresh when AuthState changes
@@ -529,8 +526,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ChipDataScreen(),
       ),
       GoRoute(
-        path: AppRoutes.nfcFinalCheck,
-        builder: (context, state) => const NfcFinalCheckScreen(),
+        path: AppRoutes.verificationFinalCheck,
+        builder: (context, state) => const VerificationFinalCheckScreen(),
+      ),
+      GoRoute(
+        path: '/verification/nfc-final-check',
+        redirect: (context, state) => AppRoutes.verificationFinalCheck,
       ),
       GoRoute(
         path: AppRoutes.nfcFailed,
@@ -553,23 +554,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.verificationProcessing,
-        builder: (context, state) {
-          final extras = state.extra as Map<String, dynamic>?;
-          final type = extras?['type'] as ProcessingType?;
-          if (type == null) {
-            // Process death recovery: redirect to status screen which
-            // will reconcile with backend
-            return const VerificationStatusScreen(verificationJobId: null);
-          }
-          return VerificationProcessingScreen(type: type);
-        },
+        redirect: (context, state) => AppRoutes.verificationStatus,
       ),
       GoRoute(
         path: AppRoutes.verificationStatus,
         builder: (context, state) {
           final extras = state.extra as Map<String, dynamic>?;
           final jobId = extras?['jobId'] as String?;
-          return VerificationStatusScreen(verificationJobId: jobId);
+          return VerificationFinalCheckScreen(verificationJobId: jobId);
         },
       ),
     ],

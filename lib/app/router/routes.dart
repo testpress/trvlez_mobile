@@ -112,8 +112,13 @@ class AppRoutes {
   static const String nfcIntro = '/verification/nfc-intro';
   static const String nfcScan = '/verification/nfc-scan';
   static const String chipData = '/verification/chip-data';
-  static const String nfcFinalCheck = '/verification/nfc-final-check';
-  static const String nfcFailed = '/verification/nfc-failed';
+  static const String verificationFinalCheck = '/verification/final-check';
+  @Deprecated('Use verificationFinalCheck instead')
+  static const String nfcFinalCheck = verificationFinalCheck;
+  static const String nfcFailed = '/verification/failed';
+  @Deprecated(
+    'Verification processing is now per-step (passportProcessing / selfieProcessing)',
+  )
   static const String verificationProcessing = '/verification/processing';
   static const String verificationSuccess = '/verification/success';
 }

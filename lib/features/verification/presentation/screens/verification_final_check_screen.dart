@@ -15,15 +15,20 @@ import 'package:trvlez_mobile/features/verification/presentation/widgets/verific
 /// Screen displayed while the backend final decision engine processes all verification inputs.
 ///
 /// Submits verification asynchronously and polls for live status until completion.
-class NfcFinalCheckScreen extends ConsumerStatefulWidget {
-  const NfcFinalCheckScreen({super.key});
+/// When [verificationJobId] is provided or when verification is already in progress,
+/// polls the backend for real-time verification pipeline updates.
+class VerificationFinalCheckScreen extends ConsumerStatefulWidget {
+  final String? verificationJobId;
+
+  const VerificationFinalCheckScreen({super.key, this.verificationJobId});
 
   @override
-  ConsumerState<NfcFinalCheckScreen> createState() =>
-      _NfcFinalCheckScreenState();
+  ConsumerState<VerificationFinalCheckScreen> createState() =>
+      _VerificationFinalCheckScreenState();
 }
 
-class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
+class _VerificationFinalCheckScreenState
+    extends ConsumerState<VerificationFinalCheckScreen> {
   bool _hasNavigated = false;
 
   @override
@@ -31,13 +36,26 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      if (widget.verificationJobId != null) {
+        ref
+            .read(verificationNotifierProvider.notifier)
+            .startPollingVerificationJob(widget.verificationJobId!);
+      }
       final state = ref.read(verificationNotifierProvider);
-      if (state.phase == VerificationPhase.verified) {
+      if (state.phase == VerificationPhase.verified ||
+          state.verificationStatus?.isVerified == true) {
         _navigateToSuccess();
-      } else if (state.phase == VerificationPhase.verificationFailed) {
+      } else if (state.phase == VerificationPhase.verificationFailed ||
+          state.verificationStatus?.isFailed == true) {
         _handleFailure(state);
-      } else if (state.phase != VerificationPhase.submitting &&
-          state.phase != VerificationPhase.verifying) {
+      } else if (state.phase == VerificationPhase.submitting ||
+          state.phase == VerificationPhase.verifying) {
+        // Polling already active or submission currently executing
+      } else if (state.verificationStatus?.isProcessing == true) {
+        ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
+      } else if (state.phase == VerificationPhase.error) {
+        // Already in error state, wait for user to retry
+      } else {
         ref
             .read(verificationNotifierProvider.notifier)
             .submitVerificationAsync();
@@ -113,6 +131,13 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
       title: 'Verification',
       helpLine: false,
       isScrollable: false,
+      onBack: () {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go(AppRoutes.home);
+        }
+      },
       body: [
         VerificationStepper(current: 4, circleSize: sizes.iconDefault),
         const Spacer(flex: 1),
@@ -205,7 +230,7 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
                 AppRoutes.reportProblem,
                 extra: const ProblemReportContext(
                   area: ProblemArea.verification,
-                  screen: AppRoutes.nfcFinalCheck,
+                  screen: AppRoutes.verificationFinalCheck,
                 ),
               );
             },

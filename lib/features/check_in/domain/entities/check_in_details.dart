@@ -20,7 +20,7 @@ class CheckInDetails {
   const CheckInDetails({
     required this.reservation,
     required this.requirement,
-    this.currentStage = CheckInStage.requirement,
+    this.currentStage = CheckInStage.identity,
     this.visaSource,
     this.visaImagePath,
     this.disclosureAgreed = false,

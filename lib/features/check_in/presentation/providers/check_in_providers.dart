@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/features/check_in/domain/entities/check_in_details.dart';
 import 'package:trvlez_mobile/features/check_in/domain/entities/check_in_stage.dart';
@@ -46,13 +47,33 @@ class CheckInNotifier
         : CheckInRequirement.visa;
 
     final isCheckedIn = matched.status == ReservationStatus.checkedIn;
+    final isVerified = ref.watch(isKycVerifiedProvider);
+
+    final defaultStage = isCheckedIn
+        ? CheckInStage.key
+        : (isVerified ? CheckInStage.requirement : CheckInStage.identity);
+
+    final previous = state.valueOrNull;
+    if (previous != null) {
+      final updatedStage = (!isVerified)
+          ? CheckInStage.identity
+          : (previous.currentStage == CheckInStage.identity
+                ? CheckInStage.requirement
+                : previous.currentStage);
+      return previous.copyWith(
+        reservation: matched,
+        requirement: requirement,
+        currentStage: isCheckedIn ? CheckInStage.key : updatedStage,
+        isDone: isCheckedIn || previous.isDone,
+      );
+    }
 
     return CheckInDetails(
       reservation: matched,
       requirement: requirement,
       numberOfGuests: matched.numberOfGuests > 0 ? matched.numberOfGuests : 2,
       isDone: isCheckedIn,
-      currentStage: isCheckedIn ? CheckInStage.key : CheckInStage.requirement,
+      currentStage: defaultStage,
     );
   }
 
@@ -98,6 +119,7 @@ class CheckInNotifier
     if (current == null) return;
 
     final nextStage = switch (stage) {
+      CheckInStage.identity => CheckInStage.requirement,
       CheckInStage.requirement => CheckInStage.questions,
       CheckInStage.questions => CheckInStage.key,
       CheckInStage.key => CheckInStage.key,

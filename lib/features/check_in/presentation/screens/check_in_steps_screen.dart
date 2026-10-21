@@ -6,6 +6,7 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_flag_callout.dart';
@@ -29,8 +30,16 @@ class CheckInStepsScreen extends ConsumerWidget {
     return CheckInStepState.todo;
   }
 
-  String _routeFor(CheckInStage stage, CheckInRequirement requirement) {
+  String _routeFor(
+    CheckInStage stage,
+    CheckInRequirement requirement,
+    TravelerVerificationState verificationState,
+  ) {
     return switch (stage) {
+      CheckInStage.identity =>
+        verificationState.isProcessing
+            ? AppRoutes.verificationStatus
+            : AppRoutes.verificationLanding,
       CheckInStage.requirement =>
         requirement == CheckInRequirement.visa
             ? AppRoutes.checkInVisaPath(reservationId)
@@ -45,6 +54,8 @@ class CheckInStepsScreen extends ConsumerWidget {
     final colors = context.colors;
     final space = context.space;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
+    final isVerified = ref.watch(isKycVerifiedProvider);
+    final verificationState = ref.watch(travelerVerificationStateProvider);
 
     return stateAsync.when(
       loading: () => Scaffold(
@@ -65,6 +76,16 @@ class CheckInStepsScreen extends ConsumerWidget {
         final step = details.currentStage;
         final requirement = details.requirement;
 
+        final identitySubtitle = isVerified
+            ? 'Already verified'
+            : (verificationState.isProcessing
+                  ? 'Verification in review'
+                  : 'Passport and selfie scan');
+
+        final identityState = isVerified
+            ? CheckInStepState.done
+            : _stateFor(step, CheckInStage.identity);
+
         return BrandVerifyScreen(
           title: 'Online check-in',
           backgroundAsset: 'assets/art/bg_checkin_steps.svg',
@@ -73,9 +94,14 @@ class CheckInStepsScreen extends ConsumerWidget {
           isScrollable: false,
           foot: [
             AppButton(
-              label: 'Continue',
+              label: step == CheckInStage.identity
+                  ? (verificationState.isProcessing
+                        ? 'Check status'
+                        : 'Verify identity')
+                  : 'Continue',
               variant: AppButtonVariant.brandWhite,
-              onPressed: () => context.push(_routeFor(step, requirement)),
+              onPressed: () =>
+                  context.push(_routeFor(step, requirement, verificationState)),
             ),
             CheckInNotice(text: requirement.notice),
           ],
@@ -112,12 +138,17 @@ class CheckInStepsScreen extends ConsumerWidget {
             ),
             const Spacer(flex: 1),
 
-            // Step 1: Already verified
-            const CheckInStepTile(
+            // Step 1: Identity verification
+            CheckInStepTile(
               number: 1,
-              state: CheckInStepState.done,
+              state: identityState,
               title: 'Your identity',
-              subtitle: 'Already verified',
+              subtitle: identitySubtitle,
+              onTap: () => context.push(
+                verificationState.isProcessing
+                    ? AppRoutes.verificationStatus
+                    : AppRoutes.verificationLanding,
+              ),
             ),
 
             // Step 2: Destination requirement (Visa or Disclosure)

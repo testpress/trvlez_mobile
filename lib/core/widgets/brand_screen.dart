@@ -112,12 +112,11 @@ class BrandScreen extends StatelessWidget {
                               padding: effectivePadding,
                               child: ConstrainedBox(
                                 constraints: BoxConstraints(
-                                  minHeight: constraints.maxHeight -
+                                  minHeight:
+                                      constraints.maxHeight -
                                       resolvedPadding.vertical,
                                 ),
-                                child: IntrinsicHeight(
-                                  child: body,
-                                ),
+                                child: IntrinsicHeight(child: body),
                               ),
                             );
                           },

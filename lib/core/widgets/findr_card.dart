@@ -6,13 +6,14 @@ import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
-enum FindrState { locked, notJoined, active }
+enum FindrState { locked, processing, notJoined, active }
 
-/// The Findr loyalty and referral card supporting locked, not joined, and active states.
+/// The Findr loyalty and referral card supporting locked, processing, not joined, and active states.
 class FindrCard extends StatelessWidget {
   const FindrCard({
     super.key,
     required this.state,
+    this.ctaLabel,
     this.earned = '£0.00',
     this.joined = 0,
     this.inReview = 0,
@@ -22,6 +23,7 @@ class FindrCard extends StatelessWidget {
   });
 
   final FindrState state;
+  final String? ctaLabel;
   final String earned;
   final int joined;
   final int inReview;
@@ -36,11 +38,14 @@ class FindrCard extends StatelessWidget {
     final shape = context.shape;
     final sizes = context.sizes;
 
-    final ctaLabel = switch (state) {
-      FindrState.locked => 'Start verification',
-      FindrState.notJoined => 'Activate Findr',
-      FindrState.active => 'Recommend a hotel',
-    };
+    final effectiveCtaLabel =
+        ctaLabel ??
+        switch (state) {
+          FindrState.locked => 'Start verification',
+          FindrState.processing => 'Verification in review',
+          FindrState.notJoined => 'Activate Findr',
+          FindrState.active => 'Recommend a hotel',
+        };
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -109,7 +114,7 @@ class FindrCard extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    ctaLabel,
+                    effectiveCtaLabel,
                     style: TextStyle(
                       fontFamily: AppTypography.fontFamily,
                       fontSize: 13,

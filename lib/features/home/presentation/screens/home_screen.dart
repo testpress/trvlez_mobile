@@ -141,7 +141,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final findrPortfolio = ref.watch(findrPortfolioProvider);
     final findrCardState = !isVerified
-        ? FindrState.locked
+        ? (verificationState.isProcessing
+              ? FindrState.processing
+              : FindrState.locked)
         : (findrPortfolio.joined ? FindrState.active : FindrState.notJoined);
 
     return Scaffold(
@@ -266,8 +268,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     due: findrPortfolio.dueAmount,
                     dueDate: findrPortfolio.dueDate,
                     onCta: () {
-                      if (findrCardState == FindrState.locked) {
-                        if (verificationState.isProcessing) {
+                      if (findrCardState == FindrState.locked ||
+                          findrCardState == FindrState.processing) {
+                        if (verificationState.isProcessing ||
+                            verificationState.isFailed) {
                           context.push(AppRoutes.verificationStatus);
                         } else {
                           context.push(AppRoutes.verificationLanding);
