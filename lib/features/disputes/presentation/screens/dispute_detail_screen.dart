@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -47,6 +45,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final draft = ref.watch(disputeDraftProvider);
     final reason = draft.reason ?? DisputeReason.somethingElse;
 
@@ -72,7 +71,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Tell us what happened',
           style: TextStyle(
@@ -83,7 +82,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           '${reason.title} · ${draft.hotel}',
           style: TextStyle(
@@ -93,7 +92,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
 
         // Text input for explanation
         CheckInField(
@@ -116,12 +115,12 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
         ),
 
         // Photo separation privacy callout
-        const CheckInFlagCallout(
+        CheckInFlagCallout(
           icon: AppIcons.shieldLock,
           lead: 'Photos stay separate from your ID. ',
           body:
               'They are kept apart from your passport and selfie, used only to look into problems at this property, and held for 24 months.',
-          marginTop: AppSpacing.md - 2,
+          marginTop: space.stackFormField,
         ),
       ],
     );
@@ -142,32 +141,35 @@ class _AttachRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
     final full = count >= 3;
 
     return Container(
-      margin: const EdgeInsets.only(top: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md - 2),
+      margin: EdgeInsets.only(top: space.stackItem),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.checkInStepPanel,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderRadius: shape.radiusControl,
       ),
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: sizes.avatarSm,
+            height: sizes.avatarSm,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: colors.checkInRingPanel,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
+              borderRadius: shape.radiusControlSm,
             ),
             child: Icon(
               AppIcons.camera,
-              size: 14,
+              size: sizes.iconXs,
               color: colors.brandOnSurface,
             ),
           ),
-          const SizedBox(width: AppSpacing.sm + 2),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +186,7 @@ class _AttachRow extends StatelessWidget {
                     color: colors.brandOnSurface,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: space.stackText),
                 Text(
                   count > 0
                       ? 'Tap + to add more, or tap Clear'
@@ -202,7 +204,7 @@ class _AttachRow extends StatelessWidget {
             GestureDetector(
               onTap: onClear,
               child: Padding(
-                padding: const EdgeInsets.only(right: 8),
+                padding: EdgeInsets.only(right: space.inlineIconLabel),
                 child: Text(
                   'Clear',
                   style: TextStyle(
@@ -219,13 +221,10 @@ class _AttachRow extends StatelessWidget {
             GestureDetector(
               onTap: onTap,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
+                padding: space.insetTag,
                 decoration: BoxDecoration(
                   color: colors.checkInRingPanel,
-                  borderRadius: AppRadius.fullRadius,
+                  borderRadius: shape.radiusPill,
                 ),
                 child: Text(
                   '+ Photo',

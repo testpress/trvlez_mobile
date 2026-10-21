@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
@@ -51,8 +49,9 @@ class PropertyScreen extends ConsumerWidget {
     }
 
     // 2. Otherwise resolve the property ID to fetch full details including real room types.
-    final targetId =
-        (property?.id.isNotEmpty == true) ? property!.id : propertyId;
+    final targetId = (property?.id.isNotEmpty == true)
+        ? property!.id
+        : propertyId;
 
     if (targetId != null && targetId.isNotEmpty) {
       final propAsync = ref.watch(propertyDetailNotifierProvider(targetId));
@@ -83,7 +82,7 @@ class PropertyScreen extends ConsumerWidget {
                           color: context.colors.inkSecondary,
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.md),
+                      SizedBox(height: context.space.stackFormField),
                       ElevatedButton(
                         onPressed: () => ref.refresh(
                           propertyDetailNotifierProvider(targetId),
@@ -130,6 +129,9 @@ class _PropertyHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+
     return AppPinnedHeader(
       child: Row(
         children: [
@@ -140,12 +142,16 @@ class _PropertyHeader extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: () => context.pop(),
               child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.xs),
-                child: Icon(AppIcons.arrowLeft, size: 20.0, color: colors.ink),
+                padding: EdgeInsets.all(space.stackText),
+                child: Icon(
+                  AppIcons.arrowLeft,
+                  size: sizes.iconMd,
+                  color: colors.ink,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           EzWord(
             rest: 'Stays',
             style: TextStyle(
@@ -169,6 +175,8 @@ class _PropertyContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final range = draft.range;
 
     return Scaffold(
@@ -183,28 +191,28 @@ class _PropertyContent extends ConsumerWidget {
                 children: [
                   PropertyPictureBand(draft: draft),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.md,
-                      AppSpacing.md,
+                    padding: EdgeInsets.fromLTRB(
+                      space.insetCard.left,
+                      space.stackFormField,
+                      space.insetCard.right,
                       0,
                     ),
                     child: PropertyInfoCard(draft: draft),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.sm,
-                      AppSpacing.md,
+                    padding: EdgeInsets.fromLTRB(
+                      space.insetCard.left,
+                      space.stackItem,
+                      space.insetCard.right,
                       0,
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.insetCard.left,
                       ),
                       decoration: BoxDecoration(
                         color: colors.surface,
-                        borderRadius: AppRadius.cardRadius,
+                        borderRadius: shape.radiusSurface,
                         boxShadow: [
                           BoxShadow(
                             color: colors.cardShadow,
@@ -236,11 +244,11 @@ class _PropertyContent extends ConsumerWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.md,
-                      AppSpacing.md,
-                      AppSpacing.xs,
+                    padding: EdgeInsets.fromLTRB(
+                      space.insetCard.left,
+                      space.stackFormField,
+                      space.insetCard.right,
+                      space.stackText,
                     ),
                     child: Text(
                       'Rooms',
@@ -262,9 +270,9 @@ class _PropertyContent extends ConsumerWidget {
                     ),
                     if (draft.picks.isEmpty)
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.lg,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: space.insetCard.left,
+                          vertical: space.stackSection,
                         ),
                         child: Center(
                           child: Text(
@@ -280,17 +288,18 @@ class _PropertyContent extends ConsumerWidget {
                       )
                     else
                       for (final pick in draft.picks)
-                      BookingRoomCard(
-                        pick: pick,
-                        differs: !pick.range.sameAs(range),
-                        currencyCode: draft.currencyCode,
-                        onQuantity: (q) => ref
-                            .read(bookingDraftProvider.notifier)
-                            .setRoomQuantity(pick.type.id, q),
-                        onChangeDates: () => showRoomDatesSheet(context, pick),
-                      ),
+                        BookingRoomCard(
+                          pick: pick,
+                          differs: !pick.range.sameAs(range),
+                          currencyCode: draft.currencyCode,
+                          onQuantity: (q) => ref
+                              .read(bookingDraftProvider.notifier)
+                              .setRoomQuantity(pick.type.id, q),
+                          onChangeDates: () =>
+                              showRoomDatesSheet(context, pick),
+                        ),
                   ],
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
                 ],
               ),
             ),

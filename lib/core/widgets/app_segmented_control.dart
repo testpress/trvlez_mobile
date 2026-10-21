@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Accessible pill segmented filter control adhering to the brand design system.
 class AppSegmentedControl extends StatelessWidget {
@@ -21,12 +19,14 @@ class AppSegmentedControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.xs),
+      padding: EdgeInsets.all(space.stackText),
       decoration: BoxDecoration(
         color: colors.page,
-        borderRadius: AppRadius.fullRadius,
+        borderRadius: shape.radiusPill,
       ),
       child: Row(
         children: [
@@ -41,14 +41,12 @@ class AppSegmentedControl extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
                     alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                    ),
+                    padding: EdgeInsets.symmetric(vertical: space.stackItem),
                     decoration: BoxDecoration(
                       color: i == selected
                           ? colors.surface
                           : Colors.transparent,
-                      borderRadius: AppRadius.fullRadius,
+                      borderRadius: shape.radiusPill,
                       boxShadow: i == selected
                           ? [
                               BoxShadow(

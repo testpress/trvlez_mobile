@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -17,6 +16,8 @@ class StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     final (fill, ink) = switch (state) {
       StatusPillState.confirmed => (colors.okFill, colors.okInk),
@@ -26,11 +27,8 @@ class StatusPill extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: fill,
-        borderRadius: AppRadius.fullRadius,
-      ),
+      padding: space.insetTag,
+      decoration: BoxDecoration(color: fill, borderRadius: shape.radiusPill),
       child: Text(
         label,
         style: TextStyle(

@@ -140,22 +140,19 @@ void main() {
       },
     );
 
-    testWidgets(
-      'renders empty selection view when propertyId is empty',
-      (tester) async {
-        await tester.pumpWidget(
-          _buildTestApp(
-            child: const PropertyScreen(propertyId: ''),
-          ),
-        );
-        await tester.pumpAndSettle();
+    testWidgets('renders empty selection view when propertyId is empty', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestApp(child: const PropertyScreen(propertyId: '')),
+      );
+      await tester.pumpAndSettle();
 
-        expect(
-          find.text('Open a property from ezStays or Saved to start a booking.'),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(
+        find.text('Open a property from ezStays or Saved to start a booking.'),
+        findsOneWidget,
+      );
+    });
   });
 
   group('BookingDatesScreen', () {

@@ -63,6 +63,7 @@ class _VerifyNfcPulseState extends State<VerifyNfcPulse>
 
   Widget _buildRing(BuildContext context, double box, int index) {
     final colors = context.colors;
+    final shape = context.shape;
     if (_reducedMotion) {
       return index == 0
           ? Container(
@@ -72,7 +73,7 @@ class _VerifyNfcPulseState extends State<VerifyNfcPulse>
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: colors.verificationStepRing.withValues(alpha: 0.3),
-                  width: 1.5,
+                  width: shape.borderMedium,
                 ),
               ),
             )
@@ -97,7 +98,7 @@ class _VerifyNfcPulseState extends State<VerifyNfcPulse>
             shape: BoxShape.circle,
             border: Border.all(
               color: colors.brandOnSurface.withValues(alpha: 0.6),
-              width: 1.5,
+              width: shape.borderMedium,
             ),
           ),
         ),
@@ -106,6 +107,7 @@ class _VerifyNfcPulseState extends State<VerifyNfcPulse>
   }
 
   Widget _buildCore(BuildContext context, AppColors colors) {
+    final sizes = context.sizes;
     final breathe = _reducedMotion
         ? 1.0
         : 1.0 + 0.07 * (1 - (2 * _controller.value - 1).abs());
@@ -113,14 +115,18 @@ class _VerifyNfcPulseState extends State<VerifyNfcPulse>
     return Transform.scale(
       scale: breathe,
       child: Container(
-        width: 62.0,
-        height: 62.0,
+        width: sizes.pulseIndicator,
+        height: sizes.pulseIndicator,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: colors.verificationCardActiveFill,
         ),
-        child: Icon(AppIcons.nfc, size: 30.0, color: colors.brandOnSurface),
+        child: Icon(
+          AppIcons.nfc,
+          size: sizes.iconXl,
+          color: colors.brandOnSurface,
+        ),
       ),
     );
   }

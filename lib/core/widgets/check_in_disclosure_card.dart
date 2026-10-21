@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -20,26 +18,26 @@ class CheckInDisclosureCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.lines,
-    this.marginTop = AppSpacing.sm + 3,
+    this.marginTop,
   });
 
   final String title;
   final List<CheckInDisclosureLine> lines;
-  final double marginTop;
+  final double? marginTop;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      margin: EdgeInsets.only(top: marginTop),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md - 3,
-        vertical: AppSpacing.sm + 3,
-      ),
+      margin: EdgeInsets.only(top: marginTop ?? space.stackTight),
+      padding: space.insetCardCompact,
       decoration: BoxDecoration(
         color: colors.checkInStepPanel,
-        borderRadius: BorderRadius.circular(AppRadius.md + 1),
+        borderRadius: shape.radiusControl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,23 +52,23 @@ class CheckInDisclosureCard extends StatelessWidget {
               color: colors.brandOnSurface,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm + 1),
+          SizedBox(height: space.stackItem),
           for (int i = 0; i < lines.length; i++) ...[
-            if (i > 0) const SizedBox(height: AppSpacing.sm - 1),
+            if (i > 0) SizedBox(height: space.stackTight),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 1.5),
+                  padding: EdgeInsets.only(top: shape.borderMedium),
                   child: Icon(
                     lines[i].shared ? AppIcons.check : AppIcons.eyeOff,
-                    size: 13,
+                    size: sizes.iconXs,
                     color: lines[i].shared
                         ? colors.brandOnSurface
                         : colors.checkInDisclosureDimIcon,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Expanded(
                   child: Text(
                     lines[i].text,

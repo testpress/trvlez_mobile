@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
@@ -16,12 +14,15 @@ class BookingReviewPropertyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
+      padding: EdgeInsets.all(space.stackItem),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -32,12 +33,12 @@ class BookingReviewPropertyCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const PhotoBox(
-            width: 44,
-            height: 44,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+          PhotoBox(
+            width: sizes.controlMd,
+            height: sizes.controlMd,
+            borderRadius: shape.radiusControl,
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +55,7 @@ class BookingReviewPropertyCard extends StatelessWidget {
                     color: colors.ink,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: space.stackText),
                 Text(
                   draft.propertyPlace,
                   maxLines: 1,

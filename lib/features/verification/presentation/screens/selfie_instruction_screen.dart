@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -20,6 +19,8 @@ class SelfieInstructionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_selfie_intro.svg',
@@ -27,12 +28,12 @@ class SelfieInstructionScreen extends StatelessWidget {
       isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 2, circleSize: 22.0),
+        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
         const Spacer(flex: 1),
         Center(
           child: Container(
-            width: AppSpacing.xxl + AppSpacing.sm,
-            height: AppSpacing.xxl + AppSpacing.sm,
+            width: sizes.controlXl,
+            height: sizes.controlXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -40,7 +41,7 @@ class SelfieInstructionScreen extends StatelessWidget {
             ),
             child: Icon(
               AppIcons.moodSmile,
-              size: AppSpacing.lg + 2,
+              size: sizes.iconLg,
               color: colors.brandOnSurface,
             ),
           ),
@@ -54,7 +55,7 @@ class SelfieInstructionScreen extends StatelessWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           "A few seconds of video, to confirm you're the person in the passport photo.",
           textAlign: TextAlign.center,
@@ -88,7 +89,7 @@ class SelfieInstructionScreen extends StatelessWidget {
           variant: AppButtonVariant.brandWhite,
           onPressed: () => context.push(AppRoutes.selfieCapture),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(
           text: 'Checked on our own systems.\nNever shared with external AI.',
         ),

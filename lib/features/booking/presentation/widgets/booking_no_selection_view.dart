@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -17,6 +16,8 @@ class BookingNoSelectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Scaffold(
       backgroundColor: colors.page,
@@ -29,15 +30,15 @@ class BookingNoSelectionView extends StatelessWidget {
                   behavior: HitTestBehavior.opaque,
                   onTap: () => context.pop(),
                   child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.xs),
+                    padding: EdgeInsets.all(space.stackText),
                     child: Icon(
                       AppIcons.arrowLeft,
-                      size: 20.0,
+                      size: sizes.iconMd,
                       color: colors.ink,
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 EzWord(
                   rest: 'Stays',
                   style: TextStyle(
@@ -53,7 +54,7 @@ class BookingNoSelectionView extends StatelessWidget {
           Expanded(
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.xl),
+                padding: space.insetDialog,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -66,7 +67,7 @@ class BookingNoSelectionView extends StatelessWidget {
                         color: colors.inkSecondary,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    SizedBox(height: space.stackSection),
                     BookingAppButton(
                       label: 'Go to ezStays',
                       onPressed: () => context.go(AppRoutes.ezStays),

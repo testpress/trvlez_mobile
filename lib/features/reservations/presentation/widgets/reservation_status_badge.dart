@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
@@ -14,6 +12,9 @@ class ReservationStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     final Color badgeColor;
     final IconData badgeIcon;
@@ -36,20 +37,20 @@ class ReservationStatusBadge extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
+      padding: space.insetTag,
       decoration: BoxDecoration(
         color: badgeColor.withAlpha(25),
-        borderRadius: AppRadius.pillRadius,
-        border: Border.all(color: badgeColor.withAlpha(80)),
+        borderRadius: shape.radiusPill,
+        border: Border.all(
+          color: badgeColor.withAlpha(80),
+          width: shape.borderDefault,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(badgeIcon, size: 14, color: badgeColor),
-          const SizedBox(width: AppSpacing.xs),
+          Icon(badgeIcon, size: sizes.iconXs, color: badgeColor),
+          SizedBox(width: space.inlineMicro),
           Text(
             status.displayLabel,
             style: AppTypography.label.copyWith(

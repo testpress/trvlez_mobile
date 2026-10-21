@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Standard card container adhering to design system tokens.
 class AppCard extends StatelessWidget {
@@ -27,12 +25,17 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final radius = borderRadius ?? AppRadius.card;
+    final space = context.space;
+    final shape = context.shape;
+
+    final radius = borderRadius ?? shape.radiusSurface;
     final cardColor = color ?? colors.surface;
-    final cardBorder = border ?? Border.all(color: colors.borderSubtle);
+    final cardBorder =
+        border ??
+        Border.all(color: colors.borderSubtle, width: shape.borderDefault);
 
     Widget content = Container(
-      padding: padding ?? const EdgeInsets.all(AppSpacing.cardPadding),
+      padding: padding ?? space.insetCard,
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: radius,

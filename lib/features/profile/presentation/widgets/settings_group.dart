@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -15,13 +13,14 @@ class SettingsGroupHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xs,
-        AppSpacing.md,
+      padding: EdgeInsets.fromLTRB(
+        space.inlineMicro,
+        space.stackFormField,
         0,
-        AppSpacing.xs,
+        space.stackText,
       ),
       child: Text(
         label,
@@ -60,6 +59,9 @@ class SettingsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     final tileColor = danger ? colors.redTint : colors.page;
     final iconColor = danger ? colors.brandPrimary : colors.inkSecondary;
@@ -71,23 +73,23 @@ class SettingsRow extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+          padding: EdgeInsets.symmetric(
+            horizontal: space.insetCard.left,
+            vertical: space.stackItem,
           ),
           child: Row(
             children: [
               Container(
-                width: 28,
-                height: 28,
+                width: sizes.avatarSm,
+                height: sizes.avatarSm,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: tileColor,
-                  borderRadius: AppRadius.smRadius,
+                  borderRadius: shape.radiusControlSm,
                 ),
-                child: Icon(icon, size: 14, color: iconColor),
+                child: Icon(icon, size: sizes.iconXs, color: iconColor),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   label,
@@ -111,17 +113,14 @@ class SettingsRow extends StatelessWidget {
                       color: colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.xs),
+                  SizedBox(width: space.inlineMicro),
                 ],
                 if (count != null) ...[
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
+                    padding: space.insetTagSm,
                     decoration: BoxDecoration(
                       color: colors.brandPrimary,
-                      borderRadius: AppRadius.fullRadius,
+                      borderRadius: shape.radiusPill,
                     ),
                     child: Text(
                       '$count',
@@ -133,11 +132,11 @@ class SettingsRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.xs),
+                  SizedBox(width: space.inlineMicro),
                 ],
                 Icon(
                   AppIcons.chevronRight,
-                  size: 14,
+                  size: sizes.iconXs,
                   color: colors.inkTertiary,
                 ),
               ],
@@ -158,13 +157,19 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
-        border: Border.all(color: colors.cardBorderSoft),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.cardBorderSoft,
+          width: shape.borderDefault,
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -179,8 +184,11 @@ class SettingsGroup extends StatelessWidget {
             rows[i],
             if (i < rows.length - 1)
               Divider(
-                height: 1,
-                indent: AppSpacing.md + 28 + AppSpacing.sm,
+                height: shape.dividerDefault,
+                indent:
+                    space.insetCard.left +
+                    sizes.avatarSm +
+                    space.inlineIconLabel,
                 color: colors.cardBorderSoft,
               ),
           ],

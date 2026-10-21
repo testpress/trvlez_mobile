@@ -41,72 +41,79 @@ void main() {
       ],
     );
 
-    return ProviderScope(
-      child: MaterialApp.router(routerConfig: testRouter),
-    );
+    return ProviderScope(child: MaterialApp.router(routerConfig: testRouter));
   }
 
   group('PassportCaptureScreen', () {
-    testWidgets('renders capture guidance, framing guide, and shutter button without upload option', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'renders capture guidance, framing guide, and shutter button without upload option',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      expect(find.text('Verification'), findsOneWidget);
-      expect(find.text('Fit the page in the frame'), findsOneWidget);
-      expect(find.text('Both the photo page and the code lines.'), findsOneWidget);
-      expect(
-        find.text('Keep the dashed box over the code lines'),
-        findsOneWidget,
-      );
-      expect(find.text('Upload from photo library'), findsNothing);
+        expect(find.text('Verification'), findsOneWidget);
+        expect(find.text('Fit the page in the frame'), findsOneWidget);
+        expect(
+          find.text('Both the photo page and the code lines.'),
+          findsOneWidget,
+        );
+        expect(
+          find.text('Keep the dashed box over the code lines'),
+          findsOneWidget,
+        );
+        expect(find.text('Upload from photo library'), findsNothing);
 
-      // Verify the ICAO TD3 passport framing guide is rendered in the tree
-      expect(find.byType(PassportFramingGuide), findsOneWidget);
+        // Verify the ICAO TD3 passport framing guide is rendered in the tree
+        expect(find.byType(PassportFramingGuide), findsOneWidget);
 
-      // Verify the shutter button is present
-      expect(find.byType(BrandShutter), findsOneWidget);
-    });
+        // Verify the shutter button is present
+        expect(find.byType(BrandShutter), findsOneWidget);
+      },
+    );
 
-    testWidgets('framing guide inside capture screen maintains ICAO aspect ratio', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'framing guide inside capture screen maintains ICAO aspect ratio',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      final framingGuideFinder = find.byType(PassportFramingGuide);
-      expect(framingGuideFinder, findsOneWidget);
+        final framingGuideFinder = find.byType(PassportFramingGuide);
+        expect(framingGuideFinder, findsOneWidget);
 
-      final framingGuide = tester.widget<PassportFramingGuide>(framingGuideFinder);
-      final frameRect = PassportFramingGuide.calculatePassportFrame(
-        framingGuide.viewportSize,
-      );
+        final framingGuide = tester.widget<PassportFramingGuide>(
+          framingGuideFinder,
+        );
+        final frameRect = PassportFramingGuide.calculatePassportFrame(
+          framingGuide.viewportSize,
+        );
 
-      // Verify frame aspect ratio is strictly ICAO TD3 (125mm / 88mm ~ 1.42)
-      final ar = frameRect.width / frameRect.height;
-      expect(ar, closeTo(125.0 / 88.0, 0.01));
-    });
+        // Verify frame aspect ratio is strictly ICAO TD3 (125mm / 88mm ~ 1.42)
+        final ar = frameRect.width / frameRect.height;
+        expect(ar, closeTo(125.0 / 88.0, 0.01));
+      },
+    );
 
-    testWidgets('does not show photo library upload option (live capture only)', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'does not show photo library upload option (live capture only)',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      expect(find.text('Upload from photo library'), findsNothing);
-    });
+        expect(find.text('Upload from photo library'), findsNothing);
+      },
+    );
 
-    testWidgets('shutter press does not trigger gallery when camera is uninitialized', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'shutter press does not trigger gallery when camera is uninitialized',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(BrandShutter));
-      await tester.pump();
+        await tester.tap(find.byType(BrandShutter));
+        await tester.pump();
 
-      expect(find.text('Passport Review Screen'), findsNothing);
-    });
+        expect(find.text('Passport Review Screen'), findsNothing);
+      },
+    );
   });
 }

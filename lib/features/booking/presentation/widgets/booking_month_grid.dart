@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
@@ -27,6 +26,7 @@ class BookingMonthGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final first = DateTime(month.year, month.month, 1);
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
 
@@ -53,9 +53,9 @@ class BookingMonthGrid extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.md,
-            bottom: AppSpacing.xs,
+          padding: EdgeInsets.only(
+            top: space.stackFormField,
+            bottom: space.stackText,
           ),
           child: Text(
             DateFormatter.monthNameYear(month),
@@ -85,7 +85,7 @@ class BookingMonthGrid extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         GridView.count(
           crossAxisCount: 7,
           shrinkWrap: true,
@@ -116,6 +116,8 @@ class _DayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final past = date.isBefore(earliest);
 
     final isFrom =
@@ -142,9 +144,9 @@ class _DayCell extends StatelessWidget {
 
     BorderRadius? tintRadius;
     if (isFrom && to != null) {
-      tintRadius = const BorderRadius.horizontal(left: Radius.circular(999));
+      tintRadius = BorderRadius.horizontal(left: shape.radiusPill.topLeft);
     } else if (isTo) {
-      tintRadius = const BorderRadius.horizontal(right: Radius.circular(999));
+      tintRadius = BorderRadius.horizontal(right: shape.radiusPill.topRight);
     }
 
     return Semantics(
@@ -163,8 +165,8 @@ class _DayCell extends StatelessWidget {
           ),
           alignment: Alignment.center,
           child: Container(
-            width: 32.0,
-            height: 32.0,
+            width: sizes.iconXl,
+            height: sizes.iconXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,

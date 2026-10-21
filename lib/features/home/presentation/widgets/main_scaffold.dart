@@ -28,6 +28,8 @@ class _BottomTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final location = GoRouterState.of(context).matchedLocation;
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
 
@@ -42,13 +44,21 @@ class _BottomTabBar extends StatelessWidget {
       currentIndex = 0;
     }
 
-    final barHeight = math.max(54.0, 48.0 + bottomInset);
+    final barHeight = math.max(
+      sizes.appBarHeight,
+      sizes.touchTargetMin + bottomInset,
+    );
 
     return Container(
       height: barHeight,
       decoration: BoxDecoration(
         color: colors.surface,
-        border: Border(top: BorderSide(color: colors.cardBorderSoft, width: 1)),
+        border: Border(
+          top: BorderSide(
+            color: colors.cardBorderSoft,
+            width: shape.borderDefault,
+          ),
+        ),
       ),
       child: Padding(
         padding: EdgeInsets.only(bottom: bottomInset),
@@ -107,6 +117,8 @@ class _TabBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
     final isSelected = index == currentIndex;
     final activeColor = colors.brandPrimary;
     final inactiveColor = colors.inkTertiary;
@@ -127,10 +139,10 @@ class _TabBarItem extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 20,
+                size: sizes.iconMd,
                 color: isSelected ? activeColor : inactiveColor,
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: space.stackText),
               Text(
                 label,
                 style: TextStyle(

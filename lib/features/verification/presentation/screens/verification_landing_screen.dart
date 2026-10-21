@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -100,12 +98,17 @@ class _VerificationLandingScreenState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final travelerState = ref.watch(travelerVerificationStateProvider);
-    final isVerified = travelerState.isVerified ||
+    final isVerified =
+        travelerState.isVerified ||
         state.phase == VerificationPhase.verified ||
         state.verificationStatus?.isVerified == true;
-    final isSubmitted = travelerState.isProcessing ||
+    final isSubmitted =
+        travelerState.isProcessing ||
         state.phase == VerificationPhase.submitting ||
         state.phase == VerificationPhase.verifying;
 
@@ -128,7 +131,7 @@ class _VerificationLandingScreenState
       },
       isScrollable: false,
       body: [
-        VerificationStepper(current: doneCount, circleSize: 26.0),
+        VerificationStepper(current: doneCount, circleSize: sizes.iconDefault),
         const Spacer(flex: 2),
 
         // Welcome Header
@@ -140,7 +143,7 @@ class _VerificationLandingScreenState
               height: 1.2,
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             'Your identity has been confirmed. You have full access.',
             style: context.text.labelMedium?.copyWith(
@@ -156,7 +159,7 @@ class _VerificationLandingScreenState
               height: 1.2,
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             'All documents submitted. We are reviewing your details.',
             style: context.text.labelMedium?.copyWith(
@@ -167,7 +170,7 @@ class _VerificationLandingScreenState
         ] else ...[
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm - 2,
+            spacing: space.stackTight,
             children: [
               Text(
                 'Welcome to',
@@ -176,10 +179,14 @@ class _VerificationLandingScreenState
                   height: 1.2,
                 ),
               ),
-              const BrandWordmark(planeWidth: 12.0, gap: 3.0, fontSize: 18.0),
+              BrandWordmark(
+                planeWidth: space.inlineButtonGroup,
+                gap: space.inlineMicro,
+                fontSize: 18.0,
+              ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             'Verify your identity to unlock full access.',
             style: context.text.labelMedium?.copyWith(
@@ -210,12 +217,12 @@ class _VerificationLandingScreenState
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.sm - 2),
+        SizedBox(height: space.stackTight),
         Container(
-          height: AppSpacing.xs + 1,
+          height: sizes.indicatorProgressHeight,
           decoration: BoxDecoration(
             color: colors.verificationProgressTrack,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
+            borderRadius: shape.radiusPill,
           ),
           child: Align(
             alignment: Alignment.centerLeft,
@@ -227,7 +234,7 @@ class _VerificationLandingScreenState
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: colors.brandOnSurface,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  borderRadius: shape.radiusPill,
                 ),
               ),
             ),
@@ -261,7 +268,7 @@ class _VerificationLandingScreenState
             variant: AppButtonVariant.brandWhite,
             onPressed: () => context.push(AppRoutes.verificationStatus),
           ),
-        if (isVerified || isSubmitted) const SizedBox(height: AppSpacing.sm),
+        if (isVerified || isSubmitted) SizedBox(height: space.stackItem),
         const BrandSecurityNote(
           text:
               'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
@@ -290,6 +297,9 @@ class _StepCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final isLocked = !isActive && !isDone;
 
     final IconData icon = isDone
@@ -304,24 +314,27 @@ class _StepCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppRadius.md14),
+          borderRadius: shape.radiusControl,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
-            padding: const EdgeInsets.all(AppSpacing.cardPadding - 4),
+            padding: space.insetCardCompact,
             decoration: BoxDecoration(
               color: isActive
                   ? colors.verificationCardActiveFill
                   : colors.brandCardBackground,
-              borderRadius: BorderRadius.circular(AppRadius.md14),
+              borderRadius: shape.radiusControl,
               border: isActive
-                  ? Border.all(color: colors.brandOnSurface, width: 1.5)
+                  ? Border.all(
+                      color: colors.brandOnSurface,
+                      width: shape.borderMedium,
+                    )
                   : null,
             ),
             child: Row(
               children: [
                 Container(
-                  width: AppSpacing.xl,
-                  height: AppSpacing.xl,
+                  width: sizes.iconXl,
+                  height: sizes.iconXl,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -331,13 +344,13 @@ class _StepCard extends StatelessWidget {
                   ),
                   child: Icon(
                     icon,
-                    size: AppSpacing.md - 1,
+                    size: sizes.iconSm,
                     color: (isActive || isDone)
                         ? colors.brandPrimary
                         : colors.verificationStepInactiveText,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.itemGap + 3),
+                SizedBox(width: space.inlineButtonGroup),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +365,7 @@ class _StepCard extends StatelessWidget {
                               : colors.brandOnSurface,
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.xs / 2),
+                      SizedBox(height: space.stackText / 2),
                       Text(
                         stepData.subtitle,
                         maxLines: 2,
@@ -368,10 +381,10 @@ class _StepCard extends StatelessWidget {
                   ),
                 ),
                 if (isActive) ...[
-                  const SizedBox(width: AppSpacing.xs),
+                  SizedBox(width: space.inlineMicro),
                   Icon(
                     AppIcons.chevronRight,
-                    size: AppSpacing.md - 1,
+                    size: sizes.iconSm,
                     color: colors.brandOnSurface,
                   ),
                 ],

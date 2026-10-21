@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
@@ -30,9 +29,9 @@ class BrandVerifyScreen extends StatelessWidget {
     this.helpPrefix = 'Having difficulties? ',
     this.helpLinkText = "Tell us what's wrong",
     this.onHelpTap,
-    this.padHorizontal = AppSpacing.md,
-    this.padTop = AppSpacing.sm,
-    this.padBottom = AppSpacing.md,
+    this.padHorizontal,
+    this.padTop,
+    this.padBottom,
     this.isScrollable = false,
   }) : children = children ?? body;
 
@@ -71,13 +70,13 @@ class BrandVerifyScreen extends StatelessWidget {
   final VoidCallback? onHelpTap;
 
   /// Horizontal padding for content.
-  final double padHorizontal;
+  final double? padHorizontal;
 
   /// Top padding for content below header.
-  final double padTop;
+  final double? padTop;
 
   /// Bottom padding for the foot.
-  final double padBottom;
+  final double? padBottom;
 
   /// Whether the screen should scroll internally if content exceeds the viewport.
   final bool isScrollable;
@@ -99,6 +98,11 @@ class BrandVerifyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+
+    final hPad = padHorizontal ?? space.insetScreen.left;
+    final tPad = padTop ?? space.stackItem;
+    final bPad = padBottom ?? space.insetScreen.left;
 
     return Scaffold(
       backgroundColor: colors.brandSurface,
@@ -121,12 +125,7 @@ class BrandVerifyScreen extends StatelessWidget {
 
             // ── Screen structure ──────────────────────────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(
-                padHorizontal,
-                padTop,
-                padHorizontal,
-                padBottom,
-              ),
+              padding: EdgeInsets.fromLTRB(hPad, tPad, hPad, bPad),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -136,7 +135,7 @@ class BrandVerifyScreen extends StatelessWidget {
                     onBack: onBack,
                     closeIcon: closeIcon,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(height: space.stackItem),
 
                   // Body Content
                   Expanded(
@@ -156,10 +155,10 @@ class BrandVerifyScreen extends StatelessWidget {
 
                   // Pinned Foot
                   if (foot != null || helpLine) ...[
-                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(height: space.stackItem),
                     ...?foot,
                     if (helpLine) ...[
-                      const SizedBox(height: AppSpacing.sm),
+                      SizedBox(height: space.stackItem),
                       _VerifyHelpLine(
                         prefix: helpPrefix,
                         linkText: helpLinkText,
@@ -191,9 +190,10 @@ class _VerifyHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final sizes = context.sizes;
 
     return SizedBox(
-      height: 48,
+      height: sizes.touchTargetMin,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -222,15 +222,15 @@ class _VerifyHeader extends StatelessWidget {
                 label: closeIcon ? 'Close' : 'Back',
                 child: IconButton(
                   onPressed: onBack,
-                  constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48,
+                  constraints: BoxConstraints(
+                    minWidth: sizes.touchTargetMin,
+                    minHeight: sizes.touchTargetMin,
                   ),
-                  splashRadius: 24,
+                  splashRadius: sizes.iconDefault,
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     closeIcon ? AppIcons.close : AppIcons.arrowLeft,
-                    size: 18,
+                    size: sizes.iconSm,
                     color: colors.brandOnSurface,
                   ),
                 ),
@@ -256,6 +256,7 @@ class _VerifyHelpLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final shape = context.shape;
 
     return Center(
       child: FittedBox(
@@ -276,12 +277,12 @@ class _VerifyHelpLine extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: onTap,
               child: Container(
-                padding: const EdgeInsets.only(bottom: 1.0),
+                padding: EdgeInsets.only(bottom: shape.borderDefault),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
                       color: colors.brandUnderline,
-                      width: 1.0,
+                      width: shape.borderDefault,
                     ),
                   ),
                 ),

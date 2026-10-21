@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -73,6 +71,9 @@ class _BrandTextFieldState extends State<BrandTextField> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final isFilled = _controller.text.isNotEmpty;
 
     return Column(
@@ -80,7 +81,10 @@ class _BrandTextFieldState extends State<BrandTextField> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: AppSpacing.xs, bottom: 6),
+          padding: EdgeInsets.only(
+            left: space.inlineMicro,
+            bottom: space.stackTight,
+          ),
           child: Text(
             widget.label,
             style: TextStyle(
@@ -102,7 +106,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
           onFieldSubmitted: (_) => widget.onSubmitted?.call(),
           validator: widget.validator,
           cursorColor: colors.brandOnSurface,
-          cursorWidth: 1.5,
+          cursorWidth: shape.borderMedium,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
             fontSize: 13,
@@ -114,31 +118,37 @@ class _BrandTextFieldState extends State<BrandTextField> {
             filled: true,
             fillColor: colors.brandFieldBackground,
             border: OutlineInputBorder(
-              borderRadius: AppRadius.pillRadius,
+              borderRadius: shape.radiusPill,
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: AppRadius.pillRadius,
+              borderRadius: shape.radiusPill,
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: AppRadius.pillRadius,
+              borderRadius: shape.radiusPill,
               borderSide: BorderSide(
                 color: colors.brandOnSurface.withValues(alpha: 0.6),
-                width: 1.2,
+                width: shape.borderDefault,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: AppRadius.pillRadius,
-              borderSide: BorderSide(color: colors.brandSecondary, width: 1.5),
+              borderRadius: shape.radiusPill,
+              borderSide: BorderSide(
+                color: colors.brandSecondary,
+                width: shape.borderMedium,
+              ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: AppRadius.pillRadius,
-              borderSide: BorderSide(color: colors.brandSecondary, width: 1.5),
+              borderRadius: shape.radiusPill,
+              borderSide: BorderSide(
+                color: colors.brandSecondary,
+                width: shape.borderMedium,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: 12,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: space.insetCard.left,
+              vertical: space.inlineButtonGroup,
             ),
             hintText: widget.placeholder,
             hintStyle: TextStyle(
@@ -162,10 +172,10 @@ class _BrandTextFieldState extends State<BrandTextField> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () => setState(() => _obscured = !_obscured),
                       child: Padding(
-                        padding: const EdgeInsets.only(right: AppSpacing.sm),
+                        padding: EdgeInsets.only(right: space.inlineIconLabel),
                         child: Icon(
                           _obscured ? AppIcons.eye : AppIcons.eyeOff,
-                          size: 16,
+                          size: sizes.iconSm,
                           color: isFilled
                               ? colors.brandOnSurface
                               : colors.brandSecondaryPlaceholder,

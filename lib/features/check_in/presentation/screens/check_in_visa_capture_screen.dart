@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
@@ -103,6 +101,9 @@ class _CheckInVisaCaptureScreenState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return BrandVerifyScreen(
       title: 'Your visa',
@@ -111,10 +112,10 @@ class _CheckInVisaCaptureScreenState
       onBack: () => context.pop(),
       foot: [
         BrandShutter(square: true, onPressed: _handleCapture),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Fit the visa in the frame',
           textAlign: TextAlign.center,
@@ -126,7 +127,7 @@ class _CheckInVisaCaptureScreenState
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'All four edges, and both dates readable.',
           textAlign: TextAlign.center,
@@ -136,7 +137,7 @@ class _CheckInVisaCaptureScreenState
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
 
         // Live camera feed or SVG illustration fallback
         Center(
@@ -145,8 +146,11 @@ class _CheckInVisaCaptureScreenState
             constraints: const BoxConstraints(maxHeight: 280),
             decoration: BoxDecoration(
               color: colors.brandCardBackground,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: colors.brandBorderSubtle, width: 1.5),
+              borderRadius: shape.radiusSurface,
+              border: Border.all(
+                color: colors.brandBorderSubtle,
+                width: shape.borderMedium,
+              ),
             ),
             clipBehavior: Clip.antiAlias,
             child: AspectRatio(
@@ -160,13 +164,17 @@ class _CheckInVisaCaptureScreenState
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(AppIcons.bulb, size: 14, color: colors.brandSecondary),
-            const SizedBox(width: AppSpacing.xs),
+            Icon(
+              AppIcons.bulb,
+              size: sizes.iconXs,
+              color: colors.brandSecondary,
+            ),
+            SizedBox(width: space.inlineMicro),
             Flexible(
               child: Text(
                 'No glare across the hologram',

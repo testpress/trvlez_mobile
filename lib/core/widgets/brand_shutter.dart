@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// Large circular shutter button (square center for document, round for selfie).
 class BrandShutter extends StatelessWidget {
@@ -18,6 +17,8 @@ class BrandShutter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final sizes = context.sizes;
+    final shape = context.shape;
     final enabled = onPressed != null;
 
     return Semantics(
@@ -29,8 +30,8 @@ class BrandShutter extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: onPressed,
           child: Container(
-            width: 58.0,
-            height: 58.0,
+            width: sizes.controlXl,
+            height: sizes.controlXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -39,13 +40,13 @@ class BrandShutter extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,
-              width: recording ? 24.0 : 44.0,
-              height: recording ? 24.0 : 44.0,
+              width: recording ? sizes.iconDefault : sizes.controlMd,
+              height: recording ? sizes.iconDefault : sizes.controlMd,
               decoration: BoxDecoration(
                 color: colors.brandPrimary,
-                borderRadius: BorderRadius.circular(
-                  recording ? 6.0 : (square ? 10.0 : AppRadius.pill),
-                ),
+                borderRadius: recording
+                    ? shape.radiusSubtle
+                    : (square ? shape.radiusControlSm : shape.radiusPill),
               ),
             ),
           ),

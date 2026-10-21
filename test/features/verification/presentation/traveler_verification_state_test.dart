@@ -32,10 +32,7 @@ void main() {
             verificationRepositoryProvider.overrideWithValue(fakeRepo),
             currentProfileProvider.overrideWith(
               () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-1',
-                  onboardingStep: 'verified',
-                ),
+                const Profile(id: 'prof-1', onboardingStep: 'verified'),
               ),
             ),
           ],
@@ -101,10 +98,7 @@ void main() {
             verificationRepositoryProvider.overrideWithValue(fakeRepo),
             currentProfileProvider.overrideWith(
               () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-1',
-                  onboardingStep: 'submitted',
-                ),
+                const Profile(id: 'prof-1', onboardingStep: 'submitted'),
               ),
             ),
           ],
@@ -132,10 +126,7 @@ void main() {
             verificationRepositoryProvider.overrideWithValue(fakeRepo),
             currentProfileProvider.overrideWith(
               () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-1',
-                  onboardingStep: 'profile_complete',
-                ),
+                const Profile(id: 'prof-1', onboardingStep: 'profile_complete'),
               ),
             ),
           ],
@@ -150,37 +141,31 @@ void main() {
       },
     );
 
-    test(
-      'returns failed when verificationStatus reports isFailed',
-      () async {
-        fakeRepo.verificationStatus = const VerificationStatus(
-          sessionId: 'session-fail',
-          status: 'failed',
-          errorReason: 'Passport image blurry',
-        );
+    test('returns failed when verificationStatus reports isFailed', () async {
+      fakeRepo.verificationStatus = const VerificationStatus(
+        sessionId: 'session-fail',
+        status: 'failed',
+        errorReason: 'Passport image blurry',
+      );
 
-        final container = ProviderContainer(
-          overrides: [
-            verificationRepositoryProvider.overrideWithValue(fakeRepo),
-            currentProfileProvider.overrideWith(
-              () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-1',
-                  onboardingStep: 'profile_complete',
-                ),
-              ),
+      final container = ProviderContainer(
+        overrides: [
+          verificationRepositoryProvider.overrideWithValue(fakeRepo),
+          currentProfileProvider.overrideWith(
+            () => _FakeProfileNotifier(
+              const Profile(id: 'prof-1', onboardingStep: 'profile_complete'),
             ),
-          ],
-        );
-        addTearDown(container.dispose);
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
 
-        await container.read(verificationStatusProvider.future);
+      await container.read(verificationStatusProvider.future);
 
-        final state = container.read(travelerVerificationStateProvider);
-        expect(state, equals(TravelerVerificationState.failed));
-        expect(state.isFailed, isTrue);
-      },
-    );
+      final state = container.read(travelerVerificationStateProvider);
+      expect(state, equals(TravelerVerificationState.failed));
+      expect(state.isFailed, isTrue);
+    });
 
     test(
       'reconcileWithBackend recovers verified status and updates travelerVerificationStateProvider',
@@ -195,10 +180,7 @@ void main() {
             verificationRepositoryProvider.overrideWithValue(fakeRepo),
             currentProfileProvider.overrideWith(
               () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-1',
-                  onboardingStep: 'profile_complete',
-                ),
+                const Profile(id: 'prof-1', onboardingStep: 'profile_complete'),
               ),
             ),
           ],

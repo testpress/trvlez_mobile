@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -12,19 +11,21 @@ class VerifyRecordingTime extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: 7.0,
-          height: 7.0,
+          width: sizes.indicatorDot,
+          height: sizes.indicatorDot,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: colors.brandOnSurface,
           ),
         ),
-        const SizedBox(width: AppSpacing.xs),
+        SizedBox(width: space.inlineMicro),
         Text(
           '0:${seconds.toString().padLeft(2, '0')}',
           style: TextStyle(

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -24,6 +23,9 @@ class PassportInstructionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_howto.svg',
@@ -37,8 +39,8 @@ class PassportInstructionScreen extends StatelessWidget {
         }
       },
       body: [
-        const VerificationStepper(current: 0, circleSize: 24.0),
-        const SizedBox(height: AppSpacing.md),
+        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackFormField),
         Text(
           'Passport photo',
           textAlign: TextAlign.center,
@@ -50,7 +52,7 @@ class PassportInstructionScreen extends StatelessWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'We need both of these. Most retakes happen because the bottom two lines were cut off.',
           textAlign: TextAlign.center,
@@ -62,7 +64,7 @@ class PassportInstructionScreen extends StatelessWidget {
             height: 1.4,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Center(
           child: SvgPicture.asset(
             'assets/art/passport_diagram.svg',
@@ -71,21 +73,21 @@ class PassportInstructionScreen extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         const BrandPointerPair(
           items: [
             ('1', 'Photo page', 'Your picture and details, sharp'),
             ('2', 'Code lines', 'Every character, nothing cropped'),
           ],
         ),
-        const SizedBox(height: AppSpacing.md),
-        const BrandInfoCard(
-          borderRadius: 13.0,
-          paddingVertical: 11.0,
-          paddingHorizontal: 12.0,
-          itemGap: 8.0,
-          iconSize: 13.0,
-          bullets: [
+        SizedBox(height: space.stackFormField),
+        BrandInfoCard(
+          borderRadius: shape.radiusControl.topLeft.x,
+          paddingVertical: space.inlineButtonGroup,
+          paddingHorizontal: space.inlineButtonGroup,
+          itemGap: space.stackItem,
+          iconSize: sizes.iconXs,
+          bullets: const [
             BrandBullet(
               icon: AppIcons.bulb,
               text: 'Well lit, no glare or flash reflection',
@@ -107,7 +109,7 @@ class PassportInstructionScreen extends StatelessWidget {
           variant: AppButtonVariant.brandWhite,
           onPressed: () => context.push(AppRoutes.passportCapture),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(
           text:
               'Proprietary ID verification. Encrypted.\nNever shared with external AI.',

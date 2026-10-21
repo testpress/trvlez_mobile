@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -38,6 +37,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
 
     return stateAsync.when(
@@ -106,7 +106,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
               variant: AppButtonVariant.brandWhite,
               onPressed: allInvited ? onwards : () => openInviteSheet(1),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             AppButton(
               label: 'Finish without them',
               variant: AppButtonVariant.brandOutline,
@@ -115,7 +115,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
             const CheckInNotice(text: "Each guest's documents stay their own."),
           ],
           children: [
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             Text(
               "Who's staying",
               style: TextStyle(
@@ -126,7 +126,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               "The hotel needs ID for every adult guest. Each person verifies themselves — you won't see their documents.",
               style: TextStyle(
@@ -136,7 +136,7 @@ class CheckInGuestsScreen extends ConsumerWidget {
                 height: 1.35,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
 
             // Booker Row
             CheckInGuestRow(
@@ -168,10 +168,10 @@ class CheckInGuestsScreen extends ConsumerWidget {
               lead: '1 of $adults ${adults == 1 ? 'guest' : 'guests'} ready. ',
               body:
                   'You can finish check-in now — anyone not verified will show ID at the desk as usual.',
-              marginTop: AppSpacing.md - 2,
+              marginTop: space.stackFormField,
               centreIcon: true,
             ),
-            const SizedBox(height: AppSpacing.sm + 2),
+            SizedBox(height: space.stackItem),
 
             const BrandInfoCard(
               bullets: [

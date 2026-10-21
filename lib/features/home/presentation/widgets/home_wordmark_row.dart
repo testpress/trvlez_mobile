@@ -22,6 +22,9 @@ class HomeWordmarkRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Row(
       children: [
@@ -57,19 +60,19 @@ class HomeWordmarkRow extends StatelessWidget {
             button: true,
             label: isDarkMode ? 'Switch to light mode' : 'Switch to dark mode',
             child: InkWell(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: shape.radiusOverlay,
               onTap: onThemeToggle,
               child: Padding(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(space.inlineIconLabel),
                 child: Icon(
                   isDarkMode ? AppIcons.sun : AppIcons.bulb,
-                  size: 20,
+                  size: sizes.iconMd,
                   color: colors.textPrimary,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: space.inlineMicro),
         ],
         Semantics(
           button: true,
@@ -77,25 +80,32 @@ class HomeWordmarkRow extends StatelessWidget {
               ? 'Notifications, $unreadCount unread'
               : 'Notifications',
           child: InkWell(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: shape.radiusOverlay,
             onTap: onBellTap,
             child: Padding(
-              padding: const EdgeInsets.all(8), // Ensures minimum 48dp hit area
+              padding: EdgeInsets.all(space.inlineIconLabel),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Icon(AppIcons.bell, size: 22, color: colors.textPrimary),
+                  Icon(
+                    AppIcons.bell,
+                    size: sizes.iconDefault,
+                    color: colors.textPrimary,
+                  ),
                   if (unreadCount > 0)
                     Positioned(
                       top: -1,
                       right: -1,
                       child: Container(
-                        width: 8,
-                        height: 8,
+                        width: sizes.indicatorDot,
+                        height: sizes.indicatorDot,
                         decoration: BoxDecoration(
                           color: colors.brandPrimary,
                           shape: BoxShape.circle,
-                          border: Border.all(color: colors.surface, width: 1.5),
+                          border: Border.all(
+                            color: colors.surface,
+                            width: shape.borderMedium,
+                          ),
                         ),
                       ),
                     ),

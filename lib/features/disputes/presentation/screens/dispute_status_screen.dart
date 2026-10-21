@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -22,6 +21,7 @@ class DisputeStatusScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final disputes = ref.watch(disputesProvider);
     final dispute = disputes[reservationId];
 
@@ -56,7 +56,7 @@ class DisputeStatusScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Payment on hold',
           style: TextStyle(
@@ -67,7 +67,7 @@ class DisputeStatusScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           '$hotel · raised $raisedText',
           style: TextStyle(
@@ -77,16 +77,16 @@ class DisputeStatusScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
 
-        const CheckInFlagCallout(
+        CheckInFlagCallout(
           icon: AppIcons.clock,
           lead: "We're looking into it. ",
           body:
               'Your payment stays with us until this is closed. We will email you before anything changes.',
-          marginTop: AppSpacing.sm,
+          marginTop: space.stackItem,
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
 
         _StatusDetailRow(
           label: 'Reason',
@@ -123,21 +123,27 @@ class _StatusDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: EdgeInsets.symmetric(vertical: space.stackItem),
       decoration: BoxDecoration(
         border: last
             ? null
             : Border(
-                bottom: BorderSide(color: colors.checkInPassRef, width: 1),
+                bottom: BorderSide(
+                  color: colors.checkInPassRef,
+                  width: shape.borderDefault,
+                ),
               ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 80,
+            width: sizes.thumbPhotoSm,
             child: Text(
               label,
               style: TextStyle(

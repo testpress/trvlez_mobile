@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -24,26 +22,26 @@ class CheckInBringCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.lines,
-    this.marginTop = AppSpacing.md,
+    this.marginTop,
   });
 
   final String title;
   final List<CheckInBringLine> lines;
-  final double marginTop;
+  final double? marginTop;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      margin: EdgeInsets.only(top: marginTop),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md - 3,
-        vertical: AppSpacing.sm + 3,
-      ),
+      margin: EdgeInsets.only(top: marginTop ?? space.stackFormField),
+      padding: space.insetCardCompact,
       decoration: BoxDecoration(
         color: colors.checkInStepPanel,
-        borderRadius: BorderRadius.circular(AppRadius.md + 1),
+        borderRadius: shape.radiusControl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,13 +56,17 @@ class CheckInBringCard extends StatelessWidget {
               color: colors.brandOnSurface,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm + 1),
+          SizedBox(height: space.stackItem),
           for (int i = 0; i < lines.length; i++) ...[
-            if (i > 0) const SizedBox(height: AppSpacing.sm),
+            if (i > 0) SizedBox(height: space.stackItem),
             Row(
               children: [
-                Icon(lines[i].icon, size: 14, color: colors.brandSecondary),
-                const SizedBox(width: AppSpacing.sm + 1),
+                Icon(
+                  lines[i].icon,
+                  size: sizes.iconXs,
+                  color: colors.brandSecondary,
+                ),
+                SizedBox(width: space.inlineIconLabel),
                 Expanded(
                   child: Text.rich(
                     TextSpan(

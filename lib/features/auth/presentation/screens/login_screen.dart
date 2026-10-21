@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
@@ -91,6 +90,8 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final loginState = ref.watch(loginControllerProvider);
 
     return BrandScreen(
@@ -120,7 +121,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 height: 1.25,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               'Sign in to continue your journey',
               style: TextStyle(
@@ -132,7 +133,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
 
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: space.stackSection),
 
             // ── Form Inputs ──────────────────────────────────────────────
             BrandTextField(
@@ -145,7 +146,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               validator: validateEmail,
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             BrandTextField(
               label: 'Password',
@@ -158,7 +159,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               onSubmitted: onSubmit,
             ),
 
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
 
             // ── Forgot Password Link ─────────────────────────────────────
             Align(
@@ -168,19 +169,19 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 label: 'Forgot password?',
                 child: InkWell(
                   onTap: () => context.push(AppRoutes.forgotPassword),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: shape.radiusSubtle,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 6,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: space.inlineMicro,
+                      vertical: space.stackTight,
                     ),
                     child: Container(
-                      padding: const EdgeInsets.only(bottom: 1),
+                      padding: EdgeInsets.only(bottom: shape.borderDefault),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: colors.brandUnderline,
-                            width: 1,
+                            width: shape.borderDefault,
                           ),
                         ),
                       ),
@@ -199,7 +200,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
 
-            const SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: space.stackHero),
 
             // ── Security Note ────────────────────────────────────────────
             const BrandSecurityNote(
@@ -207,7 +208,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                   'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // ── Submit Button ────────────────────────────────────────────
             AppButton(
@@ -217,7 +218,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               onPressed: onSubmit,
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // ── Alternative Action Line ──────────────────────────────────
             BrandAltLine(

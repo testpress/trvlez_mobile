@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -130,6 +129,8 @@ class _PassportProcessingScreenState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
 
     ref.listen<VerificationState>(verificationNotifierProvider, (
@@ -148,8 +149,8 @@ class _PassportProcessingScreenState
       helpLine: false,
       isScrollable: true,
       body: [
-        const VerificationStepper(current: 0, circleSize: 24.0),
-        const SizedBox(height: AppSpacing.xl),
+        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackHero),
         Center(
           child: SvgPicture.asset(
             'assets/art/passport_processing.svg',
@@ -158,7 +159,7 @@ class _PassportProcessingScreenState
             fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         VerifyProgressTrio(
           labels: const ['Upload', 'Check', 'Read'],
           states: [
@@ -166,9 +167,9 @@ class _PassportProcessingScreenState
               i < doneCount ? TrioState.done : TrioState.waiting,
           ],
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         SizedBox(
-          height: 28.0,
+          height: sizes.avatarSm,
           child: Center(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),

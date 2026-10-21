@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
@@ -29,22 +27,24 @@ class BookingRoomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final chosen = pick.quantity > 0;
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
+      margin: EdgeInsets.fromLTRB(
+        space.insetCard.left,
         0,
-        AppSpacing.md,
-        AppSpacing.sm,
+        space.insetCard.right,
+        space.stackItem,
       ),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         border: Border.all(
           color: chosen ? colors.brandPrimary : colors.cardBorderSoft,
-          width: 1.0,
+          width: shape.borderDefault,
         ),
         boxShadow: [
           BoxShadow(
@@ -74,7 +74,7 @@ class BookingRoomCard extends StatelessWidget {
                         color: colors.ink,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       'Sleeps ${pick.type.sleeps} · ${PriceFormatter.formatPrice(pick.type.nightly.toDouble(), currencyCode: currencyCode)} a night',
                       style: TextStyle(
@@ -86,7 +86,7 @@ class BookingRoomCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               BookingStepper(
                 value: pick.quantity,
                 onChanged: onQuantity,
@@ -97,10 +97,15 @@ class BookingRoomCard extends StatelessWidget {
           ),
           if (chosen) ...[
             Container(
-              margin: const EdgeInsets.only(top: AppSpacing.sm),
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              margin: EdgeInsets.only(top: space.stackItem),
+              padding: EdgeInsets.only(top: space.stackText),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: colors.line)),
+                border: Border(
+                  top: BorderSide(
+                    color: colors.line,
+                    width: shape.borderDefault,
+                  ),
+                ),
               ),
               child: Row(
                 children: [
@@ -121,10 +126,7 @@ class BookingRoomCard extends StatelessWidget {
                       behavior: HitTestBehavior.opaque,
                       onTap: onChangeDates,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4.0,
-                          horizontal: 8.0,
-                        ),
+                        padding: space.insetTag,
                         child: Text(
                           'Change',
                           style: TextStyle(
@@ -140,7 +142,7 @@ class BookingRoomCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               '${PriceFormatter.formatPrice(pick.total.toDouble(), currencyCode: currencyCode)} · ${pick.quantity} ${pick.quantity == 1 ? 'room' : 'rooms'}',
               style: TextStyle(

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/design_tokens/tokens.dart';
 
-InputDecorationTheme buildInputTheme(AppColors colors) {
+InputDecorationTheme buildInputTheme(
+  AppColors colors, {
+  AppSpace space = AppSpace.comfortable,
+  AppShape shape = AppShape.standard,
+}) {
   return InputDecorationTheme(
     filled: true,
     fillColor: colors.surfaceSubtle,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    contentPadding: space.insetInput,
     hintStyle: const TextStyle(
       fontFamily: AppTypography.fontFamily,
       fontSize: 14,
@@ -20,24 +24,39 @@ InputDecorationTheme buildInputTheme(AppColors colors) {
       fontWeight: TypeScale.medium,
     ).copyWith(color: colors.textSecondary),
     border: OutlineInputBorder(
-      borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.borderSubtle),
+      borderRadius: shape.radiusControl,
+      borderSide: BorderSide(
+        color: colors.borderSubtle,
+        width: shape.borderDefault,
+      ),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.borderSubtle),
+      borderRadius: shape.radiusControl,
+      borderSide: BorderSide(
+        color: colors.borderSubtle,
+        width: shape.borderDefault,
+      ),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.borderFocused, width: 1.5),
+      borderRadius: shape.radiusControl,
+      borderSide: BorderSide(
+        color: colors.borderFocused,
+        width: shape.borderMedium,
+      ),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.feedbackError),
+      borderRadius: shape.radiusControl,
+      borderSide: BorderSide(
+        color: colors.feedbackError,
+        width: shape.borderDefault,
+      ),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: AppRadius.input,
-      borderSide: BorderSide(color: colors.feedbackError, width: 1.5),
+      borderRadius: shape.radiusControl,
+      borderSide: BorderSide(
+        color: colors.feedbackError,
+        width: shape.borderMedium,
+      ),
     ),
     errorStyle: const TextStyle(
       fontFamily: AppTypography.fontFamily,

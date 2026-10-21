@@ -191,15 +191,18 @@ void main() {
       },
     );
 
-    test('maps PlatformException with not supported message to nfcNotAvailable', () {
-      final error = PlatformException(
-        code: 'NOT_SUPPORTED',
-        message: 'This device does not support NFC.',
-      );
-      final nfcError = NfcErrorMapper.fromException(error);
+    test(
+      'maps PlatformException with not supported message to nfcNotAvailable',
+      () {
+        final error = PlatformException(
+          code: 'NOT_SUPPORTED',
+          message: 'This device does not support NFC.',
+        );
+        final nfcError = NfcErrorMapper.fromException(error);
 
-      expect(nfcError.type, NfcErrorType.nfcNotAvailable);
-      expect(nfcError.isRetryable, isFalse);
-    });
+        expect(nfcError.type, NfcErrorType.nfcNotAvailable);
+        expect(nfcError.isRetryable, isFalse);
+      },
+    );
   });
 }

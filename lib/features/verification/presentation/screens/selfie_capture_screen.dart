@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
@@ -137,10 +136,11 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
     final cam = _cameraController;
 
     return BrandVerifyScreen(
@@ -150,8 +150,8 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
       isScrollable: true,
       onBack: _isRecording ? null : () => context.pop(),
       body: [
-        const VerificationStepper(current: 2, circleSize: 22.0),
-        const SizedBox(height: AppSpacing.sm),
+        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackItem),
         Text(
           _isRecording ? 'Keep still' : 'Centre your face',
           textAlign: TextAlign.center,
@@ -163,7 +163,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           _isRecording
               ? 'Hold steady until the progress ring completes.'
@@ -176,7 +176,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Center(
           child: VerifyFaceOval(
             width: kOvalWidth,
@@ -202,22 +202,22 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
                 : null,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Center(
           child: VerifyRecordingTime(
             seconds: _elapsed.clamp(0, kSelfieSeconds),
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               _isRecording ? AppIcons.video : AppIcons.moodSmile,
-              size: 14.0,
+              size: sizes.iconXs,
               color: colors.brandSecondary,
             ),
-            const SizedBox(width: AppSpacing.xs),
+            SizedBox(width: space.inlineMicro),
             Flexible(
               child: Text(
                 _isRecording
@@ -233,7 +233,6 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
             ),
           ],
         ),
-
       ],
       foot: [
         BrandShutter(
@@ -241,7 +240,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
           recording: _isRecording,
           onPressed: _isRecording ? _stopRecording : _startRecording,
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Center(
           child: InkWell(
             onTap: () {
@@ -254,7 +253,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(

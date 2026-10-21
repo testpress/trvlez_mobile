@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -22,6 +20,9 @@ class CheckInBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
@@ -29,13 +30,16 @@ class CheckInBanner extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: AppRadius.cardRadius,
+          borderRadius: shape.radiusSurface,
           onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
               color: colors.surface,
-              border: Border.all(color: colors.cardBorderSoft),
-              borderRadius: AppRadius.cardRadius,
+              border: Border.all(
+                color: colors.cardBorderSoft,
+                width: shape.borderDefault,
+              ),
+              borderRadius: shape.radiusSurface,
               boxShadow: [
                 BoxShadow(
                   color: colors.cardShadow,
@@ -45,34 +49,37 @@ class CheckInBanner extends StatelessWidget {
               ],
             ),
             child: ClipRRect(
-              borderRadius: AppRadius.cardRadius,
+              borderRadius: shape.radiusSurface,
               child: IntrinsicHeight(
                 child: Row(
                   children: [
-                    Container(width: 3, color: colors.brandPrimary),
+                    Container(
+                      width: shape.borderFocus,
+                      color: colors.brandPrimary,
+                    ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.sm,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: space.inlineItem,
+                          vertical: space.stackItem,
                         ),
                         child: Row(
                           children: [
                             Container(
-                              width: 32,
-                              height: 32,
+                              width: sizes.iconXl,
+                              height: sizes.iconXl,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: colors.redTint,
-                                borderRadius: AppRadius.mdRadius,
+                                borderRadius: shape.radiusControl,
                               ),
                               child: Icon(
                                 AppIcons.doorEnter,
-                                size: 16,
+                                size: sizes.iconSm,
                                 color: colors.brandPrimary,
                               ),
                             ),
-                            const SizedBox(width: AppSpacing.sm),
+                            SizedBox(width: space.inlineIconLabel),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +96,7 @@ class CheckInBanner extends StatelessWidget {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: space.stackText),
                                   Text(
                                     subtitle,
                                     style: TextStyle(
@@ -105,7 +112,7 @@ class CheckInBanner extends StatelessWidget {
                             ),
                             Icon(
                               AppIcons.chevronRight,
-                              size: 16,
+                              size: sizes.iconSm,
                               color: colors.brandPrimary,
                             ),
                           ],

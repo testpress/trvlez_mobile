@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Card container for grouping reservation details under a header title.
@@ -18,13 +16,18 @@ class ReservationInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: colors.borderSubtle),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.borderSubtle,
+          width: shape.borderDefault,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +39,7 @@ class ReservationInfoCard extends StatelessWidget {
               color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           ...children,
         ],
       ),
@@ -60,14 +63,16 @@ class ReservationInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      padding: EdgeInsets.symmetric(vertical: space.stackText),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: colors.textSecondary),
-          const SizedBox(width: AppSpacing.sm),
+          Icon(icon, size: sizes.iconSm, color: colors.textSecondary),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Text(
               label,
@@ -77,7 +82,7 @@ class ReservationInfoRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Text(
             value,
             style: AppTypography.label.copyWith(

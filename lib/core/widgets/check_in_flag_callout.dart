@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -12,28 +10,29 @@ class CheckInFlagCallout extends StatelessWidget {
     required this.icon,
     required this.lead,
     required this.body,
-    this.marginTop = AppSpacing.sm + 4,
+    this.marginTop,
     this.centreIcon = false,
   });
 
   final IconData icon;
   final String lead;
   final String body;
-  final double marginTop;
+  final double? marginTop;
   final bool centreIcon;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      margin: EdgeInsets.only(top: marginTop),
-      padding: EdgeInsets.all(
-        centreIcon ? AppSpacing.sm + 1 : AppSpacing.sm + 2,
-      ),
+      margin: EdgeInsets.only(top: marginTop ?? space.stackTight),
+      padding: space.insetCardCompact,
       decoration: BoxDecoration(
         color: colors.checkInFlagPanel,
-        borderRadius: BorderRadius.circular(AppRadius.md - 1),
+        borderRadius: shape.radiusControl,
       ),
       child: Row(
         crossAxisAlignment: centreIcon
@@ -41,10 +40,10 @@ class CheckInFlagCallout extends StatelessWidget {
             : CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: centreIcon ? 0 : 1.5),
-            child: Icon(icon, size: 14, color: colors.brandSecondary),
+            padding: EdgeInsets.only(top: centreIcon ? 0 : shape.borderMedium),
+            child: Icon(icon, size: sizes.iconXs, color: colors.brandSecondary),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Text.rich(
               TextSpan(

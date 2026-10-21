@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
@@ -22,6 +20,9 @@ class BookedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final made = ref.watch(lastCreatedBookingsProvider);
 
     final total = made.fold<int>(0, (sum, b) => sum + b.total);
@@ -51,14 +52,14 @@ class BookedScreen extends ConsumerWidget {
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              padding: EdgeInsets.symmetric(horizontal: space.insetCard.left),
               child: Column(
                 children: [
-                  const SizedBox(height: 36.0),
+                  SizedBox(height: sizes.avatarMd),
                   Center(
                     child: Container(
-                      width: 56.0,
-                      height: 56.0,
+                      width: sizes.controlXl,
+                      height: sizes.controlXl,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -66,12 +67,12 @@ class BookedScreen extends ConsumerWidget {
                       ),
                       child: Icon(
                         AppIcons.check,
-                        size: 26.0,
+                        size: sizes.iconLg,
                         color: colors.okInk,
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
                   Center(
                     child: Text(
                       made.length > 1
@@ -85,22 +86,19 @@ class BookedScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
                   for (final booking in made)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                      padding: EdgeInsets.only(bottom: space.stackItem),
                       child: Column(
                         children: [
                           if (booking.confirmationCode != null &&
                               booking.confirmationCode!.isNotEmpty) ...[
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
+                              padding: space.insetTag,
                               decoration: BoxDecoration(
                                 color: colors.surfaceSubtle,
-                                borderRadius: AppRadius.pillRadius,
+                                borderRadius: shape.radiusPill,
                               ),
                               child: Text(
                                 'Confirmation code: ${booking.confirmationCode}',
@@ -112,7 +110,7 @@ class BookedScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: space.stackTight),
                           ],
                           Text(
                             '${booking.propertyName} · ${booking.roomLine}',
@@ -124,7 +122,7 @@ class BookedScreen extends ConsumerWidget {
                               color: colors.ink,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: space.stackText),
                           Text(
                             '${DateFormatter.dayMonth(booking.range.from)} – ${DateFormatter.dayMonth(booking.range.to)} · ${booking.guests.summary}',
                             textAlign: TextAlign.center,
@@ -139,10 +137,10 @@ class BookedScreen extends ConsumerWidget {
                     ),
                   if (deadline != null)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.lg,
-                        AppSpacing.sm,
-                        AppSpacing.lg,
+                      padding: EdgeInsets.fromLTRB(
+                        space.stackSection,
+                        space.stackItem,
+                        space.stackSection,
                         0,
                       ),
                       child: Text(
@@ -159,10 +157,10 @@ class BookedScreen extends ConsumerWidget {
                     )
                   else
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.lg,
-                        AppSpacing.sm,
-                        AppSpacing.lg,
+                      padding: EdgeInsets.fromLTRB(
+                        space.stackSection,
+                        space.stackItem,
+                        space.stackSection,
                         0,
                       ),
                       child: Text(
@@ -175,7 +173,7 @@ class BookedScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
                   Text(
                     'Check-in opens on the day you arrive.',
                     textAlign: TextAlign.center,
@@ -190,15 +188,17 @@ class BookedScreen extends ConsumerWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              AppSpacing.md,
+            padding: EdgeInsets.fromLTRB(
+              space.insetCard.left,
+              space.stackItem,
+              space.insetCard.right,
+              space.insetCard.bottom,
             ),
             decoration: BoxDecoration(
               color: colors.surface,
-              border: Border(top: BorderSide(color: colors.line)),
+              border: Border(
+                top: BorderSide(color: colors.line, width: shape.borderDefault),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: colors.cardShadow,
@@ -221,7 +221,7 @@ class BookedScreen extends ConsumerWidget {
                     onPressed: () => context.go(AppRoutes.ezStays),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    padding: EdgeInsets.only(top: space.stackItem),
                     child: Text(
                       deadline == null
                           ? 'Your card has been charged.'

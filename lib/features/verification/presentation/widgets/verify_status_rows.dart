@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -37,12 +35,17 @@ class VerifyStatusRows extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 14.0),
+      padding: EdgeInsets.symmetric(
+        vertical: space.stackTight,
+        horizontal: space.inlineItem,
+      ),
       decoration: BoxDecoration(
         color: colors.brandCardBackground,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: shape.radiusControl,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -73,25 +76,28 @@ class _StatusRowTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final isWaiting = item.status == VerifyRowStatus.running;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: space.stackItem),
       decoration: BoxDecoration(
         border: last
             ? null
             : Border(
                 bottom: BorderSide(
                   color: colors.verificationDivider,
-                  width: 1.0,
+                  width: shape.borderDefault,
                 ),
               ),
       ),
       child: Row(
         children: [
           Container(
-            width: 18.0,
-            height: 18.0,
+            width: sizes.iconSm,
+            height: sizes.iconSm,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -105,13 +111,13 @@ class _StatusRowTile extends StatelessWidget {
                 VerifyRowStatus.running => AppIcons.dots,
                 VerifyRowStatus.redo => AppIcons.refresh,
               },
-              size: 11.0,
+              size: sizes.iconXs,
               color: (isWaiting || isDimmed)
                   ? colors.brandOnSurface
                   : colors.brandPrimary,
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Text(
               item.label,
@@ -125,15 +131,18 @@ class _StatusRowTile extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+            padding: space.insetTagSm,
             decoration: BoxDecoration(
               color: isWaiting ? Colors.transparent : colors.brandOnSurface,
               border: isWaiting
-                  ? Border.all(color: colors.verificationStepRing, width: 1.0)
+                  ? Border.all(
+                      color: colors.verificationStepRing,
+                      width: shape.borderDefault,
+                    )
                   : null,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
+              borderRadius: shape.radiusPill,
             ),
             child: Text(
               switch (item.status) {

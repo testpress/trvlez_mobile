@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -16,6 +16,9 @@ class VerificationStatusActions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     if (state.isFailed) {
       return Column(
@@ -33,12 +36,12 @@ class VerificationStatusActions extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.onSurface,
               foregroundColor: colorScheme.surface,
-              minimumSize: const Size(double.infinity, 44),
-              shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
+              minimumSize: Size(double.infinity, sizes.controlMd),
+              shape: RoundedRectangleBorder(borderRadius: shape.radiusOverlay),
               elevation: 0,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: space.inlineButtonGroup),
           TextButton.icon(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -46,7 +49,7 @@ class VerificationStatusActions extends ConsumerWidget {
                   content: const Text('Support — coming soon!'),
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.mdRadius,
+                    borderRadius: shape.radiusControl,
                   ),
                 ),
               );
@@ -58,7 +61,7 @@ class VerificationStatusActions extends ConsumerWidget {
             ),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onSurface.withValues(alpha: 0.7),
-              minimumSize: const Size(double.infinity, 44),
+              minimumSize: Size(double.infinity, sizes.controlMd),
             ),
           ),
         ],
@@ -81,8 +84,8 @@ class VerificationStatusActions extends ConsumerWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.onSurface,
           foregroundColor: colorScheme.surface,
-          minimumSize: const Size(double.infinity, 44),
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
+          minimumSize: Size(double.infinity, sizes.controlMd),
+          shape: RoundedRectangleBorder(borderRadius: shape.radiusOverlay),
           elevation: 0,
         ),
       );

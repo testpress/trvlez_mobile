@@ -59,26 +59,25 @@ void main() {
   }
 
   group('NfcIntroScreen - Skip Button & Hardware Availability Tests', () {
-    testWidgets(
-      'does not render any skip chip scan button in the default UI',
-      (tester) async {
-        final mockService = StubNfcPassportService(
-          status: NfcDeviceStatus.available,
-        );
-        final container = ProviderContainer();
+    testWidgets('does not render any skip chip scan button in the default UI', (
+      tester,
+    ) async {
+      final mockService = StubNfcPassportService(
+        status: NfcDeviceStatus.available,
+      );
+      final container = ProviderContainer();
 
-        await tester.pumpWidget(
-          createTestWidget(nfcService: mockService, container: container),
-        );
-        await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        createTestWidget(nfcService: mockService, container: container),
+      );
+      await tester.pumpAndSettle();
 
-        expect(find.text('Start scan'), findsOneWidget);
-        expect(find.text('Skip chip scan'), findsNothing);
-        expect(find.text('Skip'), findsNothing);
+      expect(find.text('Start scan'), findsOneWidget);
+      expect(find.text('Skip chip scan'), findsNothing);
+      expect(find.text('Skip'), findsNothing);
 
-        container.dispose();
-      },
-    );
+      container.dispose();
+    });
 
     testWidgets(
       'when start scan clicked and NFC is unsupported, displays modal sheet with clear explanation and skip button',
@@ -113,7 +112,10 @@ void main() {
         await tester.pumpAndSettle();
 
         // Verifies skip state was recorded and routed to final check
-        expect(container.read(verificationNotifierProvider).isNfcSkipped, isTrue);
+        expect(
+          container.read(verificationNotifierProvider).isNfcSkipped,
+          isTrue,
+        );
         expect(find.text('Final Check Screen'), findsOneWidget);
 
         container.dispose();

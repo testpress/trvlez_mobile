@@ -6,8 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -88,6 +86,9 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final controller = _videoController;
     final notifier = ref.read(verificationNotifierProvider.notifier);
 
@@ -106,8 +107,8 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 2, circleSize: 23.0),
-        const SizedBox(height: AppSpacing.md),
+        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackFormField),
         Text(
           'Check your video',
           textAlign: TextAlign.center,
@@ -119,7 +120,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Watch it back before you upload. Make sure your face is clearly visible, well-lit, and centered throughout.',
           textAlign: TextAlign.center,
@@ -131,13 +132,13 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             height: 1.4,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Center(
           child: Container(
-            padding: const EdgeInsets.all(AppSpacing.xs),
+            padding: EdgeInsets.all(space.inlineMicro),
             decoration: BoxDecoration(
               color: colors.brandShotBackdrop,
-              borderRadius: BorderRadius.circular(AppRadius.md),
+              borderRadius: shape.radiusControl,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -192,22 +193,22 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                       // Play overlay button when paused
                       if (!_isPlaying)
                         Container(
-                          width: 48.0,
-                          height: 48.0,
+                          width: sizes.controlLg,
+                          height: sizes.controlLg,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: colors.brandSurface.withValues(alpha: 0.7),
                           ),
                           child: Icon(
                             Icons.play_arrow_rounded,
-                            size: 32.0,
+                            size: sizes.iconXl,
                             color: colors.brandOnSurface,
                           ),
                         ),
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: space.stackItem),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -220,23 +221,21 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                         color: colors.brandOnSurface,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.xs),
+                    SizedBox(width: space.inlineMicro),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(AppRadius.xs),
+                      borderRadius: shape.radiusSubtle,
                       child: Container(
                         width: 120.0,
-                        height: 3.5,
+                        height: sizes.indicatorProgressHeight,
                         color: colors.brandScrubTrack,
                         alignment: Alignment.centerLeft,
                         child: FractionallySizedBox(
                           widthFactor: progress,
-                          child: Container(
-                            color: colors.brandOnSurface,
-                          ),
+                          child: Container(color: colors.brandOnSurface),
                         ),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.xs),
+                    SizedBox(width: space.inlineMicro),
                     Text(
                       _isPlaying ? 'Tap to pause' : 'Tap to play',
                       style: TextStyle(
@@ -262,7 +261,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             context.pushReplacement(AppRoutes.selfieProcessing);
           },
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.inlineMicro),
         AppButton(
           label: 'Record again',
           variant: AppButtonVariant.brandOutline,
@@ -271,7 +270,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
             context.pushReplacement(AppRoutes.selfieCapture);
           },
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );

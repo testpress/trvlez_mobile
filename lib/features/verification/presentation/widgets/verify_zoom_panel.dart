@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -12,19 +10,17 @@ import 'package:trvlez_mobile/features/verification/presentation/providers/verif
 /// Enlarged MRZ zoom card displaying the traveler's actual code lines
 /// (cropped image and/or extracted text) rather than static placeholder data.
 class VerifyZoomPanel extends ConsumerWidget {
-  const VerifyZoomPanel({
-    super.key,
-    this.mrzImage,
-    this.mrzLines,
-  });
+  const VerifyZoomPanel({super.key, this.mrzImage, this.mrzLines});
 
   final File? mrzImage;
   final List<String>? mrzLines;
 
   File? _findExistingMrzImage(File? capturedImage) {
     if (capturedImage == null) return null;
-    final mrzPath =
-        capturedImage.path.replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+    final mrzPath = capturedImage.path.replaceAll(
+      RegExp(r'\.[^.]+$'),
+      '_mrz_cropped.jpg',
+    );
     final file = File(mrzPath);
     return file.existsSync() ? file : null;
   }
@@ -32,17 +28,21 @@ class VerifyZoomPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final lines = mrzLines ?? state.mrzLines;
-    final image = mrzImage ??
+    final image =
+        mrzImage ??
         state.mrzImage ??
         _findExistingMrzImage(state.capturedImage);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+      padding: space.insetCardCompact,
       decoration: BoxDecoration(
         color: colors.brandCardBackground,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: shape.radiusControl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,8 +51,8 @@ class VerifyZoomPanel extends ConsumerWidget {
           Row(
             children: [
               Container(
-                width: 16.0,
-                height: 16.0,
+                width: space.stackFormField,
+                height: space.stackFormField,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -69,7 +69,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 6.0),
+              SizedBox(width: space.stackTight),
               Text(
                 'Code lines, enlarged',
                 style: TextStyle(
@@ -96,39 +96,35 @@ class VerifyZoomPanel extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           if (image != null && image.existsSync()) ...[
             Center(
               child: Container(
                 width: double.infinity,
                 constraints: const BoxConstraints(maxHeight: 54.0),
-                padding: const EdgeInsets.all(3.0),
+                padding: EdgeInsets.all(space.stackTight / 2),
                 decoration: BoxDecoration(
                   color: colors.brandShotBackdrop,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  borderRadius: shape.radiusControlSm,
                   border: Border.all(
                     color: colors.brandBorderSubtle.withValues(alpha: 0.5),
-                    width: 1.0,
+                    width: shape.borderDefault,
                   ),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadius.xs),
-                  child: Image.file(
-                    image,
-                    fit: BoxFit.contain,
-                  ),
+                  borderRadius: shape.radiusSubtle,
+                  child: Image.file(image, fit: BoxFit.contain),
                 ),
               ),
             ),
             if (lines != null && lines.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.inlineMicro),
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                padding: space.insetTag,
                 decoration: BoxDecoration(
                   color: colors.brandShotBackdrop,
-                  borderRadius: BorderRadius.circular(AppRadius.xs),
+                  borderRadius: shape.radiusSubtle,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,14 +150,16 @@ class VerifyZoomPanel extends ConsumerWidget {
             Center(
               child: Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+                padding: EdgeInsets.symmetric(
+                  vertical: space.stackItem,
+                  horizontal: space.inlineIconLabel,
+                ),
                 decoration: BoxDecoration(
                   color: colors.brandShotBackdrop,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  borderRadius: shape.radiusControlSm,
                   border: Border.all(
                     color: colors.brandBorderSubtle.withValues(alpha: 0.5),
-                    width: 1.0,
+                    width: shape.borderDefault,
                   ),
                 ),
                 child: Column(
@@ -188,14 +186,14 @@ class VerifyZoomPanel extends ConsumerWidget {
             Center(
               child: Container(
                 width: double.infinity,
-                height: 44.0,
+                height: sizes.controlMd,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: colors.brandShotBackdrop,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  borderRadius: shape.radiusControlSm,
                   border: Border.all(
                     color: colors.brandBorderSubtle.withValues(alpha: 0.35),
-                    width: 1.0,
+                    width: shape.borderDefault,
                   ),
                 ),
                 child: Text(

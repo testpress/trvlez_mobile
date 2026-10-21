@@ -6,8 +6,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
@@ -27,6 +25,9 @@ class CheckInPassScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
     final tokenState = ref.watch(checkInTokenProvider(reservationId));
 
@@ -63,7 +64,7 @@ class CheckInPassScreen extends ConsumerWidget {
             CheckInNotice(text: 'Works offline. Expires when you check out.'),
           ],
           children: [
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             Text(
               'Show this at the desk',
               textAlign: TextAlign.center,
@@ -75,7 +76,7 @@ class CheckInPassScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               'Collect your keys and go straight up.',
               textAlign: TextAlign.center,
@@ -85,25 +86,25 @@ class CheckInPassScreen extends ConsumerWidget {
                 color: colors.brandSecondaryBody,
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // White pass card
             Container(
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: colors.brandOnSurface,
-                borderRadius: BorderRadius.circular(AppRadius.lg),
+                borderRadius: shape.radiusSurface,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md - 2),
+                    padding: space.insetCard,
                     child: Row(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                          borderRadius: shape.radiusControlSm,
                           child: SvgPicture.asset(
                             'assets/art/guest_photo.svg',
                             width: 52,
@@ -111,7 +112,7 @@ class CheckInPassScreen extends ConsumerWidget {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.md - 2),
+                        SizedBox(width: space.inlineItem),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +127,7 @@ class CheckInPassScreen extends ConsumerWidget {
                                   color: colors.textPrimary,
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              SizedBox(height: space.stackText),
                               Text(
                                 details.dateAndGuests,
                                 style: TextStyle(
@@ -135,28 +136,23 @@ class CheckInPassScreen extends ConsumerWidget {
                                   color: colors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              SizedBox(height: space.stackTight),
                               // ID verified badge
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.sm,
-                                  vertical: 3,
-                                ),
+                                padding: space.insetTag,
                                 decoration: BoxDecoration(
                                   color: colors.redTint,
-                                  borderRadius: BorderRadius.circular(
-                                    AppRadius.pill,
-                                  ),
+                                  borderRadius: shape.radiusPill,
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
                                       AppIcons.rosetteDiscountCheck,
-                                      size: 11,
+                                      size: sizes.iconXs,
                                       color: colors.brandPrimary,
                                     ),
-                                    const SizedBox(width: 4),
+                                    SizedBox(width: space.inlineMicro),
                                     Text(
                                       'ID verified',
                                       style: TextStyle(
@@ -178,11 +174,10 @@ class CheckInPassScreen extends ConsumerWidget {
 
                   // QR section
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      0,
-                      AppSpacing.md,
-                      AppSpacing.md - 2,
+                    padding: EdgeInsets.only(
+                      left: space.insetCard.left,
+                      right: space.insetCard.right,
+                      bottom: space.insetCard.bottom,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -207,11 +202,14 @@ class CheckInPassScreen extends ConsumerWidget {
                                 height: 110,
                               ),
                         Container(
-                          margin: const EdgeInsets.only(top: AppSpacing.sm),
-                          padding: const EdgeInsets.only(top: AppSpacing.sm),
+                          margin: EdgeInsets.only(top: space.stackItem),
+                          padding: EdgeInsets.only(top: space.stackItem),
                           decoration: BoxDecoration(
                             border: Border(
-                              top: BorderSide(color: colors.line, width: 1),
+                              top: BorderSide(
+                                color: colors.line,
+                                width: shape.dividerDefault,
+                              ),
                             ),
                           ),
                           child: Row(
@@ -244,7 +242,7 @@ class CheckInPassScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // Link: See what the hotel gets
             Center(
@@ -254,8 +252,12 @@ class CheckInPassScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(AppIcons.eye, size: 14, color: colors.brandOnSurface),
-                    const SizedBox(width: AppSpacing.xs + 2),
+                    Icon(
+                      AppIcons.eye,
+                      size: sizes.iconXs,
+                      color: colors.brandOnSurface,
+                    ),
+                    SizedBox(width: space.inlineIconLabel),
                     Text(
                       'See what the hotel gets',
                       style: TextStyle(

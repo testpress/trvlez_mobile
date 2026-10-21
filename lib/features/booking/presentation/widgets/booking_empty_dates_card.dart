@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -12,14 +10,16 @@ class BookingEmptyDatesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: EdgeInsets.symmetric(horizontal: space.insetCard.left),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        border: Border.all(color: colors.line),
-        borderRadius: AppRadius.cardRadius,
+        border: Border.all(color: colors.line, width: shape.borderDefault),
+        borderRadius: shape.radiusSurface,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class BookingEmptyDatesCard extends StatelessWidget {
               color: colors.inkTertiary,
             ),
           ),
-          const SizedBox(height: 3),
+          SizedBox(height: space.stackText),
           Text(
             'Rooms and prices depend on the nights chosen, so there is nothing truthful to show here yet.',
             style: TextStyle(

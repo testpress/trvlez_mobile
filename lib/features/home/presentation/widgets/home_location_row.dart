@@ -14,20 +14,30 @@ class HomeLocationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
       label: 'Selected location: $location',
       child: InkWell(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: shape.radiusControlSm,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+          padding: EdgeInsets.symmetric(
+            vertical: space.stackText,
+            horizontal: space.inlineMicro,
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(AppIcons.mapPinFilled, size: 14, color: colors.brandPrimary),
-              const SizedBox(width: 6),
+              Icon(
+                AppIcons.mapPinFilled,
+                size: sizes.iconXs,
+                color: colors.brandPrimary,
+              ),
+              SizedBox(width: space.inlineIconLabel),
               Text(
                 location,
                 style: TextStyle(
@@ -37,8 +47,12 @@ class HomeLocationRow extends StatelessWidget {
                   color: colors.textPrimary,
                 ),
               ),
-              const SizedBox(width: 4),
-              Icon(AppIcons.chevronDown, size: 13, color: colors.brandPrimary),
+              SizedBox(width: space.inlineMicro),
+              Icon(
+                AppIcons.chevronDown,
+                size: sizes.iconXs,
+                color: colors.brandPrimary,
+              ),
             ],
           ),
         ),

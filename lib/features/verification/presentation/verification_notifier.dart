@@ -4,11 +4,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart'
-    show authNotifierProvider;
+    show authNotifierProvider, currentProfileProvider;
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart'
-    show currentProfileProvider;
 import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';

@@ -189,106 +189,115 @@ void main() {
     },
   );
 
-  test('BookingRoomCatalogue returns empty list when property has no room types', () {
-    const propWithoutRooms = Property(
-      id: 'prop-empty',
-      name: 'No Rooms Resort',
-      city: 'Paris',
-      countryCode: 'FR',
-      shortDescription: 'Hotel with no rooms configured',
-      longDescription: 'Hotel with no rooms configured',
-      heroImageUrl: 'https://example.com/hero.jpg',
-      roomTypes: [],
-    );
+  test(
+    'BookingRoomCatalogue returns empty list when property has no room types',
+    () {
+      const propWithoutRooms = Property(
+        id: 'prop-empty',
+        name: 'No Rooms Resort',
+        city: 'Paris',
+        countryCode: 'FR',
+        shortDescription: 'Hotel with no rooms configured',
+        longDescription: 'Hotel with no rooms configured',
+        heroImageUrl: 'https://example.com/hero.jpg',
+        roomTypes: [],
+      );
 
-    final rooms = BookingRoomCatalogue.forProperty(propWithoutRooms);
-    expect(rooms, isEmpty);
-  });
+      final rooms = BookingRoomCatalogue.forProperty(propWithoutRooms);
+      expect(rooms, isEmpty);
+    },
+  );
 
-  test('confirmBooking throws ValidationException when property ID is empty', () async {
-    const invalidProp = Property(
-      id: '',
-      name: 'Invalid Property',
-      city: 'Paris',
-      countryCode: 'FR',
-      shortDescription: 'Invalid',
-      longDescription: 'Invalid',
-      heroImageUrl: 'https://example.com/hero.jpg',
-      roomTypes: [
-        RoomType(
-          id: 'rt-1',
-          name: 'Standard Room',
-          maxOccupancy: 2,
-          maxAdults: 2,
-          maxChildren: 0,
-          description: 'Standard',
-          pricePerNight: 100,
-        ),
-      ],
-    );
+  test(
+    'confirmBooking throws ValidationException when property ID is empty',
+    () async {
+      const invalidProp = Property(
+        id: '',
+        name: 'Invalid Property',
+        city: 'Paris',
+        countryCode: 'FR',
+        shortDescription: 'Invalid',
+        longDescription: 'Invalid',
+        heroImageUrl: 'https://example.com/hero.jpg',
+        roomTypes: [
+          RoomType(
+            id: 'rt-1',
+            name: 'Standard Room',
+            maxOccupancy: 2,
+            maxAdults: 2,
+            maxChildren: 0,
+            description: 'Standard',
+            pricePerNight: 100,
+          ),
+        ],
+      );
 
-    final notifier = container.read(bookingDraftProvider.notifier);
-    notifier.beginBooking(invalidProp);
-    notifier.setBookingRange(
-      BookingDateRange(DateTime(2026, 12, 1), DateTime(2026, 12, 4)),
-    );
-    notifier.setBookingGuests(const GuestCounts(adults: 2));
-    notifier.setRoomQuantity('rt-1', 1);
-    notifier.addBookingCard();
+      final notifier = container.read(bookingDraftProvider.notifier);
+      notifier.beginBooking(invalidProp);
+      notifier.setBookingRange(
+        BookingDateRange(DateTime(2026, 12, 1), DateTime(2026, 12, 4)),
+      );
+      notifier.setBookingGuests(const GuestCounts(adults: 2));
+      notifier.setRoomQuantity('rt-1', 1);
+      notifier.addBookingCard();
 
-    expect(
-      () => notifier.confirmBooking(),
-      throwsA(isA<ValidationException>()),
-    );
-  });
+      expect(
+        () => notifier.confirmBooking(),
+        throwsA(isA<ValidationException>()),
+      );
+    },
+  );
 
-  test('BookingRoomCatalogue only includes active room types with valid positive rates', () {
-    const propWithMixedRooms = Property(
-      id: 'prop-mixed',
-      name: 'Mixed Rooms Resort',
-      city: 'Rome',
-      countryCode: 'IT',
-      shortDescription: 'Hotel with mixed rooms',
-      longDescription: 'Hotel with mixed rooms',
-      heroImageUrl: 'https://example.com/hero.jpg',
-      roomTypes: [
-        RoomType(
-          id: 'rt-active',
-          name: 'Active Priced Room',
-          maxOccupancy: 3,
-          maxAdults: 2,
-          maxChildren: 1,
-          description: 'Valid Room',
-          pricePerNight: 180,
-          isActive: true,
-        ),
-        RoomType(
-          id: 'rt-inactive',
-          name: 'Inactive Room',
-          maxOccupancy: 2,
-          maxAdults: 2,
-          maxChildren: 0,
-          description: 'Inactive Room',
-          pricePerNight: 150,
-          isActive: false,
-        ),
-        RoomType(
-          id: 'rt-no-price',
-          name: 'Unpriced Room',
-          maxOccupancy: 2,
-          maxAdults: 2,
-          maxChildren: 0,
-          description: 'Unpriced Room',
-          pricePerNight: null,
-          isActive: true,
-        ),
-      ],
-    );
+  test(
+    'BookingRoomCatalogue only includes active room types with valid positive rates',
+    () {
+      const propWithMixedRooms = Property(
+        id: 'prop-mixed',
+        name: 'Mixed Rooms Resort',
+        city: 'Rome',
+        countryCode: 'IT',
+        shortDescription: 'Hotel with mixed rooms',
+        longDescription: 'Hotel with mixed rooms',
+        heroImageUrl: 'https://example.com/hero.jpg',
+        roomTypes: [
+          RoomType(
+            id: 'rt-active',
+            name: 'Active Priced Room',
+            maxOccupancy: 3,
+            maxAdults: 2,
+            maxChildren: 1,
+            description: 'Valid Room',
+            pricePerNight: 180,
+            isActive: true,
+          ),
+          RoomType(
+            id: 'rt-inactive',
+            name: 'Inactive Room',
+            maxOccupancy: 2,
+            maxAdults: 2,
+            maxChildren: 0,
+            description: 'Inactive Room',
+            pricePerNight: 150,
+            isActive: false,
+          ),
+          RoomType(
+            id: 'rt-no-price',
+            name: 'Unpriced Room',
+            maxOccupancy: 2,
+            maxAdults: 2,
+            maxChildren: 0,
+            description: 'Unpriced Room',
+            pricePerNight: null,
+            isActive: true,
+          ),
+        ],
+      );
 
-    final rooms = BookingRoomCatalogue.forProperty(propWithMixedRooms);
-    expect(rooms.length, 1);
-    expect(rooms.first.id, 'rt-active');
-    expect(rooms.first.nightly, 180);
-    expect(rooms.first.sleeps, 3);
-  });
+      final rooms = BookingRoomCatalogue.forProperty(propWithMixedRooms);
+      expect(rooms.length, 1);
+      expect(rooms.first.id, 'rt-active');
+      expect(rooms.first.nightly, 180);
+      expect(rooms.first.sleeps, 3);
+    },
+  );
 }

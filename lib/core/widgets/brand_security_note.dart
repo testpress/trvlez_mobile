@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -30,21 +29,27 @@ class BrandSecurityNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteColor = color ?? context.colors.brandSecondaryNote;
+    final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+
+    final noteColor = color ?? colors.brandSecondaryNote;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 1.5),
+          padding: EdgeInsets.only(top: shape.borderMedium),
           child: SizedBox(
             width: iconWidth,
             height: iconHeight,
-            child: CustomPaint(painter: _PadlockPainter(noteColor, 1.4)),
+            child: CustomPaint(
+              painter: _PadlockPainter(noteColor, shape.borderMedium),
+            ),
           ),
         ),
-        const SizedBox(width: AppSpacing.xs),
+        SizedBox(width: space.inlineMicro),
         Flexible(
           child: Text(
             text,

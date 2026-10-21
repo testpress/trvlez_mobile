@@ -6,7 +6,6 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
@@ -113,6 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final currentThemeMode = ref.watch(themeModeProvider);
     final isDarkMode =
         currentThemeMode == ThemeMode.dark ||
@@ -161,12 +161,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onThemeToggle: () =>
                       ref.read(themeModeProvider.notifier).toggleTheme(),
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: space.stackItem),
                 HomeLocationRow(
                   location: _selectedLocation,
                   onTap: _onLocationTap,
                 ),
-                const SizedBox(height: AppSpacing.md),
+                SizedBox(height: space.stackFormField),
                 Text(
                   _greetingText(travelerName),
                   style: TextStyle(
@@ -177,13 +177,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: space.stackText),
                 Text(
                   isVerified
                       ? 'ID verified — book without re-checking'
                       : (verificationState.isProcessing
-                          ? 'Verification in review · usually under a minute'
-                          : 'Verify once, book without re-checking'),
+                            ? 'Verification in review · usually under a minute'
+                            : 'Verify once, book without re-checking'),
                   style: TextStyle(
                     fontFamily: AppTypography.fontFamily,
                     fontSize: 12,
@@ -198,10 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Expanded(
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
+              padding: space.insetCard,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -218,12 +215,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         }
                       },
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    SizedBox(height: space.stackSection),
                   ],
 
                   // ── Services Section ───────────────────────────────────
                   const HomeSectionHeader(title: 'Services'),
-                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(height: space.stackItem),
                   ServiceGrid(
                     cards: [
                       ServiceCard(
@@ -252,7 +249,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: space.stackSection),
 
                   // ── Earn With Us Section ───────────────────────────────
                   HomeSectionHeader(
@@ -260,7 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     action: findrCardState == FindrState.active ? 'Open' : null,
                     onAction: () => context.push(AppRoutes.findr),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(height: space.stackItem),
                   FindrCard(
                     state: findrCardState,
                     earned: findrPortfolio.earned,
@@ -282,7 +279,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: space.stackSection),
 
                   // ── Next Stay Section ──────────────────────────────────
                   if (nextStay != null) ...[
@@ -292,7 +289,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       onAction: () =>
                           context.push('/reservations/${nextStay.id}'),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(height: space.stackItem),
                     NextStayRow(
                       title: nextStay.propertySummary.name,
                       detail:
@@ -302,7 +299,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       imageUrl: nextStay.propertySummary.heroImageUrl,
                       onTap: () => context.push('/reservations/${nextStay.id}'),
                     ),
-                    const SizedBox(height: AppSpacing.xl),
+                    SizedBox(height: space.stackHero),
                   ],
                 ],
               ),

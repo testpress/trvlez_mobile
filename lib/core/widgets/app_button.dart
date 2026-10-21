@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -31,7 +29,7 @@ class AppButton extends StatelessWidget {
     this.enabled = true,
     this.isFullWidth = true,
     this.icon,
-    this.height = 50,
+    this.height,
     this.borderRadius,
     super.key,
   });
@@ -43,19 +41,22 @@ class AppButton extends StatelessWidget {
   final bool enabled;
   final bool isFullWidth;
   final Widget? icon;
-  final double height;
+  final double? height;
   final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     final Color backgroundColor;
     final Color foregroundColor;
     final Color disabledBackgroundColor;
     final Color disabledForegroundColor;
     BorderSide? borderSide;
-    BorderRadius effectiveRadius = borderRadius ?? AppRadius.button;
+    BorderRadius effectiveRadius = borderRadius ?? shape.radiusControl;
 
     switch (variant) {
       case AppButtonVariant.primary:
@@ -69,7 +70,10 @@ class AppButton extends StatelessWidget {
         foregroundColor = colors.textPrimary;
         disabledBackgroundColor = backgroundColor.withValues(alpha: 0.5);
         disabledForegroundColor = colors.textDisabled;
-        borderSide = BorderSide(color: colors.borderSubtle);
+        borderSide = BorderSide(
+          color: colors.borderSubtle,
+          width: shape.borderDefault,
+        );
         break;
       case AppButtonVariant.destructive:
         backgroundColor = colors.feedbackError;
@@ -82,15 +86,18 @@ class AppButton extends StatelessWidget {
         foregroundColor = colors.brandActionLabel;
         disabledBackgroundColor = colors.brandButtonDisabledBackground;
         disabledForegroundColor = colors.brandButtonDisabledForeground;
-        effectiveRadius = borderRadius ?? AppRadius.pillRadius;
+        effectiveRadius = borderRadius ?? shape.radiusPill;
         break;
       case AppButtonVariant.brandOutline:
         backgroundColor = Colors.transparent;
         foregroundColor = colors.brandOnSurface;
         disabledBackgroundColor = Colors.transparent;
         disabledForegroundColor = colors.brandButtonDisabledForeground;
-        borderSide = BorderSide(color: colors.verificationOutlineButton);
-        effectiveRadius = borderRadius ?? AppRadius.pillRadius;
+        borderSide = BorderSide(
+          color: colors.verificationOutlineButton,
+          width: shape.borderDefault,
+        );
+        effectiveRadius = borderRadius ?? shape.radiusPill;
         break;
     }
 
@@ -99,9 +106,9 @@ class AppButton extends StatelessWidget {
     Widget child;
     if (isLoading) {
       child = SizedBox.square(
-        dimension: 20,
+        dimension: sizes.iconMd,
         child: CircularProgressIndicator(
-          strokeWidth: 2.2,
+          strokeWidth: shape.strokeProgress,
           valueColor: AlwaysStoppedAnimation<Color>(
             effectiveOnPressed != null
                 ? foregroundColor
@@ -115,7 +122,7 @@ class AppButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           icon!,
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Text(
             label,
             style: const TextStyle(
@@ -143,14 +150,18 @@ class AppButton extends StatelessWidget {
       );
     }
 
+    final effectiveHeight = height ?? sizes.controlLg;
     final buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       disabledBackgroundColor: disabledBackgroundColor,
       disabledForegroundColor: disabledForegroundColor,
       elevation: 0,
-      minimumSize: Size(isFullWidth ? double.infinity : 88, height),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      minimumSize: Size(
+        isFullWidth ? double.infinity : sizes.avatarXl,
+        effectiveHeight,
+      ),
+      padding: space.insetControlMd,
       shape: RoundedRectangleBorder(
         borderRadius: effectiveRadius,
         side: borderSide ?? BorderSide.none,

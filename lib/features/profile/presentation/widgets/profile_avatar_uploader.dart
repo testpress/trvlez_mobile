@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Avatar presentation and image uploader placeholder for traveler profile setup.
 class ProfileAvatarUploader extends StatelessWidget {
@@ -12,6 +11,9 @@ class ProfileAvatarUploader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final theme = Theme.of(context);
 
     return Column(
@@ -20,12 +22,15 @@ class ProfileAvatarUploader extends StatelessWidget {
           alignment: Alignment.bottomRight,
           children: [
             Container(
-              width: 88,
-              height: 88,
+              width: sizes.avatarXl,
+              height: sizes.avatarXl,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: colors.surfaceSubtle,
-                border: Border.all(color: colors.borderDefault, width: 2),
+                border: Border.all(
+                  color: colors.borderDefault,
+                  width: shape.borderFocus,
+                ),
               ),
               child: ClipOval(
                 child: (avatarUrl != null && avatarUrl!.isNotEmpty)
@@ -36,9 +41,9 @@ class ProfileAvatarUploader extends StatelessWidget {
                           if (progress == null) return child;
                           return Center(
                             child: SizedBox.square(
-                              dimension: 24,
+                              dimension: sizes.iconDefault,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
+                                strokeWidth: shape.borderFocus,
                                 color: colors.brandPrimary,
                               ),
                             ),
@@ -46,13 +51,13 @@ class ProfileAvatarUploader extends StatelessWidget {
                         },
                         errorBuilder: (context, error, stackTrace) => Icon(
                           Icons.person_rounded,
-                          size: 48,
+                          size: sizes.iconHero,
                           color: colors.textSecondary,
                         ),
                       )
                     : Icon(
                         Icons.person_rounded,
-                        size: 48,
+                        size: sizes.iconHero,
                         color: colors.textSecondary,
                       ),
               ),
@@ -64,11 +69,14 @@ class ProfileAvatarUploader extends StatelessWidget {
                 customBorder: const CircleBorder(),
                 onTap: onUploadTap,
                 child: Container(
-                  padding: const EdgeInsets.all(AppSpacing.xs + 2),
+                  padding: EdgeInsets.all(space.stackTight),
                   decoration: BoxDecoration(
                     color: colors.actionPrimary,
                     shape: BoxShape.circle,
-                    border: Border.all(color: colors.surface, width: 2),
+                    border: Border.all(
+                      color: colors.surface,
+                      width: shape.borderFocus,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: colors.textPrimary.withAlpha(20),
@@ -79,7 +87,7 @@ class ProfileAvatarUploader extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.camera_alt_rounded,
-                    size: 16,
+                    size: sizes.iconSm,
                     color: colors.textOnAction,
                   ),
                 ),
@@ -87,13 +95,13 @@ class ProfileAvatarUploader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Text(
           'Complete Your Profile',
           style: theme.textTheme.headlineMedium,
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'We need a bit more info to verify your account',
           style: theme.textTheme.bodyLarge?.copyWith(

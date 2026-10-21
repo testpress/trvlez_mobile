@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
@@ -20,6 +20,7 @@ class ReservationActionsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final space = context.space;
     final status = reservation.status;
 
     return Column(
@@ -27,7 +28,7 @@ class ReservationActionsCard extends StatelessWidget {
       children: [
         if (status.canGenerateQr) ...[
           AppButton(label: 'Check-in Pass (QR Code)', onPressed: onCheckIn),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
         ],
         if (reservation.propertySummary.requiresPrearrivalForm) ...[
           AppButton(
@@ -35,7 +36,7 @@ class ReservationActionsCard extends StatelessWidget {
             variant: AppButtonVariant.secondary,
             onPressed: onPreArrivalForm,
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
         ],
         if (status.canCancel) ...[
           AppButton(

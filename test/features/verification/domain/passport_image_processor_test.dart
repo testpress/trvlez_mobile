@@ -360,35 +360,41 @@ void main() {
         expect(croppedFile, isNotNull);
         expect(croppedFile!.existsSync(), isTrue);
 
-        final mrzPath = testFile.path.replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+        final mrzPath = testFile.path.replaceAll(
+          RegExp(r'\.[^.]+$'),
+          '_mrz_cropped.jpg',
+        );
         final mrzFile = File(mrzPath);
         expect(mrzFile.existsSync(), isTrue);
 
         final mrzBytes = mrzFile.readAsBytesSync();
         final mrzImg = img.decodeImage(mrzBytes)!;
-        expect(mrzImg.width, equals(img.decodeImage(croppedFile.readAsBytesSync())!.width));
-        expect(mrzImg.height, lessThan(img.decodeImage(croppedFile.readAsBytesSync())!.height));
+        expect(
+          mrzImg.width,
+          equals(img.decodeImage(croppedFile.readAsBytesSync())!.width),
+        );
+        expect(
+          mrzImg.height,
+          lessThan(img.decodeImage(croppedFile.readAsBytesSync())!.height),
+        );
       },
     );
 
-    test(
-      'cropMrzRegionFromPath crops bottom ~27% of passport image',
-      () async {
-        final passportImg = img.Image(width: 1000, height: 700);
-        img.fill(passportImg, color: img.ColorRgb8(240, 240, 240));
+    test('cropMrzRegionFromPath crops bottom ~27% of passport image', () async {
+      final passportImg = img.Image(width: 1000, height: 700);
+      img.fill(passportImg, color: img.ColorRgb8(240, 240, 240));
 
-        final passportFile = File('${tempDir.path}/sample_passport.jpg');
-        passportFile.writeAsBytesSync(img.encodeJpg(passportImg));
+      final passportFile = File('${tempDir.path}/sample_passport.jpg');
+      passportFile.writeAsBytesSync(img.encodeJpg(passportImg));
 
-        final mrzFile = cropMrzRegionFromPath(passportFile.path);
-        expect(mrzFile, isNotNull);
-        expect(mrzFile!.existsSync(), isTrue);
+      final mrzFile = cropMrzRegionFromPath(passportFile.path);
+      expect(mrzFile, isNotNull);
+      expect(mrzFile!.existsSync(), isTrue);
 
-        final mrzImg = img.decodeImage(mrzFile.readAsBytesSync())!;
-        expect(mrzImg.width, equals(1000));
-        // 27% of 700 is 189
-        expect(mrzImg.height, closeTo(189, 5));
-      },
-    );
+      final mrzImg = img.decodeImage(mrzFile.readAsBytesSync())!;
+      expect(mrzImg.width, equals(1000));
+      // 27% of 700 is 189
+      expect(mrzImg.height, closeTo(189, 5));
+    });
   });
 }

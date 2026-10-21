@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -46,6 +45,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final draft = ref.watch(anywhereDraftProvider);
 
     final hotelSubtitle = draft.place.isNotEmpty
@@ -74,7 +74,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Your stay',
           style: TextStyle(
@@ -85,7 +85,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           hotelSubtitle,
           style: TextStyle(
@@ -95,7 +95,7 @@ class _StayDetailsScreenState extends ConsumerState<StayDetailsScreen> {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
 
         // Date selection
         CheckInField(

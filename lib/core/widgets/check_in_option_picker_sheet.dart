@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -14,6 +12,9 @@ Future<String?> showCheckInOptionPicker(
   required String current,
 }) {
   final colors = context.colors;
+  final space = context.space;
+  final shape = context.shape;
+  final sizes = context.sizes;
 
   return showModalBottomSheet<String>(
     context: context,
@@ -23,8 +24,8 @@ Future<String?> showCheckInOptionPicker(
     constraints: BoxConstraints(
       maxHeight: MediaQuery.sizeOf(context).height * 0.85,
     ),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
     ),
     builder: (sheetContext) => SafeArea(
       top: false,
@@ -34,21 +35,21 @@ Future<String?> showCheckInOptionPicker(
         children: [
           Center(
             child: Container(
-              width: 36,
-              height: 4,
-              margin: const EdgeInsets.only(top: AppSpacing.sm + 1),
+              width: sizes.controlSm,
+              height: sizes.indicatorProgressHeight,
+              margin: EdgeInsets.only(top: space.stackItem),
               decoration: BoxDecoration(
                 color: colors.line,
-                borderRadius: BorderRadius.circular(AppRadius.pill),
+                borderRadius: shape.radiusPill,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md - 2,
-              AppSpacing.md,
-              AppSpacing.xs,
+            padding: EdgeInsets.fromLTRB(
+              space.insetCard.left,
+              space.insetInput.bottom,
+              space.insetCard.right,
+              space.stackText,
             ),
             child: Text(
               title,
@@ -74,9 +75,9 @@ Future<String?> showCheckInOptionPicker(
                         behavior: HitTestBehavior.opaque,
                         onTap: () => Navigator.pop(sheetContext, option),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.md - 3,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: space.insetCard.left,
+                            vertical: space.inlineButtonGroup,
                           ),
                           child: Row(
                             children: [
@@ -98,7 +99,7 @@ Future<String?> showCheckInOptionPicker(
                               if (option == current)
                                 Icon(
                                   AppIcons.check,
-                                  size: 16,
+                                  size: sizes.iconSm,
                                   color: colors.brandPrimary,
                                 ),
                             ],
@@ -110,7 +111,7 @@ Future<String?> showCheckInOptionPicker(
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
         ],
       ),
     ),

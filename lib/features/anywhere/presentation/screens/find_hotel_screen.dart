@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -39,6 +38,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final query = _searchController.text.trim().toLowerCase();
     final results = kHotelDirectory
         .where(
@@ -58,7 +58,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
         CheckInNotice(text: 'Nothing reaches any hotel until you confirm it.'),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Find your hotel',
           style: TextStyle(
@@ -69,7 +69,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'You do not need to have booked through us. Being verified is enough.',
           style: TextStyle(
@@ -79,7 +79,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
 
         // Search input
         AnywhereField(
@@ -88,7 +88,7 @@ class _FindHotelScreenState extends ConsumerState<FindHotelScreen> {
           icon: AppIcons.search,
           onClear: _searchController.clear,
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
 
         // Partner hotel results
         for (final hotel in results)

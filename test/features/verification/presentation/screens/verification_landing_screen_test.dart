@@ -93,10 +93,7 @@ void main() {
             verificationRepositoryProvider.overrideWithValue(fakeRepo),
             currentProfileProvider.overrideWith(
               () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-v1',
-                  onboardingStep: 'verified',
-                ),
+                const Profile(id: 'prof-v1', onboardingStep: 'verified'),
               ),
             ),
           ],
@@ -153,10 +150,7 @@ void main() {
             verificationRepositoryProvider.overrideWithValue(fakeRepo),
             currentProfileProvider.overrideWith(
               () => _FakeProfileNotifier(
-                const Profile(
-                  id: 'prof-nfc-done',
-                  onboardingStep: 'submitted',
-                ),
+                const Profile(id: 'prof-nfc-done', onboardingStep: 'submitted'),
               ),
             ),
           ],

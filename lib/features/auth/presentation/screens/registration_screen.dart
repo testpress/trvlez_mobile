@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
@@ -66,8 +64,10 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
         ),
         backgroundColor: context.colors.feedbackSuccess,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
-        margin: const EdgeInsets.all(AppSpacing.md),
+        shape: RoundedRectangleBorder(
+          borderRadius: context.shape.radiusControl,
+        ),
+        margin: EdgeInsets.all(context.space.stackFormField),
       ),
     );
 
@@ -134,6 +134,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     });
 
     final colors = context.colors;
+    final space = context.space;
     final regState = ref.watch(registrationControllerProvider);
 
     return BrandScreen(
@@ -164,7 +165,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                 height: 1.25,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               'Start your seamless travel journey',
               style: TextStyle(
@@ -176,7 +177,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
             ),
 
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: space.stackSection),
 
             // ── Form Inputs ──────────────────────────────────────────────
             BrandTextField(
@@ -189,7 +190,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               validator: validateEmail,
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             BrandTextField(
               label: 'Password',
@@ -202,7 +203,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               onSubmitted: onSubmit,
             ),
 
-            const SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: space.stackHero),
 
             // ── Security Note ────────────────────────────────────────────
             const BrandSecurityNote(
@@ -210,7 +211,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                   'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // ── Submit Button ────────────────────────────────────────────
             AppButton(
@@ -220,7 +221,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               onPressed: onSubmit,
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // ── Alternative Action Line ──────────────────────────────────
             BrandAltLine(

@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -11,18 +10,18 @@ import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 class BrandWordmark extends StatelessWidget {
   const BrandWordmark({
     super.key,
-    this.planeWidth = 11,
-    this.gap = AppSpacing.xs,
+    this.planeWidth,
+    this.gap,
     this.fontSize = 16,
     this.trvlColor,
     this.ezColor,
   });
 
   /// Design width of the paper plane glyph.
-  final double planeWidth;
+  final double? planeWidth;
 
   /// Gap between text and plane.
-  final double gap;
+  final double? gap;
 
   /// Font size for TRVL and ez.
   final double fontSize;
@@ -37,6 +36,11 @@ class BrandWordmark extends StatelessWidget {
   Widget build(BuildContext context) {
     final trvlCol = trvlColor ?? context.colors.brandOnSurface;
     final ezCol = ezColor ?? context.colors.brandSecondary;
+    final space = context.space;
+    final sizes = context.sizes;
+
+    final effectivePlaneWidth = planeWidth ?? sizes.iconXs;
+    final effectiveGap = gap ?? space.inlineMicro;
 
     final baseStyle = TextStyle(
       fontFamily: AppTypography.fontFamily,
@@ -51,13 +55,13 @@ class BrandWordmark extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text('TRVL', style: baseStyle.copyWith(color: trvlCol)),
-        SizedBox(width: gap),
+        SizedBox(width: effectiveGap),
         SizedBox(
-          width: planeWidth,
-          height: planeWidth * (16 / 20),
+          width: effectivePlaneWidth,
+          height: effectivePlaneWidth * (16 / 20),
           child: CustomPaint(painter: _PlanePainter(ezCol)),
         ),
-        SizedBox(width: gap),
+        SizedBox(width: effectiveGap),
         Text('ez', style: baseStyle.copyWith(color: ezCol)),
       ],
     );

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -38,6 +36,9 @@ class CheckInStepTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final isNow = state == CheckInStepState.now;
     final isDone = state == CheckInStepState.done;
 
@@ -47,20 +48,23 @@ class CheckInStepTile extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: isNow ? onTap : null,
         child: Container(
-          margin: const EdgeInsets.only(top: AppSpacing.sm),
-          padding: const EdgeInsets.all(AppSpacing.sm + 2),
+          margin: EdgeInsets.only(top: space.stackItem),
+          padding: space.insetCardCompact,
           decoration: BoxDecoration(
             color: isNow ? colors.checkInStepPanelNow : colors.checkInStepPanel,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: shape.radiusControl,
             border: isNow
-                ? Border.all(color: colors.brandOnSurface, width: 1.5)
+                ? Border.all(
+                    color: colors.brandOnSurface,
+                    width: shape.borderMedium,
+                  )
                 : null,
           ),
           child: Row(
             children: [
               Container(
-                width: 26,
-                height: 26,
+                width: sizes.avatarSm,
+                height: sizes.avatarSm,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: (isDone || isNow)
@@ -69,7 +73,11 @@ class CheckInStepTile extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: isDone
-                    ? Icon(AppIcons.check, size: 14, color: colors.brandPrimary)
+                    ? Icon(
+                        AppIcons.check,
+                        size: sizes.iconXs,
+                        color: colors.brandPrimary,
+                      )
                     : Text(
                         '$number',
                         style: TextStyle(
@@ -82,7 +90,7 @@ class CheckInStepTile extends StatelessWidget {
                         ),
                       ),
               ),
-              const SizedBox(width: AppSpacing.sm + 2),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +105,7 @@ class CheckInStepTile extends StatelessWidget {
                         color: colors.brandOnSurface,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       subtitle,
                       style: TextStyle(
@@ -110,10 +118,10 @@ class CheckInStepTile extends StatelessWidget {
                 ),
               ),
               if (isNow) ...[
-                const SizedBox(width: AppSpacing.xs),
+                SizedBox(width: space.inlineMicro),
                 Icon(
                   AppIcons.chevronRight,
-                  size: 15,
+                  size: sizes.iconSm,
                   color: colors.brandOnSurface,
                 ),
               ],

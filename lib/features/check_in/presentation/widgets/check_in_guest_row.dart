@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -29,6 +27,9 @@ class CheckInGuestRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: onTap != null,
@@ -36,17 +37,17 @@ class CheckInGuestRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(top: AppSpacing.sm + 1),
-          padding: const EdgeInsets.all(AppSpacing.sm + 2),
+          margin: EdgeInsets.only(top: space.stackItem),
+          padding: space.insetCardCompact,
           decoration: BoxDecoration(
             color: colors.checkInStepPanel,
-            borderRadius: BorderRadius.circular(AppRadius.md + 1),
+            borderRadius: shape.radiusControl,
           ),
           child: Row(
             children: [
               Container(
-                width: 34,
-                height: 34,
+                width: sizes.avatarMd,
+                height: sizes.avatarMd,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: ready
@@ -57,7 +58,7 @@ class CheckInGuestRow extends StatelessWidget {
                 child: initials == null
                     ? Icon(
                         AppIcons.user,
-                        size: 16,
+                        size: sizes.iconSm,
                         color: ready
                             ? colors.brandPrimary
                             : colors.brandOnSurface,
@@ -74,7 +75,7 @@ class CheckInGuestRow extends StatelessWidget {
                         ),
                       ),
               ),
-              const SizedBox(width: AppSpacing.sm + 2),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +90,7 @@ class CheckInGuestRow extends StatelessWidget {
                         color: colors.brandOnSurface,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       detail,
                       style: TextStyle(
@@ -101,17 +102,14 @@ class CheckInGuestRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.xs),
+              SizedBox(width: space.inlineMicro),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: 3.5,
-                ),
+                padding: space.insetTag,
                 decoration: BoxDecoration(
                   color: ready
                       ? colors.brandOnSurface
                       : colors.checkInGuestAvatar,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  borderRadius: shape.radiusPill,
                 ),
                 child: Text(
                   chip,

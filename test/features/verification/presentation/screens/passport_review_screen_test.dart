@@ -20,56 +20,54 @@ void main() {
   });
 
   group('PassportReviewScreen', () {
-    testWidgets('renders fallback SVG illustration when capturedImage is null', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: PassportReviewScreen(),
+    testWidgets(
+      'renders fallback SVG illustration when capturedImage is null',
+      (tester) async {
+        await tester.pumpWidget(
+          const ProviderScope(child: MaterialApp(home: PassportReviewScreen())),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Check your photo'), findsOneWidget);
+        expect(find.byType(SvgPicture), findsWidgets);
+        expect(find.byType(Image), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'renders Image.file with BoxFit.contain when capturedImage is present',
+      (tester) async {
+        // Create a test passport image (125:88 ratio)
+        final testImg = img.Image(width: 500, height: 352);
+        img.fill(testImg, color: img.ColorRgb8(100, 150, 200));
+
+        final testFile = File('${tempDir.path}/uploaded_passport.jpg');
+        testFile.writeAsBytesSync(img.encodeJpg(testImg));
+
+        final container = ProviderContainer();
+        container
+            .read(verificationNotifierProvider.notifier)
+            .setImage(testFile);
+
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: const MaterialApp(home: PassportReviewScreen()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Check your photo'), findsOneWidget);
-      expect(find.byType(SvgPicture), findsWidgets);
-      expect(find.byType(Image), findsNothing);
-    });
+        expect(find.text('Check your photo'), findsOneWidget);
+        final imageFinder = find.byType(Image);
+        expect(imageFinder, findsOneWidget);
 
-    testWidgets('renders Image.file with BoxFit.contain when capturedImage is present', (
-      tester,
-    ) async {
-      // Create a test passport image (125:88 ratio)
-      final testImg = img.Image(width: 500, height: 352);
-      img.fill(testImg, color: img.ColorRgb8(100, 150, 200));
+        final imageWidget = tester.widget<Image>(imageFinder);
+        // Verify BoxFit.contain is used so no edges of the uploaded image are clipped or hidden
+        expect(imageWidget.fit, BoxFit.contain);
 
-      final testFile = File('${tempDir.path}/uploaded_passport.jpg');
-      testFile.writeAsBytesSync(img.encodeJpg(testImg));
-
-      final container = ProviderContainer();
-      container.read(verificationNotifierProvider.notifier).setImage(testFile);
-
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(
-            home: PassportReviewScreen(),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Check your photo'), findsOneWidget);
-      final imageFinder = find.byType(Image);
-      expect(imageFinder, findsOneWidget);
-
-      final imageWidget = tester.widget<Image>(imageFinder);
-      // Verify BoxFit.contain is used so no edges of the uploaded image are clipped or hidden
-      expect(imageWidget.fit, BoxFit.contain);
-
-      container.dispose();
-    });
+        container.dispose();
+      },
+    );
 
     testWidgets('renders enlarged cropped MRZ image when mrzImage is present', (
       tester,
@@ -85,17 +83,14 @@ void main() {
       mrzFile.writeAsBytesSync(img.encodeJpg(mrzImg));
 
       final container = ProviderContainer();
-      container.read(verificationNotifierProvider.notifier).setImage(
-            testFile,
-            mrzImage: mrzFile,
-          );
+      container
+          .read(verificationNotifierProvider.notifier)
+          .setImage(testFile, mrzImage: mrzFile);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(
-            home: PassportReviewScreen(),
-          ),
+          child: const MaterialApp(home: PassportReviewScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -117,7 +112,9 @@ void main() {
       const line2 = 'Z1234567<4IND9501018F3012312<<<<<<<<<<<<<<6';
 
       final container = ProviderContainer();
-      container.read(verificationNotifierProvider.notifier).setImage(
+      container
+          .read(verificationNotifierProvider.notifier)
+          .setImage(
             File('${tempDir.path}/dummy.jpg'),
             mrzLines: const [line1, line2],
           );
@@ -125,9 +122,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(
-            home: PassportReviewScreen(),
-          ),
+          child: const MaterialApp(home: PassportReviewScreen()),
         ),
       );
       await tester.pumpAndSettle();

@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -52,6 +51,8 @@ class PassportFailedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final effectivePhase = failurePhase ?? state.phase;
     final trioStates = effectivePhase == VerificationPhase.imageQualityFailed
@@ -65,8 +66,8 @@ class PassportFailedScreen extends ConsumerWidget {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 0, circleSize: 24.0),
-        const SizedBox(height: AppSpacing.xl),
+        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackHero),
         Center(
           child: VerifyWobble(
             child: SvgPicture.asset(
@@ -77,12 +78,12 @@ class PassportFailedScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         VerifyProgressTrio(
           labels: const ['Upload', 'Check', 'Read'],
           states: trioStates,
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         Text(
           "Let's try that again",
           textAlign: TextAlign.center,
@@ -94,9 +95,9 @@ class PassportFailedScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          padding: EdgeInsets.symmetric(horizontal: space.stackItem),
           child: Text(
             _getExplanation(state),
             textAlign: TextAlign.center,
@@ -119,14 +120,14 @@ class PassportFailedScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportCapture);
           },
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         AppButton(
           label: 'See the tips again',
           variant: AppButtonVariant.brandOutline,
           onPressed: () =>
               context.pushReplacement(AppRoutes.passportInstructions),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Center(
           child: InkWell(
             onTap: () {
@@ -139,7 +140,7 @@ class PassportFailedScreen extends ConsumerWidget {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(

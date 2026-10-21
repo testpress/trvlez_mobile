@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
@@ -43,6 +41,8 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final reservationsState = ref.watch(reservationListProvider);
     final reservations = reservationsState.valueOrNull ?? [];
 
@@ -71,11 +71,11 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: space.stackItem),
                 TabBar(
                   controller: _tabController,
                   indicatorColor: colors.brandPrimary,
-                  indicatorWeight: 2.5,
+                  indicatorWeight: shape.borderMedium,
                   labelColor: colors.brandPrimary,
                   unselectedLabelColor: colors.inkTertiary,
                   labelStyle: const TextStyle(
@@ -140,6 +140,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     List<Reservation> reservations,
     String emptyType,
   ) {
+    final space = context.space;
     final anywhereStays = emptyType == 'upcoming'
         ? ref.watch(anywhereStaysProvider)
         : const <AnywhereStay>[];
@@ -147,11 +148,11 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     if (reservations.isEmpty && anywhereStays.isEmpty) {
       if (emptyType == 'upcoming') {
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: space.insetCard,
           child: Column(
             children: [
               _buildEmptyState(emptyType),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               _AddStayRow(onTap: () => context.push(AppRoutes.anywhereFind)),
             ],
           ),
@@ -163,7 +164,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     return RefreshIndicator(
       onRefresh: () => ref.refresh(reservationListProvider.future),
       child: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: space.insetCard,
         children: [
           for (final reservation in reservations) ...[
             _ReservationCard(
@@ -173,15 +174,15 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                 extra: {'reservation': reservation},
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
           ],
           if (emptyType == 'upcoming') ...[
             for (final stay in anywhereStays) ...[
               _AnywhereCard(stay: stay),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
             ],
             _AddStayRow(onTap: () => context.push(AppRoutes.anywhereFind)),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
           ],
         ],
       ),
@@ -190,6 +191,9 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
 
   Widget _buildEmptyState(String type) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final messages = {
       'upcoming': (
         'No upcoming trips',
@@ -205,23 +209,23 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.all(space.stackHero),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: space.insetDialog,
               decoration: BoxDecoration(
                 color: colors.redTint,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 AppIcons.calendar,
-                size: 36,
+                size: sizes.avatarMd,
                 color: colors.brandPrimary,
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             Text(
               title,
               style: TextStyle(
@@ -231,7 +235,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                 color: colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: space.stackTight),
             Text(
               subtitle,
               textAlign: TextAlign.center,
@@ -242,21 +246,16 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
               ),
             ),
             if (type == 'upcoming') ...[
-              const SizedBox(height: AppSpacing.lg),
+              SizedBox(height: space.stackSection),
               ElevatedButton.icon(
                 onPressed: () => context.push(AppRoutes.ezStays),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.brandPrimary,
                   foregroundColor: colors.textOnAction,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.fullRadius,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.md,
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),
+                  padding: space.insetControlLg,
                 ),
-                icon: const Icon(AppIcons.search, size: 16),
+                icon: Icon(AppIcons.search, size: sizes.iconSm),
                 label: const Text(
                   'Explore Properties',
                   style: TextStyle(
@@ -275,15 +274,22 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
 
   Widget _buildErrorState(String error) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.all(space.stackHero),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(AppIcons.circleX, size: 40, color: colors.brandPrimary),
-            const SizedBox(height: AppSpacing.md),
+            Icon(
+              AppIcons.circleX,
+              size: sizes.iconFeature,
+              color: colors.brandPrimary,
+            ),
+            SizedBox(height: space.stackFormField),
             Text(
               'Failed to load reservations',
               style: TextStyle(
@@ -293,7 +299,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                 color: colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: space.stackTight),
             Text(
               error,
               textAlign: TextAlign.center,
@@ -303,7 +309,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                 color: colors.textSecondary,
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
+            SizedBox(height: space.stackSection),
             ElevatedButton(
               onPressed: () => ref
                   .read(reservationListProvider.notifier)
@@ -311,9 +317,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.brandPrimary,
                 foregroundColor: colors.textOnAction,
-                shape: RoundedRectangleBorder(
-                  borderRadius: AppRadius.fullRadius,
-                ),
+                shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),
               ),
               child: const Text('Retry'),
             ),
@@ -335,6 +339,9 @@ class _ReservationCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final dateFormat = DateFormat('MMM d');
     final dispute = ref.watch(disputesProvider)[reservation.id];
 
@@ -348,14 +355,17 @@ class _ReservationCard extends ConsumerWidget {
     };
 
     return InkWell(
-      borderRadius: AppRadius.cardRadius,
+      borderRadius: shape.radiusSurface,
       onTap: onTap,
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: AppRadius.cardRadius,
-          border: Border.all(color: colors.cardBorderSoft),
+          borderRadius: shape.radiusSurface,
+          border: Border.all(
+            color: colors.cardBorderSoft,
+            width: shape.borderDefault,
+          ),
           boxShadow: [
             BoxShadow(
               color: colors.cardShadow,
@@ -368,15 +378,15 @@ class _ReservationCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PhotoBox(
-              height: 130,
+              height: sizes.thumbPhotoMd,
               imageUrl: reservation.propertySummary.heroImageUrl,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
+              borderRadius: BorderRadius.vertical(
+                top: shape.radiusSurface.topLeft,
               ),
-              iconSize: 32,
+              iconSize: sizes.iconXl,
             ),
             Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
+              padding: space.insetCard,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -396,23 +406,23 @@ class _ReservationCard extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(width: space.inlineIconLabel),
                       StatusPill(
                         label: reservation.status.displayLabel,
                         state: pillState,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: space.stackText),
                   if (reservation.propertySummary.locationString.isNotEmpty)
                     Row(
                       children: [
                         Icon(
                           AppIcons.mapPin,
-                          size: 12,
+                          size: sizes.iconXs,
                           color: colors.inkTertiary,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: space.inlineMicro),
                         Expanded(
                           child: Text(
                             reservation.propertySummary.locationString,
@@ -427,15 +437,15 @@ class _ReservationCard extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  const Divider(height: AppSpacing.md),
+                  Divider(height: space.stackFormField),
                   Row(
                     children: [
                       Icon(
                         AppIcons.calendar,
-                        size: 13,
+                        size: sizes.iconXs,
                         color: colors.brandPrimary,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: space.inlineIconLabel),
                       Text(
                         '${dateFormat.format(reservation.checkInDate)} – ${dateFormat.format(reservation.checkOutDate)}',
                         style: TextStyle(
@@ -456,15 +466,15 @@ class _ReservationCard extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: space.stackText),
                   Row(
                     children: [
                       Icon(
                         AppIcons.receipt,
-                        size: 13,
+                        size: sizes.iconXs,
                         color: colors.inkTertiary,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: space.inlineIconLabel),
                       Text(
                         reservation.confirmationCode,
                         style: TextStyle(
@@ -478,7 +488,7 @@ class _ReservationCard extends ConsumerWidget {
                   ),
                   if (reservation.status.isUpcoming ||
                       reservation.status == ReservationStatus.checkedIn) ...[
-                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(height: space.stackFormField),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -493,13 +503,13 @@ class _ReservationCard extends ConsumerWidget {
                         }
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.sm,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: space.inlineItem,
+                          vertical: space.stackItem,
                         ),
                         decoration: BoxDecoration(
                           color: colors.redTint,
-                          borderRadius: AppRadius.mdRadius,
+                          borderRadius: shape.radiusSurface,
                         ),
                         child: Row(
                           children: [
@@ -507,10 +517,10 @@ class _ReservationCard extends ConsumerWidget {
                               reservation.status == ReservationStatus.checkedIn
                                   ? AppIcons.qrcode
                                   : AppIcons.doorEnter,
-                              size: 14,
+                              size: sizes.iconXs,
                               color: colors.brandPrimary,
                             ),
-                            const SizedBox(width: AppSpacing.sm),
+                            SizedBox(width: space.inlineIconLabel),
                             Expanded(
                               child: Text(
                                 reservation.status ==
@@ -527,7 +537,7 @@ class _ReservationCard extends ConsumerWidget {
                             ),
                             Icon(
                               AppIcons.chevronRight,
-                              size: 13,
+                              size: sizes.iconXs,
                               color: colors.brandPrimary,
                             ),
                           ],
@@ -536,7 +546,7 @@ class _ReservationCard extends ConsumerWidget {
                     ),
                   ],
                   if (dispute != null && dispute.status == 'holding') ...[
-                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(height: space.stackItem),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -545,27 +555,28 @@ class _ReservationCard extends ConsumerWidget {
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.sm,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: space.inlineItem,
+                          vertical: space.stackItem,
                         ),
                         decoration: BoxDecoration(
                           color: colors.statusWarningBackground,
-                          borderRadius: AppRadius.mdRadius,
+                          borderRadius: shape.radiusSurface,
                           border: Border.all(
                             color: colors.statusWarningForeground.withValues(
                               alpha: 0.3,
                             ),
+                            width: shape.borderDefault,
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               AppIcons.shieldAlert,
-                              size: 14,
+                              size: sizes.iconXs,
                               color: colors.statusWarningForeground,
                             ),
-                            const SizedBox(width: AppSpacing.sm),
+                            SizedBox(width: space.inlineIconLabel),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,7 +603,7 @@ class _ReservationCard extends ConsumerWidget {
                             ),
                             Icon(
                               AppIcons.chevronRight,
-                              size: 13,
+                              size: sizes.iconXs,
                               color: colors.statusWarningForeground,
                             ),
                           ],
@@ -601,24 +612,24 @@ class _ReservationCard extends ConsumerWidget {
                     ),
                   ] else if (dispute != null &&
                       dispute.status == 'withdrawn') ...[
-                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(height: space.stackItem),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: 6,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.inlineItem,
+                        vertical: space.stackItem,
                       ),
                       decoration: BoxDecoration(
                         color: colors.surfaceSubtle,
-                        borderRadius: AppRadius.mdRadius,
+                        borderRadius: shape.radiusSurface,
                       ),
                       child: Row(
                         children: [
                           Icon(
                             AppIcons.checkCircle,
-                            size: 12,
+                            size: sizes.iconXs,
                             color: colors.inkTertiary,
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: space.inlineIconLabel),
                           Expanded(
                             child: Text(
                               'Dispute withdrawn · Payment released to hotel',
@@ -635,7 +646,7 @@ class _ReservationCard extends ConsumerWidget {
                   ] else if (reservation.status ==
                           ReservationStatus.checkedIn ||
                       reservation.status == ReservationStatus.checkedOut) ...[
-                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(height: space.stackItem),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -655,10 +666,10 @@ class _ReservationCard extends ConsumerWidget {
                         children: [
                           Icon(
                             AppIcons.alertCircle,
-                            size: 12,
+                            size: sizes.iconXs,
                             color: colors.inkTertiary,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: space.inlineMicro),
                           Text(
                             'Something wrong with this stay? Report issue',
                             style: TextStyle(
@@ -693,6 +704,9 @@ class _AnywhereCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     final (pillLabel, pillState) = switch (stay.status) {
       AnywhereStatus.sent => ('Sent to hotel', StatusPillState.awaiting),
@@ -702,11 +716,14 @@ class _AnywhereCard extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
-        border: Border.all(color: colors.cardBorderSoft),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.cardBorderSoft,
+          width: shape.borderDefault,
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -722,21 +739,21 @@ class _AnywhereCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 38,
-                height: 38,
+                width: sizes.avatarMd,
+                height: sizes.avatarMd,
                 decoration: BoxDecoration(
                   color: colors.redTint,
-                  borderRadius: AppRadius.smRadius,
+                  borderRadius: shape.radiusControlSm,
                 ),
                 child: Center(
                   child: Icon(
                     AppIcons.globe,
-                    size: 18,
+                    size: sizes.iconSm,
                     color: colors.brandPrimary,
                   ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -752,15 +769,15 @@ class _AnywhereCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Row(
                       children: [
                         Icon(
                           AppIcons.mapPin,
-                          size: 12,
+                          size: sizes.iconXs,
                           color: colors.inkTertiary,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: space.inlineMicro),
                         Expanded(
                           child: Text(
                             stay.place,
@@ -778,15 +795,19 @@ class _AnywhereCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               StatusPill(label: pillLabel, state: pillState),
             ],
           ),
-          const Divider(height: AppSpacing.md),
+          Divider(height: space.stackFormField),
           Row(
             children: [
-              Icon(AppIcons.calendar, size: 13, color: colors.brandPrimary),
-              const SizedBox(width: 6),
+              Icon(
+                AppIcons.calendar,
+                size: sizes.iconXs,
+                color: colors.brandPrimary,
+              ),
+              SizedBox(width: space.inlineIconLabel),
               Text(
                 stay.dates,
                 style: TextStyle(
@@ -807,17 +828,17 @@ class _AnywhereCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: space.stackTight),
           Row(
             children: [
               Icon(
                 stay.route == AnywhereRoute.byEmail
                     ? AppIcons.mail
                     : AppIcons.shieldCheck,
-                size: 13,
+                size: sizes.iconXs,
                 color: colors.inkTertiary,
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   stay.route == AnywhereRoute.byEmail
@@ -834,20 +855,24 @@ class _AnywhereCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: 6,
+            padding: EdgeInsets.symmetric(
+              horizontal: space.inlineIconLabel,
+              vertical: space.stackTight,
             ),
             decoration: BoxDecoration(
               color: colors.surfaceSubtle,
-              borderRadius: AppRadius.smRadius,
+              borderRadius: shape.radiusControlSm,
             ),
             child: Row(
               children: [
-                Icon(AppIcons.info, size: 12, color: colors.inkTertiary),
-                const SizedBox(width: 6),
+                Icon(
+                  AppIcons.info,
+                  size: sizes.iconXs,
+                  color: colors.inkTertiary,
+                ),
+                SizedBox(width: space.inlineIconLabel),
                 Expanded(
                   child: Text(
                     'Check-in Anywhere pass · Show passport upon arrival',
@@ -878,24 +903,30 @@ class _AddStayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.surfaceSubtle,
-            borderRadius: AppRadius.cardRadius,
-            border: Border.all(color: colors.cardBorderSoft),
+            borderRadius: shape.radiusSurface,
+            border: Border.all(
+              color: colors.cardBorderSoft,
+              width: shape.borderDefault,
+            ),
           ),
           child: Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: sizes.controlSm,
+                height: sizes.controlSm,
                 decoration: BoxDecoration(
                   color: colors.redTint,
                   shape: BoxShape.circle,
@@ -903,12 +934,12 @@ class _AddStayRow extends StatelessWidget {
                 child: Center(
                   child: Icon(
                     AppIcons.plus,
-                    size: 16,
+                    size: sizes.iconSm,
                     color: colors.brandPrimary,
                   ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
+              SizedBox(width: space.inlineItem),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -922,7 +953,7 @@ class _AddStayRow extends StatelessWidget {
                         color: colors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       'Staying at a hotel not on TRVLez? Check in online here.',
                       style: TextStyle(
@@ -934,8 +965,12 @@ class _AddStayRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
-              Icon(AppIcons.chevronRight, size: 16, color: colors.inkTertiary),
+              SizedBox(width: space.inlineIconLabel),
+              Icon(
+                AppIcons.chevronRight,
+                size: sizes.iconSm,
+                color: colors.inkTertiary,
+              ),
             ],
           ),
         ),

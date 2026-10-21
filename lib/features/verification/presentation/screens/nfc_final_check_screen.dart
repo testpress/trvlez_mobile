@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -94,6 +92,9 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
 
     ref.listen<VerificationState>(verificationNotifierProvider, (
@@ -113,7 +114,7 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
       helpLine: false,
       isScrollable: false,
       body: [
-        const VerificationStepper(current: 4, circleSize: 22.0),
+        VerificationStepper(current: 4, circleSize: sizes.iconDefault),
         const Spacer(flex: 1),
         const Center(child: VerifyHourglass()),
         const Spacer(flex: 1),
@@ -125,9 +126,9 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
           child: Text(
             "Usually under a minute. You can close the app — we'll let you know.",
             textAlign: TextAlign.center,
@@ -161,13 +162,16 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
           ],
         ),
         if (state.phase == VerificationPhase.error) ...[
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
           Container(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: space.insetCard,
             decoration: BoxDecoration(
               color: colors.brandCardBackground,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: colors.brandDivider),
+              borderRadius: shape.radiusControl,
+              border: Border.all(
+                color: colors.brandDivider,
+                width: shape.borderDefault,
+              ),
             ),
             child: Column(
               children: [
@@ -178,7 +182,7 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
                     color: colors.brandOnSurface,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: space.stackItem),
                 AppButton(
                   label: 'Retry submission',
                   variant: AppButtonVariant.brandWhite,
@@ -206,7 +210,7 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -229,7 +233,7 @@ class _NfcFinalCheckScreenState extends ConsumerState<NfcFinalCheckScreen> {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(
           text: 'Checked on our own systems.\nNever shared with external AI.',
         ),

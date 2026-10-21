@@ -1,4 +1,7 @@
 /// 4-point grid spacing system and semantic aliases.
+@Deprecated(
+  'Use semantic layout tokens via context.space, context.sizes, or context.shape instead',
+)
 abstract final class AppSpacing {
   // ─── Base 4-pt scale ──────────────────────────────────────────────────
   static const double xs = 4;

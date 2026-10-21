@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
@@ -87,12 +86,17 @@ class VerificationStatusScreenState
     final state = ref.watch(travelerVerificationStateProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final config = StatusConfig.from(state, context);
 
-    final activeVerificationScore = verificationState.jobResult?.verificationScore ??
+    final activeVerificationScore =
+        verificationState.jobResult?.verificationScore ??
         verificationState.submitResult?.verificationScore;
     final failedStep = verificationState.verificationStatus?.failedStep;
-    final reason = verificationState.verificationStatus?.errorReason ??
+    final reason =
+        verificationState.verificationStatus?.errorReason ??
         verificationState.errorMessage;
     final uiMitigation = verificationState.verificationStatus?.uiMitigation;
     final errorReason = reason == uiMitigation ? null : reason;
@@ -114,7 +118,7 @@ class VerificationStatusScreenState
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: colorScheme.onSurface,
-            size: 18,
+            size: sizes.iconSm,
           ),
           onPressed: () {
             if (context.canPop()) {
@@ -131,26 +135,26 @@ class VerificationStatusScreenState
               onRefresh: handleRefresh,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
+                padding: EdgeInsets.symmetric(
+                  horizontal: space.stackSection,
+                  vertical: space.stackFormField,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Horizontal Stepper Progress Indicator - Step 4 (All completed)
                     const KycProgressStepper(progressIndex: 4),
-                    const SizedBox(height: 24),
+                    SizedBox(height: space.stackSection),
 
                     // Central Card Container
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 24,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.insetCardComfortable.left,
+                        vertical: space.stackSection,
                       ),
                       decoration: BoxDecoration(
                         color: colorScheme.surface,
-                        borderRadius: AppRadius.sm10Radius,
+                        borderRadius: shape.radiusControlSm,
                         boxShadow: [
                           BoxShadow(
                             color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -170,7 +174,7 @@ class VerificationStatusScreenState
                               pulseAnimation: pulseAnimation,
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: space.stackSection),
                           // ── Title & Subtitle ──────────────────────────
                           Text(
                             config.title,
@@ -180,7 +184,7 @@ class VerificationStatusScreenState
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: space.stackItem),
                           Text(
                             config.subtitle,
                             style: AppTypography.body.copyWith(
@@ -194,21 +198,21 @@ class VerificationStatusScreenState
                           ),
                           // ── Verification Score ───────────────────────
                           if (activeVerificationScore != null) ...[
-                            const SizedBox(height: 16),
+                            SizedBox(height: space.stackFormField),
                             VerificationScoreIndicator(
                               score: activeVerificationScore,
                               isVerified:
                                   state == TravelerVerificationState.verified,
                             ),
                           ],
-                          const SizedBox(height: 32),
+                          SizedBox(height: space.stackHero),
                           // ── Step Checklist ────────────────────────────
                           StepChecklist(
                             state: state,
                             isNfcSkipped: verificationState.isNfcSkipped,
                             hasNfcResult: verificationState.nfcResult != null,
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: space.stackSection),
                           // ── Info Card ─────────────────────────────────
                           InfoCard(
                             state: state,
@@ -216,17 +220,19 @@ class VerificationStatusScreenState
                             errorReason: errorReason,
                             uiMitigation: uiMitigation,
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: space.stackSection),
                           // ── Actions ───────────────────────────────────
                           VerificationStatusActions(state: state),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: space.stackHero),
                     // Footer text
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: space.stackFormField,
+                        ),
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
@@ -252,7 +258,7 @@ class VerificationStatusScreenState
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: space.stackFormField),
                   ],
                 ),
               ),

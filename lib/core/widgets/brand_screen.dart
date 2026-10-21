@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/widgets/brand_wordmark.dart';
 
 /// The foundational full-screen scaffold for TrvlEz brand screens (Auth & Verification).
@@ -17,10 +16,7 @@ class BrandScreen extends StatelessWidget {
     this.onBack,
     this.showWordmark = true,
     this.isScrollable = false,
-    this.contentPadding = const EdgeInsets.symmetric(
-      horizontal: AppSpacing.lg,
-      vertical: AppSpacing.md,
-    ),
+    this.contentPadding,
   });
 
   /// The primary content widget.
@@ -39,11 +35,15 @@ class BrandScreen extends StatelessWidget {
   final bool isScrollable;
 
   /// Outer padding for screen content.
-  final EdgeInsetsGeometry contentPadding;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+
+    final effectivePadding = contentPadding ?? space.insetScreen;
 
     return Scaffold(
       backgroundColor: colors.brandSurface,
@@ -68,7 +68,7 @@ class BrandScreen extends StatelessWidget {
               children: [
                 // ── Header Bar ──────────────────────────────────────────────
                 SizedBox(
-                  height: 52,
+                  height: sizes.appBarHeight,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -82,15 +82,15 @@ class BrandScreen extends StatelessWidget {
                               icon: Icon(
                                 AppIcons.arrowLeft,
                                 color: colors.brandOnSurface,
-                                size: 20,
+                                size: sizes.iconMd,
                               ),
                               onPressed: onBack,
-                              splashRadius: 24,
-                              constraints: const BoxConstraints(
-                                minWidth: 48,
-                                minHeight: 48,
+                              splashRadius: sizes.iconDefault,
+                              constraints: BoxConstraints(
+                                minWidth: sizes.touchTargetMin,
+                                minHeight: sizes.touchTargetMin,
                               ),
-                              padding: const EdgeInsets.all(AppSpacing.sm),
+                              padding: space.insetControlSm,
                             ),
                           ),
                         ),
@@ -103,10 +103,10 @@ class BrandScreen extends StatelessWidget {
                 Expanded(
                   child: isScrollable
                       ? SingleChildScrollView(
-                          padding: contentPadding,
+                          padding: effectivePadding,
                           child: body,
                         )
-                      : Padding(padding: contentPadding, child: body),
+                      : Padding(padding: effectivePadding, child: body),
                 ),
               ],
             ),

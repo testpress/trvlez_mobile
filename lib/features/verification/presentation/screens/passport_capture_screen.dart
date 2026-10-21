@@ -9,8 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
@@ -95,8 +93,9 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     try {
       final XFile file = await cam.takePicture();
       final viewportSize = _viewportSize;
-      final frameRect =
-          PassportFramingGuide.calculatePassportFrame(viewportSize);
+      final frameRect = PassportFramingGuide.calculatePassportFrame(
+        viewportSize,
+      );
 
       // Compute effective preview aspect ratio matching the viewport orientation.
       // CameraController.value.aspectRatio is sensor width / sensor height (> 1.0).
@@ -104,8 +103,8 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       final camAR = cam.value.aspectRatio;
       final double previewAR =
           (viewportSize.width < viewportSize.height && camAR > 1.0)
-              ? (1.0 / camAR)
-              : camAR;
+          ? (1.0 / camAR)
+          : camAR;
 
       final cropParams = PassportCropParams(
         imagePath: file.path,
@@ -128,8 +127,10 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       final passportFile = croppedFile ?? File(file.path);
 
       // Retrieve or generate the cropped MRZ region strip from the passport image
-      final mrzPath = passportFile.path
-          .replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+      final mrzPath = passportFile.path.replaceAll(
+        RegExp(r'\.[^.]+$'),
+        '_mrz_cropped.jpg',
+      );
       File? mrzFile = File(mrzPath);
       if (!mrzFile.existsSync()) {
         mrzFile = await compute<String, File?>(
@@ -148,9 +149,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to capture photo. Try again.'),
-          ),
+          const SnackBar(content: Text('Failed to capture photo. Try again.')),
         );
       }
     } finally {
@@ -161,6 +160,9 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final cam = _controller;
 
     return BrandVerifyScreen(
@@ -170,8 +172,8 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 0, circleSize: 23.0),
-        const SizedBox(height: AppSpacing.md),
+        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackFormField),
         Text(
           'Fit the page in the frame',
           textAlign: TextAlign.center,
@@ -183,7 +185,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Both the photo page and the code lines.',
           textAlign: TextAlign.center,
@@ -194,14 +196,14 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 320),
             child: AspectRatio(
               aspectRatio: 1 / 1.05,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderRadius: shape.radiusControl,
                 child: Container(
                   color: colors.brandShotBackdrop.withValues(alpha: 0.35),
                   child: LayoutBuilder(
@@ -223,15 +225,15 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
                                   child: SizedBox(
                                     width: cam.value.previewSize != null
                                         ? (viewportSize.width <
-                                                viewportSize.height
-                                            ? cam.value.previewSize!.height
-                                            : cam.value.previewSize!.width)
+                                                  viewportSize.height
+                                              ? cam.value.previewSize!.height
+                                              : cam.value.previewSize!.width)
                                         : viewportSize.width,
                                     height: cam.value.previewSize != null
                                         ? (viewportSize.width <
-                                                viewportSize.height
-                                            ? cam.value.previewSize!.width
-                                            : cam.value.previewSize!.height)
+                                                  viewportSize.height
+                                              ? cam.value.previewSize!.width
+                                              : cam.value.previewSize!.height)
                                         : viewportSize.height,
                                     child: CameraPreview(cam),
                                   ),
@@ -257,12 +259,16 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(AppIcons.numbers, size: 14.0, color: colors.brandSecondary),
-            const SizedBox(width: AppSpacing.xs),
+            Icon(
+              AppIcons.numbers,
+              size: sizes.iconXs,
+              color: colors.brandSecondary,
+            ),
+            SizedBox(width: space.inlineMicro),
             Flexible(
               child: Text(
                 'Keep the dashed box over the code lines',
@@ -276,14 +282,13 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
             ),
           ],
         ),
-
       ],
       foot: [
         BrandShutter(
           square: true,
           onPressed: _isCapturing ? null : _capturePhoto,
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Center(
           child: InkWell(
             onTap: () {
@@ -296,7 +301,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(

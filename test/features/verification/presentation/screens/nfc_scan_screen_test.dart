@@ -57,7 +57,9 @@ void main() {
 
   ProviderContainer createInitializedContainer() {
     final container = ProviderContainer();
-    container.read(verificationNotifierProvider.notifier).setExtractedMrz(
+    container
+        .read(verificationNotifierProvider.notifier)
+        .setExtractedMrz(
           'P12345678',
           DateTime(1990, 1, 1),
           DateTime(2030, 1, 1),
@@ -84,8 +86,7 @@ void main() {
 
         final progressFinder = find.byType(LinearProgressIndicator);
         expect(progressFinder, findsOneWidget);
-        final progress =
-            tester.widget<LinearProgressIndicator>(progressFinder);
+        final progress = tester.widget<LinearProgressIndicator>(progressFinder);
         expect(progress.value, equals(0.0));
 
         container.dispose();
@@ -146,39 +147,38 @@ void main() {
       },
     );
 
-    testWidgets(
-      'finishes reading at 100% and routes to chip data screen',
-      (tester) async {
-        final mockService = MockNfcPassportService();
-        final container = createInitializedContainer();
+    testWidgets('finishes reading at 100% and routes to chip data screen', (
+      tester,
+    ) async {
+      final mockService = MockNfcPassportService();
+      final container = createInitializedContainer();
 
-        await tester.pumpWidget(
-          createTestWidget(nfcService: mockService, container: container),
-        );
-        await tester.pump();
+      await tester.pumpWidget(
+        createTestWidget(nfcService: mockService, container: container),
+      );
+      await tester.pump();
 
-        mockService.progressCallback?.call(
-          const NfcReadProgress(
-            currentStep: NfcReadStep.complete,
-            percentage: 1.0,
-            description: 'Finished',
-          ),
-        );
-        mockService.readCompleter.complete(
-          const NfcPassportResult(
-            rawDgBytesBase64: {},
-            sodBytesBase64: '',
-            comBytesBase64: '',
-            authMethod: NfcAuthMethod.bac,
-            availableDataGroups: [],
-          ),
-        );
+      mockService.progressCallback?.call(
+        const NfcReadProgress(
+          currentStep: NfcReadStep.complete,
+          percentage: 1.0,
+          description: 'Finished',
+        ),
+      );
+      mockService.readCompleter.complete(
+        const NfcPassportResult(
+          rawDgBytesBase64: {},
+          sodBytesBase64: '',
+          comBytesBase64: '',
+          authMethod: NfcAuthMethod.bac,
+          availableDataGroups: [],
+        ),
+      );
 
-        await tester.pumpAndSettle();
-        expect(find.text('Chip Data Screen'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.text('Chip Data Screen'), findsOneWidget);
 
-        container.dispose();
-      },
-    );
+      container.dispose();
+    });
   });
 }

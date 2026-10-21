@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
@@ -50,10 +48,7 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
           ? e.message
           : e.toString().replaceAll(RegExp(r'^[A-Za-z]*Exception:\s*'), '');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          behavior: SnackBarBehavior.floating,
-        ),
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -63,6 +58,9 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final draft = ref.watch(bookingDraftProvider);
 
     if (draft == null || draft.chosen.isEmpty) {
@@ -88,16 +86,16 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
                     behavior: HitTestBehavior.opaque,
                     onTap: () => context.pop(),
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
+                      padding: EdgeInsets.all(space.stackText),
                       child: Icon(
                         AppIcons.arrowLeft,
-                        size: 20.0,
+                        size: sizes.iconMd,
                         color: colors.ink,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Review',
                   style: TextStyle(
@@ -112,24 +110,24 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              padding: EdgeInsets.only(bottom: space.stackFormField),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.md,
-                      AppSpacing.md,
+                    padding: EdgeInsets.fromLTRB(
+                      space.insetCard.left,
+                      space.stackFormField,
+                      space.insetCard.right,
                       0,
                     ),
                     child: BookingReviewPropertyCard(draft: draft),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.sm,
-                      AppSpacing.md,
+                    padding: EdgeInsets.fromLTRB(
+                      space.insetCard.left,
+                      space.stackItem,
+                      space.insetCard.right,
                       0,
                     ),
                     child: BookingReviewBreakdownCard(
@@ -138,10 +136,10 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.xs,
-                      AppSpacing.md,
+                    padding: EdgeInsets.fromLTRB(
+                      space.insetCard.left,
+                      space.stackText,
+                      space.insetCard.right,
                       0,
                     ),
                     child: Text(
@@ -179,15 +177,17 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              AppSpacing.md,
+            padding: EdgeInsets.fromLTRB(
+              space.insetCard.left,
+              space.stackItem,
+              space.insetCard.right,
+              space.insetCard.bottom,
             ),
             decoration: BoxDecoration(
               color: colors.surface,
-              border: Border(top: BorderSide(color: colors.line)),
+              border: Border(
+                top: BorderSide(color: colors.line, width: shape.borderDefault),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: colors.cardShadow,
@@ -202,15 +202,18 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    padding: EdgeInsets.only(bottom: space.stackItem),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.insetCard.left,
                       ),
                       decoration: BoxDecoration(
                         color: colors.surface,
-                        border: Border.all(color: colors.line),
-                        borderRadius: AppRadius.cardRadius,
+                        border: Border.all(
+                          color: colors.line,
+                          width: shape.borderDefault,
+                        ),
+                        borderRadius: shape.radiusSurface,
                       ),
                       child: BookingPaymentRow(cardAdded: draft.cardAdded),
                     ),

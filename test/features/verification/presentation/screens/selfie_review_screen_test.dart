@@ -47,9 +47,7 @@ void main() {
     setUp(() {
       fakeRepo = FakeVerificationRepository();
       container = ProviderContainer(
-        overrides: [
-          verificationRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
+        overrides: [verificationRepositoryProvider.overrideWithValue(fakeRepo)],
       );
     });
 
@@ -86,7 +84,9 @@ void main() {
       'tapping Record again clears video and navigates to selfieCapture',
       (tester) async {
         final dummyVideo = File('selfie_to_clear.mp4');
-        container.read(verificationNotifierProvider.notifier).setVideo(dummyVideo);
+        container
+            .read(verificationNotifierProvider.notifier)
+            .setVideo(dummyVideo);
 
         await tester.pumpWidget(createTestWidget(container: container));
         await tester.pumpAndSettle();
@@ -96,7 +96,10 @@ void main() {
           equals(dummyVideo),
         );
 
-        final recordAgainFinder = find.widgetWithText(AppButton, 'Record again');
+        final recordAgainFinder = find.widgetWithText(
+          AppButton,
+          'Record again',
+        );
         expect(recordAgainFinder, findsOneWidget);
 
         await tester.tap(recordAgainFinder);
@@ -114,7 +117,9 @@ void main() {
       'tapping Looks good, upload triggers uploadSelfie and navigates to selfieProcessing',
       (tester) async {
         final dummyVideo = File('selfie_to_upload.mp4');
-        container.read(verificationNotifierProvider.notifier).setVideo(dummyVideo);
+        container
+            .read(verificationNotifierProvider.notifier)
+            .setVideo(dummyVideo);
 
         await tester.pumpWidget(createTestWidget(container: container));
         await tester.pumpAndSettle();

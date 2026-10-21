@@ -31,7 +31,8 @@ class BookingNotifier extends Notifier<BookingDraft?> {
   /// Initializes a draft for the given property.
   void beginBooking(Property property) {
     final roomTypes = BookingRoomCatalogue.forProperty(property);
-    final nightly = property.pricePerNight?.round() ??
+    final nightly =
+        property.pricePerNight?.round() ??
         (roomTypes.isNotEmpty
             ? roomTypes.map((r) => r.nightly).reduce((a, b) => a < b ? a : b)
             : 0);
@@ -66,7 +67,8 @@ class BookingNotifier extends Notifier<BookingDraft?> {
           RoomPick(
             type: rt,
             quantity: 0,
-            range: savedRange ??
+            range:
+                savedRange ??
                 BookingDateRange(
                   DateTime.now().add(const Duration(days: 7)),
                   DateTime.now().add(const Duration(days: 10)),

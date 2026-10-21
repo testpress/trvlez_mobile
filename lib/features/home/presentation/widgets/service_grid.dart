@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
@@ -29,19 +27,25 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: !soon,
       label: 'ez$title service: $subtitle${soon ? ", coming soon" : ""}',
       child: InkWell(
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         onTap: soon ? null : onTap,
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: soon ? colors.page : colors.surface,
-            borderRadius: AppRadius.cardRadius,
-            border: Border.all(color: colors.cardBorderSoft, width: 1),
+            borderRadius: shape.radiusSurface,
+            border: Border.all(
+              color: colors.cardBorderSoft,
+              width: shape.borderDefault,
+            ),
             boxShadow: soon
                 ? null
                 : [
@@ -59,20 +63,20 @@ class ServiceCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: sizes.controlSm,
+                    height: sizes.controlSm,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: soon ? colors.surface : colors.redTint,
-                      borderRadius: AppRadius.mdRadius,
+                      borderRadius: shape.radiusControl,
                     ),
                     child: Icon(
                       icon,
-                      size: 18,
+                      size: sizes.iconSm,
                       color: soon ? colors.inkTertiary : colors.brandPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(height: space.stackItem),
                   EzWord(
                     rest: title,
                     ezColor: soon ? colors.inkTertiary : colors.brandPrimary,
@@ -83,7 +87,7 @@ class ServiceCard extends StatelessWidget {
                       color: soon ? colors.inkTertiary : colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: space.stackText),
                   Text(
                     subtitle,
                     style: TextStyle(
@@ -101,14 +105,14 @@ class ServiceCard extends StatelessWidget {
                   top: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
+                    padding: space.insetTagSm,
                     decoration: BoxDecoration(
                       color: colors.surface,
-                      borderRadius: AppRadius.fullRadius,
-                      border: Border.all(color: colors.cardBorderSoft),
+                      borderRadius: shape.radiusPill,
+                      border: Border.all(
+                        color: colors.cardBorderSoft,
+                        width: shape.borderDefault,
+                      ),
                     ),
                     child: Text(
                       'SOON',
@@ -138,16 +142,17 @@ class ServiceGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final space = context.space;
     final rows = <Widget>[];
     for (var i = 0; i < cards.length; i += 2) {
-      if (i > 0) rows.add(const SizedBox(height: AppSpacing.md));
+      if (i > 0) rows.add(SizedBox(height: space.stackFormField));
       rows.add(
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(child: cards[i]),
-              const SizedBox(width: AppSpacing.md),
+              SizedBox(width: space.inlineItem),
               Expanded(
                 child: i + 1 < cards.length
                     ? cards[i + 1]

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -27,6 +26,9 @@ class _BookingDatesScreenState extends ConsumerState<BookingDatesScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final draft = ref.watch(bookingDraftProvider);
 
     if (!_initialized) {
@@ -48,16 +50,16 @@ class _BookingDatesScreenState extends ConsumerState<BookingDatesScreen> {
                     behavior: HitTestBehavior.opaque,
                     onTap: () => context.pop(),
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
+                      padding: EdgeInsets.all(space.stackText),
                       child: Icon(
                         AppIcons.arrowLeft,
-                        size: 20.0,
+                        size: sizes.iconMd,
                         color: colors.ink,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Your dates',
                   style: TextStyle(
@@ -72,7 +74,7 @@ class _BookingDatesScreenState extends ConsumerState<BookingDatesScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              padding: EdgeInsets.symmetric(horizontal: space.insetCard.left),
               child: BookingRangePicker(
                 initial: _range,
                 onChanged: (r) => setState(() => _range = r),
@@ -80,15 +82,17 @@ class _BookingDatesScreenState extends ConsumerState<BookingDatesScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              AppSpacing.md,
+            padding: EdgeInsets.fromLTRB(
+              space.insetCard.left,
+              space.stackItem,
+              space.insetCard.right,
+              space.insetCard.bottom,
             ),
             decoration: BoxDecoration(
               color: colors.surface,
-              border: Border(top: BorderSide(color: colors.line)),
+              border: Border(
+                top: BorderSide(color: colors.line, width: shape.borderDefault),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: colors.cardShadow,
@@ -103,7 +107,7 @@ class _BookingDatesScreenState extends ConsumerState<BookingDatesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    padding: EdgeInsets.only(bottom: space.stackItem),
                     child: BookingRangeLine(range: _range),
                   ),
                   BookingAppButton(

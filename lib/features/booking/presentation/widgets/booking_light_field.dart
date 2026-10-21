@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -27,15 +25,18 @@ class BookingLightField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.sm,
-            bottom: AppSpacing.xs,
+          padding: EdgeInsets.only(
+            top: space.stackItem,
+            bottom: space.stackText,
           ),
           child: Text(
             label,
@@ -48,13 +49,13 @@ class BookingLightField extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: const BoxConstraints(minHeight: 48.0),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+          padding: EdgeInsets.symmetric(horizontal: space.insetCard.left),
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
             color: colors.surface,
-            border: Border.all(color: colors.line),
-            borderRadius: AppRadius.pillRadius,
+            border: Border.all(color: colors.line, width: shape.borderDefault),
+            borderRadius: shape.radiusPill,
           ),
           child: TextField(
             controller: controller,

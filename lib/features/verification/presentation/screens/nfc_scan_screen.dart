@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -104,7 +102,8 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
         onProgress: (progressEvent) {
           if (!mounted) return;
           setState(() {
-            _isReading = progressEvent.currentStep != NfcReadStep.connecting ||
+            _isReading =
+                progressEvent.currentStep != NfcReadStep.connecting ||
                 progressEvent.percentage > 0.0;
             final rawPercent = progressEvent.percentage > 1.0
                 ? progressEvent.percentage / 100.0
@@ -141,6 +140,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc_scan.svg',
@@ -149,7 +151,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
       isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           _isReading ? 'Reading chip…' : 'Hold near passport',
           textAlign: TextAlign.center,
@@ -161,9 +163,9 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
           child: Text(
             _isReading
                 ? 'Keep phone still against the passport cover.'
@@ -178,15 +180,15 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         const Center(child: VerifyNfcPulse()),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          padding: EdgeInsets.symmetric(horizontal: space.stackSection),
           child: Column(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.xs),
+                borderRadius: shape.radiusSubtle,
                 child: TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0.0, end: _progress),
                   duration: const Duration(milliseconds: 300),
@@ -194,7 +196,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
                   builder: (context, value, _) {
                     return LinearProgressIndicator(
                       value: value,
-                      minHeight: 5.0,
+                      minHeight: sizes.indicatorProgressHeight,
                       backgroundColor: colors.verificationProgressTrack,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         colors.brandOnSurface,
@@ -203,7 +205,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

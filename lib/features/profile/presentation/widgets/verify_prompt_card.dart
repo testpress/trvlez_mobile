@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -15,12 +13,18 @@ class VerifyPromptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
-        border: Border.all(color: colors.cardBorderSoft),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.cardBorderSoft,
+          width: shape.borderDefault,
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -29,24 +33,28 @@ class VerifyPromptCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
             child: Container(
-              width: 40,
-              height: 40,
+              width: sizes.iconFeature,
+              height: sizes.iconFeature,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: colors.redTint,
                 shape: BoxShape.circle,
               ),
-              child: Icon(AppIcons.id, size: 20, color: colors.brandPrimary),
+              child: Icon(
+                AppIcons.id,
+                size: sizes.iconMd,
+                color: colors.brandPrimary,
+              ),
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           Text(
             'Verify your identity',
             textAlign: TextAlign.center,
@@ -57,7 +65,7 @@ class VerifyPromptCard extends StatelessWidget {
               color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: space.stackText),
           Text(
             'One check unlocks booking, ezMoney and faster hotel check-in. '
             'Takes about two minutes, and you never repeat it.',
@@ -69,15 +77,15 @@ class VerifyPromptCard extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
           ElevatedButton(
             onPressed: onStart,
             style: ElevatedButton.styleFrom(
               backgroundColor: colors.brandPrimary,
               foregroundColor: Colors.white,
               elevation: 0,
-              minimumSize: const Size.fromHeight(42),
-              shape: RoundedRectangleBorder(borderRadius: AppRadius.fullRadius),
+              minimumSize: Size.fromHeight(sizes.controlMd),
+              shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),
             ),
             child: const Text(
               'Start verification',

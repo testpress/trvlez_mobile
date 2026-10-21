@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 enum StepStatus { completed, processing, failed }
@@ -28,6 +27,8 @@ class StepChecklist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final space = context.space;
+    final shape = context.shape;
 
     // All steps before the user reaches the status screen are already done
     // (profile, passport, selfie). Only "Review" varies.
@@ -57,12 +58,13 @@ class StepChecklist extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: space.insetCardComfortable,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: AppRadius.lg20Radius,
+        borderRadius: shape.radiusOverlay,
         border: Border.all(
           color: theme.colorScheme.outlineVariant.withAlpha(80),
+          width: shape.borderDefault,
         ),
       ),
       child: Column(
@@ -75,7 +77,7 @@ class StepChecklist extends StatelessWidget {
               color: theme.colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: space.stackFormField),
           ...steps.asMap().entries.map((entry) {
             final index = entry.key;
             final step = entry.value;
@@ -98,6 +100,9 @@ class StepRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     final (IconData icon, Color color) = switch (step.status) {
       StepStatus.completed => (
@@ -118,15 +123,19 @@ class StepRow extends StatelessWidget {
     };
 
     return Padding(
-      padding: EdgeInsets.only(bottom: isLast ? 0 : 20),
+      padding: EdgeInsets.only(
+        bottom: isLast ? 0 : space.insetCardComfortable.top,
+      ),
       child: Row(
         children: [
           // Step icon
           SizedBox(
-            width: 32,
-            child: Center(child: Icon(icon, color: color, size: 28)),
+            width: sizes.iconXl,
+            child: Center(
+              child: Icon(icon, color: color, size: sizes.iconLg),
+            ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: space.inlineItem),
           Expanded(
             child: Text(
               step.label,
@@ -138,10 +147,10 @@ class StepRow extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: space.insetTag,
             decoration: BoxDecoration(
               color: color.withAlpha(20),
-              borderRadius: AppRadius.smRadius,
+              borderRadius: shape.radiusControlSm,
             ),
             child: Text(
               statusLabel,

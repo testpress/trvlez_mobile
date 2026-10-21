@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -31,6 +30,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final draft = ref.watch(anywhereDraftProvider);
     final byEmail = draft.route == AnywhereRoute.byEmail;
     final hotel = draft.hotelName;
@@ -54,7 +54,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
         const CheckInNotice(text: 'This does not book or confirm anything.'),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'What they are told',
           style: TextStyle(
@@ -65,7 +65,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           byEmail ? 'By email, to ${draft.email}' : 'In the $hotel dashboard',
           style: TextStyle(
@@ -75,7 +75,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
 
         // Disclosure card of sent vs withheld fields
         const CheckInDisclosureCard(
@@ -94,20 +94,20 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
         ),
 
         if (byEmail)
-          const CheckInFlagCallout(
+          CheckInFlagCallout(
             icon: AppIcons.scale,
             lead: 'We do not ask them to skip their own checks. ',
             body:
                 'Many hotels must see your passport by law. The email says so.',
-            marginTop: AppSpacing.md - 2,
+            marginTop: space.stackFormField,
           )
         else
-          const CheckInFlagCallout(
+          CheckInFlagCallout(
             icon: AppIcons.building,
             lead: 'They already use TRVLez. ',
             body:
                 'This appears in their dashboard for someone there to link to your reservation.',
-            marginTop: AppSpacing.md - 2,
+            marginTop: space.stackFormField,
           ),
 
         CheckInConsentTick(

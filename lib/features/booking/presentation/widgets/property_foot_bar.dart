@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
@@ -18,17 +17,21 @@ class PropertyFootBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.sm,
-        AppSpacing.md,
-        AppSpacing.md,
+      padding: EdgeInsets.fromLTRB(
+        space.insetCard.left,
+        space.stackItem,
+        space.insetCard.right,
+        space.insetCard.bottom,
       ),
       decoration: BoxDecoration(
         color: colors.surface,
-        border: Border(top: BorderSide(color: colors.line)),
+        border: Border(
+          top: BorderSide(color: colors.line, width: shape.borderDefault),
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -44,7 +47,7 @@ class PropertyFootBar extends StatelessWidget {
           children: [
             if (draft.chosen.isNotEmpty) ...[
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                padding: EdgeInsets.only(bottom: space.stackItem),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,

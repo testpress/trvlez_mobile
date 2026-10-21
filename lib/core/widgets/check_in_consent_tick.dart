@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -13,17 +11,20 @@ class CheckInConsentTick extends StatelessWidget {
     required this.agreed,
     required this.label,
     required this.onTap,
-    this.marginTop = AppSpacing.md - 2,
+    this.marginTop,
   });
 
   final bool agreed;
   final String label;
   final VoidCallback onTap;
-  final double marginTop;
+  final double? marginTop;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       checked: agreed,
@@ -32,14 +33,14 @@ class CheckInConsentTick extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.only(top: marginTop),
+          padding: EdgeInsets.only(top: marginTop ?? space.stackFormField),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 19,
-                height: 19,
-                margin: const EdgeInsets.only(top: 1.5),
+                width: sizes.iconMd,
+                height: sizes.iconMd,
+                margin: EdgeInsets.only(top: shape.borderMedium),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: agreed ? colors.brandOnSurface : null,
@@ -47,19 +48,19 @@ class CheckInConsentTick extends StatelessWidget {
                     color: agreed
                         ? colors.brandOnSurface
                         : colors.checkInConsentBox,
-                    width: 1.5,
+                    width: shape.borderMedium,
                   ),
-                  borderRadius: BorderRadius.circular(AppRadius.xs + 1),
+                  borderRadius: shape.radiusSubtle,
                 ),
                 child: agreed
                     ? Icon(
                         AppIcons.check,
-                        size: 13,
+                        size: sizes.iconXs,
                         color: colors.brandActionLabel,
                       )
                     : null,
               ),
-              const SizedBox(width: AppSpacing.sm + 2),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   label,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -30,15 +28,18 @@ class CheckInField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.md - 2,
-            bottom: AppSpacing.xs + 2,
+          padding: EdgeInsets.only(
+            top: space.stackFormField,
+            bottom: space.stackTight,
           ),
           child: Text(
             label,
@@ -54,17 +55,15 @@ class CheckInField extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
           child: Container(
-            height: tall ? 64 : 40,
+            height: tall ? sizes.pulseIndicator : sizes.controlMd,
             padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.md - 3,
-              vertical: tall ? AppSpacing.sm : 0,
+              horizontal: space.insetInput.left,
+              vertical: tall ? space.stackItem : 0,
             ),
             alignment: tall ? Alignment.topLeft : Alignment.centerLeft,
             decoration: BoxDecoration(
               color: colors.brandFieldBackground,
-              borderRadius: BorderRadius.circular(
-                tall ? AppRadius.md : AppRadius.pill,
-              ),
+              borderRadius: tall ? shape.radiusControl : shape.radiusPill,
             ),
             child: Row(
               crossAxisAlignment: tall
@@ -109,10 +108,10 @@ class CheckInField extends StatelessWidget {
                         ),
                 ),
                 if (!tall) ...[
-                  const SizedBox(width: AppSpacing.sm),
+                  SizedBox(width: space.inlineIconLabel),
                   Icon(
                     AppIcons.chevronDown,
-                    size: 13,
+                    size: sizes.iconXs,
                     color: colors.brandSecondaryPlaceholder,
                   ),
                 ],

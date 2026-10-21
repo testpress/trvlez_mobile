@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
+export 'package:trvlez_mobile/core/design_tokens/tokens.dart';
 
 /// Extension methods on [BuildContext] to access semantic theme tokens easily.
 extension AppThemeContext on BuildContext {

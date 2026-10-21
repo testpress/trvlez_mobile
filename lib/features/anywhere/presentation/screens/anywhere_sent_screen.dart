@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
@@ -24,6 +23,7 @@ class AnywhereSentScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final draft = ref.watch(anywhereDraftProvider);
     final findrPortfolio = ref.watch(findrPortfolioProvider);
     final hotel = draft.hotelName.isNotEmpty ? draft.hotelName : 'The hotel';
@@ -48,9 +48,9 @@ class AnywhereSentScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const CheckInBigRing(icon: AppIcons.check),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Text(
           'Sent',
           textAlign: TextAlign.center,
@@ -62,7 +62,7 @@ class AnywhereSentScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Your pass proves TRVLez has verified who you are.',
           textAlign: TextAlign.center,
@@ -72,13 +72,13 @@ class AnywhereSentScreen extends ConsumerWidget {
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         CheckInFlagCallout(
           icon: AppIcons.infoCircle,
           lead: 'Not confirmed yet. ',
           body:
               '$hotel has to reply, and we will tell you the moment they do. Show your pass at the desk — they may still ask for your passport.',
-          marginTop: AppSpacing.xs,
+          marginTop: space.stackText,
         ),
       ],
     );

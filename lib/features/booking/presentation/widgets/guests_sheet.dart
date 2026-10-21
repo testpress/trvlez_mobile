@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/booking/presentation/providers/booking_providers.dart';
@@ -25,6 +23,9 @@ class GuestsSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final draft = ref.watch(bookingDraftProvider);
     final guests = draft?.guests ?? const GuestCounts();
 
@@ -33,13 +34,13 @@ class GuestsSheet extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(18.0)),
+          borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
         ),
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.sm,
-          AppSpacing.md,
-          AppSpacing.md,
+        padding: EdgeInsets.fromLTRB(
+          space.insetCard.left,
+          space.stackItem,
+          space.insetCard.right,
+          space.insetCard.bottom,
         ),
         child: SafeArea(
           top: false,
@@ -49,15 +50,15 @@ class GuestsSheet extends ConsumerWidget {
             children: [
               Center(
                 child: Container(
-                  width: 36.0,
-                  height: 4.0,
+                  width: sizes.avatarMd,
+                  height: space.stackText,
                   decoration: BoxDecoration(
                     color: colors.line,
-                    borderRadius: AppRadius.pillRadius,
+                    borderRadius: shape.radiusPill,
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               Text(
                 'Guests',
                 style: TextStyle(
@@ -67,7 +68,7 @@ class GuestsSheet extends ConsumerWidget {
                   color: colors.ink,
                 ),
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: space.stackText),
               Text(
                 'Everyone 18 and over verifies with us. Under-18s are checked in at reception.',
                 style: TextStyle(
@@ -76,7 +77,7 @@ class GuestsSheet extends ConsumerWidget {
                   color: colors.inkSecondary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               for (final kind in GuestKind.values)
                 _GuestCountRow(
                   kind: kind,
@@ -87,7 +88,7 @@ class GuestsSheet extends ConsumerWidget {
                       .read(bookingDraftProvider.notifier)
                       .setBookingGuests(guests.withKind(kind, v)),
                 ),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               Text(
                 'We pass the hotel a count of children and infants and nothing else — no names, no dates of birth.',
                 style: TextStyle(
@@ -96,7 +97,7 @@ class GuestsSheet extends ConsumerWidget {
                   color: colors.inkTertiary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               BookingAppButton(
                 label: 'Done',
                 onPressed: () => Navigator.pop(context),
@@ -127,13 +128,20 @@ class _GuestCountRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: EdgeInsets.symmetric(vertical: space.stackItem),
       decoration: last
           ? null
           : BoxDecoration(
-              border: Border(bottom: BorderSide(color: colors.line)),
+              border: Border(
+                bottom: BorderSide(
+                  color: colors.line,
+                  width: shape.borderDefault,
+                ),
+              ),
             ),
       child: Row(
         children: [
@@ -151,7 +159,7 @@ class _GuestCountRow extends StatelessWidget {
                     color: colors.ink,
                   ),
                 ),
-                const SizedBox(height: 1),
+                SizedBox(height: space.stackText),
                 Text(
                   kind.hint,
                   style: TextStyle(

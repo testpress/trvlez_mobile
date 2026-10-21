@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -25,6 +23,9 @@ class CloseAccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Scaffold(
       backgroundColor: colors.page,
@@ -38,19 +39,19 @@ class CloseAccountScreen extends StatelessWidget {
                   button: true,
                   label: 'Back',
                   child: InkWell(
-                    borderRadius: AppRadius.fullRadius,
+                    borderRadius: shape.radiusPill,
                     onTap: () => Navigator.maybePop(context),
                     child: Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(space.stackItem),
                       child: Icon(
                         AppIcons.arrowLeft,
-                        size: 20,
+                        size: sizes.iconMd,
                         color: colors.textPrimary,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Close my account',
                   style: TextStyle(
@@ -67,10 +68,7 @@ class CloseAccountScreen extends StatelessWidget {
           // ── Content ────────────────────────────────────────────────────
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
+              padding: space.insetCard,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -84,7 +82,7 @@ class CloseAccountScreen extends StatelessWidget {
                       height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
 
                   // Option 1: Deactivate
                   _CloseAccountOptionCard(
@@ -98,7 +96,7 @@ class CloseAccountScreen extends StatelessWidget {
                     isDanger: false,
                     onAction: () => _notWired(context, 'Deactivating'),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
 
                   // Option 2: Close and delete
                   _CloseAccountOptionCard(
@@ -112,28 +110,31 @@ class CloseAccountScreen extends StatelessWidget {
                     isDanger: true,
                     onAction: () => _notWired(context, 'Deleting account'),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
 
                   // Regulatory retention notice
                   Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
+                    padding: space.insetCard,
                     decoration: BoxDecoration(
                       color: colors.waitFill,
-                      borderRadius: AppRadius.cardRadius,
-                      border: Border.all(color: colors.cardBorderSoft),
+                      borderRadius: shape.radiusSurface,
+                      border: Border.all(
+                        color: colors.cardBorderSoft,
+                        width: shape.borderDefault,
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 2),
+                          padding: EdgeInsets.only(top: shape.borderFocus),
                           child: Icon(
                             AppIcons.clock,
-                            size: 16,
+                            size: sizes.iconSm,
                             color: colors.waitInk,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.sm),
+                        SizedBox(width: space.inlineIconLabel),
                         Expanded(
                           child: Text(
                             'We are required by financial and travel regulations to keep '
@@ -150,7 +151,7 @@ class CloseAccountScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(height: space.stackSection),
                 ],
               ),
             ),
@@ -181,13 +182,19 @@ class _CloseAccountOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
-        border: Border.all(color: colors.cardBorderSoft),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.cardBorderSoft,
+          width: shape.borderDefault,
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -202,20 +209,20 @@ class _CloseAccountOptionCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: sizes.iconXl,
+                height: sizes.iconXl,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isDanger ? colors.redTint : colors.page,
-                  borderRadius: AppRadius.mdRadius,
+                  borderRadius: shape.radiusControl,
                 ),
                 child: Icon(
                   icon,
-                  size: 16,
+                  size: sizes.iconSm,
                   color: isDanger ? colors.brandPrimary : colors.inkSecondary,
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   title,
@@ -229,7 +236,7 @@ class _CloseAccountOptionCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           Text(
             body,
             style: TextStyle(
@@ -239,7 +246,7 @@ class _CloseAccountOptionCard extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
           Align(
             alignment: Alignment.centerLeft,
             child: isDanger
@@ -250,11 +257,11 @@ class _CloseAccountOptionCard extends StatelessWidget {
                       foregroundColor: colors.textOnAction,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: AppRadius.fullRadius,
+                        borderRadius: shape.radiusPill,
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.sm,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.stackSection,
+                        vertical: space.stackItem,
                       ),
                     ),
                     child: Text(
@@ -270,13 +277,16 @@ class _CloseAccountOptionCard extends StatelessWidget {
                     onPressed: onAction,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.textPrimary,
-                      side: BorderSide(color: colors.cardBorderSoft),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: AppRadius.fullRadius,
+                      side: BorderSide(
+                        color: colors.cardBorderSoft,
+                        width: shape.borderDefault,
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.sm,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: shape.radiusPill,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.stackSection,
+                        vertical: space.stackItem,
                       ),
                     ),
                     child: Text(

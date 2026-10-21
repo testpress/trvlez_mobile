@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -64,6 +62,9 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final unreadCount = _currentItems.where((i) => i.isUnread).length;
 
     return Container(
@@ -72,13 +73,13 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
       ),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
       ),
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.sm,
-        AppSpacing.lg,
-        MediaQuery.viewPaddingOf(context).bottom + AppSpacing.md,
+        space.stackSection,
+        space.stackItem,
+        space.stackSection,
+        MediaQuery.viewPaddingOf(context).bottom + space.inlineItem,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -87,16 +88,16 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
           // Drag handle
           Center(
             child: Container(
-              width: 36,
-              height: 4,
-              margin: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              width: sizes.controlSm,
+              height: sizes.indicatorProgressHeight,
+              margin: EdgeInsets.symmetric(vertical: space.stackItem),
               decoration: BoxDecoration(
                 color: colors.cardBorderSoft,
-                borderRadius: AppRadius.fullRadius,
+                borderRadius: shape.radiusPill,
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Row(
             children: [
               Text(
@@ -109,15 +110,12 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                 ),
               ),
               if (unreadCount > 0) ...[
-                const SizedBox(width: AppSpacing.xs),
+                SizedBox(width: space.inlineMicro),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
+                  padding: space.insetTagSm,
                   decoration: BoxDecoration(
                     color: colors.brandPrimary,
-                    borderRadius: AppRadius.fullRadius,
+                    borderRadius: shape.radiusPill,
                   ),
                   child: Text(
                     '$unreadCount',
@@ -162,10 +160,10 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                 ),
             ],
           ),
-          const Divider(height: AppSpacing.lg),
+          Divider(height: space.stackSection),
           if (_currentItems.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+              padding: EdgeInsets.symmetric(vertical: space.stackHero),
               child: Center(
                 child: Text(
                   'No notifications right now',
@@ -182,33 +180,35 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: _currentItems.length,
-                separatorBuilder: (context, index) =>
-                    Divider(height: 1, color: colors.cardBorderSoft),
+                separatorBuilder: (context, index) => Divider(
+                  height: shape.borderDefault,
+                  color: colors.cardBorderSoft,
+                ),
                 itemBuilder: (context, index) {
                   final item = _currentItems[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.md,
-                      horizontal: AppSpacing.xs,
+                    padding: EdgeInsets.symmetric(
+                      vertical: space.stackFormField,
+                      horizontal: space.inlineMicro,
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 32,
-                          height: 32,
+                          width: sizes.iconXl,
+                          height: sizes.iconXl,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: colors.redTint,
-                            borderRadius: AppRadius.mdRadius,
+                            borderRadius: shape.radiusControl,
                           ),
                           child: Icon(
                             item.icon,
-                            size: 16,
+                            size: sizes.iconSm,
                             color: colors.brandPrimary,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.md),
+                        SizedBox(width: space.inlineItem),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +224,7 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                                   color: colors.textPrimary,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              SizedBox(height: space.stackText),
                               Text(
                                 item.body,
                                 style: TextStyle(
@@ -233,7 +233,7 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                                   color: colors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: space.stackText),
                               Text(
                                 item.timeAgo,
                                 style: TextStyle(
@@ -247,9 +247,9 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                         ),
                         if (item.isUnread)
                           Container(
-                            width: 6,
-                            height: 6,
-                            margin: const EdgeInsets.only(top: 6),
+                            width: space.stackTight,
+                            height: space.stackTight,
+                            margin: EdgeInsets.only(top: space.stackTight),
                             decoration: BoxDecoration(
                               color: colors.brandPrimary,
                               shape: BoxShape.circle,

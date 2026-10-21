@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -23,6 +22,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final disputes = ref.watch(disputesProvider);
     final dispute = disputes[reservationId];
     final hotel = dispute?.hotel ?? 'your property';
@@ -47,9 +47,9 @@ class DisputeRaisedScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const CheckInBigRing(icon: AppIcons.check),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Text(
           "We've got it",
           textAlign: TextAlign.center,
@@ -61,7 +61,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Your payment for $hotel is on hold while we look into this.',
           textAlign: TextAlign.center,
@@ -72,7 +72,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
 
         _DisputeDetailRow(label: 'Booking', value: bookingRef),
         _DisputeDetailRow(
@@ -99,15 +99,20 @@ class _DisputeDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      margin: const EdgeInsets.only(top: AppSpacing.sm),
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      margin: EdgeInsets.only(top: space.stackItem),
+      padding: EdgeInsets.symmetric(vertical: space.stackText),
       decoration: BoxDecoration(
         border: last
             ? null
             : Border(
-                bottom: BorderSide(color: colors.checkInPassRef, width: 1),
+                bottom: BorderSide(
+                  color: colors.checkInPassRef,
+                  width: shape.borderDefault,
+                ),
               ),
       ),
       child: Row(

@@ -5,7 +5,6 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
@@ -58,6 +57,7 @@ class AccountScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final currentThemeMode = ref.watch(themeModeProvider);
     final verificationState = ref.watch(travelerVerificationStateProvider);
     final verified = verificationState.isVerified;
@@ -114,10 +114,7 @@ class AccountScreen extends ConsumerWidget {
           Expanded(
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
+              padding: space.insetCard,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -341,13 +338,15 @@ class AccountScreen extends ConsumerWidget {
                   ),
 
                   // ── Footer ─────────────────────────────────────────────
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: space.stackSection),
                   Semantics(
                     button: true,
                     child: InkWell(
                       onTap: () => _confirmSignOut(context, ref),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          vertical: space.stackItem,
+                        ),
                         child: Text(
                           'Sign out',
                           textAlign: TextAlign.center,
@@ -361,7 +360,7 @@ class AccountScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xs),
+                  SizedBox(height: space.stackText),
                   Text(
                     'TRVLez 1.0.0',
                     textAlign: TextAlign.center,
@@ -371,7 +370,7 @@ class AccountScreen extends ConsumerWidget {
                       color: colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(height: space.stackSection),
                 ],
               ),
             ),

@@ -22,6 +22,9 @@ class VerifyProgressTrio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -30,12 +33,14 @@ class VerifyProgressTrio extends StatelessWidget {
         for (int i = 0; i < labels.length; i++) ...[
           if (i > 0)
             Container(
-              width: 38.0,
-              height: 2.0,
-              margin: const EdgeInsets.only(top: 10.0),
+              width: sizes.controlSm + space.stackTight / 3,
+              height: shape.borderFocus,
+              margin: EdgeInsets.only(
+                top: space.stackItem + space.stackText / 2,
+              ),
               decoration: BoxDecoration(
                 color: colors.verificationStepTrack,
-                borderRadius: BorderRadius.circular(2.0),
+                borderRadius: shape.radiusMicro,
               ),
               child: Align(
                 alignment: Alignment.centerLeft,
@@ -47,22 +52,22 @@ class VerifyProgressTrio extends StatelessWidget {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: colors.brandOnSurface,
-                      borderRadius: BorderRadius.circular(2.0),
+                      borderRadius: shape.radiusMicro,
                     ),
                   ),
                 ),
               ),
             ),
           SizedBox(
-            width: 56.0,
+            width: sizes.controlXl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   curve: Curves.easeOut,
-                  width: 22.0,
-                  height: 22.0,
+                  width: sizes.iconDefault - shape.borderFocus,
+                  height: sizes.iconDefault - shape.borderFocus,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -73,24 +78,24 @@ class VerifyProgressTrio extends StatelessWidget {
                       color: states[i] == TrioState.waiting
                           ? colors.verificationStepRing
                           : colors.brandOnSurface,
-                      width: 1.5,
+                      width: shape.borderMedium,
                     ),
                   ),
                   child: switch (states[i]) {
                     TrioState.waiting => const SizedBox.shrink(),
                     TrioState.done => Icon(
                       AppIcons.check,
-                      size: 13.0,
+                      size: sizes.iconXs - shape.borderDefault,
                       color: colors.brandPrimary,
                     ),
                     TrioState.failed => Icon(
                       AppIcons.close,
-                      size: 13.0,
+                      size: sizes.iconXs - shape.borderDefault,
                       color: colors.brandActionLabel,
                     ),
                   },
                 ),
-                const SizedBox(height: 7.0),
+                SizedBox(height: space.stackItem),
                 Text(
                   labels[i],
                   textAlign: TextAlign.center,

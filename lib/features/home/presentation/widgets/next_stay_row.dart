@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
@@ -26,20 +24,26 @@ class NextStayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
       label:
           'Your next stay: $title, $detail${badge != null ? ", $badge" : ""}',
       child: InkWell(
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.sm),
+          padding: EdgeInsets.all(space.stackItem),
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: AppRadius.cardRadius,
-            border: Border.all(color: colors.cardBorderSoft),
+            borderRadius: shape.radiusSurface,
+            border: Border.all(
+              color: colors.cardBorderSoft,
+              width: shape.borderDefault,
+            ),
             boxShadow: [
               BoxShadow(
                 color: colors.cardShadow,
@@ -51,13 +55,13 @@ class NextStayRow extends StatelessWidget {
           child: Row(
             children: [
               PhotoBox(
-                width: 44,
-                height: 44,
+                width: sizes.controlMd,
+                height: sizes.controlMd,
                 imageUrl: imageUrl,
-                borderRadius: AppRadius.mdRadius,
-                iconSize: 18,
+                borderRadius: shape.radiusControl,
+                iconSize: sizes.iconSm,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +78,7 @@ class NextStayRow extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       detail,
                       style: TextStyle(
@@ -89,15 +93,12 @@ class NextStayRow extends StatelessWidget {
                 ),
               ),
               if (badge != null) ...[
-                const SizedBox(width: AppSpacing.xs),
+                SizedBox(width: space.inlineMicro),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
+                  padding: space.insetTag,
                   decoration: BoxDecoration(
                     color: colors.redTint,
-                    borderRadius: AppRadius.fullRadius,
+                    borderRadius: shape.radiusPill,
                   ),
                   child: Text(
                     badge!,

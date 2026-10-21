@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
@@ -15,49 +13,55 @@ class ReservationPropertyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: colors.borderSubtle),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.borderSubtle,
+          width: shape.borderDefault,
+        ),
       ),
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppRadius.lg),
+            borderRadius: BorderRadius.vertical(
+              top: shape.radiusSurface.topLeft,
             ),
             child: (property.heroImageUrl ?? '').isNotEmpty
                 ? Image.network(
                     property.heroImageUrl!,
-                    height: 160,
+                    height: sizes.thumbPhotoLg,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      height: 160,
+                      height: sizes.thumbPhotoLg,
                       width: double.infinity,
                       color: colors.surfaceSubtle,
                       child: Icon(
                         Icons.hotel,
-                        size: 48,
+                        size: sizes.iconHero,
                         color: colors.textSecondary,
                       ),
                     ),
                   )
                 : Container(
-                    height: 160,
+                    height: sizes.thumbPhotoLg,
                     width: double.infinity,
                     color: colors.surfaceSubtle,
                     child: Icon(
                       Icons.hotel,
-                      size: 48,
+                      size: sizes.iconHero,
                       color: colors.textSecondary,
                     ),
                   ),
           ),
           Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: space.insetCard,
             child: Row(
               children: [
                 Expanded(
@@ -72,15 +76,15 @@ class ReservationPropertyCard extends StatelessWidget {
                         ),
                       ),
                       if (property.locationString.isNotEmpty) ...[
-                        const SizedBox(height: AppSpacing.xs),
+                        SizedBox(height: space.stackText),
                         Row(
                           children: [
                             Icon(
                               AppIcons.mapPin,
-                              size: 14,
+                              size: sizes.iconXs,
                               color: colors.textSecondary,
                             ),
-                            const SizedBox(width: AppSpacing.xs),
+                            SizedBox(width: space.inlineMicro),
                             Text(
                               property.locationString,
                               style: AppTypography.body.copyWith(

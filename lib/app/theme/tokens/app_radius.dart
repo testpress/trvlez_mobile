@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// Standard border radius constants and shapes.
+@Deprecated(
+  'Use semantic layout tokens via context.space, context.sizes, or context.shape instead',
+)
 abstract final class AppRadius {
   static const double xxs = 2;
   static const double xs = 4;

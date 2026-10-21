@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// Framing guide overlay for passport photo page capture.
 ///
@@ -47,6 +47,7 @@ class PassportFramingGuide extends StatelessWidget {
         painter: _PassportFramingPainter(
           frameRect: frameRect,
           colors: colors,
+          shape: context.shape,
         ),
       ),
     );
@@ -57,10 +58,12 @@ class _PassportFramingPainter extends CustomPainter {
   const _PassportFramingPainter({
     required this.frameRect,
     required this.colors,
+    required this.shape,
   });
 
   final Rect frameRect;
   final AppColors colors;
+  final AppShape shape;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -69,19 +72,19 @@ class _PassportFramingPainter extends CustomPainter {
     // 1. Subtle outline around the full passport boundary
     final rrect = RRect.fromRectAndRadius(
       frameRect,
-      const Radius.circular(AppRadius.sm),
+      shape.radiusControlSm.topLeft,
     );
     final borderPaint = Paint()
       ..color = colors.brandBorderSubtle.withValues(alpha: 0.65)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
+      ..strokeWidth = shape.borderDefault;
     canvas.drawRRect(rrect, borderPaint);
 
     // 2. Four distinct corner bracket guides
     final cornerPaint = Paint()
       ..color = colors.brandSecondary
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.4
+      ..strokeWidth = shape.borderFocus
       ..strokeCap = StrokeCap.round;
 
     final double cornerLen = math.min(22.0, frameRect.width * 0.12);
@@ -141,7 +144,7 @@ class _PassportFramingPainter extends CustomPainter {
     );
     final mrzRRect = RRect.fromRectAndRadius(
       mrzRect,
-      const Radius.circular(AppRadius.xs),
+      shape.radiusSubtle.topLeft,
     );
 
     _drawDashedRRect(
@@ -150,7 +153,7 @@ class _PassportFramingPainter extends CustomPainter {
       Paint()
         ..color = colors.brandSecondary.withValues(alpha: 0.85)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.4,
+        ..strokeWidth = shape.borderMedium,
       dashLength: 4.0,
       dashGap: 4.0,
     );

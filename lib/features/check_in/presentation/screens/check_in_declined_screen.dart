@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -26,6 +25,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
 
     return stateAsync.when(
@@ -57,7 +57,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
               variant: AppButtonVariant.brandWhite,
               onPressed: () => context.go(AppRoutes.bookings),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             AppButton(
               label: 'Review what Spain needs',
               variant: AppButtonVariant.brandOutline,
@@ -71,7 +71,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
           ],
           children: [
             const CheckInBigRing(icon: AppIcons.buildingStore),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             Text(
               "You'll check in at the desk",
               textAlign: TextAlign.center,
@@ -83,7 +83,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               "That's absolutely fine. Your booking is unaffected — ${details.hotel} is expecting you.",
               textAlign: TextAlign.center,
@@ -94,7 +94,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
                 height: 1.35,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             CheckInBringCard(
               title: 'Take with you',
               lines: [
@@ -110,7 +110,7 @@ class CheckInDeclinedScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md - 2),
+            SizedBox(height: space.stackFormField),
             Text(
               'Changed your mind? You can check in online any time before you arrive.',
               textAlign: TextAlign.center,

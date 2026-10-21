@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -24,51 +22,55 @@ class NfcIntroScreen extends ConsumerWidget {
 
   void _showUnsupportedSheet(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: colors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
       ),
       builder: (sheetContext) => SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
                 child: Container(
-                  width: 36.0,
-                  height: 4.0,
-                  margin: const EdgeInsets.only(
-                    top: AppSpacing.sm,
-                    bottom: AppSpacing.md,
+                  width: sizes.avatarMd,
+                  height: sizes.indicatorProgressHeight,
+                  margin: EdgeInsets.only(
+                    top: space.stackItem,
+                    bottom: space.stackFormField,
                   ),
                   decoration: BoxDecoration(
                     color: colors.line,
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                    borderRadius: shape.radiusPill,
                   ),
                 ),
               ),
               Center(
                 child: Container(
-                  width: 56.0,
-                  height: 56.0,
+                  width: sizes.controlXl,
+                  height: sizes.controlXl,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: colors.surfaceSubtle,
                   ),
                   child: Icon(
                     AppIcons.nfc,
-                    size: 28.0,
+                    size: sizes.iconLg,
                     color: colors.textSecondary,
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               Text(
                 'NFC Not Supported',
                 textAlign: TextAlign.center,
@@ -76,7 +78,7 @@ class NfcIntroScreen extends ConsumerWidget {
                   color: colors.textPrimary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               Text(
                 'This device does not have NFC hardware, which is required to scan passport chips. You can continue verification without chip scanning.',
                 textAlign: TextAlign.center,
@@ -85,7 +87,7 @@ class NfcIntroScreen extends ConsumerWidget {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
+              SizedBox(height: space.stackSection),
               AppButton(
                 label: 'Continue without chip scan',
                 variant: AppButtonVariant.primary,
@@ -98,13 +100,13 @@ class NfcIntroScreen extends ConsumerWidget {
                   context.pushReplacement(AppRoutes.nfcFinalCheck);
                 },
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               AppButton(
                 label: 'Cancel',
                 variant: AppButtonVariant.secondary,
                 onPressed: () => Navigator.pop(sheetContext),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
             ],
           ),
         ),
@@ -114,51 +116,55 @@ class NfcIntroScreen extends ConsumerWidget {
 
   void _showDisabledSheet(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: colors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
       ),
       builder: (sheetContext) => SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
                 child: Container(
-                  width: 36.0,
-                  height: 4.0,
-                  margin: const EdgeInsets.only(
-                    top: AppSpacing.sm,
-                    bottom: AppSpacing.md,
+                  width: sizes.avatarMd,
+                  height: sizes.indicatorProgressHeight,
+                  margin: EdgeInsets.only(
+                    top: space.stackItem,
+                    bottom: space.stackFormField,
                   ),
                   decoration: BoxDecoration(
                     color: colors.line,
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                    borderRadius: shape.radiusPill,
                   ),
                 ),
               ),
               Center(
                 child: Container(
-                  width: 56.0,
-                  height: 56.0,
+                  width: sizes.controlXl,
+                  height: sizes.controlXl,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: colors.surfaceSubtle,
                   ),
                   child: Icon(
                     AppIcons.nfc,
-                    size: 28.0,
+                    size: sizes.iconLg,
                     color: colors.textPrimary,
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               Text(
                 'Enable NFC to Continue',
                 textAlign: TextAlign.center,
@@ -166,7 +172,7 @@ class NfcIntroScreen extends ConsumerWidget {
                   color: colors.textPrimary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               Text(
                 'NFC is turned off on your device. To scan your passport chip, please enable NFC in your device settings.',
                 textAlign: TextAlign.center,
@@ -175,7 +181,7 @@ class NfcIntroScreen extends ConsumerWidget {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
+              SizedBox(height: space.stackSection),
               AppButton(
                 label: 'Open NFC Settings',
                 variant: AppButtonVariant.primary,
@@ -194,13 +200,13 @@ class NfcIntroScreen extends ConsumerWidget {
                   }
                 },
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               AppButton(
                 label: 'Cancel',
                 variant: AppButtonVariant.secondary,
                 onPressed: () => Navigator.pop(sheetContext),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
             ],
           ),
         ),
@@ -211,6 +217,8 @@ class NfcIntroScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc.svg',
@@ -218,12 +226,12 @@ class NfcIntroScreen extends ConsumerWidget {
       isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 3, circleSize: 22.0),
+        VerificationStepper(current: 3, circleSize: sizes.iconDefault),
         const Spacer(flex: 1),
         Center(
           child: Container(
-            width: AppSpacing.xxl + AppSpacing.md,
-            height: AppSpacing.xxl + AppSpacing.md,
+            width: sizes.pulseIndicator,
+            height: sizes.pulseIndicator,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -231,7 +239,7 @@ class NfcIntroScreen extends ConsumerWidget {
             ),
             child: Icon(
               AppIcons.nfc,
-              size: AppSpacing.xl - 4,
+              size: sizes.iconLg,
               color: colors.brandOnSurface,
             ),
           ),
@@ -245,7 +253,7 @@ class NfcIntroScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Your passport has a secure chip. Reading it is the strongest check there is, and it takes seconds.',
           textAlign: TextAlign.center,
@@ -290,7 +298,7 @@ class NfcIntroScreen extends ConsumerWidget {
             context.push(AppRoutes.nfcScan);
           },
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(
           text: 'Read on your phone.\nNever shared with external AI.',
         ),

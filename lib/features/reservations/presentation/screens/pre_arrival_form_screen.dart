@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/form.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_notifier.dart';
@@ -107,12 +105,16 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
         formResponse.submission?.status == FormSubmissionStatus.submitted ||
         formResponse.submission?.status == FormSubmissionStatus.approved;
 
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
     return Scaffold(
       backgroundColor: colors.surface,
       appBar: AppBar(
         backgroundColor: colors.surface,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new, size: sizes.iconMd),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -126,11 +128,12 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
       body: Form(
         key: _formKey,
         child: ListView.builder(
-          padding: const EdgeInsets.all(AppSpacing.screenPadding),
+          padding: space.insetScreen,
           itemCount: template.formDefinition.sections.length,
           itemBuilder: (context, index) {
             final section = template.formDefinition.sections[index];
             return _buildSection(
+              context,
               section,
               state.currentResponses,
               isReadOnly,
@@ -142,12 +145,20 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
       bottomNavigationBar: isReadOnly
           ? null
           : Container(
-              padding: const EdgeInsets.all(
-                AppSpacing.screenPadding,
-              ).copyWith(top: AppSpacing.md),
+              padding: EdgeInsets.fromLTRB(
+                space.insetScreen.left,
+                space.stackFormField,
+                space.insetScreen.right,
+                space.insetScreen.bottom,
+              ),
               decoration: BoxDecoration(
                 color: colors.surface,
-                border: Border(top: BorderSide(color: colors.borderSubtle)),
+                border: Border(
+                  top: BorderSide(
+                    color: colors.borderSubtle,
+                    width: shape.borderDefault,
+                  ),
+                ),
               ),
               child: SafeArea(
                 child: Row(
@@ -156,21 +167,22 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
                       child: OutlinedButton(
                         onPressed: state.isLoading ? null : _handleSaveDraft,
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.md,
+                          padding: space.insetControlMd,
+                          side: BorderSide(
+                            color: colors.borderSubtle,
+                            width: shape.borderDefault,
                           ),
-                          side: BorderSide(color: colors.borderSubtle),
                           foregroundColor: colors.textPrimary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderRadius: shape.radiusControl,
                           ),
                         ),
                         child: state.isLoading
                             ? SizedBox(
-                                height: 20,
-                                width: 20,
+                                height: sizes.iconMd,
+                                width: sizes.iconMd,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                                  strokeWidth: shape.strokeProgress,
                                   color: colors.brandPrimary,
                                 ),
                               )
@@ -183,18 +195,16 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
                               ),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.md),
+                    SizedBox(width: space.inlineItem),
                     Expanded(
                       child: FilledButton(
                         onPressed: state.isLoading ? null : _handleSubmit,
                         style: FilledButton.styleFrom(
                           backgroundColor: colors.brandPrimary,
                           foregroundColor: colors.brandOnSurface,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.md,
-                          ),
+                          padding: space.insetControlMd,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderRadius: shape.radiusControl,
                           ),
                         ),
                         child: Text(
@@ -214,11 +224,14 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
   }
 
   Widget _buildSection(
+    BuildContext context,
     FormSection section,
     Map<String, dynamic> responses,
     bool isReadOnly,
     AppColors colors,
   ) {
+    final space = context.space;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -230,7 +243,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
           ),
         ),
         if (section.description != null && section.description!.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             section.description!,
             style: AppTypography.body.copyWith(
@@ -239,14 +252,14 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
             ),
           ),
         ],
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         ...section.fields.map(
           (field) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            padding: EdgeInsets.only(bottom: space.stackFormField),
             child: _buildField(field, responses[field.id], isReadOnly),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
       ],
     );
   }

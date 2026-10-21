@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -12,30 +10,40 @@ class BookingNoteCard extends StatelessWidget {
     required this.title,
     required this.body,
     this.amber = false,
-    this.marginTop = AppSpacing.sm,
+    this.marginTop,
   });
 
   final String title;
   final String body;
   final bool amber;
-  final double marginTop;
+  final double? marginTop;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(AppSpacing.md, marginTop, AppSpacing.md, 0),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: EdgeInsets.fromLTRB(
+        space.insetCard.left,
+        marginTop ?? space.stackItem,
+        space.insetCard.right,
+        0,
+      ),
+      padding: space.insetCard,
       decoration: amber
           ? BoxDecoration(
               color: colors.waitFill,
-              borderRadius: AppRadius.cardRadius,
+              borderRadius: shape.radiusSurface,
             )
           : BoxDecoration(
               color: colors.surface,
-              borderRadius: AppRadius.cardRadius,
-              border: Border.all(color: colors.line),
+              borderRadius: shape.radiusSurface,
+              border: Border.all(
+                color: colors.line,
+                width: shape.borderDefault,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: colors.cardShadow,
@@ -57,7 +65,7 @@ class BookingNoteCard extends StatelessWidget {
               color: amber ? colors.waitInk : colors.ink,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: space.stackText),
           Text(
             body,
             style: TextStyle(

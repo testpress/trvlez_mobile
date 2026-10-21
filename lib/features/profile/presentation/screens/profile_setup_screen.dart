@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
@@ -106,6 +104,8 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
     });
 
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final profileState = ref.watch(currentProfileProvider);
     final error = profileState.error;
     String? errorMessage;
@@ -126,9 +126,9 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
+            padding: EdgeInsets.symmetric(
+              horizontal: space.stackSection,
+              vertical: space.stackFormField,
             ),
             child: FadeTransition(
               opacity: fadeAnimation,
@@ -137,8 +137,11 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
                 constraints: const BoxConstraints(maxWidth: 480),
                 decoration: BoxDecoration(
                   color: colors.surface,
-                  borderRadius: BorderRadius.circular(AppRadius.xl),
-                  border: Border.all(color: colors.borderSubtle),
+                  borderRadius: shape.radiusOverlay,
+                  border: Border.all(
+                    color: colors.borderSubtle,
+                    width: shape.borderDefault,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: colors.textPrimary.withAlpha(10),
@@ -147,13 +150,13 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.all(AppSpacing.lg),
+                padding: space.insetDialog,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const ProfileAvatarUploader(),
-                    const SizedBox(height: AppSpacing.lg),
+                    SizedBox(height: space.stackSection),
                     ProfileErrorBanner(errorMessage: errorMessage),
                     PersonalDetailsForm(
                       formKey: formKey,

@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
@@ -24,6 +22,7 @@ class DisputeReasonScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final reservationsState = ref.watch(reservationListProvider);
     final allReservations = reservationsState.valueOrNull ?? [];
     final reservation = allReservations
@@ -60,7 +59,7 @@ class DisputeReasonScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'What went wrong?',
           style: TextStyle(
@@ -71,7 +70,7 @@ class DisputeReasonScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Pick the closest one. You can explain in your own words next.',
           style: TextStyle(
@@ -81,7 +80,7 @@ class DisputeReasonScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
 
         for (final reason in reasons)
           _ReasonRow(
@@ -113,6 +112,9 @@ class _ReasonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     return Semantics(
       button: true,
@@ -120,29 +122,29 @@ class _ReasonRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(top: AppSpacing.sm),
-          padding: const EdgeInsets.all(AppSpacing.md - 2),
+          margin: EdgeInsets.only(top: space.stackItem),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.checkInStepPanel,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: shape.radiusControl,
           ),
           child: Row(
             children: [
               Container(
-                width: 28,
-                height: 28,
+                width: sizes.avatarSm,
+                height: sizes.avatarSm,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: colors.checkInRingPanel,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  borderRadius: shape.radiusControlSm,
                 ),
                 child: Icon(
                   reason.icon,
-                  size: 14,
+                  size: sizes.iconXs,
                   color: colors.brandOnSurface,
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm + 2),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +159,7 @@ class _ReasonRow extends StatelessWidget {
                         color: colors.brandOnSurface,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       reason.subtitle,
                       style: TextStyle(
@@ -169,10 +171,10 @@ class _ReasonRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.xs),
+              SizedBox(width: space.inlineMicro),
               Icon(
                 AppIcons.chevronRight,
-                size: 16,
+                size: sizes.iconSm,
                 color: colors.brandOnSurface,
               ),
             ],

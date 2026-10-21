@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -16,6 +15,8 @@ class BookingPaymentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
@@ -24,7 +25,7 @@ class BookingPaymentRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: () => context.push(AppRoutes.bookingCard),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          padding: EdgeInsets.symmetric(vertical: space.stackFormField),
           child: Row(
             children: [
               Text(
@@ -45,10 +46,10 @@ class BookingPaymentRow extends StatelessWidget {
                   color: cardAdded ? colors.ink : colors.textDisabled,
                 ),
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: space.inlineMicro),
               Icon(
                 AppIcons.chevronRight,
-                size: 16.0,
+                size: sizes.iconSm,
                 color: colors.inkTertiary,
               ),
             ],

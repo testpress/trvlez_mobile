@@ -6,8 +6,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
@@ -28,6 +26,9 @@ class CheckInDoneScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
     final tokenState = ref.watch(checkInTokenProvider(reservationId));
 
@@ -78,12 +79,12 @@ class CheckInDoneScreen extends ConsumerWidget {
             ),
           ],
           children: [
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             // White check circle
             Center(
               child: Container(
-                width: 48,
-                height: 48,
+                width: sizes.avatarLg,
+                height: sizes.avatarLg,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: colors.brandOnSurface,
@@ -91,12 +92,12 @@ class CheckInDoneScreen extends ConsumerWidget {
                 ),
                 child: Icon(
                   AppIcons.check,
-                  size: 26,
+                  size: sizes.iconLg,
                   color: colors.brandPrimary,
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             Text(
               'Show this at the desk',
               textAlign: TextAlign.center,
@@ -108,7 +109,7 @@ class CheckInDoneScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               'Collect your keys and go straight up. Nothing else needed.',
               textAlign: TextAlign.center,
@@ -118,21 +119,21 @@ class CheckInDoneScreen extends ConsumerWidget {
                 color: colors.brandSecondaryBody,
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // White QR Code Panel
             Center(
               child: Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
+                padding: space.insetCard,
                 decoration: BoxDecoration(
                   color: colors.brandOnSurface,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  borderRadius: shape.radiusControl,
                 ),
                 child: token != null && token.token.isNotEmpty
                     ? QrImageView(
                         data: token.token,
                         version: QrVersions.auto,
-                        size: 110,
+                        size: sizes.thumbPhotoMd,
                         eyeStyle: const QrEyeStyle(
                           eyeShape: QrEyeShape.square,
                           color: Colors.black,
@@ -144,12 +145,12 @@ class CheckInDoneScreen extends ConsumerWidget {
                       )
                     : SvgPicture.asset(
                         'assets/art/checkin_qr.svg',
-                        width: 110,
-                        height: 110,
+                        width: sizes.thumbPhotoMd,
+                        height: sizes.thumbPhotoMd,
                       ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
 
             // Reference metadata
             _ReferenceRow(label: 'Booking', value: bookingRef),
@@ -170,12 +171,19 @@ class _ReferenceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      margin: const EdgeInsets.only(top: AppSpacing.sm),
-      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      margin: EdgeInsets.only(top: space.stackItem),
+      padding: EdgeInsets.only(top: space.stackItem),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: colors.checkInPassRef, width: 1)),
+        border: Border(
+          top: BorderSide(
+            color: colors.checkInPassRef,
+            width: shape.borderDefault,
+          ),
+        ),
       ),
       child: Row(
         children: [

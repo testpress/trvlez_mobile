@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -26,13 +25,20 @@ class BookingSummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: EdgeInsets.symmetric(vertical: space.stackItem),
       decoration: last
           ? null
           : BoxDecoration(
-              border: Border(bottom: BorderSide(color: colors.line)),
+              border: Border(
+                bottom: BorderSide(
+                  color: colors.line,
+                  width: shape.borderDefault,
+                ),
+              ),
             ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +59,7 @@ class BookingSummaryRow extends StatelessWidget {
                   ),
                 ),
                 if (note != null) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: space.stackText),
                   Text(
                     note ?? '',
                     style: TextStyle(
@@ -66,7 +72,7 @@ class BookingSummaryRow extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Flexible(
             flex: 2,
             child: Text(

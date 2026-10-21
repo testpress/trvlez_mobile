@@ -74,5 +74,77 @@ void main() {
         expect(activeText.bodyMedium, isNotNull);
       },
     );
+
+    test('AppSpace ThemeExtension copyWith and lerp', () {
+      const space = AppSpace.comfortable;
+      final copied = space.copyWith(stackFormField: 20.0);
+      expect(copied.stackFormField, 20.0);
+      expect(copied.insetCard, space.insetCard);
+
+      final lerped = space.lerp(AppSpace.compact, 0.5);
+      expect(lerped, isA<AppSpace>());
+      expect(space.lerp(null, 0.5), space);
+    });
+
+    test('AppSize ThemeExtension copyWith and lerp', () {
+      const size = AppSize.regular;
+      final copied = size.copyWith(iconDefault: 26.0);
+      expect(copied.iconDefault, 26.0);
+      expect(copied.controlLg, size.controlLg);
+
+      final lerped = size.lerp(size, 0.5);
+      expect(lerped, isA<AppSize>());
+      expect(size.lerp(null, 0.5), size);
+    });
+
+    test('AppShape ThemeExtension copyWith, lerp, and inner radius', () {
+      const shape = AppShape.standard;
+      final copied = shape.copyWith(borderDefault: 1.2);
+      expect(copied.borderDefault, 1.2);
+      expect(copied.radiusSurface, shape.radiusSurface);
+
+      final lerped = shape.lerp(shape, 0.5);
+      expect(lerped, isA<AppShape>());
+      expect(shape.lerp(null, 0.5), shape);
+
+      final innerRadius = shape.inner(
+        const BorderRadius.all(Radius.circular(16)),
+        const EdgeInsets.all(4),
+      );
+      expect(innerRadius.topLeft.x, 12.0);
+    });
+
+    testWidgets(
+      'AppTheme registers AppSpace, AppSize, and AppShape on context',
+      (tester) async {
+        late AppSpace space;
+        late AppSize size;
+        late AppShape shape;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: Builder(
+              builder: (context) {
+                space = context.space;
+                size = context.sizes;
+                shape = context.shape;
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(space.insetCard, const EdgeInsets.all(16.0));
+        expect(space.stackFormField, 16.0);
+        expect(size.controlLg, 48.0);
+        expect(size.iconDefault, 24.0);
+        expect(
+          shape.radiusSurface,
+          const BorderRadius.all(Radius.circular(16.0)),
+        );
+        expect(shape.borderDefault, 1.0);
+      },
+    );
   });
 }

@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -123,111 +122,150 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
           return AnimatedBuilder(
             animation: _controller,
-            builder: (context, _) => Stack(
-              children: [
-                // ── 1. Full-Bleed Opening Motifs Layer ────────────────────────
-                Opacity(
-                  opacity: (1.0 - _motifsOut.value).clamp(0.0, 1.0),
-                  child: IgnorePointer(
-                    child: SizedBox.expand(
-                      child: SvgPicture.asset(
-                        'assets/art/launch_motifs.svg',
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
+            builder: (context, _) {
+              final space = context.space;
+              return Stack(
+                children: [
+                  // ── 1. Full-Bleed Opening Motifs Layer ────────────────────────
+                  Opacity(
+                    opacity: (1.0 - _motifsOut.value).clamp(0.0, 1.0),
+                    child: IgnorePointer(
+                      child: SizedBox.expand(
+                        child: SvgPicture.asset(
+                          'assets/art/launch_motifs.svg',
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // ── 2. City Skyline Layer ─────────────────────────────────────
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: screenHeight * 0.22,
-                  child: Opacity(
-                    opacity: _artRise.value,
-                    child: Transform.translate(
-                      offset: Offset(0, 30 * (1 - _artRise.value)),
-                      child: SvgPicture.asset(
-                        'assets/art/launch_skyline.svg',
-                        width: screenWidth,
-                        fit: BoxFit.fitWidth,
+                  // ── 2. City Skyline Layer ─────────────────────────────────────
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: screenHeight * 0.22,
+                    child: Opacity(
+                      opacity: _artRise.value,
+                      child: Transform.translate(
+                        offset: Offset(0, 30 * (1 - _artRise.value)),
+                        child: SvgPicture.asset(
+                          'assets/art/launch_skyline.svg',
+                          width: screenWidth,
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // ── 3. Centered / Lifted Wordmark ─────────────────────────────
-                Positioned.fill(
-                  child: Center(
-                    child: Transform.translate(
-                      offset: Offset(
-                        0,
-                        -screenHeight * (124.0 / _artH) * _lift.value,
+                  // ── 3. Centered / Lifted Wordmark ─────────────────────────────
+                  Positioned.fill(
+                    child: Center(
+                      child: Transform.translate(
+                        offset: Offset(
+                          0,
+                          -screenHeight * (124.0 / _artH) * _lift.value,
+                        ),
+                        child: Transform.scale(
+                          scale: 1.0 - (0.1 * _lift.value),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // "TRVL"
+                                Opacity(
+                                  opacity: _trvl.value,
+                                  child: Transform.translate(
+                                    offset: Offset(-15 * (1 - _trvl.value), 0),
+                                    child: Text(
+                                      'TRVL',
+                                      style: TextStyle(
+                                        fontFamily: AppTypography.fontFamily,
+                                        fontSize: wordmarkFontSize,
+                                        fontWeight: TypeScale.bold,
+                                        letterSpacing: 0.5,
+                                        height: 1.0,
+                                        color: colors.brandOnSurface,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: wordmarkGap),
+                                // Plane Glyph
+                                Opacity(
+                                  opacity: _plane.value,
+                                  child: Transform.translate(
+                                    offset: Offset(
+                                      -planeOffset * (1 - _plane.value),
+                                      0,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      'assets/art/plane_glyph.svg',
+                                      width: planeWidth,
+                                      colorFilter: ColorFilter.mode(
+                                        colors.brandSecondary,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: wordmarkGap),
+                                // "ez"
+                                Opacity(
+                                  opacity: _ez.value,
+                                  child: Transform.translate(
+                                    offset: Offset(15 * (1 - _ez.value), 0),
+                                    child: Text(
+                                      'ez',
+                                      style: TextStyle(
+                                        fontFamily: AppTypography.fontFamily,
+                                        fontSize: wordmarkFontSize,
+                                        fontWeight: TypeScale.bold,
+                                        letterSpacing: 0.5,
+                                        height: 1.0,
+                                        color: colors.brandSecondary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      child: Transform.scale(
-                        scale: 1.0 - (0.1 * _lift.value),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
+                    ),
+                  ),
+
+                  // ── 4. CTA and Security Footer ────────────────────────────────
+                  Positioned(
+                    left: space.stackSection,
+                    right: space.stackSection,
+                    bottom: space.stackHero,
+                    child: SafeArea(
+                      child: Opacity(
+                        opacity: _ctaRise.value,
+                        child: Transform.translate(
+                          offset: Offset(0, 24 * (1 - _ctaRise.value)),
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // "TRVL"
-                              Opacity(
-                                opacity: _trvl.value,
-                                child: Transform.translate(
-                                  offset: Offset(-15 * (1 - _trvl.value), 0),
-                                  child: Text(
-                                    'TRVL',
-                                    style: TextStyle(
-                                      fontFamily: AppTypography.fontFamily,
-                                      fontSize: wordmarkFontSize,
-                                      fontWeight: TypeScale.bold,
-                                      letterSpacing: 0.5,
-                                      height: 1.0,
-                                      color: colors.brandOnSurface,
-                                    ),
-                                  ),
-                                ),
+                              const BrandSecurityNote(
+                                text:
+                                    'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
                               ),
-                              SizedBox(width: wordmarkGap),
-                              // Plane Glyph
-                              Opacity(
-                                opacity: _plane.value,
-                                child: Transform.translate(
-                                  offset: Offset(
-                                    -planeOffset * (1 - _plane.value),
-                                    0,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/art/plane_glyph.svg',
-                                    width: planeWidth,
-                                    colorFilter: ColorFilter.mode(
-                                      colors.brandSecondary,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                ),
+                              SizedBox(height: space.stackFormField),
+                              AppButton(
+                                label: 'Create account',
+                                variant: AppButtonVariant.brandWhite,
+                                onPressed: () => context.go(AppRoutes.register),
                               ),
-                              SizedBox(width: wordmarkGap),
-                              // "ez"
-                              Opacity(
-                                opacity: _ez.value,
-                                child: Transform.translate(
-                                  offset: Offset(15 * (1 - _ez.value), 0),
-                                  child: Text(
-                                    'ez',
-                                    style: TextStyle(
-                                      fontFamily: AppTypography.fontFamily,
-                                      fontSize: wordmarkFontSize,
-                                      fontWeight: TypeScale.bold,
-                                      letterSpacing: 0.5,
-                                      height: 1.0,
-                                      color: colors.brandSecondary,
-                                    ),
-                                  ),
-                                ),
+                              SizedBox(height: space.stackFormField),
+                              BrandAltLine(
+                                prefix: 'Already have an account? ',
+                                linkText: 'Log in',
+                                onTap: () => context.go(AppRoutes.login),
                               ),
                             ],
                           ),
@@ -235,45 +273,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       ),
                     ),
                   ),
-                ),
-
-                // ── 4. CTA and Security Footer ────────────────────────────────
-                Positioned(
-                  left: AppSpacing.lg,
-                  right: AppSpacing.lg,
-                  bottom: AppSpacing.xl,
-                  child: SafeArea(
-                    child: Opacity(
-                      opacity: _ctaRise.value,
-                      child: Transform.translate(
-                        offset: Offset(0, 24 * (1 - _ctaRise.value)),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const BrandSecurityNote(
-                              text:
-                                  'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            AppButton(
-                              label: 'Create account',
-                              variant: AppButtonVariant.brandWhite,
-                              onPressed: () => context.go(AppRoutes.register),
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            BrandAltLine(
-                              prefix: 'Already have an account? ',
-                              linkText: 'Log in',
-                              onTap: () => context.go(AppRoutes.login),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                ],
+              );
+            },
           );
         },
       ),

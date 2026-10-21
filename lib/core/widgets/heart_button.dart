@@ -8,18 +8,22 @@ class HeartButton extends StatelessWidget {
     super.key,
     required this.saved,
     this.onTap,
-    this.size = 32,
+    this.size,
     this.onPhoto = false,
   });
 
   final bool saved;
   final VoidCallback? onTap;
-  final double size;
+  final double? size;
   final bool onPhoto;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+
+    final effectiveSize = size ?? sizes.controlSm;
 
     final background = onPhoto
         ? colors.photoChip
@@ -34,16 +38,20 @@ class HeartButton extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(8), // Ensures minimum 48dp hit area
+          padding: space.insetControlSm, // Ensures minimum 48dp hit area
           child: Container(
-            width: size,
-            height: size,
+            width: effectiveSize,
+            height: effectiveSize,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: background,
               shape: BoxShape.circle,
             ),
-            child: Icon(AppIcons.heart, size: size * 0.52, color: iconColor),
+            child: Icon(
+              AppIcons.heart,
+              size: effectiveSize * 0.52,
+              color: iconColor,
+            ),
           ),
         ),
       ),

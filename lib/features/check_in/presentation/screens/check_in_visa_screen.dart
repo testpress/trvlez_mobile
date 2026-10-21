@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -50,6 +49,7 @@ class CheckInVisaScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
 
     return BrandVerifyScreen(
       title: 'Online check-in',
@@ -64,7 +64,7 @@ class CheckInVisaScreen extends ConsumerWidget {
           onPressed: () =>
               context.push(AppRoutes.checkInVisaCapturePath(reservationId)),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Row(
           children: [
             Expanded(
@@ -74,7 +74,7 @@ class CheckInVisaScreen extends ConsumerWidget {
                 onTap: () => _pickFile(context, ref, VisaSource.file),
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
+            SizedBox(width: space.inlineIconLabel),
             Expanded(
               child: CheckInAltAction(
                 icon: AppIcons.fileText,
@@ -89,7 +89,7 @@ class CheckInVisaScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Your visa',
           textAlign: TextAlign.center,
@@ -101,7 +101,7 @@ class CheckInVisaScreen extends ConsumerWidget {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           "Photograph the visa page in your passport, or the sticker if it's separate.",
           textAlign: TextAlign.center,
@@ -112,7 +112,7 @@ class CheckInVisaScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
 
         // Visa illustration
         Center(
@@ -122,7 +122,7 @@ class CheckInVisaScreen extends ConsumerWidget {
             height: 126,
           ),
         ),
-        const SizedBox(height: AppSpacing.md - 2),
+        SizedBox(height: space.stackFormField),
 
         // Pointers
         const BrandPointerPair(
@@ -131,7 +131,7 @@ class CheckInVisaScreen extends ConsumerWidget {
             ('2', 'The dates', 'Valid from and valid to, both readable'),
           ],
         ),
-        const SizedBox(height: AppSpacing.sm + 2),
+        SizedBox(height: space.stackItem),
 
         // Info card with bullets
         const BrandInfoCard(

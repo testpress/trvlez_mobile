@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 
 /// A subtle horizontal step indicator for verification processing stages.
 ///
@@ -35,6 +34,9 @@ class ProcessingStepIndicator extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final successColor = context.colors.feedbackSuccess;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -47,14 +49,14 @@ class ProcessingStepIndicator extends StatelessWidget {
 
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            width: 24,
-            height: 1.5,
-            margin: const EdgeInsets.only(bottom: 16),
+            width: sizes.iconDefault,
+            height: shape.borderMedium,
+            margin: EdgeInsets.only(bottom: space.stackFormField),
             decoration: BoxDecoration(
               color: isConnected
                   ? successColor.withValues(alpha: 0.6)
                   : colorScheme.onSurface.withValues(alpha: 0.12),
-              borderRadius: AppRadius.xxsRadius,
+              borderRadius: shape.radiusMicro,
             ),
           );
         }
@@ -112,6 +114,10 @@ class _StepDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
     final dotColor = isCompleted
         ? successColor
         : isActive
@@ -133,18 +139,21 @@ class _StepDot extends StatelessWidget {
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          width: isActive ? 10 : 8,
-          height: isActive ? 10 : 8,
+          width: isActive ? (sizes.indicatorDot + 2) : sizes.indicatorDot,
+          height: isActive ? (sizes.indicatorDot + 2) : sizes.indicatorDot,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isUpcoming ? Colors.transparent : dotColor,
-            border: Border.all(color: dotColor, width: isActive ? 2.0 : 1.5),
+            border: Border.all(
+              color: dotColor,
+              width: isActive ? shape.borderFocus : shape.borderMedium,
+            ),
           ),
           child: isCompleted
-              ? const Icon(Icons.check, size: 6, color: Colors.white)
+              ? Icon(Icons.check, size: space.stackTight, color: Colors.white)
               : null,
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: space.stackTight),
         Text(
           label,
           style: textStyle.copyWith(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 
 class InfoCard extends StatelessWidget {
@@ -31,14 +30,20 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     if (state == TravelerVerificationState.failed) {
       return Container(
-        padding: const EdgeInsets.all(16),
+        padding: space.insetCard,
         decoration: BoxDecoration(
           color: theme.colorScheme.error.withAlpha(15),
-          borderRadius: AppRadius.lgRadius,
-          border: Border.all(color: theme.colorScheme.error.withAlpha(40)),
+          borderRadius: shape.radiusSurface,
+          border: Border.all(
+            color: theme.colorScheme.error.withAlpha(40),
+            width: shape.borderDefault,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,9 +53,9 @@ class InfoCard extends StatelessWidget {
                 Icon(
                   Icons.warning_amber_rounded,
                   color: theme.colorScheme.error,
-                  size: 22,
+                  size: sizes.iconMd,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: space.inlineButtonGroup),
                 Text(
                   'Verification Unsuccessful',
                   style: AppTypography.heading.copyWith(
@@ -60,7 +65,7 @@ class InfoCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: space.inlineButtonGroup),
             if (failedStep != null && failedStep!.isNotEmpty) ...[
               Text(
                 'Failed at: ${formatStep(failedStep!)}',
@@ -69,7 +74,7 @@ class InfoCard extends StatelessWidget {
                   color: theme.colorScheme.onSurface.withAlpha(200),
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: space.stackText),
             ],
             Text(
               errorReason ??
@@ -81,14 +86,15 @@ class InfoCard extends StatelessWidget {
               ),
             ),
             if (uiMitigation != null && uiMitigation!.isNotEmpty) ...[
-              const SizedBox(height: 12),
+              SizedBox(height: space.inlineButtonGroup),
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: space.insetCardCompact,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius: AppRadius.smRadius,
+                  borderRadius: shape.radiusControlSm,
                   border: Border.all(
                     color: theme.colorScheme.error.withAlpha(40),
+                    width: shape.borderDefault,
                   ),
                 ),
                 child: Row(
@@ -96,10 +102,10 @@ class InfoCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.lightbulb_outline_rounded,
-                      size: 18,
+                      size: sizes.iconSm,
                       color: theme.colorScheme.error,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: space.inlineIconLabel),
                     Expanded(
                       child: Text(
                         uiMitigation!,
@@ -139,17 +145,20 @@ class InfoCard extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: color.withAlpha(15),
-        borderRadius: AppRadius.lgRadius,
-        border: Border.all(color: color.withAlpha(40)),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: color.withAlpha(40),
+          width: shape.borderDefault,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(width: 12),
+          Icon(icon, color: color, size: sizes.iconMd),
+          SizedBox(width: space.inlineButtonGroup),
           Expanded(
             child: Text(
               message,

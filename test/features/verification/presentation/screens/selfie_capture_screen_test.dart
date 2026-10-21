@@ -63,9 +63,7 @@ void main() {
       );
     }
 
-    return ProviderScope(
-      child: MaterialApp.router(routerConfig: testRouter),
-    );
+    return ProviderScope(child: MaterialApp.router(routerConfig: testRouter));
   }
 
   group('SelfieCaptureScreen', () {
@@ -107,10 +105,7 @@ void main() {
         final container = ProviderContainer();
 
         await tester.pumpWidget(
-          createTestWidget(
-            cameraService: camService,
-            container: container,
-          ),
+          createTestWidget(cameraService: camService, container: container),
         );
         await tester.pumpAndSettle();
 

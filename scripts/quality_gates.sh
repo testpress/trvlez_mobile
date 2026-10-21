@@ -10,7 +10,7 @@ echo "=============================================="
 
 # 1. Automated Style Guard
 echo ""
-echo "1/7 Checking Style Guard (disallow raw color references in lib/features/)..."
+echo "1/8 Checking Style Guard (disallow raw color references in lib/features/)..."
 if grep -rnE "Color\(0x|Colors\.(red|blue|green|grey)" lib/features/; then
   echo "FAILED: Raw color references found in lib/features/. Use design system tokens (context.colors.*)." >&2
   exit 1
@@ -19,7 +19,7 @@ echo "PASSED: Style Guard - Zero raw colors in lib/features/."
 
 # 2. Automated Layer Import Guard
 echo ""
-echo "2/7 Checking Layer Import Guard (disallow data imports in presentation UI)..."
+echo "2/8 Checking Layer Import Guard (disallow data imports in presentation UI)..."
 if grep -rnE "import .*/data/" lib/features/*/presentation/ --exclude-dir=providers; then
   echo "FAILED: UI screens and widgets in presentation/ must not import data layer directly." >&2
   exit 1
@@ -28,7 +28,7 @@ echo "PASSED: Layer Import Guard - Zero data imports in presentation UI screens 
 
 # 3. Automated Domain Purity Guard
 echo ""
-echo "3/7 Checking Domain Purity Guard (disallow Flutter/Dio/platform imports in domain)..."
+echo "3/8 Checking Domain Purity Guard (disallow Flutter/Dio/platform imports in domain)..."
 if grep -rnE "import '(package:flutter|package:dio|package:dmrtd)" lib/features/*/domain/; then
   echo "FAILED: Domain layer must be pure Dart. No Flutter, Dio, or platform packages." >&2
   exit 1
@@ -37,7 +37,7 @@ echo "PASSED: Domain Purity Guard - 100% pure Dart domain layer."
 
 # 4. Automated Cross-Feature Encapsulation Guard
 echo ""
-echo "4/7 Checking Feature Encapsulation Guard (disallow cross-feature presentation/data imports)..."
+echo "4/8 Checking Feature Encapsulation Guard (disallow cross-feature presentation/data imports)..."
 python3 -c "
 import os, re, sys
 
@@ -69,21 +69,26 @@ if violations:
 "
 echo "PASSED: Feature Encapsulation Guard - Zero cross-feature presentation or data imports."
 
-# 5. Formatting Check
+# 5. Semantic Layout Token Guard
 echo ""
-echo "5/7 Checking Dart formatting..."
+echo "5/8 Checking Semantic Layout Token Guard (disallow raw layout numbers outside lib/core/design_tokens/)..."
+python3 scripts/verify_layout_tokens.py
+
+# 6. Formatting Check
+echo ""
+echo "6/8 Checking Dart formatting..."
 dart format --output=none --set-exit-if-changed .
 echo "PASSED: Dart formatting is clean."
 
-# 6. Static Analysis with Fatal Infos
+# 7. Static Analysis with Fatal Infos
 echo ""
-echo "6/7 Running Flutter analyze (--fatal-infos)..."
+echo "7/8 Running Flutter analyze (--fatal-infos)..."
 flutter analyze --fatal-infos
 echo "PASSED: Flutter analyze reported 0 issues."
 
-# 7. Full Test Suite
+# 8. Full Test Suite
 echo ""
-echo "7/7 Running Flutter test suite..."
+echo "8/8 Running Flutter test suite..."
 flutter test
 echo "PASSED: All Flutter tests passed successfully."
 

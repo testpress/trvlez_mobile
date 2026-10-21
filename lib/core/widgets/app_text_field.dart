@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -49,6 +47,8 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     final field = TextFormField(
       controller: controller,
@@ -78,31 +78,43 @@ class AppTextField extends StatelessWidget {
         ).copyWith(color: colors.textDisabled),
         filled: true,
         fillColor: colors.surfaceSubtle,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        contentPadding: space.insetInput,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
-          borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.borderSubtle),
+          borderRadius: shape.radiusControl,
+          borderSide: BorderSide(
+            color: colors.borderSubtle,
+            width: shape.borderDefault,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.borderSubtle),
+          borderRadius: shape.radiusControl,
+          borderSide: BorderSide(
+            color: colors.borderSubtle,
+            width: shape.borderDefault,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.borderFocused, width: 1.5),
+          borderRadius: shape.radiusControl,
+          borderSide: BorderSide(
+            color: colors.borderFocused,
+            width: shape.borderMedium,
+          ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.feedbackError),
+          borderRadius: shape.radiusControl,
+          borderSide: BorderSide(
+            color: colors.feedbackError,
+            width: shape.borderDefault,
+          ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: AppRadius.input,
-          borderSide: BorderSide(color: colors.feedbackError, width: 1.5),
+          borderRadius: shape.radiusControl,
+          borderSide: BorderSide(
+            color: colors.feedbackError,
+            width: shape.borderMedium,
+          ),
         ),
         errorStyle: const TextStyle(
           fontFamily: AppTypography.fontFamily,
@@ -128,7 +140,7 @@ class AppTextField extends StatelessWidget {
             fontWeight: TypeScale.semiBold,
           ).copyWith(color: colors.textPrimary),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         field,
       ],
     );

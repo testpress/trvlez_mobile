@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -112,6 +111,8 @@ class _SelfieProcessingScreenState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
 
     ref.listen<VerificationState>(verificationNotifierProvider, (
@@ -130,12 +131,12 @@ class _SelfieProcessingScreenState
       helpLine: false,
       isScrollable: true,
       body: [
-        const VerificationStepper(current: 2, circleSize: 23.0),
-        const SizedBox(height: AppSpacing.xl),
+        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackHero),
         Center(
           child: Container(
-            width: 80.0,
-            height: 80.0,
+            width: sizes.avatarXl,
+            height: sizes.avatarXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -143,13 +144,13 @@ class _SelfieProcessingScreenState
             ),
             child: SvgPicture.asset(
               'assets/art/video_glyph.svg',
-              width: 36.0,
-              height: 36.0,
+              width: sizes.avatarMd,
+              height: sizes.avatarMd,
               fit: BoxFit.contain,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         VerifyProgressTrio(
           labels: const ['Upload', 'Check'],
           states: [
@@ -157,9 +158,9 @@ class _SelfieProcessingScreenState
               i < doneCount ? TrioState.done : TrioState.waiting,
           ],
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         SizedBox(
-          height: 28.0,
+          height: sizes.avatarSm,
           child: Center(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),

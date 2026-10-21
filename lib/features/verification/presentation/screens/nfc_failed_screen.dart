@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -139,6 +137,9 @@ class NfcFailedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
 
     final resolvedLabel = _getResolvedButtonLabel();
@@ -154,11 +155,11 @@ class NfcFailedScreen extends ConsumerWidget {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         Center(
           child: Container(
-            width: 62.0,
-            height: 62.0,
+            width: sizes.pulseIndicator,
+            height: sizes.pulseIndicator,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -166,12 +167,12 @@ class NfcFailedScreen extends ConsumerWidget {
             ),
             child: Icon(
               AppIcons.refresh,
-              size: 30.0,
+              size: sizes.iconXl,
               color: colors.brandPrimary,
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Text(
           'One step needs redoing',
           textAlign: TextAlign.center,
@@ -183,9 +184,9 @@ class NfcFailedScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
           child: Text(
             subtitle,
             textAlign: TextAlign.center,
@@ -198,14 +199,14 @@ class NfcFailedScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         VerifyStatusRows(dimCompleted: true, rows: rows),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.brandCardIconBackground,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: shape.radiusControl,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +221,7 @@ class NfcFailedScreen extends ConsumerWidget {
                   color: colors.brandOnSurface,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               Text(
                 fixText,
                 style: TextStyle(
@@ -242,7 +243,7 @@ class NfcFailedScreen extends ConsumerWidget {
           onPressed: () => _onRedoTap(context, ref, resolvedRoute),
         ),
         if (_isChipScan) ...[
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           AppButton(
             label: 'Skip chip scan and continue',
             variant: AppButtonVariant.brandOutline,
@@ -255,11 +256,11 @@ class NfcFailedScreen extends ConsumerWidget {
             },
           ),
         ],
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(
           text: "Your other steps are saved. You won't repeat them.",
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Center(
           child: InkWell(
             onTap: () {
@@ -272,7 +273,7 @@ class NfcFailedScreen extends ConsumerWidget {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(

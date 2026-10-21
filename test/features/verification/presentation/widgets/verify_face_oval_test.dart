@@ -8,11 +8,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: VerifyFaceOval(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: VerifyFaceOval())),
       );
       await tester.pumpAndSettle();
 

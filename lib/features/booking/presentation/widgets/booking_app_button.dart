@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
@@ -11,16 +10,19 @@ class BookingAppButton extends StatelessWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.paddingVertical = 14.0,
+    this.paddingVertical,
   });
 
   final String label;
   final VoidCallback? onPressed;
-  final double paddingVertical;
+  final double? paddingVertical;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final enabled = onPressed != null;
 
     return Semantics(
@@ -31,16 +33,18 @@ class BookingAppButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: AppRadius.pillRadius,
+          borderRadius: shape.radiusPill,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            constraints: const BoxConstraints(minHeight: 48.0),
+            constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
             width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: paddingVertical),
+            padding: EdgeInsets.symmetric(
+              vertical: paddingVertical ?? space.insetInput.top,
+            ),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: enabled ? colors.brandPrimary : colors.borderSubtle,
-              borderRadius: AppRadius.pillRadius,
+              borderRadius: shape.radiusPill,
             ),
             child: EzText(
               text: label,

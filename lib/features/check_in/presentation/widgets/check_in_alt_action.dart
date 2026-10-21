@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -21,6 +19,9 @@ class CheckInAltAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
@@ -29,23 +30,20 @@ class CheckInAltAction extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.sm + 2,
-            horizontal: AppSpacing.sm,
-          ),
+          padding: space.insetControlSm,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(
               color: colors.verificationOutlineButton,
-              width: 1.5,
+              width: shape.borderMedium,
             ),
-            borderRadius: BorderRadius.circular(AppRadius.pill),
+            borderRadius: shape.radiusPill,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 14, color: colors.brandOnSurface),
-              const SizedBox(width: AppSpacing.xs + 2),
+              Icon(icon, size: sizes.iconXs, color: colors.brandOnSurface),
+              SizedBox(width: space.stackTight),
               Flexible(
                 child: Text(
                   label,

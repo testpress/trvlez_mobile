@@ -3,8 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -34,6 +32,9 @@ class FindrCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     final ctaLabel = switch (state) {
       FindrState.locked => 'Start verification',
@@ -45,7 +46,7 @@ class FindrCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: colors.paper,
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -67,7 +68,7 @@ class FindrCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: space.insetCard,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
@@ -83,7 +84,7 @@ class FindrCard extends StatelessWidget {
                   ),
                 ] else
                   Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    padding: EdgeInsets.only(top: space.stackItem),
                     child: Text(
                       'Know a hotel worth staying in? Recommend it. When they '
                       'join TRVLez, you earn a share of what they book.',
@@ -95,16 +96,16 @@ class FindrCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: AppSpacing.md),
+                SizedBox(height: space.stackFormField),
                 ElevatedButton(
                   onPressed: onCta,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.brandPrimary,
                     foregroundColor: colors.textOnAction,
                     elevation: 0,
-                    minimumSize: const Size.fromHeight(42),
+                    minimumSize: Size.fromHeight(sizes.controlMd),
                     shape: RoundedRectangleBorder(
-                      borderRadius: AppRadius.fullRadius,
+                      borderRadius: shape.radiusPill,
                     ),
                   ),
                   child: Text(
@@ -127,24 +128,28 @@ class FindrCard extends StatelessWidget {
 }
 
 class FindrHeading extends StatelessWidget {
-  const FindrHeading({super.key, this.prefix = 'Find', this.iconBox = 32});
+  const FindrHeading({super.key, this.prefix = 'Find', this.iconBox});
 
   final String prefix;
-  final double iconBox;
+  final double? iconBox;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+    final boxSize = iconBox ?? sizes.iconXl;
 
     return Row(
       children: [
         Container(
-          width: iconBox,
-          height: iconBox,
+          width: boxSize,
+          height: boxSize,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: AppColors.white,
-            borderRadius: AppRadius.mdRadius,
+            borderRadius: shape.radiusControl,
             boxShadow: [
               BoxShadow(
                 color: colors.cardShadow,
@@ -155,11 +160,11 @@ class FindrHeading extends StatelessWidget {
           ),
           child: Icon(
             AppIcons.mapSearch,
-            size: iconBox * 0.5,
+            size: boxSize * 0.5,
             color: colors.brandPrimary,
           ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        SizedBox(width: space.inlineIconLabel),
         Text.rich(
           TextSpan(
             children: [
@@ -197,8 +202,10 @@ class _FindrEarnedRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      padding: EdgeInsets.only(top: space.stackItem),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -212,7 +219,7 @@ class _FindrEarnedRow extends StatelessWidget {
               color: colors.paperInk,
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: space.stackTight),
           Text(
             'earned so far',
             style: TextStyle(
@@ -243,19 +250,23 @@ class _FindrMiniStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      margin: const EdgeInsets.only(top: AppSpacing.sm),
-      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      margin: EdgeInsets.only(top: space.stackItem),
+      padding: EdgeInsets.only(top: space.stackItem),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: colors.paperLine, width: 1)),
+        border: Border(
+          top: BorderSide(color: colors.paperLine, width: shape.borderDefault),
+        ),
       ),
       child: Row(
         children: [
           _FindrStatItem(value: '$joined', label: 'joined'),
-          const SizedBox(width: AppSpacing.lg),
+          SizedBox(width: space.stackSection),
           _FindrStatItem(value: '$inReview', label: 'in review'),
-          const SizedBox(width: AppSpacing.lg),
+          SizedBox(width: space.stackSection),
           _FindrStatItem(value: due, label: 'due $dueDate'),
         ],
       ),
@@ -272,6 +283,8 @@ class _FindrStatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final shape = context.shape;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -285,7 +298,7 @@ class _FindrStatItem extends StatelessWidget {
             color: colors.paperInk,
           ),
         ),
-        const SizedBox(height: 1),
+        SizedBox(height: shape.borderDefault),
         Text(
           label,
           style: TextStyle(

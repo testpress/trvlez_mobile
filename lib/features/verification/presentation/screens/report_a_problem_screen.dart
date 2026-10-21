@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -81,6 +79,9 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final problems = _currentArea.problems;
     final canSubmit = _selected.isNotEmpty || _notes.text.trim().isNotEmpty;
 
@@ -92,7 +93,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Text(
           'Tell us what went wrong',
           style: TextStyle(
@@ -103,7 +104,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           "We'll attach your step, device model and app version so support has context.",
           style: TextStyle(
@@ -114,10 +115,10 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
             height: 1.4,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
+          spacing: space.inlineIconLabel,
+          runSpacing: space.stackItem,
           children: [
             for (int i = 0; i < problems.length; i++)
               _ProblemChip(
@@ -135,7 +136,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
               ),
           ],
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         TextField(
           controller: _notes,
           maxLines: 4,
@@ -154,28 +155,28 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
             filled: true,
             fillColor: colors.brandCardBackground,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.md),
+              borderRadius: shape.radiusControl,
               borderSide: BorderSide.none,
             ),
-            contentPadding: const EdgeInsets.all(AppSpacing.md),
+            contentPadding: space.insetCard,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.brandShotBackdrop.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: shape.radiusControl,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
                 AppIcons.shieldCheck,
-                size: 16.0,
+                size: sizes.iconSm,
                 color: colors.brandSecondary,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   'Never send photos of your passport by message. We will never ask you to.',
@@ -219,25 +220,30 @@ class _ProblemChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
+        borderRadius: shape.radiusPill,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: space.stackFormField - space.stackText / 2,
+            vertical: space.stackItem,
+          ),
           decoration: BoxDecoration(
             color: isSelected
                 ? colors.brandOnSurface
                 : colors.brandCardBackground,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
+            borderRadius: shape.radiusPill,
             border: Border.all(
               color: isSelected
                   ? colors.brandOnSurface
                   : colors.brandBorderSubtle,
-              width: 1.0,
+              width: shape.borderDefault,
             ),
           ),
           child: Text(

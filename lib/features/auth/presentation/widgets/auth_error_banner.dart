@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -24,23 +22,23 @@ class AuthErrorBanner extends StatelessWidget {
     }
 
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: EdgeInsets.only(bottom: space.stackFormField),
       child: AnimatedSize(
         duration: const Duration(milliseconds: 200),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: 12,
-          ),
+          padding: space.insetControlMd,
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
-            borderRadius: AppRadius.mdRadius,
+            borderRadius: shape.radiusControl,
             border: Border.all(
               color: colors.brandButtonDisabledBackground,
-              width: 1,
+              width: shape.borderDefault,
             ),
           ),
           child: Row(
@@ -48,9 +46,9 @@ class AuthErrorBanner extends StatelessWidget {
               Icon(
                 AppIcons.alertCircle,
                 color: colors.brandSecondary,
-                size: 18,
+                size: sizes.iconSm,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   errorMessage!,
@@ -63,19 +61,19 @@ class AuthErrorBanner extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: AppSpacing.xs),
+              SizedBox(width: space.inlineMicro),
               Semantics(
                 button: true,
                 label: 'Dismiss error',
                 child: InkWell(
                   onTap: onDismiss,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: shape.radiusControl,
                   child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.xs),
+                    padding: EdgeInsets.all(space.inlineMicro),
                     child: Icon(
                       AppIcons.close,
                       color: colors.brandSecondarySmall,
-                      size: 16,
+                      size: sizes.iconSm,
                     ),
                   ),
                 ),

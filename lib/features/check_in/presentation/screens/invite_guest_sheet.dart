@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -31,12 +29,17 @@ class InviteGuestSheet extends StatefulWidget {
     int adultIndex = 1,
     VoidCallback? onInvited,
   }) {
+    final shape = context.shape;
+
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.colors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: shape.radiusOverlay.topLeft,
+          topRight: shape.radiusOverlay.topRight,
+        ),
       ),
       builder: (_) => InviteGuestSheet(
         reservationId: reservationId,
@@ -70,6 +73,9 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return SafeArea(
       top: false,
@@ -84,21 +90,21 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
             // Grab handle
             Center(
               child: Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(top: AppSpacing.sm + 1),
+                width: sizes.avatarMd,
+                height: space.stackText,
+                margin: EdgeInsets.only(top: space.stackItem),
                 decoration: BoxDecoration(
                   color: colors.line,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  borderRadius: shape.radiusPill,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.md - 2,
-                AppSpacing.md,
-                AppSpacing.lg,
+              padding: EdgeInsets.fromLTRB(
+                space.stackFormField,
+                space.stackFormField,
+                space.stackFormField,
+                space.stackSection,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +123,7 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                       color: colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xs),
+                  SizedBox(height: space.stackText),
                   Text(
                     'Each person verifies themselves on their own phone. You will not see their documents.',
                     style: TextStyle(
@@ -127,26 +133,29 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                       height: 1.35,
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
 
                   if (_showingQrCode) ...[
                     // QR Code panel
                     Center(
                       child: Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
+                        padding: space.insetCard,
                         decoration: BoxDecoration(
                           color: colors.surfaceSubtle,
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                          border: Border.all(color: colors.borderDefault),
+                          borderRadius: shape.radiusControl,
+                          border: Border.all(
+                            color: colors.borderDefault,
+                            width: shape.borderDefault,
+                          ),
                         ),
                         child: SvgPicture.asset(
                           'assets/art/checkin_qr.svg',
-                          width: 140,
-                          height: 140,
+                          width: sizes.thumbPhotoMd,
+                          height: sizes.thumbPhotoMd,
                         ),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(height: space.stackFormField),
                     Center(
                       child: GestureDetector(
                         onTap: () => setState(() => _showingQrCode = false),
@@ -165,23 +174,23 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                   ] else ...[
                     // Link box
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm + 2,
-                      ),
+                      padding: space.insetControlMd,
                       decoration: BoxDecoration(
                         color: colors.surfaceSubtle,
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(color: colors.borderDefault),
+                        borderRadius: shape.radiusControl,
+                        border: Border.all(
+                          color: colors.borderDefault,
+                          width: shape.borderDefault,
+                        ),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             AppIcons.paperclip,
-                            size: 16,
+                            size: sizes.iconSm,
                             color: colors.textSecondary,
                           ),
-                          const SizedBox(width: AppSpacing.sm),
+                          SizedBox(width: space.inlineIconLabel),
                           Expanded(
                             child: Text(
                               _inviteUrl,
@@ -194,21 +203,16 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: AppSpacing.sm),
+                          SizedBox(width: space.inlineIconLabel),
                           GestureDetector(
                             onTap: _copyLink,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.sm + 2,
-                                vertical: 6,
-                              ),
+                              padding: space.insetTag,
                               decoration: BoxDecoration(
                                 color: _copied
                                     ? colors.statusSuccessBackground
                                     : colors.actionPrimary,
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.pill,
-                                ),
+                                borderRadius: shape.radiusPill,
                               ),
                               child: Text(
                                 _copied ? 'Copied' : 'Copy',
@@ -226,7 +230,7 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(height: space.stackFormField),
                     Center(
                       child: GestureDetector(
                         onTap: () => setState(() => _showingQrCode = true),
@@ -244,7 +248,7 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                     ),
                   ],
 
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: space.stackSection),
                   AppButton(
                     label: 'Done',
                     variant: AppButtonVariant.primary,

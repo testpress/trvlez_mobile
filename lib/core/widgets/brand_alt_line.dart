@@ -32,6 +32,9 @@ class BrandAltLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final space = context.space;
+    final shape = context.shape;
+
     final prefixStyle = TextStyle(
       fontFamily: AppTypography.fontFamily,
       fontSize: fontSize,
@@ -54,27 +57,24 @@ class BrandAltLine extends StatelessWidget {
           children: [
             if (prefix != null) ...[
               Text(prefix!, style: prefixStyle),
-              const SizedBox(width: 4),
+              SizedBox(width: space.inlineMicro),
             ],
             Semantics(
               button: true,
               label: linkText,
               child: InkWell(
                 onTap: onTap,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: shape.radiusSubtle,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 6,
-                  ),
+                  padding: space.insetTagSm,
                   child: Container(
-                    padding: const EdgeInsets.only(bottom: 1),
+                    padding: EdgeInsets.only(bottom: shape.borderDefault),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
                           color:
                               underlineColor ?? context.colors.brandUnderline,
-                          width: 1,
+                          width: shape.borderDefault,
                         ),
                       ),
                     ),

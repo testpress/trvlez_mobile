@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -28,6 +26,9 @@ class VerifiedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final cardBg = backgroundColor ?? colors.redTint;
     final primary = accentColor ?? colors.brandPrimary;
 
@@ -35,31 +36,27 @@ class VerifiedCard extends StatelessWidget {
       button: true,
       label: '$title. $detail.',
       child: InkWell(
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             color: cardBg,
-            borderRadius: AppRadius.cardRadius,
+            borderRadius: shape.radiusSurface,
           ),
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: space.insetCard,
           child: Row(
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: sizes.iconXl,
+                height: sizes.iconXl,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: primary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: Colors.white,
-                ),
+                child: Icon(icon, size: sizes.iconSm, color: Colors.white),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +71,7 @@ class VerifiedCard extends StatelessWidget {
                         color: primary,
                       ),
                     ),
-                    const SizedBox(height: 1),
+                    SizedBox(height: shape.borderDefault),
                     Text(
                       detail,
                       style: TextStyle(
@@ -86,7 +83,7 @@ class VerifiedCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(AppIcons.chevronRight, size: 16, color: primary),
+              Icon(AppIcons.chevronRight, size: sizes.iconSm, color: primary),
             ],
           ),
         ),

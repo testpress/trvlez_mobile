@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Error banner widget displaying validation or network failure messages in profile flows.
@@ -17,28 +15,31 @@ class ProfileErrorBanner extends StatelessWidget {
     }
 
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: EdgeInsets.only(bottom: space.stackFormField),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm + 4,
-        ),
+        padding: space.insetControlMd,
         decoration: BoxDecoration(
           color: colors.feedbackError.withAlpha(20),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          border: Border.all(color: colors.feedbackError.withAlpha(60)),
+          borderRadius: shape.radiusControl,
+          border: Border.all(
+            color: colors.feedbackError.withAlpha(60),
+            width: shape.borderDefault,
+          ),
         ),
         child: Row(
           children: [
             Icon(
               Icons.error_outline_rounded,
               color: colors.feedbackError,
-              size: 20,
+              size: sizes.iconMd,
             ),
-            const SizedBox(width: AppSpacing.sm + 2),
+            SizedBox(width: space.inlineIconLabel),
             Expanded(
               child: Text(
                 errorMessage!,

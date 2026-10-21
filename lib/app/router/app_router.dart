@@ -217,10 +217,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           if (propertyId.isEmpty) {
             return const PropertiesListingScreen();
           }
-          return PropertyScreen(
-            property: property,
-            propertyId: propertyId,
-          );
+          return PropertyScreen(property: property, propertyId: propertyId);
         },
       ),
       // ─── Booking Flow Routes ─────────────────────────────────────

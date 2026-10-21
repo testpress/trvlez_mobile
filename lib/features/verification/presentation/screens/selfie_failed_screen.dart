@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -36,6 +35,8 @@ class SelfieFailedScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
 
     return BrandVerifyScreen(
@@ -45,8 +46,8 @@ class SelfieFailedScreen extends ConsumerWidget {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 2, circleSize: 23.0),
-        const SizedBox(height: AppSpacing.xl),
+        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackHero),
         Center(
           child: VerifyWobble(
             child: SvgPicture.asset(
@@ -57,12 +58,12 @@ class SelfieFailedScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         const VerifyProgressTrio(
           labels: ['Upload', 'Check'],
           states: [TrioState.done, TrioState.failed],
         ),
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(height: space.stackSection),
         Text(
           "Let's try that again",
           textAlign: TextAlign.center,
@@ -74,9 +75,9 @@ class SelfieFailedScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          padding: EdgeInsets.symmetric(horizontal: space.stackItem),
           child: Text(
             _getExplanation(state.errorMessage),
             textAlign: TextAlign.center,
@@ -99,14 +100,14 @@ class SelfieFailedScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.selfieCapture);
           },
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         AppButton(
           label: 'See the tips again',
           variant: AppButtonVariant.brandOutline,
           onPressed: () =>
               context.pushReplacement(AppRoutes.selfieInstructions),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Center(
           child: InkWell(
             onTap: () {
@@ -119,7 +120,7 @@ class SelfieFailedScreen extends ConsumerWidget {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(

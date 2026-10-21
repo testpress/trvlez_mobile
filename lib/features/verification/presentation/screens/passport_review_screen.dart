@@ -4,8 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -25,6 +23,9 @@ class PassportReviewScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final capturedImage = state.capturedImage;
@@ -35,8 +36,8 @@ class PassportReviewScreen extends ConsumerWidget {
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 0, circleSize: 24.0),
-        const SizedBox(height: AppSpacing.md),
+        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
+        SizedBox(height: space.stackFormField),
         Text(
           'Check your photo',
           textAlign: TextAlign.center,
@@ -48,7 +49,7 @@ class PassportReviewScreen extends ConsumerWidget {
             letterSpacing: -0.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'Both parts need to be sharp. Look closely before you upload.',
           textAlign: TextAlign.center,
@@ -59,24 +60,21 @@ class PassportReviewScreen extends ConsumerWidget {
             color: colors.brandSecondaryBody,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        SizedBox(height: space.stackFormField),
         Center(
           child: Container(
-            padding: const EdgeInsets.all(AppSpacing.xs),
+            padding: EdgeInsets.all(space.inlineMicro),
             decoration: BoxDecoration(
               color: colors.brandShotBackdrop,
-              borderRadius: BorderRadius.circular(AppRadius.md),
+              borderRadius: shape.radiusControl,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.sm),
+              borderRadius: shape.radiusControlSm,
               child: SizedBox(
                 width: 200.0,
                 height: 140.0,
                 child: capturedImage != null
-                    ? Image.file(
-                        capturedImage,
-                        fit: BoxFit.contain,
-                      )
+                    ? Image.file(capturedImage, fit: BoxFit.contain)
                     : SvgPicture.asset(
                         'assets/art/passport_shot.svg',
                         width: 196.0,
@@ -87,11 +85,8 @@ class PassportReviewScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
-        VerifyZoomPanel(
-          mrzImage: state.mrzImage,
-          mrzLines: state.mrzLines,
-        ),
+        SizedBox(height: space.stackFormField),
+        VerifyZoomPanel(mrzImage: state.mrzImage, mrzLines: state.mrzLines),
       ],
       foot: [
         AppButton(
@@ -102,7 +97,7 @@ class PassportReviewScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportProcessing);
           },
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.inlineMicro),
         AppButton(
           label: 'Retake photo',
           variant: AppButtonVariant.brandOutline,
@@ -111,7 +106,7 @@ class PassportReviewScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportCapture);
           },
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );

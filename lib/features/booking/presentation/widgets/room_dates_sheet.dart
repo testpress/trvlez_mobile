@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
@@ -36,6 +34,9 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final draft = ref.watch(bookingDraftProvider);
     final bookingRange = draft?.range;
 
@@ -47,13 +48,13 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
         ),
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(18.0)),
+          borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
         ),
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.sm,
-          AppSpacing.md,
-          AppSpacing.md,
+        padding: EdgeInsets.fromLTRB(
+          space.insetCard.left,
+          space.stackItem,
+          space.insetCard.right,
+          space.insetCard.bottom,
         ),
         child: SafeArea(
           top: false,
@@ -63,15 +64,15 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
             children: [
               Center(
                 child: Container(
-                  width: 36.0,
-                  height: 4.0,
+                  width: sizes.avatarMd,
+                  height: space.stackText,
                   decoration: BoxDecoration(
                     color: colors.line,
-                    borderRadius: AppRadius.pillRadius,
+                    borderRadius: shape.radiusPill,
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               Text(
                 widget.pick.type.name,
                 style: TextStyle(
@@ -81,7 +82,7 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
                   color: colors.ink,
                 ),
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: space.stackText),
               Text(
                 bookingRange == null
                     ? 'These dates apply to this room only.'
@@ -92,7 +93,7 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
                   color: colors.inkSecondary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               Flexible(
                 child: SingleChildScrollView(
                   child: BookingRangePicker(
@@ -101,9 +102,9 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               BookingRangeLine(range: _range),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               BookingAppButton(
                 label: 'Done',
                 onPressed: _range == null

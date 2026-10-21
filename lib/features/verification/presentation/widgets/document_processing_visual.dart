@@ -77,11 +77,13 @@ class _DocumentProcessingVisualState extends State<DocumentProcessingVisual>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final sizes = context.sizes;
+    final shape = context.shape;
     final successColor = context.colors.feedbackSuccess;
 
     return SizedBox(
-      width: 120,
-      height: 120,
+      width: sizes.thumbPhotoMd,
+      height: sizes.thumbPhotoMd,
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -96,6 +98,7 @@ class _DocumentProcessingVisualState extends State<DocumentProcessingVisual>
               successColor: successColor,
               errorColor: colorScheme.error,
               mutedColor: colorScheme.onSurface.withValues(alpha: 0.15),
+              shape: shape,
             ),
           );
         },
@@ -114,6 +117,7 @@ class _DocumentPainter extends CustomPainter {
   final Color successColor;
   final Color errorColor;
   final Color mutedColor;
+  final AppShape shape;
 
   const _DocumentPainter({
     required this.stageType,
@@ -125,6 +129,7 @@ class _DocumentPainter extends CustomPainter {
     required this.successColor,
     required this.errorColor,
     required this.mutedColor,
+    required this.shape,
   });
 
   @override
@@ -183,7 +188,9 @@ class _DocumentPainter extends CustomPainter {
 
     final frameRRect = RRect.fromRectAndRadius(
       frameRect,
-      const Radius.circular(6),
+      Radius.circular(
+        shape.radiusSubtle.topLeft.x + shape.radiusMicro.topLeft.x,
+      ),
     );
     canvas.drawRRect(frameRRect, framePaint);
     canvas.drawRRect(frameRRect, frameBorderPaint);
@@ -224,7 +231,10 @@ class _DocumentPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
-    final docRRect = RRect.fromRectAndRadius(docRect, const Radius.circular(4));
+    final docRRect = RRect.fromRectAndRadius(
+      docRect,
+      shape.radiusSubtle.topLeft,
+    );
     canvas.drawRRect(docRRect, docPaint);
     canvas.drawRRect(docRRect, docBorderPaint);
   }
@@ -254,7 +264,7 @@ class _DocumentPainter extends CustomPainter {
     final photoRect = Rect.fromLTWH(docRect.left + 8, docRect.top + 8, 16, 20);
     final photoPaint = Paint()..color = outlineColor.withValues(alpha: 0.12);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(photoRect, const Radius.circular(2)),
+      RRect.fromRectAndRadius(photoRect, shape.radiusMicro.topLeft),
       photoPaint,
     );
   }

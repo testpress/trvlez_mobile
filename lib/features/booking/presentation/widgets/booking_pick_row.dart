@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -25,6 +24,9 @@ class BookingPickRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
@@ -33,11 +35,16 @@ class BookingPickRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          padding: EdgeInsets.symmetric(vertical: space.stackFormField),
           decoration: isLast
               ? null
               : BoxDecoration(
-                  border: Border(bottom: BorderSide(color: colors.line)),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: colors.line,
+                      width: shape.borderDefault,
+                    ),
+                  ),
                 ),
           child: Row(
             children: [
@@ -49,7 +56,7 @@ class BookingPickRow extends StatelessWidget {
                   color: colors.ink,
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   value,
@@ -66,10 +73,10 @@ class BookingPickRow extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: space.inlineMicro),
               Icon(
                 AppIcons.chevronRight,
-                size: 16.0,
+                size: sizes.iconSm,
                 color: colors.inkTertiary,
               ),
             ],

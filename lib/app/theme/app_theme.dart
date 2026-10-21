@@ -5,12 +5,13 @@ import 'package:trvlez_mobile/app/theme/component_themes/card_theme.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/input_theme.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
+import 'package:trvlez_mobile/core/design_tokens/tokens.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 
 /// TrvlEz centralized theme system.
 ///
-/// Builds Material 3 [ThemeData] with registered [AppColors] extension,
-/// semantic typography, and component themes.
+/// Builds Material 3 [ThemeData] with registered semantic extensions:
+/// [AppColors], [AppSpace], [AppSize], [AppShape], typography, and component themes.
 class AppTheme {
   const AppTheme._();
 
@@ -62,14 +63,20 @@ class AppTheme {
 
   // ─── Shared Theme Builder ─────────────────────────────────────────
 
-  static ThemeData buildTheme(ColorScheme colorScheme, AppColors colors) {
+  static ThemeData buildTheme(
+    ColorScheme colorScheme,
+    AppColors colors, {
+    AppSpace space = AppSpace.comfortable,
+    AppSize size = AppSize.regular,
+    AppShape shape = AppShape.standard,
+  }) {
     final textTheme = AppTypography.createTextTheme(colors.textPrimary);
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colors.background,
-      extensions: [colors],
+      extensions: [colors, space, size, shape],
       textTheme: textTheme,
 
       // ── AppBar ────────────────────────────────────────────────────
@@ -86,21 +93,41 @@ class AppTheme {
       ),
 
       // ── Input Fields ──────────────────────────────────────────────
-      inputDecorationTheme: buildInputTheme(colors),
+      inputDecorationTheme: buildInputTheme(colors, space: space, shape: shape),
 
       // ── Buttons ───────────────────────────────────────────────────
-      filledButtonTheme: buildFilledButtonTheme(colors),
-      elevatedButtonTheme: buildElevatedButtonTheme(colors),
-      outlinedButtonTheme: buildOutlinedButtonTheme(colors),
-      textButtonTheme: buildTextButtonTheme(colors),
+      filledButtonTheme: buildFilledButtonTheme(
+        colors,
+        space: space,
+        size: size,
+        shape: shape,
+      ),
+      elevatedButtonTheme: buildElevatedButtonTheme(
+        colors,
+        space: space,
+        size: size,
+        shape: shape,
+      ),
+      outlinedButtonTheme: buildOutlinedButtonTheme(
+        colors,
+        space: space,
+        size: size,
+        shape: shape,
+      ),
+      textButtonTheme: buildTextButtonTheme(
+        colors,
+        space: space,
+        size: size,
+        shape: shape,
+      ),
 
       // ── Cards ─────────────────────────────────────────────────────
-      cardTheme: buildCardTheme(colors),
+      cardTheme: buildCardTheme(colors, shape: shape),
 
       // ── Divider ───────────────────────────────────────────────────
       dividerTheme: DividerThemeData(
         color: colors.borderSubtle,
-        thickness: 1,
+        thickness: shape.dividerDefault,
         space: 0,
       ),
     );

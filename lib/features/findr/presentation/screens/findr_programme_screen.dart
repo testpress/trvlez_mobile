@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -19,6 +17,9 @@ class FindrProgrammeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
     final portfolio = ref.watch(findrPortfolioProvider);
 
     return Scaffold(
@@ -47,10 +48,10 @@ class FindrProgrammeScreen extends ConsumerWidget {
                     onPressed: () => context.pop(),
                     icon: Icon(
                       AppIcons.arrowLeft,
-                      size: 20,
+                      size: sizes.iconMd,
                       color: colors.textPrimary,
                     ),
-                    splashRadius: 20,
+                    splashRadius: sizes.iconMd,
                     tooltip: 'Back',
                   ),
                 ),
@@ -61,7 +62,7 @@ class FindrProgrammeScreen extends ConsumerWidget {
           // ── Scrollable Body ────────────────────────────────────────────
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
+              padding: space.insetCard,
               children: [
                 // Findr Active Card
                 FindrCard(
@@ -84,7 +85,7 @@ class FindrProgrammeScreen extends ConsumerWidget {
                   },
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                SizedBox(height: space.stackSection),
 
                 // ── Recent Recommendations ─────────────────────────────────
                 Row(
@@ -110,12 +111,12 @@ class FindrProgrammeScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: space.stackItem),
 
                 for (final rec in portfolio.recommendations)
                   _RecommendationCard(recommendation: rec),
 
-                const SizedBox(height: AppSpacing.lg),
+                SizedBox(height: space.stackSection),
 
                 // ── Payouts Section ────────────────────────────────────────
                 Text(
@@ -127,17 +128,20 @@ class FindrProgrammeScreen extends ConsumerWidget {
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: space.stackItem),
 
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: space.insetCard.left,
+                    vertical: space.stackItem,
                   ),
                   decoration: BoxDecoration(
                     color: colors.surface,
-                    borderRadius: AppRadius.mdRadius,
-                    border: Border.all(color: colors.cardBorder),
+                    borderRadius: shape.radiusControl,
+                    border: Border.all(
+                      color: colors.cardBorder,
+                      width: shape.borderDefault,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: colors.cardShadow,
@@ -155,7 +159,7 @@ class FindrProgrammeScreen extends ConsumerWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSpacing.xl),
+                SizedBox(height: space.stackHero),
               ],
             ),
           ),
@@ -173,14 +177,20 @@ class _RecommendationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md - 2),
+      margin: EdgeInsets.only(bottom: space.stackItem),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.mdRadius,
-        border: Border.all(color: colors.cardBorder),
+        borderRadius: shape.radiusControl,
+        border: Border.all(
+          color: colors.cardBorder,
+          width: shape.borderDefault,
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -192,20 +202,20 @@ class _RecommendationCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: sizes.avatarSm,
+            height: sizes.avatarSm,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: colors.surfaceSubtle,
-              borderRadius: AppRadius.smRadius,
+              borderRadius: shape.radiusControlSm,
             ),
             child: Icon(
               AppIcons.building,
-              size: 16,
+              size: sizes.iconSm,
               color: colors.textSecondary,
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +232,7 @@ class _RecommendationCard extends StatelessWidget {
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: space.stackText),
                 Text(
                   recommendation.when,
                   style: TextStyle(
@@ -234,7 +244,7 @@ class _RecommendationCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           StatusPill(
             label: recommendation.status,
             state: switch (recommendation.state) {
@@ -257,13 +267,20 @@ class _PayoutRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: EdgeInsets.symmetric(vertical: space.stackItem),
       decoration: BoxDecoration(
         border: payout.last
             ? null
-            : Border(bottom: BorderSide(color: colors.line, width: 1)),
+            : Border(
+                bottom: BorderSide(
+                  color: colors.line,
+                  width: shape.borderDefault,
+                ),
+              ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

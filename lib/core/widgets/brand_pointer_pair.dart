@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -14,30 +13,30 @@ class BrandPointerPair extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (int i = 0; i < items.length; i++) ...[
-            if (i > 0) const SizedBox(width: AppSpacing.sm),
+            if (i > 0) SizedBox(width: space.inlineIconLabel),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 10.0,
-                ),
+                padding: space.insetTag,
                 decoration: BoxDecoration(
                   color: colors.brandCardBackground,
-                  borderRadius: BorderRadius.circular(11.0),
+                  borderRadius: shape.radiusControlSm,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 16.0,
-                      height: 16.0,
+                      width: sizes.iconSm,
+                      height: sizes.iconSm,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -54,7 +53,7 @@ class BrandPointerPair extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 6.0),
+                    SizedBox(height: space.stackTight),
                     Text(
                       items[i].$2,
                       style: TextStyle(
@@ -65,7 +64,7 @@ class BrandPointerPair extends StatelessWidget {
                         letterSpacing: -0.1,
                       ),
                     ),
-                    const SizedBox(height: 2.0),
+                    SizedBox(height: space.stackText),
                     Text(
                       items[i].$3,
                       style: TextStyle(

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
@@ -53,6 +52,7 @@ class _HotelDetailsScreenState extends ConsumerState<HotelDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final findrPortfolio = ref.watch(findrPortfolioProvider);
 
     return BrandVerifyScreen(
@@ -83,7 +83,7 @@ class _HotelDetailsScreenState extends ConsumerState<HotelDetailsScreen> {
         ),
       ],
       children: [
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Text(
           'Which hotel?',
           style: TextStyle(
@@ -94,7 +94,7 @@ class _HotelDetailsScreenState extends ConsumerState<HotelDetailsScreen> {
             letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Text(
           'We will write to them and ask them to accept your digital pass.',
           style: TextStyle(
@@ -117,14 +117,14 @@ class _HotelDetailsScreenState extends ConsumerState<HotelDetailsScreen> {
           hint: 'stay@example-hotel.it',
           keyboard: TextInputType.emailAddress,
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         if (findrPortfolio.joined)
-          const CheckInFlagCallout(
+          CheckInFlagCallout(
             icon: AppIcons.mapSearch,
             lead: 'This goes to your Findr portfolio. ',
             body:
                 'If they join TRVLez, you earn 5% of commission on bookings for 12 months.',
-            marginTop: AppSpacing.sm,
+            marginTop: space.stackItem,
           )
         else
           AnywhereRow(

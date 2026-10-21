@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/heart_button.dart';
@@ -37,6 +35,9 @@ class PropertyCard extends StatelessWidget {
 
   Widget _buildPopularCard(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     final badgeLabel =
         (property.propertyType != null && property.propertyType!.isNotEmpty)
@@ -48,15 +49,18 @@ class PropertyCard extends StatelessWidget {
       label:
           '${property.name}, £${property.pricePerNight?.toInt() ?? 120} per night',
       child: InkWell(
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         onTap: onTap,
         child: Container(
-          width: 220.0,
-          margin: const EdgeInsets.only(right: AppSpacing.md),
+          width: sizes.cardWidthCarousel,
+          margin: EdgeInsets.only(right: space.inlineItem),
           decoration: BoxDecoration(
-            borderRadius: AppRadius.cardRadius,
+            borderRadius: shape.radiusSurface,
             color: colors.surface,
-            border: Border.all(color: colors.cardBorderSoft),
+            border: Border.all(
+              color: colors.cardBorderSoft,
+              width: shape.borderDefault,
+            ),
             boxShadow: [
               BoxShadow(
                 color: colors.cardShadow,
@@ -73,24 +77,21 @@ class PropertyCard extends StatelessWidget {
               Stack(
                 children: [
                   PhotoBox(
-                    height: 125,
+                    height: sizes.thumbPhotoMd,
                     imageUrl: property.heroImageUrl,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
+                    borderRadius: BorderRadius.vertical(
+                      top: shape.radiusSurface.topLeft,
                     ),
-                    iconSize: 28,
+                    iconSize: sizes.iconLg,
                   ),
                   Positioned(
-                    top: 8,
-                    left: 8,
+                    top: space.stackItem,
+                    left: space.inlineIconLabel,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
+                      padding: space.insetTag,
                       decoration: BoxDecoration(
                         color: colors.brandPrimary,
-                        borderRadius: AppRadius.fullRadius,
+                        borderRadius: shape.radiusPill,
                       ),
                       child: Text(
                         badgeLabel,
@@ -105,12 +106,12 @@ class PropertyCard extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: 2,
-                    right: 2,
+                    top: shape.strokeProgress,
+                    right: shape.strokeProgress,
                     child: HeartButton(
                       saved: isSaved,
                       onPhoto: true,
-                      size: 28,
+                      size: sizes.iconLg,
                       onTap: onSaveToggle,
                     ),
                   ),
@@ -118,7 +119,7 @@ class PropertyCard extends StatelessWidget {
               ),
               // Body info
               Padding(
-                padding: const EdgeInsets.all(AppSpacing.sm),
+                padding: space.insetCardCompact,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -133,15 +134,15 @@ class PropertyCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: shape.strokeProgress),
                     Row(
                       children: [
                         Icon(
                           AppIcons.mapPin,
-                          size: 11,
+                          size: sizes.iconXs,
                           color: colors.inkTertiary,
                         ),
-                        const SizedBox(width: 3),
+                        SizedBox(width: space.inlineMicro),
                         Expanded(
                           child: Text(
                             property.locationString,
@@ -156,7 +157,7 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: space.stackTight),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
@@ -170,7 +171,7 @@ class PropertyCard extends StatelessWidget {
                             color: colors.textPrimary,
                           ),
                         ),
-                        const SizedBox(width: 2),
+                        SizedBox(width: shape.strokeProgress),
                         Text(
                           '/night',
                           style: TextStyle(
@@ -183,10 +184,10 @@ class PropertyCard extends StatelessWidget {
                         if (property.rating != null) ...[
                           Icon(
                             AppIcons.starFilled,
-                            size: 11,
+                            size: sizes.iconXs,
                             color: colors.brandPrimary,
                           ),
-                          const SizedBox(width: 2),
+                          SizedBox(width: shape.strokeProgress),
                           Text(
                             property.rating!.toStringAsFixed(1),
                             style: TextStyle(
@@ -211,21 +212,27 @@ class PropertyCard extends StatelessWidget {
 
   Widget _buildRecommendedCard(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
       label:
           '${property.name}, £${property.pricePerNight?.toInt() ?? 120} per night',
       child: InkWell(
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(bottom: AppSpacing.md),
-          padding: const EdgeInsets.all(AppSpacing.sm),
+          margin: EdgeInsets.only(bottom: space.stackFormField),
+          padding: space.insetCardCompact,
           decoration: BoxDecoration(
-            borderRadius: AppRadius.cardRadius,
+            borderRadius: shape.radiusSurface,
             color: colors.surface,
-            border: Border.all(color: colors.cardBorderSoft),
+            border: Border.all(
+              color: colors.cardBorderSoft,
+              width: shape.borderDefault,
+            ),
             boxShadow: [
               BoxShadow(
                 color: colors.cardShadow,
@@ -237,13 +244,13 @@ class PropertyCard extends StatelessWidget {
           child: Row(
             children: [
               PhotoBox(
-                width: 90,
-                height: 90,
+                width: sizes.thumbPhotoSm,
+                height: sizes.thumbPhotoSm,
                 imageUrl: property.heroImageUrl,
-                borderRadius: AppRadius.mdRadius,
-                iconSize: 24,
+                borderRadius: shape.radiusControl,
+                iconSize: sizes.iconDefault,
               ),
-              const SizedBox(width: AppSpacing.md),
+              SizedBox(width: space.inlineItem),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,15 +266,15 @@ class PropertyCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 3),
+                    SizedBox(height: space.inlineMicro),
                     Row(
                       children: [
                         Icon(
                           AppIcons.mapPin,
-                          size: 11,
+                          size: sizes.iconXs,
                           color: colors.inkTertiary,
                         ),
-                        const SizedBox(width: 3),
+                        SizedBox(width: space.inlineMicro),
                         Expanded(
                           child: Text(
                             property.locationString,
@@ -282,7 +289,7 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: space.stackTight),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
@@ -296,7 +303,7 @@ class PropertyCard extends StatelessWidget {
                             color: colors.textPrimary,
                           ),
                         ),
-                        const SizedBox(width: 2),
+                        SizedBox(width: shape.strokeProgress),
                         Text(
                           '/night',
                           style: TextStyle(
@@ -308,7 +315,7 @@ class PropertyCard extends StatelessWidget {
                         const Spacer(),
                         HeartButton(
                           saved: isSaved,
-                          size: 26,
+                          size: sizes.iconLg,
                           onTap: onSaveToggle,
                         ),
                       ],

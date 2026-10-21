@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
@@ -34,6 +32,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
+
     final propertiesState = ref.watch(propertiesProvider);
     final allProperties = propertiesState.valueOrNull ?? [];
 
@@ -50,8 +52,8 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
           Container(
             decoration: BoxDecoration(
               color: colors.surface,
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(18),
+              borderRadius: BorderRadius.vertical(
+                bottom: shape.radiusSurface.topLeft,
               ),
               boxShadow: [
                 BoxShadow(
@@ -62,10 +64,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               ],
             ),
             padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md + MediaQuery.viewPaddingOf(context).top,
-              AppSpacing.md,
-              AppSpacing.md,
+              space.insetCard.left,
+              space.insetCard.top + MediaQuery.viewPaddingOf(context).top,
+              space.insetCard.right,
+              space.insetCard.bottom,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +83,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.md),
+                SizedBox(height: space.stackFormField),
                 AppSegmentedControl(
                   count: _services.length,
                   selected: _selectedServiceIndex,
@@ -106,13 +108,13 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
             child: _selectedServiceIndex != 0 || savedProperties.isEmpty
                 ? Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      padding: space.insetDialog,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 56,
-                            height: 56,
+                            width: sizes.controlXl,
+                            height: sizes.controlXl,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: colors.redTint,
@@ -120,11 +122,11 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                             ),
                             child: Icon(
                               AppIcons.heart,
-                              size: 26,
+                              size: sizes.iconLg,
                               color: colors.brandPrimary,
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.md),
+                          SizedBox(height: space.stackFormField),
                           Text(
                             'Nothing saved yet',
                             style: TextStyle(
@@ -134,7 +136,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                               color: colors.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: space.stackText),
                           Text(
                             _selectedServiceIndex == 0
                                 ? 'Tap the heart icon on any property to save it here.'
@@ -151,26 +153,26 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.md,
-                    ),
+                    padding: space.insetCard,
                     itemCount: savedProperties.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: AppSpacing.md),
+                        SizedBox(height: space.stackFormField),
                     itemBuilder: (context, index) {
                       final property = savedProperties[index];
                       return InkWell(
-                        borderRadius: AppRadius.cardRadius,
+                        borderRadius: shape.radiusSurface,
                         onTap: () => context.push(
                           AppRoutes.propertyDetailPath(property.id),
                         ),
                         child: Container(
-                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          padding: space.insetCardCompact,
                           decoration: BoxDecoration(
                             color: colors.surface,
-                            borderRadius: AppRadius.cardRadius,
-                            border: Border.all(color: colors.cardBorderSoft),
+                            borderRadius: shape.radiusSurface,
+                            border: Border.all(
+                              color: colors.cardBorderSoft,
+                              width: shape.borderDefault,
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: colors.cardShadow,
@@ -182,12 +184,12 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                           child: Row(
                             children: [
                               PhotoBox(
-                                width: 80,
-                                height: 80,
+                                width: sizes.thumbPhotoSm,
+                                height: sizes.thumbPhotoSm,
                                 imageUrl: property.heroImageUrl,
-                                borderRadius: AppRadius.mdRadius,
+                                borderRadius: shape.radiusControl,
                               ),
-                              const SizedBox(width: AppSpacing.md),
+                              SizedBox(width: space.inlineItem),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,15 +205,15 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 2),
+                                    SizedBox(height: space.stackText),
                                     Row(
                                       children: [
                                         Icon(
                                           AppIcons.mapPin,
-                                          size: 11,
+                                          size: sizes.iconXs,
                                           color: colors.inkTertiary,
                                         ),
-                                        const SizedBox(width: 3),
+                                        SizedBox(width: space.inlineMicro),
                                         Expanded(
                                           child: Text(
                                             property.city.isNotEmpty
@@ -229,7 +231,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: AppSpacing.xs),
+                                    SizedBox(height: space.stackText),
                                     Row(
                                       children: [
                                         if (property.pricePerNight != null) ...[
@@ -243,7 +245,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                               color: colors.textPrimary,
                                             ),
                                           ),
-                                          const SizedBox(width: 2),
+                                          SizedBox(width: space.inlineMicro),
                                           Text(
                                             '/night',
                                             style: TextStyle(

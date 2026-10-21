@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/nationality_picker_field.dart';
@@ -76,6 +74,9 @@ class PersonalDetailsForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final textTheme = Theme.of(context).textTheme;
 
     return Form(
@@ -88,7 +89,7 @@ class PersonalDetailsForm extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Phone Number', style: textTheme.labelLarge),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               TextFormField(
                 controller: phoneController,
                 validator: (val) => _validateRequired(val, 'Phone Number'),
@@ -106,7 +107,7 @@ class PersonalDetailsForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           // Nationality Picker
           NationalityPickerField(
@@ -114,14 +115,14 @@ class PersonalDetailsForm extends StatelessWidget {
             onNationalitySelected: onNationalityChanged,
             isEnabled: !isLoading,
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           // Gender Dropdown
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Gender', style: textTheme.labelLarge),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               DropdownButtonFormField<String>(
                 initialValue: selectedGender,
                 decoration: const InputDecoration(
@@ -140,25 +141,25 @@ class PersonalDetailsForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           // Date of Birth Picker
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Date of Birth', style: textTheme.labelLarge),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               InkWell(
                 onTap: isLoading ? null : () => _selectDateOfBirth(context),
-                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderRadius: shape.radiusControl,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.md,
-                  ),
+                  padding: space.insetCard,
                   decoration: BoxDecoration(
-                    border: Border.all(color: colors.borderDefault),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(
+                      color: colors.borderDefault,
+                      width: shape.borderDefault,
+                    ),
+                    borderRadius: shape.radiusControl,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,11 +180,11 @@ class PersonalDetailsForm extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(width: space.inlineIconLabel),
                       Icon(
                         AppIcons.calendar,
                         color: colors.textSecondary,
-                        size: 20,
+                        size: sizes.iconMd,
                       ),
                     ],
                   ),
@@ -191,14 +192,14 @@ class PersonalDetailsForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           // Passport Number Field (Optional)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Passport Number', style: textTheme.labelLarge),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               TextFormField(
                 controller: passportNumberController,
                 enabled: !isLoading,
@@ -213,25 +214,25 @@ class PersonalDetailsForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           // Passport Expiry Picker (Optional)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Passport Expiry', style: textTheme.labelLarge),
-              const SizedBox(height: AppSpacing.sm),
+              SizedBox(height: space.stackItem),
               InkWell(
                 onTap: isLoading ? null : () => _selectPassportExpiry(context),
-                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderRadius: shape.radiusControl,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.md,
-                  ),
+                  padding: space.insetCard,
                   decoration: BoxDecoration(
-                    border: Border.all(color: colors.borderDefault),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(
+                      color: colors.borderDefault,
+                      width: shape.borderDefault,
+                    ),
+                    borderRadius: shape.radiusControl,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -252,11 +253,11 @@ class PersonalDetailsForm extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(width: space.inlineIconLabel),
                       Icon(
                         AppIcons.calendar,
                         color: colors.textSecondary,
-                        size: 20,
+                        size: sizes.iconMd,
                       ),
                     ],
                   ),
@@ -264,14 +265,14 @@ class PersonalDetailsForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xl),
+          SizedBox(height: space.stackSection),
 
           // Complete Profile Submit Button
           AppButton(
             label: 'Complete Profile',
             onPressed: onSubmit,
             isLoading: isLoading,
-            height: 56,
+            height: sizes.controlXl,
           ),
         ],
       ),

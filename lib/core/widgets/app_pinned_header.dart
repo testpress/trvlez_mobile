@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 
 /// Pinned white header cap with curved bottom corners that extends into the status bar.
 class AppPinnedHeader extends StatelessWidget {
   const AppPinnedHeader({
     super.key,
     required this.child,
-    this.paddingTop = AppSpacing.md,
-    this.paddingBottom = AppSpacing.md,
-    this.horizontalPadding = AppSpacing.md,
+    this.paddingTop,
+    this.paddingBottom,
+    this.horizontalPadding,
   });
 
   final Widget child;
-  final double paddingTop;
-  final double paddingBottom;
-  final double horizontalPadding;
+  final double? paddingTop;
+  final double? paddingBottom;
+  final double? horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final topInset = MediaQuery.viewPaddingOf(context).top;
+
+    final effectiveTop = (paddingTop ?? space.insetCard.top) + topInset;
+    final effectiveBottom = paddingBottom ?? space.insetCard.bottom;
+    final effectiveHorizontal = horizontalPadding ?? space.insetCard.left;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
+        borderRadius: BorderRadius.vertical(
+          bottom: shape.radiusSurface.topLeft,
+        ),
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -35,10 +42,10 @@ class AppPinnedHeader extends StatelessWidget {
         ],
       ),
       padding: EdgeInsets.fromLTRB(
-        horizontalPadding,
-        paddingTop + topInset,
-        horizontalPadding,
-        paddingBottom,
+        effectiveHorizontal,
+        effectiveTop,
+        effectiveHorizontal,
+        effectiveBottom,
       ),
       child: child,
     );

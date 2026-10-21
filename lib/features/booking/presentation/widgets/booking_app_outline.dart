@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
@@ -11,16 +10,19 @@ class BookingAppOutline extends StatelessWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.marginTop = 10.0,
+    this.marginTop,
   });
 
   final String label;
   final VoidCallback? onPressed;
-  final double marginTop;
+  final double? marginTop;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final enabled = onPressed != null;
 
     return Semantics(
@@ -28,24 +30,24 @@ class BookingAppOutline extends StatelessWidget {
       enabled: enabled,
       label: label,
       child: Container(
-        margin: EdgeInsets.only(top: marginTop),
+        margin: EdgeInsets.only(top: marginTop ?? space.inlineButtonGroup),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: onPressed,
-            borderRadius: AppRadius.pillRadius,
+            borderRadius: shape.radiusPill,
             child: Container(
-              constraints: const BoxConstraints(minHeight: 48.0),
+              constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 13.0),
+              padding: EdgeInsets.symmetric(vertical: space.insetControlMd.top),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: colors.surface,
                 border: Border.all(
                   color: enabled ? colors.line : colors.borderSubtle,
-                  width: 1.0,
+                  width: shape.borderDefault,
                 ),
-                borderRadius: AppRadius.pillRadius,
+                borderRadius: shape.radiusPill,
               ),
               child: EzText(
                 text: label,

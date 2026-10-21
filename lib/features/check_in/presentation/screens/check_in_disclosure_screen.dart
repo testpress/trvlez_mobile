@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -25,6 +24,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
 
     return stateAsync.when(
@@ -66,7 +66,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
               },
             ),
             Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.md - 2),
+              padding: EdgeInsets.only(top: space.stackFormField),
               child: Center(
                 child: GestureDetector(
                   onTap: () {
@@ -94,7 +94,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
             ),
           ],
           children: [
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             Text(
               'Approve what we send',
               style: TextStyle(
@@ -105,7 +105,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               'Spanish law names these fields. We send exactly them and nothing else.',
               style: TextStyle(

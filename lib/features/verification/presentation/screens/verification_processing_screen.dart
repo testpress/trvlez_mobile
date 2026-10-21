@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/kyc_progress_stepper.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -192,6 +192,8 @@ class _VerificationProcessingScreenState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final space = context.space;
+    final sizes = context.sizes;
 
     // Listen to backend state changes and enqueue stages
     ref.listen<VerificationState>(verificationNotifierProvider, (
@@ -227,7 +229,7 @@ class _VerificationProcessingScreenState
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: colorScheme.onSurface,
-                    size: 18,
+                    size: sizes.iconSm,
                   ),
                   onPressed: () {
                     if (context.canPop()) {
@@ -240,16 +242,25 @@ class _VerificationProcessingScreenState
         body: SafeArea(
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: space.stackSection,
+              vertical: space.stackFormField,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 KycProgressStepper(progressIndex: kycStepIndex),
-                const SizedBox(height: 24),
-                _buildProcessingCard(theme, colorScheme, stage, stepLabels),
-                const SizedBox(height: 32),
-                _buildFooter(colorScheme),
-                const SizedBox(height: 16),
+                SizedBox(height: space.stackSection),
+                _buildProcessingCard(
+                  context,
+                  theme,
+                  colorScheme,
+                  stage,
+                  stepLabels,
+                ),
+                SizedBox(height: space.stackHero),
+                _buildFooter(context, colorScheme),
+                SizedBox(height: space.stackFormField),
               ],
             ),
           ),
@@ -259,16 +270,24 @@ class _VerificationProcessingScreenState
   }
 
   Widget _buildProcessingCard(
+    BuildContext context,
     ThemeData theme,
     ColorScheme colorScheme,
     ProcessingStage stage,
     List<String> stepLabels,
   ) {
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+      padding: EdgeInsets.symmetric(
+        horizontal: space.insetCardComfortable.left,
+        vertical: space.stackHero,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: AppRadius.sm10Radius,
+        borderRadius: shape.radiusControlSm,
         boxShadow: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.08),
@@ -281,14 +300,14 @@ class _VerificationProcessingScreenState
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildVisual(stage),
-          const SizedBox(height: 28),
+          SizedBox(height: sizes.iconLg),
           ProcessingStepIndicator(
             labels: stepLabels,
             currentIndex: stage.stepIndex(widget.type),
             isCompleted: stage.type == ProcessingStageType.completed,
             isFailed: stage.type == ProcessingStageType.failed,
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: sizes.iconLg),
           _buildAnimatedText(
             key: ValueKey('title_${stage.title}'),
             text: stage.title,
@@ -297,7 +316,7 @@ class _VerificationProcessingScreenState
               color: colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: space.stackItem),
           _buildAnimatedText(
             key: ValueKey('subtitle_${stage.subtitle}'),
             text: stage.subtitle,
@@ -308,8 +327,8 @@ class _VerificationProcessingScreenState
             ),
           ),
           if (stage.type == ProcessingStageType.failed) ...[
-            const SizedBox(height: 32),
-            _buildRetryButton(colorScheme),
+            SizedBox(height: space.stackHero),
+            _buildRetryButton(context, colorScheme),
           ],
         ],
       ),
@@ -354,7 +373,9 @@ class _VerificationProcessingScreenState
     );
   }
 
-  Widget _buildRetryButton(ColorScheme colorScheme) {
+  Widget _buildRetryButton(BuildContext context, ColorScheme colorScheme) {
+    final shape = context.shape;
+    final sizes = context.sizes;
     final retryLabel = widget.type == ProcessingType.passport
         ? 'Retake Passport'
         : 'Record Again';
@@ -364,8 +385,8 @@ class _VerificationProcessingScreenState
       style: ElevatedButton.styleFrom(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        minimumSize: const Size(double.infinity, 44),
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl22Radius),
+        minimumSize: Size(double.infinity, sizes.controlMd),
+        shape: RoundedRectangleBorder(borderRadius: shape.radiusOverlay),
         elevation: 0,
       ),
       child: Text(
@@ -375,10 +396,12 @@ class _VerificationProcessingScreenState
     );
   }
 
-  Widget _buildFooter(ColorScheme colorScheme) {
+  Widget _buildFooter(BuildContext context, ColorScheme colorScheme) {
+    final space = context.space;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(

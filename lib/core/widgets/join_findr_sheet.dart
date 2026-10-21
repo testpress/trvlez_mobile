@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
@@ -56,6 +54,9 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final viewPadding = MediaQuery.viewPaddingOf(context);
 
     return Container(
@@ -64,19 +65,17 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
       ),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(AppRadius.xl),
-        ),
+        borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ── Sheet Header ────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md,
+            padding: EdgeInsets.fromLTRB(
+              space.insetCard.left,
+              space.insetCard.top,
+              space.insetCard.right,
               0,
             ),
             child: Row(
@@ -87,8 +86,8 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const FindrHeading(prefix: 'Join Find', iconBox: 30),
-                      const SizedBox(height: AppSpacing.sm),
+                      FindrHeading(prefix: 'Join Find', iconBox: sizes.iconXl),
+                      SizedBox(height: space.stackItem),
                       Text(
                         'Recommend hotels you rate. Earn when they join and start taking bookings through TRVLez.',
                         style: TextStyle(
@@ -103,22 +102,26 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  icon: Icon(AppIcons.x, size: 18, color: colors.inkSecondary),
-                  splashRadius: 20,
+                  icon: Icon(
+                    AppIcons.x,
+                    size: sizes.iconSm,
+                    color: colors.inkSecondary,
+                  ),
+                  splashRadius: sizes.iconMd,
                   tooltip: 'Close',
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
 
           // ── Scrollable Body ──────────────────────────────────────────────
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xs,
+              padding: EdgeInsets.symmetric(
+                horizontal: space.insetCard.left,
+                vertical: space.stackText,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,9 +129,9 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                   for (final (i, step) in _steps.indexed)
                     _StepItem(number: i + 1, title: step.$1, body: step.$2),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: AppSpacing.md,
-                      bottom: AppSpacing.xs,
+                    padding: EdgeInsets.only(
+                      top: space.stackFormField,
+                      bottom: space.stackText,
                     ),
                     child: Text(
                       'The terms, in short',
@@ -141,7 +144,7 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                     ),
                   ),
                   for (final term in _terms) _TermItem(text: term),
-                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(height: space.stackItem),
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -165,7 +168,7 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: space.stackFormField),
                 ],
               ),
             ),
@@ -174,14 +177,16 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
           // ── Sticky Footer ────────────────────────────────────────────────
           Container(
             padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm + 2,
-              AppSpacing.md,
-              AppSpacing.md + viewPadding.bottom,
+              space.insetCard.left,
+              space.stackItem,
+              space.insetCard.right,
+              space.insetCard.left + viewPadding.bottom,
             ),
             decoration: BoxDecoration(
               color: colors.surface,
-              border: Border(top: BorderSide(color: colors.line, width: 1)),
+              border: Border(
+                top: BorderSide(color: colors.line, width: shape.borderDefault),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -193,30 +198,30 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                   child: Row(
                     children: [
                       Container(
-                        width: 18,
-                        height: 18,
+                        width: sizes.iconSm,
+                        height: sizes.iconSm,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: _agreed
                               ? colors.brandPrimary
                               : Colors.transparent,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: shape.radiusSubtle,
                           border: Border.all(
                             color: _agreed
                                 ? colors.brandPrimary
                                 : colors.border,
-                            width: 1.5,
+                            width: shape.borderMedium,
                           ),
                         ),
                         child: _agreed
-                            ? const Icon(
+                            ? Icon(
                                 AppIcons.check,
-                                size: 13,
+                                size: sizes.iconXs,
                                 color: Colors.white,
                               )
                             : null,
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(width: space.inlineIconLabel),
                       Expanded(
                         child: Text(
                           'I agree to the Findr programme terms',
@@ -231,7 +236,7 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.md),
+                SizedBox(height: space.stackFormField),
                 AppButton(
                   label: 'Activate Findr',
                   enabled: _agreed,
@@ -263,15 +268,18 @@ class _StepItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm + 2),
+      padding: EdgeInsets.only(bottom: space.stackItem),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 22,
-            height: 22,
+            width: sizes.iconDefault,
+            height: sizes.iconDefault,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: colors.surfaceSubtle,
@@ -287,7 +295,7 @@ class _StepItem extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: space.inlineIconLabel),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,7 +310,7 @@ class _StepItem extends StatelessWidget {
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: shape.strokeProgress),
                 Text(
                   body,
                   style: TextStyle(
@@ -329,17 +337,22 @@ class _TermItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: EdgeInsets.only(bottom: space.stackTight),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 6, right: 8),
+            padding: EdgeInsets.only(
+              top: space.stackTight,
+              right: space.inlineIconLabel,
+            ),
             child: Container(
-              width: 4,
-              height: 4,
+              width: sizes.indicatorProgressHeight,
+              height: sizes.indicatorProgressHeight,
               decoration: BoxDecoration(
                 color: colors.inkTertiary,
                 shape: BoxShape.circle,

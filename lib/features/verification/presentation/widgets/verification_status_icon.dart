@@ -18,9 +18,12 @@ class VerificationStatusIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sizes = context.sizes;
+    final space = context.space;
+
     final icon = Container(
-      width: 96,
-      height: 96,
+      width: sizes.avatarXl + space.stackFormField,
+      height: sizes.avatarXl + space.stackFormField,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: config.iconGradient,
@@ -36,7 +39,11 @@ class VerificationStatusIcon extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(config.icon, color: context.colors.textOnAction, size: 44),
+      child: Icon(
+        config.icon,
+        color: context.colors.textOnAction,
+        size: sizes.controlMd,
+      ),
     );
 
     if (state.isProcessing) {

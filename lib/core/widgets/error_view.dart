@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 
@@ -22,20 +21,22 @@ class ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: space.insetDialog,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline_rounded,
-              size: 56,
+              size: sizes.controlXl,
               color: colors.feedbackError,
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             Text(
               title,
               style: AppTypography.heading.copyWith(
@@ -44,7 +45,7 @@ class ErrorView extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             Text(
               message,
               style: AppTypography.body.copyWith(
@@ -54,7 +55,7 @@ class ErrorView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: AppSpacing.lg),
+              SizedBox(height: space.stackSection),
               AppButton(
                 label: retryLabel,
                 onPressed: onRetry,

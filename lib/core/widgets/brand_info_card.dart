@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// A single bullet item inside an instruction card.
@@ -23,34 +21,46 @@ class BrandInfoCard extends StatelessWidget {
     super.key,
     required this.bullets,
     this.heading,
-    this.borderRadius = AppRadius.md14,
-    this.paddingVertical = AppSpacing.md - 4,
-    this.paddingHorizontal = AppSpacing.md - 3,
-    this.itemGap = AppSpacing.sm + 1,
-    this.iconSize = AppSpacing.md - 2,
+    this.borderRadius,
+    this.paddingVertical,
+    this.paddingHorizontal,
+    this.itemGap,
+    this.iconSize,
   });
 
   final List<BrandBullet> bullets;
   final String? heading;
-  final double borderRadius;
-  final double paddingVertical;
-  final double paddingHorizontal;
-  final double itemGap;
-  final double iconSize;
+  final double? borderRadius;
+  final double? paddingVertical;
+  final double? paddingHorizontal;
+  final double? itemGap;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
+
+    final effectiveRadius = borderRadius != null
+        ? BorderRadius.circular(borderRadius!)
+        : shape.radiusControl;
+    final effectivePaddingV = paddingVertical ?? space.insetCardCompact.top;
+    final effectivePaddingH = paddingHorizontal ?? space.insetCardCompact.left;
+    final effectiveItemGap = itemGap ?? space.stackItem;
+    final effectiveIconSize = iconSize ?? sizes.iconXs;
+
     final currentHeading = heading;
 
     return Container(
       padding: EdgeInsets.symmetric(
-        vertical: paddingVertical,
-        horizontal: paddingHorizontal,
+        vertical: effectivePaddingV,
+        horizontal: effectivePaddingH,
       ),
       decoration: BoxDecoration(
         color: colors.brandCardBackground,
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: effectiveRadius,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,22 +74,22 @@ class BrandInfoCard extends StatelessWidget {
                 color: colors.brandOnSurface,
               ),
             ),
-            SizedBox(height: itemGap),
+            SizedBox(height: effectiveItemGap),
           ],
           for (int i = 0; i < bullets.length; i++) ...[
-            if (i > 0) SizedBox(height: itemGap),
+            if (i > 0) SizedBox(height: effectiveItemGap),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 2.0),
+                  padding: EdgeInsets.only(top: space.inlineMicro / 2),
                   child: Icon(
                     bullets[i].icon,
-                    size: iconSize,
+                    size: effectiveIconSize,
                     color: colors.brandSecondary,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Expanded(
                   child: Text(
                     bullets[i].text,

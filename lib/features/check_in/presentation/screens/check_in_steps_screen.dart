@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -44,6 +43,7 @@ class CheckInStepsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
 
     return stateAsync.when(
@@ -80,7 +80,7 @@ class CheckInStepsScreen extends ConsumerWidget {
             CheckInNotice(text: requirement.notice),
           ],
           children: [
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             Text(
               details.hotel,
               style: TextStyle(
@@ -91,7 +91,7 @@ class CheckInStepsScreen extends ConsumerWidget {
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               details.summary,
               style: TextStyle(
@@ -107,9 +107,9 @@ class CheckInStepsScreen extends ConsumerWidget {
               icon: requirement.flagIcon,
               lead: requirement.flagLead,
               body: requirement.flagBody,
-              marginTop: AppSpacing.md - 2,
+              marginTop: space.stackFormField,
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
 
             // Step 1: Already verified
             const CheckInStepTile(

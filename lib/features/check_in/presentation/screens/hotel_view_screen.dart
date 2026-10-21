@@ -4,8 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
@@ -26,6 +24,9 @@ class HotelViewScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final stateAsync = ref.watch(checkInNotifierProvider(reservationId));
 
     return stateAsync.when(
@@ -56,13 +57,18 @@ class HotelViewScreen extends ConsumerWidget {
               children: [
                 // App Bar
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm + 2,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: space.insetCard.left,
+                    vertical: space.stackItem,
                   ),
                   decoration: BoxDecoration(
                     color: colors.surface,
-                    border: Border(bottom: BorderSide(color: colors.line)),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: colors.line,
+                        width: shape.borderDefault,
+                      ),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -71,11 +77,11 @@ class HotelViewScreen extends ConsumerWidget {
                         onTap: () => context.pop(),
                         child: Icon(
                           AppIcons.arrowLeft,
-                          size: 18,
+                          size: sizes.iconSm,
                           color: colors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.md),
+                      SizedBox(width: space.inlineItem),
                       Text(
                         'What the hotel gets',
                         style: TextStyle(
@@ -92,7 +98,7 @@ class HotelViewScreen extends ConsumerWidget {
                 // Content
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(AppSpacing.md),
+                    padding: space.insetCard,
                     physics: const ClampingScrollPhysics(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -106,7 +112,7 @@ class HotelViewScreen extends ConsumerWidget {
                             height: 1.4,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.md),
+                        SizedBox(height: space.stackFormField),
 
                         // Dark Terminal Panel
                         _DarkHotelScreen(
@@ -118,16 +124,16 @@ class HotelViewScreen extends ConsumerWidget {
                                     'Standard Room')
                               : 'Standard Room',
                         ),
-                        const SizedBox(height: AppSpacing.lg),
+                        SizedBox(height: space.stackSection),
 
                         // Not Shared Section
                         _NotSharedSection(),
-                        const SizedBox(height: AppSpacing.lg),
+                        SizedBox(height: space.stackSection),
 
                         // Registration Form Preview (if paper card required)
                         if (hasForm) ...[
                           _RegistrationFormSection(hotelName: details.hotel),
-                          const SizedBox(height: AppSpacing.lg),
+                          SizedBox(height: space.stackSection),
                         ],
 
                         Text(
@@ -140,7 +146,7 @@ class HotelViewScreen extends ConsumerWidget {
                             height: 1.35,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.xl),
+                        SizedBox(height: space.stackHero),
                       ],
                     ),
                   ),
@@ -170,12 +176,15 @@ class _DarkHotelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.hotelScreen,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: shape.radiusSurface,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +192,7 @@ class _DarkHotelScreen extends StatelessWidget {
           Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.sm),
+                borderRadius: shape.radiusControlSm,
                 child: SvgPicture.asset(
                   'assets/art/guest_photo.svg',
                   width: 48,
@@ -191,7 +200,7 @@ class _DarkHotelScreen extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
+              SizedBox(width: space.inlineItem),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +214,7 @@ class _DarkHotelScreen extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 3),
+                    SizedBox(height: space.stackText),
                     Text(
                       bookingRef,
                       style: TextStyle(
@@ -214,25 +223,22 @@ class _DarkHotelScreen extends StatelessWidget {
                         color: colors.hotelMeta,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: space.stackTight),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: 3,
-                      ),
+                      padding: space.insetTag,
                       decoration: BoxDecoration(
                         color: colors.hotelOkFill,
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                        borderRadius: shape.radiusPill,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             AppIcons.check,
-                            size: 10,
+                            size: sizes.iconXs,
                             color: colors.hotelOkInk,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: space.inlineMicro),
                           Text(
                             'ID VERIFIED',
                             style: TextStyle(
@@ -250,11 +256,11 @@ class _DarkHotelScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          Divider(color: colors.hotelLine, height: 1),
-          const SizedBox(height: AppSpacing.sm + 2),
+          SizedBox(height: space.stackFormField),
+          Divider(color: colors.hotelLine, height: shape.dividerDefault),
+          SizedBox(height: space.stackItem),
           _TerminalRow(label: 'Stay', value: dates),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           _TerminalRow(label: 'Room', value: roomType),
         ],
       ),
@@ -271,11 +277,13 @@ class _TerminalRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Row(
       children: [
         SizedBox(
-          width: 60,
+          width: sizes.controlXl + space.inlineMicro,
           child: Text(
             label,
             style: TextStyle(
@@ -305,6 +313,10 @@ class _NotSharedSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
     const notSharedItems = [
       'Passport scans or documents',
       'Selfie video or biometric data',
@@ -314,11 +326,11 @@ class _NotSharedSection extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: colors.line),
+        borderRadius: shape.radiusControl,
+        border: Border.all(color: colors.line, width: shape.borderDefault),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,14 +344,18 @@ class _NotSharedSection extends StatelessWidget {
               color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           for (final item in notSharedItems) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3.5),
+              padding: EdgeInsets.symmetric(vertical: space.stackText),
               child: Row(
                 children: [
-                  Icon(AppIcons.eyeOff, size: 14, color: colors.textSecondary),
-                  const SizedBox(width: AppSpacing.sm),
+                  Icon(
+                    AppIcons.eyeOff,
+                    size: sizes.iconXs,
+                    color: colors.textSecondary,
+                  ),
+                  SizedBox(width: space.inlineIconLabel),
                   Expanded(
                     child: Text(
                       item,
@@ -368,13 +384,16 @@ class _RegistrationFormSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: colors.line),
+        borderRadius: shape.radiusControl,
+        border: Border.all(color: colors.line, width: shape.borderDefault),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,10 +402,10 @@ class _RegistrationFormSection extends StatelessWidget {
             children: [
               Icon(
                 AppIcons.alertTriangle,
-                size: 16,
+                size: sizes.iconSm,
                 color: colors.feedbackWarning,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Text(
                   'Paper Registration Form',
@@ -400,7 +419,7 @@ class _RegistrationFormSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             'If $hotelName asks you to complete a paper card at reception, only share the required identity fields.',
             style: TextStyle(
@@ -410,7 +429,7 @@ class _RegistrationFormSection extends StatelessWidget {
               height: 1.35,
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
           Center(
             child: SvgPicture.asset(
               'assets/art/registration_form.svg',

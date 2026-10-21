@@ -42,8 +42,7 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
     // Read the preview aspect ratio. Falls back to the captured image AR
     // when unavailable (e.g. gallery-picked images), which makes the mapping
     // an identity.
-    double previewAR =
-        ((params['previewAR'] as num?)?.toDouble()) ?? (iw / ih);
+    double previewAR = ((params['previewAR'] as num?)?.toDouble()) ?? (iw / ih);
 
     // Normalize preview aspect ratio orientation to match screen/viewport orientation (sw vs sh)
     if (sw < sh && previewAR > 1.0) {
@@ -136,8 +135,10 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
     final jpgFile = File(jpgPath)..writeAsBytesSync(jpgBytes);
 
     // Also extract and save the enlarged MRZ code lines region (bottom ~27% of passport)
-    final int mrzTop =
-        (croppedImage.height * 0.73).round().clamp(0, croppedImage.height - 1);
+    final int mrzTop = (croppedImage.height * 0.73).round().clamp(
+      0,
+      croppedImage.height - 1,
+    );
     final int mrzHeight = croppedImage.height - mrzTop;
     final img.Image mrzCrop = img.copyCrop(
       croppedImage,
@@ -147,7 +148,10 @@ Future<File?> cropAndOptimizePassportImage(Map<String, dynamic> params) async {
       height: mrzHeight,
     );
     final mrzBytes = img.encodeJpg(mrzCrop, quality: 100);
-    final mrzPath = imagePath.replaceAll(RegExp(r'\.[^.]+$'), '_mrz_cropped.jpg');
+    final mrzPath = imagePath.replaceAll(
+      RegExp(r'\.[^.]+$'),
+      '_mrz_cropped.jpg',
+    );
     File(mrzPath).writeAsBytesSync(mrzBytes);
 
     return jpgFile;
@@ -166,8 +170,7 @@ File? cropMrzRegionFromPath(String imagePath) {
 
   final baked = img.bakeOrientation(originalImage);
 
-  final int mrzTop =
-      (baked.height * 0.73).round().clamp(0, baked.height - 1);
+  final int mrzTop = (baked.height * 0.73).round().clamp(0, baked.height - 1);
   final int mrzHeight = baked.height - mrzTop;
 
   final img.Image mrzCrop = img.copyCrop(

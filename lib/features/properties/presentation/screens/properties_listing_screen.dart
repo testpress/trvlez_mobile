@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -102,6 +100,9 @@ class _PropertiesListingScreenState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final propertiesState = ref.watch(propertiesProvider);
     final properties = propertiesState.valueOrNull ?? [];
     final isLoading = propertiesState.isLoading;
@@ -123,7 +124,7 @@ class _PropertiesListingScreenState
                       button: true,
                       label: 'Back',
                       child: InkWell(
-                        borderRadius: AppRadius.fullRadius,
+                        borderRadius: shape.radiusPill,
                         onTap: () {
                           if (Navigator.canPop(context)) {
                             Navigator.pop(context);
@@ -132,16 +133,16 @@ class _PropertiesListingScreenState
                           }
                         },
                         child: Padding(
-                          padding: const EdgeInsets.all(4),
+                          padding: EdgeInsets.all(space.inlineMicro),
                           child: Icon(
                             AppIcons.arrowLeft,
-                            size: 20,
+                            size: sizes.iconMd,
                             color: colors.textPrimary,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    SizedBox(width: space.inlineIconLabel),
                     EzWord(
                       rest: 'Stays',
                       style: TextStyle(
@@ -154,25 +155,25 @@ class _PropertiesListingScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.md),
+                SizedBox(height: space.stackFormField),
                 // Search box
                 Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
+                  height: sizes.controlMd,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: space.insetCard.left,
                   ),
                   decoration: BoxDecoration(
                     color: colors.page,
-                    borderRadius: AppRadius.fullRadius,
+                    borderRadius: shape.radiusPill,
                   ),
                   child: Row(
                     children: [
                       Icon(
                         AppIcons.search,
-                        size: 16,
+                        size: sizes.iconSm,
                         color: colors.brandPrimary,
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(width: space.inlineIconLabel),
                       Expanded(
                         child: TextField(
                           controller: _searchController,
@@ -205,10 +206,10 @@ class _PropertiesListingScreenState
                           child: InkWell(
                             onTap: _clearSearch,
                             child: Padding(
-                              padding: const EdgeInsets.all(4),
+                              padding: EdgeInsets.all(space.inlineMicro),
                               child: Icon(
                                 AppIcons.circleX,
-                                size: 16,
+                                size: sizes.iconSm,
                                 color: colors.inkTertiary,
                               ),
                             ),
@@ -217,15 +218,15 @@ class _PropertiesListingScreenState
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.md),
+                SizedBox(height: space.stackFormField),
                 // Category filter chips
                 SizedBox(
-                  height: 32,
+                  height: sizes.iconXl,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _categories.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(width: AppSpacing.xs),
+                        SizedBox(width: space.inlineMicro),
                     itemBuilder: (context, index) {
                       final isSelected = index == _selectedCategoryIndex;
                       return ChoiceChip(
@@ -248,10 +249,10 @@ class _PropertiesListingScreenState
                               : colors.cardBorderSoft,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.fullRadius,
+                          borderRadius: shape.radiusPill,
                         ),
                         showCheckmark: false,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: space.insetTag,
                       );
                     },
                   ),
@@ -269,16 +270,16 @@ class _PropertiesListingScreenState
                   : error != null && properties.isEmpty
                   ? Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        padding: space.insetDialog,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               AppIcons.circleX,
-                              size: 40,
+                              size: sizes.iconFeature,
                               color: colors.brandPrimary,
                             ),
-                            const SizedBox(height: AppSpacing.md),
+                            SizedBox(height: space.stackFormField),
                             Text(
                               'Unable to load properties',
                               style: TextStyle(
@@ -288,7 +289,7 @@ class _PropertiesListingScreenState
                                 color: colors.textPrimary,
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.lg),
+                            SizedBox(height: space.stackSection),
                             ElevatedButton(
                               onPressed: () => ref
                                   .read(propertiesProvider.notifier)
@@ -297,7 +298,7 @@ class _PropertiesListingScreenState
                                 backgroundColor: colors.brandPrimary,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: AppRadius.fullRadius,
+                                  borderRadius: shape.radiusPill,
                                 ),
                               ),
                               child: const Text('Retry'),
@@ -309,16 +310,16 @@ class _PropertiesListingScreenState
                   : properties.isEmpty
                   ? Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        padding: space.insetDialog,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               AppIcons.search,
-                              size: 36,
+                              size: sizes.avatarMd,
                               color: colors.inkTertiary,
                             ),
-                            const SizedBox(height: AppSpacing.md),
+                            SizedBox(height: space.stackFormField),
                             Text(
                               'Nothing matches that',
                               style: TextStyle(
@@ -328,7 +329,7 @@ class _PropertiesListingScreenState
                                 color: colors.textPrimary,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: space.stackText),
                             Text(
                               'Try adjusting your search terms or filters.',
                               style: TextStyle(
@@ -337,7 +338,7 @@ class _PropertiesListingScreenState
                                 color: colors.textSecondary,
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.md),
+                            SizedBox(height: space.stackFormField),
                             TextButton(
                               onPressed: _resetAllFilters,
                               child: Text(
@@ -355,7 +356,7 @@ class _PropertiesListingScreenState
                       ),
                     )
                   : SingleChildScrollView(
-                      padding: const EdgeInsets.all(AppSpacing.md),
+                      padding: space.insetCard,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -369,7 +370,7 @@ class _PropertiesListingScreenState
                               color: colors.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.sm),
+                          SizedBox(height: space.stackItem),
                           SizedBox(
                             height: 226,
                             child: ListView.builder(
@@ -402,7 +403,7 @@ class _PropertiesListingScreenState
                               },
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          SizedBox(height: space.stackSection),
 
                           // All properties vertical list
                           Text(
@@ -414,7 +415,7 @@ class _PropertiesListingScreenState
                               color: colors.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.sm),
+                          SizedBox(height: space.stackItem),
                           ...properties.map(
                             (property) => PropertyCard(
                               property: property,
@@ -435,7 +436,7 @@ class _PropertiesListingScreenState
                               ),
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.xl),
+                          SizedBox(height: space.stackHero),
                         ],
                       ),
                     ),

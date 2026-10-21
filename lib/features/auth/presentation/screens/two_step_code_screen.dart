@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -92,6 +90,9 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final code = _controller.text;
 
     return BrandScreen(
@@ -110,7 +111,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
               height: 1.25,
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             'We sent a 6-digit code to ${_maskEmail(widget.email)}',
             style: TextStyle(
@@ -122,7 +123,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
             ),
           ),
 
-          const SizedBox(height: AppSpacing.xl),
+          SizedBox(height: space.stackHero),
 
           // ── 6-Box Visual Code Input ──────────────────────────────────
           Stack(
@@ -152,18 +153,18 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
                     final isCurrent = index == code.length;
 
                     return Container(
-                      width: 44,
-                      height: 52,
+                      width: sizes.controlMd,
+                      height: sizes.controlLg,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: isCurrent
                             ? colors.brandCardBackground
                             : colors.brandCodeBoxBackground,
-                        borderRadius: AppRadius.mdRadius,
+                        borderRadius: shape.radiusControl,
                         border: isCurrent
                             ? Border.all(
                                 color: colors.brandOnSurface,
-                                width: 1.5,
+                                width: shape.borderMedium,
                               )
                             : null,
                       ),
@@ -183,7 +184,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
             ],
           ),
 
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: space.stackSection),
 
           // ── Resend Line ──────────────────────────────────────────────
           Center(
@@ -202,12 +203,9 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
                     label: 'Resend code',
                     child: InkWell(
                       onTap: _startTimer,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: shape.radiusSubtle,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
+                        padding: space.insetTag,
                         child: Text(
                           'Resend code',
                           style: TextStyle(
@@ -224,11 +222,11 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
                   ),
           ),
 
-          const SizedBox(height: AppSpacing.xxl),
+          SizedBox(height: space.stackPageBottom),
 
           const BrandSecurityNote(text: 'Codes expire after 10 minutes.'),
 
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           AppButton(
             label: 'Verify',

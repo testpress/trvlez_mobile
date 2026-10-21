@@ -200,8 +200,12 @@ class VerificationState {
       imageQualityResult: imageQualityResult ?? this.imageQualityResult,
       videoQualityResult: videoQualityResult ?? this.videoQualityResult,
       mrzExtractionResult: mrzExtractionResult ?? this.mrzExtractionResult,
-      mrzImage: (clearMrzImage || clearImage) ? null : (mrzImage ?? this.mrzImage),
-      mrzLines: (clearMrzLines || clearImage) ? null : (mrzLines ?? this.mrzLines),
+      mrzImage: (clearMrzImage || clearImage)
+          ? null
+          : (mrzImage ?? this.mrzImage),
+      mrzLines: (clearMrzLines || clearImage)
+          ? null
+          : (mrzLines ?? this.mrzLines),
       nfcResult: clearNfcResult ? null : (nfcResult ?? this.nfcResult),
       isNfcSkipped: isNfcSkipped ?? this.isNfcSkipped,
       extractedDocumentNumber:

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -70,6 +69,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
 
     return BrandScreen(
       backgroundAsset: 'assets/art/bg_create_account.svg',
@@ -87,7 +87,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               height: 1.25,
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             showMismatch
                 ? 'Type the same one in both boxes'
@@ -101,7 +101,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             ),
           ),
 
-          const SizedBox(height: AppSpacing.xl),
+          SizedBox(height: space.stackHero),
 
           BrandTextField(
             label: 'Password',
@@ -112,7 +112,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             autofillHints: const [AutofillHints.newPassword],
           ),
 
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           BrandTextField(
             label: 'Confirm password',
@@ -124,14 +124,14 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             onSubmitted: isFormFilled ? _onSubmit : null,
           ),
 
-          const SizedBox(height: AppSpacing.xxl),
+          SizedBox(height: space.stackPageBottom),
 
           const BrandSecurityNote(
             text:
                 'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
           ),
 
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           AppButton(
             label: 'Save and sign in',

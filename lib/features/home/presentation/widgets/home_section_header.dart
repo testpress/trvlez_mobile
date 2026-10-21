@@ -19,6 +19,7 @@ class HomeSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -39,7 +40,10 @@ class HomeSectionHeader extends StatelessWidget {
           InkWell(
             onTap: onAction,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              padding: EdgeInsets.symmetric(
+                horizontal: space.inlineMicro,
+                vertical: space.stackText,
+              ),
               child: Text(
                 action!,
                 style: TextStyle(

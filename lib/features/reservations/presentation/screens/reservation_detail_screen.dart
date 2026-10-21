@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
@@ -78,11 +76,13 @@ class _ReservationDetailContent extends ConsumerWidget {
       reservationDetailNotifierProvider(reservationId),
     );
 
+    final sizes = context.sizes;
+
     return Scaffold(
       backgroundColor: colors.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(AppIcons.arrowLeft, size: 20),
+          icon: Icon(AppIcons.arrowLeft, size: sizes.iconMd),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -117,12 +117,13 @@ class _ReservationDetailContent extends ConsumerWidget {
     Reservation activeReservation,
   ) {
     final colors = context.colors;
+    final sizes = context.sizes;
 
     return Scaffold(
       backgroundColor: colors.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(AppIcons.arrowLeft, size: 20),
+          icon: Icon(AppIcons.arrowLeft, size: sizes.iconMd),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -144,6 +145,7 @@ class _ReservationDetailContent extends ConsumerWidget {
     WidgetRef ref,
     Reservation activeReservation,
   ) {
+    final space = context.space;
     final dateFormat = DateFormat('EEE, MMM d, yyyy');
 
     return RefreshIndicator(
@@ -154,16 +156,16 @@ class _ReservationDetailContent extends ConsumerWidget {
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(AppSpacing.screenPadding),
+        padding: space.insetScreen,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ReservationPropertyCard(
               property: activeReservation.propertySummary,
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             _buildStatusCard(context, activeReservation),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             ReservationInfoCard(
               title: 'Stay Details',
               children: [
@@ -193,7 +195,7 @@ class _ReservationDetailContent extends ConsumerWidget {
                   ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             ReservationInfoCard(
               title: 'Guest Information',
               children: [
@@ -230,7 +232,7 @@ class _ReservationDetailContent extends ConsumerWidget {
             ),
             if (activeReservation.specialRequests != null &&
                 activeReservation.specialRequests!.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: space.stackFormField),
               ReservationInfoCard(
                 title: 'Special Requests',
                 children: [
@@ -246,7 +248,7 @@ class _ReservationDetailContent extends ConsumerWidget {
                 ],
               ),
             ],
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: space.stackHero),
             ReservationActionsCard(
               reservation: activeReservation,
               onCheckIn: () {
@@ -265,7 +267,7 @@ class _ReservationDetailContent extends ConsumerWidget {
               },
               onCancel: () => _handleCancel(context, ref, activeReservation),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: space.stackHero),
           ],
         ),
       ),
@@ -274,13 +276,18 @@ class _ReservationDetailContent extends ConsumerWidget {
 
   Widget _buildStatusCard(BuildContext context, Reservation activeReservation) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: colors.borderSubtle),
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.borderSubtle,
+          width: shape.borderDefault,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -298,7 +305,7 @@ class _ReservationDetailContent extends ConsumerWidget {
                   color: colors.textSecondary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: space.stackText),
               Text(
                 activeReservation.confirmationCode,
                 style: TextStyle(
@@ -322,14 +329,13 @@ class _ReservationDetailContent extends ConsumerWidget {
     Reservation activeReservation,
   ) async {
     final colors = context.colors;
+    final shape = context.shape;
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: shape.radiusSurface),
           title: const Text(
             'Cancel Reservation?',
             style: TextStyle(

@@ -22,7 +22,7 @@ class VerificationStepper extends StatelessWidget {
   const VerificationStepper({
     super.key,
     required this.current,
-    this.circleSize = 26.0,
+    this.circleSize,
     this.labels = kVerificationStepLabels,
   });
 
@@ -30,7 +30,7 @@ class VerificationStepper extends StatelessWidget {
   final int current;
 
   /// Diameter of the step circle indicator.
-  final double circleSize;
+  final double? circleSize;
 
   /// Step labels. Must match length of the steps.
   final List<String> labels;
@@ -38,7 +38,11 @@ class VerificationStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final inset = circleSize / 2 + 4.0;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+    final resolvedSize = circleSize ?? sizes.iconDefault;
+    final inset = resolvedSize / 2 + space.inlineMicro;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -49,10 +53,10 @@ class VerificationStepper extends StatelessWidget {
             // ── Connectors behind the step circles ──────────────────────────
             for (int i = 0; i < labels.length - 1; i++)
               Positioned(
-                top: circleSize / 2 - 0.75,
+                top: resolvedSize / 2 - (shape.borderDefault * 0.75),
                 left: cellWidth * i + cellWidth / 2 + inset,
                 width: cellWidth - (inset * 2),
-                height: 2.0,
+                height: shape.strokeProgress,
                 child: _StepConnector(
                   isFilled: i < current,
                   trackColor: colors.verificationStepTrack,
@@ -71,7 +75,7 @@ class VerificationStepper extends StatelessWidget {
                       label: labels[i],
                       isDone: i < current,
                       isActive: i == current,
-                      size: circleSize,
+                      size: resolvedSize,
                     ),
                   ),
               ],
@@ -96,10 +100,12 @@ class _StepConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shape = context.shape;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: trackColor,
-        borderRadius: BorderRadius.circular(2.0),
+        borderRadius: shape.radiusMicro,
       ),
       child: Align(
         alignment: Alignment.centerLeft,
@@ -111,7 +117,7 @@ class _StepConnector extends StatelessWidget {
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: fillColor,
-              borderRadius: BorderRadius.circular(2.0),
+              borderRadius: shape.radiusMicro,
             ),
           ),
         ),
@@ -138,6 +144,8 @@ class _StepNode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
     final isOn = isDone || isActive;
 
     return Column(
@@ -154,7 +162,7 @@ class _StepNode extends StatelessWidget {
             color: isOn ? colors.brandOnSurface : Colors.transparent,
             border: Border.all(
               color: isOn ? colors.brandOnSurface : colors.verificationStepRing,
-              width: 1.5,
+              width: shape.borderMedium,
             ),
           ),
           child: isDone
@@ -176,7 +184,7 @@ class _StepNode extends StatelessWidget {
                   ),
                 ),
         ),
-        const SizedBox(height: 6.0),
+        SizedBox(height: space.stackTight),
         Text(
           label,
           textAlign: TextAlign.center,

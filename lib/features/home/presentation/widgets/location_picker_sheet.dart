@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -46,17 +44,20 @@ class LocationPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
       ),
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.sm,
-        AppSpacing.lg,
-        MediaQuery.viewPaddingOf(context).bottom + AppSpacing.md,
+        space.stackSection,
+        space.stackItem,
+        space.stackSection,
+        MediaQuery.viewPaddingOf(context).bottom + space.inlineItem,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -65,16 +66,16 @@ class LocationPickerSheet extends StatelessWidget {
           // Drag handle
           Center(
             child: Container(
-              width: 36,
-              height: 4,
-              margin: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              width: sizes.controlSm,
+              height: sizes.indicatorProgressHeight,
+              margin: EdgeInsets.symmetric(vertical: space.stackItem),
               decoration: BoxDecoration(
                 color: colors.cardBorderSoft,
-                borderRadius: AppRadius.fullRadius,
+                borderRadius: shape.radiusPill,
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           Text(
             'Select city',
             style: TextStyle(
@@ -84,30 +85,30 @@ class LocationPickerSheet extends StatelessWidget {
               color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           ...availableLocations.map((city) {
             final isSelected = city == currentLocation;
             return InkWell(
-              borderRadius: AppRadius.mdRadius,
+              borderRadius: shape.radiusControl,
               onTap: () {
                 onLocationSelected(city);
                 Navigator.of(context).pop();
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.md,
-                  horizontal: AppSpacing.xs,
+                padding: EdgeInsets.symmetric(
+                  vertical: space.stackFormField,
+                  horizontal: space.inlineMicro,
                 ),
                 child: Row(
                   children: [
                     Icon(
                       AppIcons.mapPin,
-                      size: 16,
+                      size: sizes.iconSm,
                       color: isSelected
                           ? colors.brandPrimary
                           : colors.inkTertiary,
                     ),
-                    const SizedBox(width: AppSpacing.md),
+                    SizedBox(width: space.inlineItem),
                     Expanded(
                       child: Text(
                         city,
@@ -126,7 +127,7 @@ class LocationPickerSheet extends StatelessWidget {
                     if (isSelected)
                       Icon(
                         AppIcons.check,
-                        size: 16,
+                        size: sizes.iconSm,
                         color: colors.brandPrimary,
                       ),
                   ],

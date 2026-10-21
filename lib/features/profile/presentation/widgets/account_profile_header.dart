@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -25,6 +23,9 @@ class AccountProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return AppPinnedHeader(
       child: Column(
@@ -41,15 +42,15 @@ class AccountProfileHeader extends StatelessWidget {
               color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
           InkWell(
-            borderRadius: AppRadius.mdRadius,
+            borderRadius: shape.radiusControl,
             onTap: () => context.push(AppRoutes.profileSetup),
             child: Row(
               children: [
                 Container(
-                  width: 42,
-                  height: 42,
+                  width: sizes.avatarLg,
+                  height: sizes.avatarLg,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: colors.redTint,
@@ -65,7 +66,7 @@ class AccountProfileHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.md),
+                SizedBox(width: space.inlineItem),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +81,7 @@ class AccountProfileHeader extends StatelessWidget {
                           color: colors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: space.stackText),
                       Text(
                         subtitle,
                         style: TextStyle(
@@ -94,7 +95,7 @@ class AccountProfileHeader extends StatelessWidget {
                 ),
                 Icon(
                   AppIcons.chevronRight,
-                  size: 16,
+                  size: sizes.iconSm,
                   color: colors.inkTertiary,
                 ),
               ],

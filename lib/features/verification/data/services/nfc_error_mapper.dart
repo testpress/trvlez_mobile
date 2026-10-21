@@ -43,8 +43,7 @@ class NfcErrorMapper {
       );
     }
 
-    if (errorString.contains('disabled') ||
-        errorString.contains('404')) {
+    if (errorString.contains('disabled') || errorString.contains('404')) {
       return NfcError(
         type: NfcErrorType.nfcDisabled,
         message: 'NFC is turned off. Please enable it in your device settings.',

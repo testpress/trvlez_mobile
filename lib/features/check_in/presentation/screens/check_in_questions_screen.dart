@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -60,6 +59,7 @@ class _CheckInQuestionsScreenState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final stateAsync = ref.watch(checkInNotifierProvider(widget.reservationId));
 
     return stateAsync.when(
@@ -114,7 +114,7 @@ class _CheckInQuestionsScreenState
             ),
           ],
           children: [
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: space.stackItem),
             Text(
               'A few questions',
               style: TextStyle(
@@ -125,7 +125,7 @@ class _CheckInQuestionsScreenState
                 letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
             Text(
               'So the hotel has your room ready when you arrive.',
               style: TextStyle(
@@ -135,7 +135,7 @@ class _CheckInQuestionsScreenState
                 height: 1.35,
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
+            SizedBox(height: space.stackText),
 
             // Arrival time picker
             CheckInField(

@@ -33,7 +33,8 @@ final verificationStatusProvider =
       final profile = profileState.valueOrNull;
 
       if (profile != null &&
-          profile.verificationState != TravelerVerificationState.profilePending) {
+          profile.verificationState !=
+              TravelerVerificationState.profilePending) {
         try {
           final repository = ref.read(verificationRepositoryProvider);
           return await repository.getVerificationStatus();

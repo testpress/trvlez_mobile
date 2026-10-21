@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/heart_button.dart';
@@ -24,9 +22,12 @@ class _PropertyPictureBandState extends State<PropertyPictureBand> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return SizedBox(
-      height: 140.0,
+      height: sizes.thumbPhotoMd + sizes.iconMd,
       child: Stack(
         children: [
           Positioned.fill(
@@ -36,16 +37,13 @@ class _PropertyPictureBandState extends State<PropertyPictureBand> {
             ),
           ),
           Positioned(
-            top: AppSpacing.sm,
-            left: AppSpacing.sm,
+            top: space.stackItem,
+            left: space.inlineIconLabel,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
-              ),
+              padding: space.insetTag,
               decoration: BoxDecoration(
                 color: colors.photoChip,
-                borderRadius: AppRadius.pillRadius,
+                borderRadius: shape.radiusPill,
               ),
               child: Text(
                 widget.draft.propertyTag,
@@ -59,8 +57,8 @@ class _PropertyPictureBandState extends State<PropertyPictureBand> {
             ),
           ),
           Positioned(
-            top: AppSpacing.sm,
-            right: AppSpacing.sm,
+            top: space.stackItem,
+            right: space.inlineIconLabel,
             child: HeartButton(
               saved: _isSaved,
               onPhoto: true,

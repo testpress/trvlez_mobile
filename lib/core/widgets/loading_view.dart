@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Full-screen or centered loading state indicator.
@@ -12,6 +11,8 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
 
     return Center(
       child: Column(
@@ -19,10 +20,11 @@ class LoadingView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
+            strokeWidth: shape.strokeProgress,
             valueColor: AlwaysStoppedAnimation<Color>(colors.actionPrimary),
           ),
           if (message != null) ...[
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             Text(
               message!,
               style: AppTypography.body.copyWith(

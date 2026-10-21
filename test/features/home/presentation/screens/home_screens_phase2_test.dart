@@ -196,10 +196,7 @@ void main() {
     testWidgets(
       'AccountScreen renders in-review verification state without start verification button',
       (tester) async {
-        const mockProfile = Profile(
-          id: 'usr-1',
-          onboardingStep: 'submitted',
-        );
+        const mockProfile = Profile(id: 'usr-1', onboardingStep: 'submitted');
 
         await tester.pumpWidget(
           ProviderScope(
@@ -217,7 +214,10 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Verification in review'), findsOneWidget);
-        expect(find.text('Our system is reviewing your documents'), findsOneWidget);
+        expect(
+          find.text('Our system is reviewing your documents'),
+          findsOneWidget,
+        );
         expect(find.text('Start verification'), findsNothing);
       },
     );
@@ -225,10 +225,7 @@ void main() {
     testWidgets(
       'AccountScreen renders needs-attention verification state when failed',
       (tester) async {
-        const mockProfile = Profile(
-          id: 'usr-1',
-          onboardingStep: 'submitted',
-        );
+        const mockProfile = Profile(id: 'usr-1', onboardingStep: 'submitted');
 
         await tester.pumpWidget(
           ProviderScope(

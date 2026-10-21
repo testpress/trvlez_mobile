@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/constants/nationalities.dart';
 
@@ -20,13 +18,18 @@ class NationalityPickerField extends StatelessWidget {
   final bool isEnabled;
 
   Future<void> _showPicker(BuildContext context) async {
+    final space = context.space;
+    final shape = context.shape;
     String searchQuery = '';
 
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: shape.radiusOverlay.topLeft,
+          topRight: shape.radiusOverlay.topRight,
+        ),
       ),
       builder: (context) {
         return StatefulBuilder(
@@ -42,13 +45,13 @@ class NationalityPickerField extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
-                  top: AppSpacing.md,
+                  top: space.stackFormField,
                 ),
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.insetCard.left,
                       ),
                       child: TextField(
                         autofocus: true,
@@ -56,14 +59,14 @@ class NationalityPickerField extends StatelessWidget {
                           labelText: 'Search Nationality',
                           prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderRadius: shape.radiusControl,
                           ),
                         ),
                         onChanged: (val) =>
                             setSheetState(() => searchQuery = val),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
+                    SizedBox(height: space.stackItem),
                     Expanded(
                       child: ListView.builder(
                         itemCount: filtered.length,
@@ -97,24 +100,27 @@ class NationalityPickerField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Nationality', style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         InkWell(
           onTap: isEnabled ? () => _showPicker(context) : null,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: shape.radiusControl,
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.md,
-            ),
+            padding: space.insetCard,
             decoration: BoxDecoration(
-              border: Border.all(color: colors.borderDefault),
-              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(
+                color: colors.borderDefault,
+                width: shape.borderDefault,
+              ),
+              borderRadius: shape.radiusControl,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +138,7 @@ class NationalityPickerField extends StatelessWidget {
                 Icon(
                   AppIcons.chevronDown,
                   color: colorScheme.onSurface.withAlpha(150),
-                  size: 20,
+                  size: sizes.iconMd,
                 ),
               ],
             ),

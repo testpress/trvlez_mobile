@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
@@ -67,6 +66,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final authState = ref.watch(authNotifierProvider).valueOrNull;
     final isAlreadyLoggedIn =
         widget.isChangePassword ?? (authState?.isAuthenticated ?? false);
@@ -88,7 +88,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               height: 1.25,
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: space.stackText),
           Text(
             isAlreadyLoggedIn
                 ? "We'll email you a code to update your password"
@@ -102,7 +102,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ),
           ),
 
-          const SizedBox(height: AppSpacing.xl),
+          SizedBox(height: space.stackHero),
 
           BrandTextField(
             label: 'Email',
@@ -114,11 +114,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             onSubmitted: _onSendCode,
           ),
 
-          const SizedBox(height: AppSpacing.xxl),
+          SizedBox(height: space.stackPageBottom),
 
           const BrandSecurityNote(text: 'Codes expire after 10 minutes.'),
 
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: space.stackFormField),
 
           AppButton(
             label: 'Send code',
@@ -128,7 +128,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ),
 
           if (!isAlreadyLoggedIn) ...[
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: space.stackFormField),
             BrandAltLine(
               linkText: 'Back to log in',
               onTap: () => context.go(AppRoutes.login),

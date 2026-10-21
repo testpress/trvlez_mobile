@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
@@ -28,6 +26,9 @@ class AnywhereRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     return Semantics(
       button: onTap != null,
@@ -35,25 +36,29 @@ class AnywhereRow extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(top: AppSpacing.sm),
-          padding: const EdgeInsets.all(AppSpacing.md - 2),
+          margin: EdgeInsets.only(top: space.stackItem),
+          padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.checkInStepPanel,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: shape.radiusControl,
           ),
           child: Row(
             children: [
               Container(
-                width: 28,
-                height: 28,
+                width: sizes.avatarSm,
+                height: sizes.avatarSm,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: colors.checkInRingPanel,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  borderRadius: shape.radiusControlSm,
                 ),
-                child: Icon(icon, size: 14, color: colors.brandOnSurface),
+                child: Icon(
+                  icon,
+                  size: sizes.iconXs,
+                  color: colors.brandOnSurface,
+                ),
               ),
-              const SizedBox(width: AppSpacing.sm + 2),
+              SizedBox(width: space.inlineIconLabel),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +73,7 @@ class AnywhereRow extends StatelessWidget {
                         color: colors.brandOnSurface,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: space.stackText),
                     Text(
                       subtitle,
                       style: TextStyle(
@@ -81,15 +86,12 @@ class AnywhereRow extends StatelessWidget {
                 ),
               ),
               if (tag != null) ...[
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
+                  padding: space.insetTag,
                   decoration: BoxDecoration(
                     color: colors.checkInRingPanel,
-                    borderRadius: AppRadius.fullRadius,
+                    borderRadius: shape.radiusPill,
                   ),
                   child: Text(
                     tag!,
@@ -102,10 +104,10 @@ class AnywhereRow extends StatelessWidget {
                   ),
                 ),
               ] else if (chevron) ...[
-                const SizedBox(width: AppSpacing.sm),
+                SizedBox(width: space.inlineIconLabel),
                 Icon(
                   AppIcons.chevronRight,
-                  size: 16,
+                  size: sizes.iconSm,
                   color: colors.brandOnSurface,
                 ),
               ],
@@ -127,9 +129,13 @@ class AnywhereLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
 
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xs),
+      padding: EdgeInsets.only(
+        top: space.stackFormField,
+        bottom: space.stackText,
+      ),
       child: Text.rich(
         TextSpan(
           children: [
@@ -178,12 +184,18 @@ class AnywhereField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
+    final shape = context.shape;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.brandFieldBackground,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: colors.brandBorderSubtle, width: 1),
+        borderRadius: shape.radiusControl,
+        border: Border.all(
+          color: colors.brandBorderSubtle,
+          width: shape.borderDefault,
+        ),
       ),
       child: TextField(
         controller: controller,
@@ -205,23 +217,20 @@ class AnywhereField extends StatelessWidget {
             color: colors.brandSecondaryPlaceholder,
           ),
           prefixIcon: icon != null
-              ? Icon(icon, size: 16, color: colors.brandSecondaryBody)
+              ? Icon(icon, size: sizes.iconSm, color: colors.brandSecondaryBody)
               : null,
           suffixIcon: onClear != null && controller.text.isNotEmpty
               ? GestureDetector(
                   onTap: onClear,
                   child: Icon(
                     AppIcons.x,
-                    size: 14,
+                    size: sizes.iconXs,
                     color: colors.brandSecondaryBody,
                   ),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm + 4,
-          ),
+          contentPadding: space.insetInput,
         ),
       ),
     );

@@ -31,6 +31,9 @@ jobs:
         run: |
           ! grep -rnE "Color\(0x|Colors\.(red|blue|green|grey)" lib/features/
 
+      - name: Verify Semantic Layout Tokens Guard
+        run: python3 scripts/verify_layout_tokens.py
+
       - name: Verify Layer Import Guard (Zero Data Imports in UI)
         run: |
           ! grep -rnE "import .*/data/" lib/features/*/presentation/ --exclude-dir=providers

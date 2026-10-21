@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -58,6 +56,9 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final mrz = state.mrzExtractionResult;
@@ -96,7 +97,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
       isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        const VerificationStepper(current: 1, circleSize: 24.0),
+        VerificationStepper(current: 1, circleSize: sizes.iconDefault),
         const Spacer(flex: 1),
         Align(
           alignment: Alignment.centerLeft,
@@ -108,7 +109,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -121,13 +122,13 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
         ),
         const Spacer(flex: 1),
         Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.xs,
-            horizontal: AppSpacing.md - 3,
+          padding: EdgeInsets.symmetric(
+            vertical: space.stackText,
+            horizontal: space.inlineButtonGroup,
           ),
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: shape.radiusControl,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -148,7 +149,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
           variant: AppButtonVariant.brandWhite,
           onPressed: _isConfirming ? null : _handleConfirm,
         ),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: space.stackText),
         AppButton(
           label: 'Retake passport photo',
           variant: AppButtonVariant.brandOutline,
@@ -157,7 +158,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
             context.pushReplacement(AppRoutes.passportInstructions);
           },
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: space.stackItem),
         Center(
           child: InkWell(
             onTap: () {
@@ -170,7 +171,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              padding: EdgeInsets.symmetric(vertical: space.stackText),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(

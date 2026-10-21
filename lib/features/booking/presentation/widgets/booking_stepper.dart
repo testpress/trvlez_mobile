@@ -23,6 +23,8 @@ class BookingStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final sizes = context.sizes;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -34,9 +36,9 @@ class BookingStepper extends StatelessWidget {
           onTap: () => onChanged(value - 1),
         ),
         Container(
-          constraints: const BoxConstraints(minWidth: 32.0),
+          constraints: BoxConstraints(minWidth: sizes.iconXl),
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          padding: EdgeInsets.symmetric(horizontal: space.inlineMicro),
           child: Text(
             '$value',
             style: TextStyle(
@@ -74,6 +76,8 @@ class _StepperButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Semantics(
       button: true,
@@ -83,18 +87,18 @@ class _StepperButton extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: enabled ? onTap : null,
         child: Container(
-          width: 48.0,
-          height: 48.0,
+          width: sizes.touchTargetMin,
+          height: sizes.touchTargetMin,
           alignment: Alignment.center,
           child: Container(
-            width: 32.0,
-            height: 32.0,
+            width: sizes.iconXl,
+            height: sizes.iconXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
                 color: enabled ? colors.line : colors.borderSubtle,
-                width: 1.2,
+                width: shape.borderDefault,
               ),
             ),
             child: Text(

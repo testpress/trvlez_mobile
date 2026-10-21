@@ -146,11 +146,7 @@ class _FaceGuidancePainter extends CustomPainter {
 
     // Top head guideline notch
     const notchLen = 8.0;
-    canvas.drawLine(
-      Offset(cx, 10.0),
-      Offset(cx, 10.0 + notchLen),
-      paint,
-    );
+    canvas.drawLine(Offset(cx, 10.0), Offset(cx, 10.0 + notchLen), paint);
 
     // Bottom chin guideline notch
     canvas.drawLine(

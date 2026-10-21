@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_radius.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_spacing.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
@@ -17,12 +15,15 @@ class PropertyInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: space.insetCard,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: AppRadius.cardRadius,
+        borderRadius: shape.radiusSurface,
         boxShadow: [
           BoxShadow(
             color: colors.cardShadow,
@@ -44,11 +45,15 @@ class PropertyInfoCard extends StatelessWidget {
               color: colors.ink,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: space.stackText),
           Row(
             children: [
-              Icon(AppIcons.mapPin, size: 14.0, color: colors.inkSecondary),
-              const SizedBox(width: 4),
+              Icon(
+                AppIcons.mapPin,
+                size: sizes.iconXs,
+                color: colors.inkSecondary,
+              ),
+              SizedBox(width: space.inlineMicro),
               Expanded(
                 child: Text(
                   draft.propertyPlace,
@@ -63,22 +68,22 @@ class PropertyInfoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          SizedBox(height: space.stackItem),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+            padding: space.insetTag,
             decoration: BoxDecoration(
               color: colors.redTint,
-              borderRadius: AppRadius.pillRadius,
+              borderRadius: shape.radiusPill,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   AppIcons.circleCheck,
-                  size: 13.0,
+                  size: sizes.iconXs,
                   color: colors.brandPrimary,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: space.inlineMicro),
                 Text(
                   'Verified partner',
                   style: TextStyle(
@@ -92,10 +97,12 @@ class PropertyInfoCard extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(top: AppSpacing.md),
-            padding: const EdgeInsets.only(top: AppSpacing.sm),
+            margin: EdgeInsets.only(top: space.stackFormField),
+            padding: EdgeInsets.only(top: space.stackItem),
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: colors.line)),
+              border: Border(
+                top: BorderSide(color: colors.line, width: shape.borderDefault),
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
