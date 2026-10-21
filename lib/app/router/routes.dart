@@ -23,6 +23,9 @@ class AppRoutes {
   static const String propertyDetail = '/properties/:id';
 
   // Account Operations
+  static const String personalDetails = '/account/personal-details';
+  static const String security = '/account/security';
+  static const String preferences = '/account/preferences';
   static const String closeAccount = '/close-account';
 
   static String propertyDetailPath(String id) => '/properties/$id';

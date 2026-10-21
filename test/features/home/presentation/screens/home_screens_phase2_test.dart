@@ -17,6 +17,7 @@ import 'package:trvlez_mobile/features/home/presentation/widgets/service_grid.da
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/account_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/close_account_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/screens/preferences_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 import 'package:trvlez_mobile/features/properties/presentation/screens/properties_listing_screen.dart';
@@ -223,14 +224,15 @@ void main() {
         expect(find.text('Account'), findsOneWidget);
         expect(find.text('T'), findsOneWidget);
 
-        // Verified badge
-        expect(find.text('Identity verified'), findsOneWidget);
+        // Verified account drops the hero card
+        expect(find.text('Verify your identity'), findsNothing);
 
         // Settings categories
         expect(find.text('Personal'), findsOneWidget);
         expect(find.text('Personal details'), findsOneWidget);
-        expect(find.text('Your data'), findsOneWidget);
-        expect(find.text('Sharing & permissions'), findsOneWidget);
+        expect(find.text('Settings'), findsOneWidget);
+        expect(find.text('Security'), findsOneWidget);
+        expect(find.text('Preferences'), findsOneWidget);
         expect(find.text('Sign out'), findsOneWidget);
       },
     );
@@ -463,26 +465,21 @@ void main() {
       },
     );
 
-    testWidgets('AccountScreen toggles dark mode switch', (tester) async {
+    testWidgets('PreferencesScreen toggles theme mode', (tester) async {
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            travelerVerificationStateProvider.overrideWithValue(
-              TravelerVerificationState.verified,
-            ),
-          ],
-          child: const MaterialApp(home: AccountScreen()),
+        const ProviderScope(
+          child: MaterialApp(home: PreferencesScreen()),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Scroll to Preferences section
-      await tester.ensureVisible(find.text('Dark mode'));
-      expect(find.text('Dark mode'), findsOneWidget);
+      expect(find.text('Theme'), findsOneWidget);
+      await tester.tap(find.text('Theme'));
+      await tester.pumpAndSettle();
 
-      // Switch is present
-      expect(find.byType(Switch), findsOneWidget);
-      await tester.tap(find.byType(Switch));
+      expect(find.text('Choose Theme'), findsOneWidget);
+      expect(find.text('Dark'), findsOneWidget);
+      await tester.tap(find.text('Dark'));
       await tester.pumpAndSettle();
     });
   });

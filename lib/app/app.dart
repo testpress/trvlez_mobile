@@ -44,6 +44,7 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
   @override
   Widget build(BuildContext context) {
     final currentMode = ref.watch(themeModeProvider);
+    final textScalePreset = ref.watch(textScaleNotifierProvider);
 
     return MaterialApp.router(
       title: 'TrvlEz',
@@ -52,6 +53,15 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
       darkTheme: AppTheme.darkTheme,
       themeMode: currentMode,
       routerConfig: ref.watch(routerProvider),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(textScalePreset.scaleFactor),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }
+

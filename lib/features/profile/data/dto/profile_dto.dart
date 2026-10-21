@@ -10,6 +10,9 @@ class ProfileDto {
   final String? passportNumber;
   final String? passportExpiry;
   final String onboardingStep;
+  final String? fullName;
+  final String? email;
+  final String? legalName;
 
   const ProfileDto({
     required this.id,
@@ -20,6 +23,9 @@ class ProfileDto {
     this.passportNumber,
     this.passportExpiry,
     required this.onboardingStep,
+    this.fullName,
+    this.email,
+    this.legalName,
   });
 
   factory ProfileDto.fromJson(Map<String, dynamic> json) {
@@ -32,6 +38,9 @@ class ProfileDto {
       passportNumber: json['passport_number'] as String?,
       passportExpiry: json['passport_expiry'] as String?,
       onboardingStep: json['onboarding_step'] as String,
+      fullName: json['full_name'] as String?,
+      email: json['email'] as String?,
+      legalName: json['legal_name'] as String?,
     );
   }
 
@@ -45,6 +54,9 @@ class ProfileDto {
       if (passportNumber != null) 'passport_number': passportNumber,
       if (passportExpiry != null) 'passport_expiry': passportExpiry,
       'onboarding_step': onboardingStep,
+      if (fullName != null) 'full_name': fullName,
+      if (email != null) 'email': email,
+      if (legalName != null) 'legal_name': legalName,
     };
   }
 
@@ -60,6 +72,10 @@ class ProfileDto {
           ? DateTime.tryParse(passportExpiry!)
           : null,
       onboardingStep: onboardingStep,
+      displayName: fullName,
+      email: email,
+      legalName: legalName,
     );
   }
 }
+

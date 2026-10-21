@@ -41,7 +41,9 @@ import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dar
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/account_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/close_account_screen.dart';
-import 'package:trvlez_mobile/features/profile/presentation/screens/profile_setup_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/screens/personal_details_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/screens/preferences_screen.dart';
+import 'package:trvlez_mobile/features/profile/presentation/screens/security_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/screens/properties_listing_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
@@ -418,9 +420,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       // ─── Profile & Verification Routes ──────────────────────────
       GoRoute(
-        path: AppRoutes.profileSetup,
-        builder: (context, state) => const ProfileSetupScreen(),
+        path: AppRoutes.personalDetails,
+        builder: (context, state) => const PersonalDetailsScreen(),
       ),
+      GoRoute(
+        path: AppRoutes.security,
+        builder: (context, state) => const SecurityScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.preferences,
+        builder: (context, state) => const PreferencesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.profileSetup,
+        builder: (context, state) => const PersonalDetailsScreen(),
+      ),
+
       GoRoute(
         path: AppRoutes.verificationLanding,
         builder: (context, state) => const VerificationLandingScreen(),

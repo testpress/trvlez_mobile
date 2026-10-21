@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trvlez_mobile/app/theme/tokens/text_scale_preset.dart';
+
+export 'package:trvlez_mobile/app/theme/tokens/text_scale_preset.dart';
 
 class SettingsRepository {
   static const _themeKey = 'isDark';
+  static const _textScaleKey = 'textScalePreset';
+  static const _twoStepKey = 'isTwoStepVerificationEnabled';
 
   final SharedPreferences _prefs;
 
@@ -27,7 +32,25 @@ class SettingsRepository {
       await _prefs.setBool(_themeKey, mode == ThemeMode.dark);
     }
   }
+
+  TextScalePreset getTextScalePreset() {
+    final saved = _prefs.getString(_textScaleKey);
+    return TextScalePreset.fromName(saved);
+  }
+
+  Future<void> setTextScalePreset(TextScalePreset preset) async {
+    await _prefs.setString(_textScaleKey, preset.name);
+  }
+
+  bool isTwoStepVerificationEnabled() {
+    return _prefs.getBool(_twoStepKey) ?? false;
+  }
+
+  Future<void> setTwoStepVerificationEnabled(bool enabled) async {
+    await _prefs.setBool(_twoStepKey, enabled);
+  }
 }
+
 
 /// Provider for the [SettingsRepository].
 ///
@@ -36,3 +59,30 @@ class SettingsRepository {
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   throw UnimplementedError('settingsRepositoryProvider must be overridden');
 });
+
+/// Notifier managing whether two-step verification is toggled on.
+class TwoStepVerificationNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    try {
+      return ref.watch(settingsRepositoryProvider).isTwoStepVerificationEnabled();
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> toggle() async {
+    final next = !state;
+    state = next;
+    try {
+      await ref.read(settingsRepositoryProvider).setTwoStepVerificationEnabled(next);
+    } catch (_) {}
+  }
+}
+
+/// Provider for two-step verification setting state.
+final twoStepVerificationNotifierProvider =
+    NotifierProvider<TwoStepVerificationNotifier, bool>(() {
+  return TwoStepVerificationNotifier();
+});
+

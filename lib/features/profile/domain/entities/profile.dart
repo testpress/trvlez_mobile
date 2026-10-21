@@ -10,6 +10,9 @@ class Profile {
   final String? passportNumber;
   final DateTime? passportExpiry;
   final String onboardingStep;
+  final String? displayName;
+  final String? email;
+  final String? legalName;
 
   const Profile({
     required this.id,
@@ -20,6 +23,9 @@ class Profile {
     this.passportNumber,
     this.passportExpiry,
     required this.onboardingStep,
+    this.displayName,
+    this.email,
+    this.legalName,
   });
 
   /// Typed verification state derived from the raw backend step string.
@@ -35,6 +41,9 @@ class Profile {
     String? passportNumber,
     DateTime? passportExpiry,
     String? onboardingStep,
+    String? displayName,
+    String? email,
+    String? legalName,
   }) {
     return Profile(
       id: id ?? this.id,
@@ -45,6 +54,9 @@ class Profile {
       passportNumber: passportNumber ?? this.passportNumber,
       passportExpiry: passportExpiry ?? this.passportExpiry,
       onboardingStep: onboardingStep ?? this.onboardingStep,
+      displayName: displayName ?? this.displayName,
+      email: email ?? this.email,
+      legalName: legalName ?? this.legalName,
     );
   }
 
@@ -59,7 +71,10 @@ class Profile {
         other.dateOfBirth == dateOfBirth &&
         other.passportNumber == passportNumber &&
         other.passportExpiry == passportExpiry &&
-        other.onboardingStep == onboardingStep;
+        other.onboardingStep == onboardingStep &&
+        other.displayName == displayName &&
+        other.email == email &&
+        other.legalName == legalName;
   }
 
   @override
@@ -71,6 +86,10 @@ class Profile {
         dateOfBirth.hashCode ^
         passportNumber.hashCode ^
         passportExpiry.hashCode ^
-        onboardingStep.hashCode;
+        onboardingStep.hashCode ^
+        displayName.hashCode ^
+        email.hashCode ^
+        legalName.hashCode;
   }
 }
+

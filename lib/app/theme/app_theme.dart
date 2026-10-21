@@ -162,3 +162,29 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
 final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(() {
   return ThemeModeNotifier();
 });
+
+/// Notifier managing the active [TextScalePreset].
+class TextScaleNotifier extends Notifier<TextScalePreset> {
+  @override
+  TextScalePreset build() {
+    try {
+      return ref.watch(settingsRepositoryProvider).getTextScalePreset();
+    } catch (_) {
+      return TextScalePreset.normal;
+    }
+  }
+
+  Future<void> setTextScalePreset(TextScalePreset preset) async {
+    state = preset;
+    try {
+      await ref.read(settingsRepositoryProvider).setTextScalePreset(preset);
+    } catch (_) {}
+  }
+}
+
+/// Provider for the application's active [TextScalePreset].
+final textScaleNotifierProvider =
+    NotifierProvider<TextScaleNotifier, TextScalePreset>(() {
+  return TextScaleNotifier();
+});
+

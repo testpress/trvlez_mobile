@@ -131,7 +131,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? upcomingReservations.first
         : null;
 
-    final travelerName = nextStay?.guestName;
+    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final travelerName = (profile?.displayName != null &&
+            profile!.displayName!.trim().isNotEmpty)
+        ? profile.displayName!.trim()
+        : nextStay?.guestName;
 
     final notifications = _getNotifications(
       nextStay: nextStay,

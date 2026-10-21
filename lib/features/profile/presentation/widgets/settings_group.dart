@@ -101,20 +101,20 @@ class SettingsRow extends StatelessWidget {
                   ),
                 ),
               ),
+              if (value != null) ...[
+                Text(
+                  value!,
+                  style: TextStyle(
+                    fontFamily: AppTypography.fontFamily,
+                    fontSize: 12,
+                    color: colors.textSecondary,
+                  ),
+                ),
+                SizedBox(width: space.inlineMicro),
+              ],
               if (trailing != null) ...[
                 trailing!,
               ] else ...[
-                if (value != null) ...[
-                  Text(
-                    value!,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      color: colors.textSecondary,
-                    ),
-                  ),
-                  SizedBox(width: space.inlineMicro),
-                ],
                 if (count != null) ...[
                   Container(
                     padding: space.insetTagSm,

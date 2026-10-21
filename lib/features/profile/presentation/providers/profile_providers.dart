@@ -51,6 +51,26 @@ class ProfileNotifier extends AsyncNotifier<Profile> {
     }
   }
 
+  Future<bool> updateUserDetails({
+    String? displayName,
+    String? email,
+  }) async {
+    state = const AsyncLoading<Profile>().copyWithPrevious(state);
+
+    try {
+      final repository = ref.read(profileRepositoryProvider);
+      final updatedProfile = await repository.updateUserDetails(
+        displayName: displayName,
+        email: email,
+      );
+      state = AsyncData(updatedProfile);
+      return true;
+    } catch (e, st) {
+      state = AsyncError<Profile>(e, st).copyWithPrevious(state);
+      return false;
+    }
+  }
+
   void clearError() {
     if (state.hasError && state.hasValue) {
       state = AsyncData(state.value!);

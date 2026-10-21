@@ -51,7 +51,24 @@ class ProfileRepositoryImpl implements ProfileRepository {
       throw mapDioException(e);
     }
   }
+
+  @override
+  Future<Profile> updateUserDetails({
+    String? displayName,
+    String? email,
+  }) async {
+    try {
+      await remoteDataSource.updateUserDetails(
+        fullName: displayName,
+        email: email,
+      );
+      return getProfile();
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 }
+
 
 /// Provider for the domain [ProfileRepository] interface.
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {

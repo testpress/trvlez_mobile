@@ -14,4 +14,11 @@ abstract interface class ProfileRepository {
     String? passportNumber,
     DateTime? passportExpiry,
   });
+
+  /// Updates user-owned details (display name, email).
+  Future<Profile> updateUserDetails({
+    String? displayName,
+    String? email,
+  });
 }
+
