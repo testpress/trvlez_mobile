@@ -148,12 +148,26 @@ class NfcFailedScreen extends ConsumerWidget {
     final fixText = _getMitigation();
     final rows = _buildRows(state.isNfcSkipped);
 
-    return BrandVerifyScreen(
-      backgroundAsset: 'assets/art/bg_nfc_scan.svg',
-      title: 'Verification',
-      helpLine: false,
-      isScrollable: true,
-      onBack: () => context.pop(),
+    void navigateExit() {
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go(AppRoutes.home);
+      }
+    }
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        navigateExit();
+      },
+      child: BrandVerifyScreen(
+        backgroundAsset: 'assets/art/bg_nfc_scan.svg',
+        title: 'Verification',
+        helpLine: false,
+        isScrollable: true,
+        onBack: navigateExit,
       body: [
         SizedBox(height: space.stackSection),
         Center(
@@ -252,7 +266,7 @@ class NfcFailedScreen extends ConsumerWidget {
               ref
                   .read(verificationNotifierProvider.notifier)
                   .submitVerificationAsync();
-              context.pushReplacement(AppRoutes.verificationFinalCheck);
+              context.go(AppRoutes.verificationFinalCheck);
             },
           ),
         ],
@@ -299,6 +313,7 @@ class NfcFailedScreen extends ConsumerWidget {
           ),
         ),
       ],
-    );
+    ),
+  );
   }
 }

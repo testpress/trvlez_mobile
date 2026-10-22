@@ -97,7 +97,7 @@ class NfcIntroScreen extends ConsumerWidget {
                   ref
                       .read(verificationNotifierProvider.notifier)
                       .submitVerificationAsync();
-                  context.pushReplacement(AppRoutes.verificationFinalCheck);
+                  context.go(AppRoutes.verificationFinalCheck);
                 },
               ),
               SizedBox(height: space.stackText),

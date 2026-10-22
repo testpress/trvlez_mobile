@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/chip_data_screen.dart';
@@ -160,6 +162,55 @@ void main() {
       // Verify details still shown
       expect(find.text('JOHN DOE'), findsOneWidget);
       expect(find.text('USA'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'tapping Submit verification submits asynchronously and routes via context.go to final check',
+    (tester) async {
+      final resultWithImage = NfcPassportResult(
+        rawDgBytesBase64: {'dg1': 'dummy'},
+        authMethod: NfcAuthMethod.bac,
+        availableDataGroups: ['dg1'],
+        parsedMrz: testMrz,
+        faceImageBytes: null,
+      );
+
+      final container = ProviderContainer();
+      container
+          .read(verificationNotifierProvider.notifier)
+          .setNfcResult(resultWithImage);
+
+      final router = GoRouter(
+        initialLocation: AppRoutes.chipData,
+        routes: [
+          GoRoute(
+            path: AppRoutes.chipData,
+            builder: (context, state) => const ChipDataScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.verificationFinalCheck,
+            builder: (context, state) =>
+                const Scaffold(body: Text('Final Check Screen')),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final submitButton = find.text('Submit verification');
+      expect(submitButton, findsOneWidget);
+
+      await tester.tap(submitButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Final Check Screen'), findsOneWidget);
     },
   );
 }

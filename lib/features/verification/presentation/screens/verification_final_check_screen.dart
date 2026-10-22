@@ -126,18 +126,22 @@ class _VerificationFinalCheckScreenState
       }
     });
 
-    return BrandVerifyScreen(
-      backgroundAsset: 'assets/art/bg_nfc.svg',
-      title: 'Verification',
-      helpLine: false,
-      isScrollable: false,
-      onBack: () {
-        if (context.canPop()) {
-          context.pop();
-        } else {
-          context.go(AppRoutes.home);
-        }
+    void navigateExit() {
+      context.go(AppRoutes.home);
+    }
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        navigateExit();
       },
+      child: BrandVerifyScreen(
+        backgroundAsset: 'assets/art/bg_nfc.svg',
+        title: 'Verification',
+        helpLine: false,
+        isScrollable: false,
+        onBack: navigateExit,
       body: [
         VerificationStepper(current: 4, circleSize: sizes.iconDefault),
         const Spacer(flex: 1),
@@ -263,6 +267,7 @@ class _VerificationFinalCheckScreenState
           text: 'Checked on our own systems.\nNever shared with external AI.',
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 }
