@@ -467,9 +467,7 @@ void main() {
 
     testWidgets('PreferencesScreen toggles theme mode', (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: PreferencesScreen()),
-        ),
+        const ProviderScope(child: MaterialApp(home: PreferencesScreen())),
       );
       await tester.pumpAndSettle();
 

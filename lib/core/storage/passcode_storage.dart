@@ -47,38 +47,3 @@ class PasscodeStorage {
 final passcodeStorageProvider = Provider<PasscodeStorage>((ref) {
   return PasscodeStorage();
 });
-
-/// Async notifier managing whether the device passcode lock is enabled.
-class AppPasscodeNotifier extends AsyncNotifier<bool> {
-  @override
-  Future<bool> build() async {
-    final storage = ref.watch(passcodeStorageProvider);
-    return storage.isPasscodeEnabled();
-  }
-
-  Future<void> toggleEnabled() async {
-    final current = state.valueOrNull ?? false;
-    final storage = ref.read(passcodeStorageProvider);
-    final next = !current;
-    await storage.setPasscodeEnabled(next);
-    state = AsyncData(next);
-  }
-
-  Future<void> setPasscode(String passcode) async {
-    final storage = ref.read(passcodeStorageProvider);
-    await storage.setPasscode(passcode);
-    state = const AsyncData(true);
-  }
-
-  Future<void> disablePasscode() async {
-    final storage = ref.read(passcodeStorageProvider);
-    await storage.setPasscodeEnabled(false);
-    state = const AsyncData(false);
-  }
-}
-
-/// Provider for active passcode enabled status.
-final appPasscodeNotifierProvider =
-    AsyncNotifierProvider<AppPasscodeNotifier, bool>(() {
-      return AppPasscodeNotifier();
-    });

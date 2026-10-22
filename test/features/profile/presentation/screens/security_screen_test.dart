@@ -44,33 +44,34 @@ void main() {
       );
     }
 
-    testWidgets('Renders Password, Passcode, Two-step, and Keychain disclaimer', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Renders Password, Passcode, Two-step, and Keychain disclaimer',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      expect(find.text('Security'), findsOneWidget);
+        expect(find.text('Security'), findsOneWidget);
 
-      // Password row
-      expect(find.text('Password'), findsOneWidget);
-      expect(find.text('••••••••'), findsOneWidget);
-      expect(find.text('Change'), findsOneWidget);
+        // Password row
+        expect(find.text('Password'), findsOneWidget);
+        expect(find.text('••••••••'), findsOneWidget);
+        expect(find.text('Change'), findsOneWidget);
 
-      // App passcode row
-      expect(find.text('App passcode'), findsOneWidget);
-      expect(find.text('Off'), findsOneWidget);
+        // App passcode row
+        expect(find.text('App passcode'), findsOneWidget);
+        expect(find.text('Off'), findsOneWidget);
 
-      // Two-step verification row
-      expect(find.text('Two-step verification'), findsOneWidget);
-      expect(find.byType(Switch), findsOneWidget);
+        // Two-step verification row
+        expect(find.text('Two-step verification'), findsOneWidget);
+        expect(find.byType(Switch), findsOneWidget);
 
-      // Keychain note
-      expect(
-        find.textContaining('lives in the Keychain — never on a server'),
-        findsOneWidget,
-      );
-    });
+        // Keychain note
+        expect(
+          find.textContaining('lives in the Keychain — never on a server'),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('Toggling Two-step verification switch updates state', (
       tester,

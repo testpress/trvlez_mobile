@@ -74,8 +74,8 @@ class AccountScreen extends ConsumerWidget {
     final name = (displayName != null && displayName.isNotEmpty)
         ? displayName
         : ((guestName != null && guestName.trim().isNotEmpty)
-            ? guestName.trim()
-            : 'Traveler');
+              ? guestName.trim()
+              : 'Traveler');
 
     final safeInitials = name
         .split(' ')
@@ -180,7 +180,6 @@ class AccountScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-
 
                   // ── Support ────────────────────────────────────────────
                   const SettingsGroupHeading('Support'),

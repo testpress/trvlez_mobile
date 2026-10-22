@@ -51,20 +51,13 @@ class ProfileRemoteDataSource {
   }
 
   /// Updates user details (display name, email) via /users/me.
-  Future<void> updateUserDetails({
-    String? fullName,
-    String? email,
-  }) async {
+  Future<void> updateUserDetails({String? fullName, String? email}) async {
     await dio.patch<Map<String, dynamic>>(
       '/users/me',
-      data: {
-        'full_name': ?fullName,
-        'email': ?email,
-      },
+      data: {'full_name': ?fullName, 'email': ?email},
     );
   }
 }
-
 
 /// Provider for the [ProfileRemoteDataSource].
 final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((

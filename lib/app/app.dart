@@ -54,9 +54,13 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
       themeMode: currentMode,
       routerConfig: ref.watch(routerProvider),
       builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        final systemScale = mediaQuery.textScaler.scale(1.0);
+        final effectiveScale = (systemScale * textScalePreset.scaleFactor)
+            .clamp(0.85, 1.35);
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(textScalePreset.scaleFactor),
+          data: mediaQuery.copyWith(
+            textScaler: TextScaler.linear(effectiveScale),
           ),
           child: child ?? const SizedBox.shrink(),
         );
@@ -64,4 +68,3 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
     );
   }
 }
-

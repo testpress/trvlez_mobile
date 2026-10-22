@@ -85,7 +85,9 @@ void main() {
 
       // Privacy note
       expect(
-        find.textContaining('Your date of birth was checked once to confirm you\'re 18+'),
+        find.textContaining(
+          'Your date of birth was checked once to confirm you\'re 18+',
+        ),
         findsOneWidget,
       );
 
@@ -97,48 +99,52 @@ void main() {
       expect(find.text('A12345678'), findsNothing);
     });
 
-    testWidgets('Unverified account displays locked legal name and verify button', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget(isVerified: false));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Unverified account displays locked legal name and verify button',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget(isVerified: false));
+        await tester.pumpAndSettle();
 
-      // Your details
-      expect(find.text('Display name'), findsOneWidget);
-      expect(find.text('Email'), findsOneWidget);
+        // Your details
+        expect(find.text('Display name'), findsOneWidget);
+        expect(find.text('Email'), findsOneWidget);
 
-      // Locked identity row
-      expect(find.text('Add with your passport'), findsOneWidget);
-      expect(
-        find.textContaining('Your legal name comes straight from your passport chip'),
-        findsOneWidget,
-      );
-      expect(find.text('Verify with your passport'), findsOneWidget);
+        // Locked identity row
+        expect(find.text('Add with your passport'), findsOneWidget);
+        expect(
+          find.textContaining(
+            'Your legal name comes straight from your passport chip',
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Verify with your passport'), findsOneWidget);
 
-      // Re-verify CTA should NOT be present when unverified
-      expect(find.text('Re-verify'), findsNothing);
+        // Re-verify CTA should NOT be present when unverified
+        expect(find.text('Re-verify'), findsNothing);
 
-      // NON-NEGOTIABLE: No date of birth, nationality, or document number
-      expect(find.text('Date of birth'), findsNothing);
-      expect(find.text('Nigeria'), findsNothing);
-      expect(find.text('A12345678'), findsNothing);
-    });
+        // NON-NEGOTIABLE: No date of birth, nationality, or document number
+        expect(find.text('Date of birth'), findsNothing);
+        expect(find.text('Nigeria'), findsNothing);
+        expect(find.text('A12345678'), findsNothing);
+      },
+    );
 
-    testWidgets('Tapping Re-verify on verified account shows confirmation dialog', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget(isVerified: true));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Tapping Re-verify on verified account shows confirmation dialog',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget(isVerified: true));
+        await tester.pumpAndSettle();
 
-      final reverifyBtn = find.text('Re-verify');
-      expect(reverifyBtn, findsOneWidget);
-      await tester.tap(reverifyBtn);
-      await tester.pumpAndSettle();
+        final reverifyBtn = find.text('Re-verify');
+        expect(reverifyBtn, findsOneWidget);
+        await tester.tap(reverifyBtn);
+        await tester.pumpAndSettle();
 
-      expect(find.text('Re-verify your identity?'), findsOneWidget);
-      expect(find.text('Start re-scan'), findsOneWidget);
-      expect(find.text('Cancel'), findsOneWidget);
-    });
+        expect(find.text('Re-verify your identity?'), findsOneWidget);
+        expect(find.text('Start re-scan'), findsOneWidget);
+        expect(find.text('Cancel'), findsOneWidget);
+      },
+    );
   });
 }
 

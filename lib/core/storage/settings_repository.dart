@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trvlez_mobile/app/theme/tokens/text_scale_preset.dart';
+import 'package:trvlez_mobile/core/design_tokens/text_scale_preset.dart';
 
-export 'package:trvlez_mobile/app/theme/tokens/text_scale_preset.dart';
+export 'package:trvlez_mobile/core/design_tokens/text_scale_preset.dart';
 
 class SettingsRepository {
   static const _themeKey = 'isDark';
@@ -51,7 +51,6 @@ class SettingsRepository {
   }
 }
 
-
 /// Provider for the [SettingsRepository].
 ///
 /// Since [SettingsRepository] requires asynchronous initialization, this provider
@@ -59,30 +58,3 @@ class SettingsRepository {
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   throw UnimplementedError('settingsRepositoryProvider must be overridden');
 });
-
-/// Notifier managing whether two-step verification is toggled on.
-class TwoStepVerificationNotifier extends Notifier<bool> {
-  @override
-  bool build() {
-    try {
-      return ref.watch(settingsRepositoryProvider).isTwoStepVerificationEnabled();
-    } catch (_) {
-      return false;
-    }
-  }
-
-  Future<void> toggle() async {
-    final next = !state;
-    state = next;
-    try {
-      await ref.read(settingsRepositoryProvider).setTwoStepVerificationEnabled(next);
-    } catch (_) {}
-  }
-}
-
-/// Provider for two-step verification setting state.
-final twoStepVerificationNotifierProvider =
-    NotifierProvider<TwoStepVerificationNotifier, bool>(() {
-  return TwoStepVerificationNotifier();
-});
-

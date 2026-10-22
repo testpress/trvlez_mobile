@@ -4,10 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
-import 'package:trvlez_mobile/core/storage/passcode_storage.dart';
-import 'package:trvlez_mobile/core/storage/settings_repository.dart';
+import 'package:trvlez_mobile/features/profile/presentation/providers/security_providers.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/passcode_setup_sheet.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
 
@@ -20,6 +17,8 @@ class SecurityScreen extends ConsumerWidget {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final sizes = context.sizes;
+    final text = context.text;
 
     final isPasscodeEnabled =
         ref.watch(appPasscodeNotifierProvider).valueOrNull ?? false;
@@ -37,12 +36,7 @@ class SecurityScreen extends ConsumerWidget {
         ),
         title: Text(
           'Account',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 16,
-            fontWeight: TypeScale.semiBold,
-            color: colors.textPrimary,
-          ),
+          style: text.titleLarge?.copyWith(color: colors.textPrimary),
         ),
       ),
       body: SafeArea(
@@ -53,10 +47,7 @@ class SecurityScreen extends ConsumerWidget {
             children: [
               Text(
                 'Security',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 24,
-                  fontWeight: TypeScale.bold,
+                style: text.displaySmall?.copyWith(
                   letterSpacing: -0.5,
                   color: colors.textPrimary,
                 ),
@@ -75,10 +66,8 @@ class SecurityScreen extends ConsumerWidget {
                       ),
                       child: Text(
                         'Change',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
+                        style: text.labelLarge?.copyWith(
                           color: colors.brandPrimary,
-                          fontWeight: TypeScale.semiBold,
                         ),
                       ),
                     ),
@@ -132,18 +121,16 @@ class SecurityScreen extends ConsumerWidget {
                   children: [
                     Icon(
                       AppIcons.alertCircle,
-                      size: 16,
+                      size: sizes.iconXs + 2,
                       color: colors.textSecondary,
                     ),
                     SizedBox(width: space.inlineItem),
                     Expanded(
                       child: Text(
                         'Password gets you into the account. The app passcode locks the app on this phone, and lives in the Keychain — never on a server.',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
-                          height: 1.5,
+                        style: text.labelMedium?.copyWith(
                           color: colors.textSecondary,
+                          height: 1.5,
                         ),
                       ),
                     ),

@@ -51,10 +51,7 @@ class ProfileNotifier extends AsyncNotifier<Profile> {
     }
   }
 
-  Future<bool> updateUserDetails({
-    String? displayName,
-    String? email,
-  }) async {
+  Future<bool> updateUserDetails({String? displayName, String? email}) async {
     state = const AsyncLoading<Profile>().copyWithPrevious(state);
 
     try {

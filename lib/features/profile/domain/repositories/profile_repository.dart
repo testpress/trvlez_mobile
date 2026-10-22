@@ -16,9 +16,5 @@ abstract interface class ProfileRepository {
   });
 
   /// Updates user-owned details (display name, email).
-  Future<Profile> updateUserDetails({
-    String? displayName,
-    String? email,
-  });
+  Future<Profile> updateUserDetails({String? displayName, String? email});
 }
-

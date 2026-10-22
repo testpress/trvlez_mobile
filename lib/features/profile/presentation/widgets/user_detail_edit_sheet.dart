@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 
@@ -100,6 +98,7 @@ class _UserDetailEditSheetState extends ConsumerState<UserDetailEditSheet> {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final text = context.text;
 
     return Container(
       decoration: BoxDecoration(
@@ -120,23 +119,14 @@ class _UserDetailEditSheetState extends ConsumerState<UserDetailEditSheet> {
         children: [
           Text(
             'Edit ${widget.fieldTitle}',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 18,
-              fontWeight: TypeScale.bold,
-              color: colors.textPrimary,
-            ),
+            style: text.headlineSmall?.copyWith(color: colors.textPrimary),
           ),
           SizedBox(height: space.stackText),
           Text(
             widget.isEmail
                 ? 'Your email is used for booking confirmations and account sign-in.'
                 : 'Your display name is how TRVLez greets you across the app.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              color: colors.textSecondary,
-            ),
+            style: text.bodyMedium?.copyWith(color: colors.textSecondary),
           ),
           SizedBox(height: space.stackFormField),
           TextField(
@@ -144,7 +134,12 @@ class _UserDetailEditSheetState extends ConsumerState<UserDetailEditSheet> {
             keyboardType: widget.isEmail
                 ? TextInputType.emailAddress
                 : TextInputType.name,
+            textInputAction: TextInputAction.done,
+            autofillHints: widget.isEmail
+                ? const [AutofillHints.email]
+                : const [AutofillHints.name],
             autofocus: true,
+            onSubmitted: (_) => _handleSave(),
             decoration: InputDecoration(
               hintText: 'Enter ${widget.fieldTitle.toLowerCase()}',
               errorText: _error,

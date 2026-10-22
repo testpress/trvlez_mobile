@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/text_size_selector.dart';
 
@@ -15,6 +13,8 @@ class PreferencesScreen extends ConsumerWidget {
 
   void _showThemeDialog(BuildContext context, WidgetRef ref) {
     final currentMode = ref.read(themeModeProvider);
+    final space = context.space;
+    final sizes = context.sizes;
 
     showDialog<void>(
       context: context,
@@ -23,20 +23,22 @@ class PreferencesScreen extends ConsumerWidget {
         children: [
           SimpleDialogOption(
             onPressed: () {
-              ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.system);
+              ref
+                  .read(themeModeProvider.notifier)
+                  .setThemeMode(ThemeMode.system);
               Navigator.pop(dialogContext);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: space.stackItem),
               child: Row(
                 children: [
                   Icon(
                     currentMode == ThemeMode.system
                         ? AppIcons.circleCheck
                         : AppIcons.check,
-                    size: 18,
+                    size: sizes.iconSm,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: space.inlineButtonGroup),
                   const Text('System default'),
                 ],
               ),
@@ -44,20 +46,22 @@ class PreferencesScreen extends ConsumerWidget {
           ),
           SimpleDialogOption(
             onPressed: () {
-              ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light);
+              ref
+                  .read(themeModeProvider.notifier)
+                  .setThemeMode(ThemeMode.light);
               Navigator.pop(dialogContext);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: space.stackItem),
               child: Row(
                 children: [
                   Icon(
                     currentMode == ThemeMode.light
                         ? AppIcons.circleCheck
                         : AppIcons.check,
-                    size: 18,
+                    size: sizes.iconSm,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: space.inlineButtonGroup),
                   const Text('Light'),
                 ],
               ),
@@ -69,16 +73,16 @@ class PreferencesScreen extends ConsumerWidget {
               Navigator.pop(dialogContext);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: space.stackItem),
               child: Row(
                 children: [
                   Icon(
                     currentMode == ThemeMode.dark
                         ? AppIcons.circleCheck
                         : AppIcons.check,
-                    size: 18,
+                    size: sizes.iconSm,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: space.inlineButtonGroup),
                   const Text('Dark'),
                 ],
               ),
@@ -93,6 +97,7 @@ class PreferencesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final space = context.space;
+    final text = context.text;
     final currentThemeMode = ref.watch(themeModeProvider);
 
     final themeLabel = switch (currentThemeMode) {
@@ -113,12 +118,7 @@ class PreferencesScreen extends ConsumerWidget {
         ),
         title: Text(
           'Account',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 16,
-            fontWeight: TypeScale.semiBold,
-            color: colors.textPrimary,
-          ),
+          style: text.titleLarge?.copyWith(color: colors.textPrimary),
         ),
       ),
       body: SafeArea(
@@ -129,10 +129,7 @@ class PreferencesScreen extends ConsumerWidget {
             children: [
               Text(
                 'Preferences',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 24,
-                  fontWeight: TypeScale.bold,
+                style: text.displaySmall?.copyWith(
                   letterSpacing: -0.5,
                   color: colors.textPrimary,
                 ),

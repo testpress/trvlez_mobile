@@ -185,6 +185,5 @@ class TextScaleNotifier extends Notifier<TextScalePreset> {
 /// Provider for the application's active [TextScalePreset].
 final textScaleNotifierProvider =
     NotifierProvider<TextScaleNotifier, TextScalePreset>(() {
-  return TextScaleNotifier();
-});
-
+      return TextScaleNotifier();
+    });

@@ -69,7 +69,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 }
 
-
 /// Provider for the domain [ProfileRepository] interface.
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepositoryImpl(

@@ -18,9 +18,7 @@ void main() {
 
     Widget createTestWidget() {
       return ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-        ],
+        overrides: [settingsRepositoryProvider.overrideWithValue(settingsRepo)],
         child: MaterialApp(
           theme: AppTheme.lightTheme,
           home: const PreferencesScreen(),
@@ -28,34 +26,35 @@ void main() {
       );
     }
 
-    testWidgets('Renders Text size control with 4 ezChat presets and preview card', (
-      tester,
-    ) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Renders Text size control with 4 ezChat presets and preview card',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      expect(find.text('Preferences'), findsOneWidget);
-      expect(find.text('Reading'), findsOneWidget);
-      expect(find.text('Text size'), findsOneWidget);
+        expect(find.text('Preferences'), findsOneWidget);
+        expect(find.text('Reading'), findsOneWidget);
+        expect(find.text('Text size'), findsOneWidget);
 
-      // Four named presets
-      expect(find.text('Smaller'), findsOneWidget);
-      expect(find.text('Normal'), findsOneWidget);
-      expect(find.text('Larger'), findsOneWidget);
-      expect(find.text('Largest'), findsOneWidget);
+        // Four named presets
+        expect(find.text('Smaller'), findsOneWidget);
+        expect(find.text('Normal'), findsOneWidget);
+        expect(find.text('Larger'), findsOneWidget);
+        expect(find.text('Largest'), findsOneWidget);
 
-      // Live preview box
-      expect(find.text('PREVIEW'), findsOneWidget);
-      expect(find.text('Grand Ocean Hotel'), findsOneWidget);
-      expect(
-        find.text('Lisbon · 2–6 Nov · check-in from 3pm'),
-        findsOneWidget,
-      );
+        // Live preview box
+        expect(find.text('PREVIEW'), findsOneWidget);
+        expect(find.text('Grand Ocean Hotel'), findsOneWidget);
+        expect(
+          find.text('Lisbon · 2–6 Nov · check-in from 3pm'),
+          findsOneWidget,
+        );
 
-      // Appearance / Theme row
-      expect(find.text('Appearance'), findsOneWidget);
-      expect(find.text('Theme'), findsOneWidget);
-    });
+        // Appearance / Theme row
+        expect(find.text('Appearance'), findsOneWidget);
+        expect(find.text('Theme'), findsOneWidget);
+      },
+    );
 
     testWidgets('Tapping Larger preset updates selection', (tester) async {
       await tester.pumpWidget(createTestWidget());

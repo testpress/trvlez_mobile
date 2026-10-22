@@ -132,9 +132,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         : null;
 
     final profile = ref.watch(currentProfileProvider).valueOrNull;
-    final travelerName = (profile?.displayName != null &&
-            profile!.displayName!.trim().isNotEmpty)
-        ? profile.displayName!.trim()
+    final displayName = profile?.displayName?.trim();
+    final travelerName = (displayName != null && displayName.isNotEmpty)
+        ? displayName
         : nextStay?.guestName;
 
     final notifications = _getNotifications(

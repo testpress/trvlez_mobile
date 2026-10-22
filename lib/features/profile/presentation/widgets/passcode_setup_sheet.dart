@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
-import 'package:trvlez_mobile/core/storage/passcode_storage.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/features/profile/presentation/providers/security_providers.dart';
 
 /// Modal bottom sheet for configuring local device Keychain app passcode.
 class PasscodeSetupSheet extends ConsumerStatefulWidget {
@@ -12,12 +10,16 @@ class PasscodeSetupSheet extends ConsumerStatefulWidget {
 
   final bool isCurrentlyEnabled;
 
-  static Future<void> show(BuildContext context, {required bool isCurrentlyEnabled}) {
+  static Future<void> show(
+    BuildContext context, {
+    required bool isCurrentlyEnabled,
+  }) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => PasscodeSetupSheet(isCurrentlyEnabled: isCurrentlyEnabled),
+      builder: (_) =>
+          PasscodeSetupSheet(isCurrentlyEnabled: isCurrentlyEnabled),
     );
   }
 
@@ -72,11 +74,14 @@ class _PasscodeSetupSheetState extends ConsumerState<PasscodeSetupSheet> {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final text = context.text;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(shape.radiusOverlay.topRight.x)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(shape.radiusOverlay.topRight.x),
+        ),
       ),
       padding: EdgeInsets.only(
         left: space.insetDialog.left,
@@ -89,38 +94,31 @@ class _PasscodeSetupSheetState extends ConsumerState<PasscodeSetupSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            widget.isCurrentlyEnabled ? 'Manage App Passcode' : 'Set App Passcode',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 18,
-              fontWeight: TypeScale.bold,
-              color: colors.textPrimary,
-            ),
+            widget.isCurrentlyEnabled
+                ? 'Manage App Passcode'
+                : 'Set App Passcode',
+            style: text.headlineSmall?.copyWith(color: colors.textPrimary),
           ),
           SizedBox(height: space.stackText),
           Text(
             widget.isCurrentlyEnabled
                 ? 'Update or remove the 4-digit PIN locking TRVLez on this phone.'
                 : 'Enter a 4-digit PIN to lock TRVLez on this device.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              color: colors.textSecondary,
-            ),
+            style: text.bodyMedium?.copyWith(color: colors.textSecondary),
           ),
           SizedBox(height: space.stackFormField),
           TextField(
             controller: _controller,
             keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.password],
             maxLength: 4,
             obscureText: true,
             autofocus: true,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 24,
+            onSubmitted: (_) => _handleSave(),
+            style: text.displaySmall?.copyWith(
               letterSpacing: 12,
-              fontWeight: TypeScale.bold,
               color: colors.textPrimary,
             ),
             decoration: InputDecoration(
@@ -131,7 +129,9 @@ class _PasscodeSetupSheetState extends ConsumerState<PasscodeSetupSheet> {
           ),
           SizedBox(height: space.stackSection),
           AppButton(
-            label: widget.isCurrentlyEnabled ? 'Update Passcode' : 'Enable Passcode',
+            label: widget.isCurrentlyEnabled
+                ? 'Update Passcode'
+                : 'Enable Passcode',
             isLoading: _isSubmitting,
             onPressed: _handleSave,
           ),
@@ -141,11 +141,7 @@ class _PasscodeSetupSheetState extends ConsumerState<PasscodeSetupSheet> {
               onPressed: _isSubmitting ? null : _handleDisable,
               child: Text(
                 'Turn Passcode Off',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  color: colors.feedbackError,
-                  fontWeight: TypeScale.semiBold,
-                ),
+                style: text.labelLarge?.copyWith(color: colors.feedbackError),
               ),
             ),
           ],
