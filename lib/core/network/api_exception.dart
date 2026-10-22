@@ -88,9 +88,10 @@ class ApiException implements Exception {
 
   /// Whether this error indicates the session has expired or is invalid.
   bool get isSessionExpired =>
-      statusCode == 400 &&
+      (statusCode == 400 || statusCode == 404 || statusCode == 422) &&
       (message.toLowerCase().contains('session') ||
-          message.toLowerCase().contains('start a verification'));
+          message.toLowerCase().contains('start a verification') ||
+          message.toLowerCase().contains('active verification'));
 
   @override
   String toString() => 'ApiException($statusCode): $message';

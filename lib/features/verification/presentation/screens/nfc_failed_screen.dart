@@ -124,9 +124,17 @@ class NfcFailedScreen extends ConsumerWidget {
     ];
   }
 
-  void _onRedoTap(BuildContext context, WidgetRef ref, String route) {
+  void _onRedoTap(
+    BuildContext context,
+    WidgetRef ref,
+    String route,
+    String label,
+  ) {
     final notifier = ref.read(verificationNotifierProvider.notifier);
-    if (_isSelfie) {
+    if (label.toLowerCase().contains('start over') ||
+        route == AppRoutes.passportCapture) {
+      notifier.reset();
+    } else if (_isSelfie) {
       notifier.clearVideo();
     } else if (!_isChipScan) {
       notifier.clearImage();
@@ -254,7 +262,8 @@ class NfcFailedScreen extends ConsumerWidget {
         AppButton(
           label: resolvedLabel,
           variant: AppButtonVariant.brandWhite,
-          onPressed: () => _onRedoTap(context, ref, resolvedRoute),
+          onPressed: () =>
+              _onRedoTap(context, ref, resolvedRoute, resolvedLabel),
         ),
         if (_isChipScan) ...[
           SizedBox(height: space.stackText),

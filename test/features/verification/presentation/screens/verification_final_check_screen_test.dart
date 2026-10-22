@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +23,7 @@ class TestVerificationNotifier extends VerificationNotifier {
 
   int submitCallCount = 0;
   int reconcileCallCount = 0;
+  int resetCallCount = 0;
   String? polledJobId;
 
   @override
@@ -36,6 +39,12 @@ class TestVerificationNotifier extends VerificationNotifier {
   @override
   void startPollingVerificationJob(String jobId) {
     polledJobId = jobId;
+  }
+
+  @override
+  void reset() {
+    resetCallCount++;
+    super.reset();
   }
 
   void updateState(VerificationState newState) {
@@ -71,6 +80,11 @@ void main() {
           path: AppRoutes.nfcFailed,
           builder: (context, state) =>
               const Scaffold(body: Text('NFC Failed Screen')),
+        ),
+        GoRoute(
+          path: AppRoutes.passportCapture,
+          builder: (context, state) =>
+              const Scaffold(body: Text('Passport Capture Screen')),
         ),
       ],
     );
@@ -179,29 +193,100 @@ void main() {
       );
     });
 
-    testWidgets('triggers submitVerificationAsync on initial mount if idle', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(1170, 2532);
-      tester.view.devicePixelRatio = 3.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'triggers submitVerificationAsync on initial mount if idle with documents',
+      (tester) async {
+        tester.view.physicalSize = const Size(1170, 2532);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      final notifier = TestVerificationNotifier(
-        const VerificationState(phase: VerificationPhase.idle),
-      );
-      final container = ProviderContainer(
-        overrides: [verificationNotifierProvider.overrideWith(() => notifier)],
-      );
-      addTearDown(container.dispose);
+        final notifier = TestVerificationNotifier(
+          VerificationState(
+            phase: VerificationPhase.idle,
+            capturedImage: File('dummy.jpg'),
+          ),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            verificationNotifierProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(createTestWidget(container: container));
-      await tester.pump();
+        await tester.pumpWidget(createTestWidget(container: container));
+        await tester.pump();
 
-      expect(notifier.submitCallCount, 1);
-    });
+        expect(notifier.submitCallCount, 1);
+        expect(notifier.reconcileCallCount, 0);
+      },
+    );
+
+    testWidgets(
+      'triggers reconcileWithBackend on initial mount if idle without documents',
+      (tester) async {
+        tester.view.physicalSize = const Size(1170, 2532);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final notifier = TestVerificationNotifier(
+          const VerificationState(phase: VerificationPhase.idle),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            verificationNotifierProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(createTestWidget(container: container));
+        await tester.pump();
+
+        expect(notifier.reconcileCallCount, 1);
+        expect(notifier.submitCallCount, 0);
+      },
+    );
+
+    testWidgets(
+      'navigates immediately to failure screen on initial mount when status is failed',
+      (tester) async {
+        tester.view.physicalSize = const Size(1170, 2532);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final notifier = TestVerificationNotifier(
+          const VerificationState(
+            phase: VerificationPhase.idle,
+            verificationStatus: VerificationStatus(
+              status: 'failed',
+              failedStep: 'passport',
+              errorReason: 'Passport photo blurry',
+            ),
+          ),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            verificationNotifierProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(createTestWidget(container: container));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+
+        expect(find.text('NFC Failed Screen'), findsOneWidget);
+        expect(notifier.submitCallCount, 0);
+      },
+    );
 
     testWidgets('navigates to success when verification succeeds', (
       tester,
@@ -301,6 +386,46 @@ void main() {
 
       expect(notifier.submitCallCount, 1);
     });
+
+    testWidgets(
+      'shows only Start over button when error indicates no active session',
+      (tester) async {
+        tester.view.physicalSize = const Size(1170, 2532);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final notifier = TestVerificationNotifier(
+          const VerificationState(
+            phase: VerificationPhase.error,
+            errorMessage: 'No active verification session',
+          ),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            verificationNotifierProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(createTestWidget(container: container));
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(find.text('No active verification session'), findsOneWidget);
+        expect(find.text('Retry submission'), findsNothing);
+        final startOverButton = find.text('Start over');
+        expect(startOverButton, findsOneWidget);
+
+        await tester.tap(startOverButton);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+
+        expect(notifier.resetCallCount, 1);
+        expect(find.text('Passport Capture Screen'), findsOneWidget);
+      },
+    );
 
     testWidgets('starts polling when verificationJobId is provided', (
       tester,

@@ -17,7 +17,7 @@ import 'package:trvlez_mobile/features/verification/presentation/providers/verif
 import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 
 class VerificationNotifier extends Notifier<VerificationState> {
-  late final VerificationPollingService _pollingService;
+  VerificationPollingService? _pollingService;
 
   /// Guards against duplicate submissions from rapid taps.
   bool _isSubmitting = false;
@@ -71,6 +71,7 @@ class VerificationNotifier extends Notifier<VerificationState> {
       final repository = ref.read(verificationRepositoryProvider);
       final verificationStatus = await repository.getVerificationStatus();
       state = state.copyWith(verificationStatus: verificationStatus);
+      final serverStatus = verificationStatus.status;
 
       if (verificationStatus.isVerified) {
         state = state.copyWith(phase: VerificationPhase.verified);
@@ -78,18 +79,20 @@ class VerificationNotifier extends Notifier<VerificationState> {
         return;
       }
 
-      if (!verificationStatus.hasActiveSession) {
-        // No session exists — fresh start is valid
-        return;
-      }
-
-      final serverStatus = verificationStatus.status;
-
       if (verificationStatus.isFailed) {
         state = state.copyWith(
           phase: VerificationPhase.verificationFailed,
           errorMessage: verificationStatus.errorReason,
         );
+        return;
+      }
+
+      if (!verificationStatus.hasActiveSession) {
+        // No session exists — fresh start is valid
+        if (state.phase == VerificationPhase.submitting ||
+            state.phase == VerificationPhase.verifying) {
+          state = state.copyWith(phase: VerificationPhase.idle);
+        }
         return;
       }
 
@@ -527,6 +530,15 @@ class VerificationNotifier extends Notifier<VerificationState> {
       // Handle session expired — try to reconcile silently
       if (apiException?.isSessionExpired == true) {
         await reconcileWithBackend();
+        if (state.phase == VerificationPhase.submitting) {
+          state = state.copyWith(
+            phase: VerificationPhase.error,
+            errorMessage: ApiException.extractMessage(
+              e,
+              'No active verification session',
+            ),
+          );
+        }
         return;
       }
 
@@ -545,7 +557,9 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
   /// Starts polling for a verification job with proper state management.
   void _startPollingForJob(String jobId) {
-    _pollingService.startPolling(
+    final polling = _pollingService ??=
+        VerificationPollingService(repository: ref.read(verificationRepositoryProvider));
+    polling.startPolling(
       jobId: jobId,
       onUpdate: (pollingResult, domainStatus) {
         final isVerified = pollingResult.isVerified;
@@ -579,6 +593,6 @@ class VerificationNotifier extends Notifier<VerificationState> {
   }
 
   void stopPolling() {
-    _pollingService.stopPolling();
+    _pollingService?.stopPolling();
   }
 }

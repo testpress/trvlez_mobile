@@ -28,39 +28,81 @@ class VerificationFinalCheckScreen extends ConsumerStatefulWidget {
 }
 
 class _VerificationFinalCheckScreenState
-    extends ConsumerState<VerificationFinalCheckScreen> {
+    extends ConsumerState<VerificationFinalCheckScreen>
+    with WidgetsBindingObserver {
   bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      if (widget.verificationJobId != null) {
-        ref
-            .read(verificationNotifierProvider.notifier)
-            .startPollingVerificationJob(widget.verificationJobId!);
-      }
-      final state = ref.read(verificationNotifierProvider);
-      if (state.phase == VerificationPhase.verified ||
-          state.verificationStatus?.isVerified == true) {
-        _navigateToSuccess();
-      } else if (state.phase == VerificationPhase.verificationFailed ||
-          state.verificationStatus?.isFailed == true) {
-        _handleFailure(state);
-      } else if (state.phase == VerificationPhase.submitting ||
-          state.phase == VerificationPhase.verifying) {
-        // Polling already active or submission currently executing
-      } else if (state.verificationStatus?.isProcessing == true) {
-        ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
-      } else if (state.phase == VerificationPhase.error) {
-        // Already in error state, wait for user to retry
-      } else {
-        ref
-            .read(verificationNotifierProvider.notifier)
-            .submitVerificationAsync();
-      }
+      _checkStatusAndProceed();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.resumed) {
+      _checkStatusAndProceed();
+    }
+  }
+
+  void _checkStatusAndProceed() {
+    if (_hasNavigated || !mounted) return;
+
+    final state = ref.read(verificationNotifierProvider);
+    final status = state.verificationStatus;
+
+    if (state.phase == VerificationPhase.verified ||
+        status?.isVerified == true) {
+      _navigateToSuccess();
+      return;
+    }
+
+    if (state.phase == VerificationPhase.verificationFailed ||
+        status?.isFailed == true) {
+      _handleFailure(state);
+      return;
+    }
+
+    if (widget.verificationJobId != null) {
+      ref
+          .read(verificationNotifierProvider.notifier)
+          .startPollingVerificationJob(widget.verificationJobId!);
+      return;
+    }
+
+    if (state.phase == VerificationPhase.submitting ||
+        state.phase == VerificationPhase.verifying) {
+      return;
+    }
+
+    if (status?.isProcessing == true) {
+      ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
+      return;
+    }
+
+    if (state.phase == VerificationPhase.error) {
+      return;
+    }
+
+    final hasLocalDocuments =
+        state.capturedImage != null || state.capturedVideo != null;
+    if (hasLocalDocuments) {
+      ref
+          .read(verificationNotifierProvider.notifier)
+          .submitVerificationAsync();
+    } else {
+      ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
+    }
   }
 
   void _navigateToSuccess() {
@@ -72,7 +114,8 @@ class _VerificationFinalCheckScreenState
   void _handleFailure(VerificationState state) {
     if (_hasNavigated || !mounted) return;
     _hasNavigated = true;
-    final status = state.verificationStatus;
+    final status = state.verificationStatus ??
+        ref.read(verificationStatusProvider).valueOrNull;
     final (title, route, label) = _resolveFailedStep(status?.failedStep);
     context.pushReplacement(
       AppRoutes.nfcFailed,
@@ -119,12 +162,16 @@ class _VerificationFinalCheckScreenState
       previous,
       next,
     ) {
-      if (next.phase == VerificationPhase.verified) {
+      if (next.phase == VerificationPhase.verified ||
+          next.verificationStatus?.isVerified == true) {
         _navigateToSuccess();
-      } else if (next.phase == VerificationPhase.verificationFailed) {
+      } else if (next.phase == VerificationPhase.verificationFailed ||
+          next.verificationStatus?.isFailed == true) {
         _handleFailure(next);
       }
     });
+
+
 
     void navigateExit() {
       context.go(AppRoutes.home);
@@ -212,13 +259,53 @@ class _VerificationFinalCheckScreenState
                   ),
                 ),
                 SizedBox(height: space.stackItem),
-                AppButton(
-                  label: 'Retry submission',
-                  variant: AppButtonVariant.brandWhite,
-                  onPressed: () {
-                    ref
-                        .read(verificationNotifierProvider.notifier)
-                        .submitVerificationAsync();
+                Builder(
+                  builder: (context) {
+                    final errorMsg = state.errorMessage?.toLowerCase() ?? '';
+                    final isNoActiveSession = errorMsg.contains('session') ||
+                        errorMsg.contains('active verification');
+                    final canRetry = !isNoActiveSession;
+
+                    if (canRetry) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              label: 'Start over',
+                              variant: AppButtonVariant.brandOutline,
+                              onPressed: () {
+                                ref
+                                    .read(verificationNotifierProvider.notifier)
+                                    .reset();
+                                context.go(AppRoutes.passportCapture);
+                              },
+                            ),
+                          ),
+                          SizedBox(width: space.inlineButtonGroup),
+                          Expanded(
+                            child: AppButton(
+                              label: 'Retry submission',
+                              variant: AppButtonVariant.brandWhite,
+                              onPressed: () {
+                                ref
+                                    .read(verificationNotifierProvider.notifier)
+                                    .submitVerificationAsync();
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return AppButton(
+                      label: 'Start over',
+                      variant: AppButtonVariant.brandWhite,
+                      onPressed: () {
+                        ref
+                            .read(verificationNotifierProvider.notifier)
+                            .reset();
+                        context.go(AppRoutes.passportCapture);
+                      },
+                    );
                   },
                 ),
               ],

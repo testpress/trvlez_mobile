@@ -20,6 +20,9 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
   void initState() {
     super.initState();
     _lifecycleListener = AppLifecycleListener(onResume: _onAppResumed);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _onAppResumed();
+    });
   }
 
   @override
