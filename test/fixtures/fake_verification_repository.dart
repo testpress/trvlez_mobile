@@ -11,12 +11,18 @@ import 'package:trvlez_mobile/features/verification/domain/verification_submit_r
 
 class FakeVerificationRepository implements VerificationRepository {
   bool uploadPassportCalled = false;
+  bool startReverificationCalled = false;
   bool checkImageQualityCalled = false;
   bool extractMrzCalled = false;
   bool uploadSelfieCalled = false;
   bool checkVideoQualityCalled = false;
   bool submitVerificationCalled = false;
   bool confirmMrzCalled = false;
+
+  @override
+  Future<void> startReverification() async {
+    startReverificationCalled = true;
+  }
 
   ImageQualityResult imageQualityResult = ImageQualityResult(
     success: true,

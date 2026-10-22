@@ -19,6 +19,7 @@ import 'package:trvlez_mobile/features/verification/domain/verification_submit_r
 class FakeVerificationRemoteDataSource extends Fake
     implements VerificationRemoteDataSource {
   bool startVerificationCalled = false;
+  bool startReverificationCalled = false;
   bool completePassportUploadCalled = false;
   bool completeSelfieUploadCalled = false;
   String? lastCompletedFileId;
@@ -90,6 +91,12 @@ class FakeVerificationRemoteDataSource extends Fake
   Future<void> startVerification() async {
     if (exceptionToThrow != null) throw exceptionToThrow!;
     startVerificationCalled = true;
+  }
+
+  @override
+  Future<void> startReverification() async {
+    if (exceptionToThrow != null) throw exceptionToThrow!;
+    startReverificationCalled = true;
   }
 
   @override
@@ -222,6 +229,11 @@ void main() {
 
     tearDown(() {
       tempDir.deleteSync(recursive: true);
+    });
+
+    test('startReverification delegates to remoteDataSource', () async {
+      await repository.startReverification();
+      expect(fakeDataSource.startReverificationCalled, isTrue);
     });
 
     test(

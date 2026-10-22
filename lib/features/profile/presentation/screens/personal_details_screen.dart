@@ -5,6 +5,7 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show verificationNotifierProvider;
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
@@ -36,10 +37,29 @@ class PersonalDetailsScreen extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(dialogContext);
-              ref.read(verificationNotifierProvider.notifier).reset();
-              context.push(AppRoutes.passportInstructions);
+              try {
+                await ref
+                    .read(verificationNotifierProvider.notifier)
+                    .startReverification();
+                if (context.mounted) {
+                  context.push(AppRoutes.passportInstructions);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        ApiException.extractMessage(
+                          e,
+                          'Failed to start re-verification. Please try again.',
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
             },
             child: const Text('Start re-scan'),
           ),

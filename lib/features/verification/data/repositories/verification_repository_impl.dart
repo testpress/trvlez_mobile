@@ -26,6 +26,15 @@ class VerificationRepositoryImpl implements VerificationRepository {
   });
 
   @override
+  Future<void> startReverification() async {
+    try {
+      await remoteDataSource.startReverification();
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
+  @override
   Future<void> uploadPassport(
     File imageFile, {
     required void Function(double progress) onProgress,

@@ -5,6 +5,8 @@ import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/personal_details_screen.dart';
+import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+import '../../../../fixtures/fake_verification_repository.dart';
 
 class MockProfileRepository extends Fake implements ProfileRepository {
   Profile profileToReturn = const Profile(
@@ -37,15 +39,20 @@ class MockProfileRepository extends Fake implements ProfileRepository {
 void main() {
   group('PersonalDetailsScreen Widget Tests', () {
     late MockProfileRepository mockRepo;
+    late FakeVerificationRepository fakeVerificationRepo;
 
     setUp(() {
       mockRepo = MockProfileRepository();
+      fakeVerificationRepo = FakeVerificationRepository();
     });
 
     Widget createTestWidget({required bool isVerified}) {
       return ProviderScope(
         overrides: [
           profileRepositoryProvider.overrideWithValue(mockRepo),
+          verificationRepositoryProvider.overrideWithValue(
+            fakeVerificationRepo,
+          ),
           travelerVerificationStateProvider.overrideWithValue(
             isVerified
                 ? TravelerVerificationState.verified
@@ -143,6 +150,24 @@ void main() {
         expect(find.text('Re-verify your identity?'), findsOneWidget);
         expect(find.text('Start re-scan'), findsOneWidget);
         expect(find.text('Cancel'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Tapping Start re-scan in confirmation dialog calls startReverification',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget(isVerified: true));
+        await tester.pumpAndSettle();
+
+        final reverifyBtn = find.text('Re-verify');
+        await tester.tap(reverifyBtn);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Start re-scan'), findsOneWidget);
+        await tester.tap(find.text('Start re-scan'));
+        await tester.pumpAndSettle();
+
+        expect(fakeVerificationRepo.startReverificationCalled, isTrue);
       },
     );
   });

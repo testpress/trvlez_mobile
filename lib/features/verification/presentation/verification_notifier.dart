@@ -212,6 +212,19 @@ class VerificationNotifier extends Notifier<VerificationState> {
     state = const VerificationState();
   }
 
+  /// Initiates an enterprise re-verification session for an already-verified user.
+  ///
+  /// Calls POST /traveler/verification/reverify, clears local state, and sets
+  /// the notifier to [VerificationPhase.idle] so the traveler can capture a fresh passport.
+  Future<void> startReverification() async {
+    reset();
+    final repository = ref.read(verificationRepositoryProvider);
+    await repository.startReverification();
+    ref.invalidate(currentProfileProvider);
+    ref.invalidate(verificationStatusProvider);
+    state = const VerificationState(phase: VerificationPhase.idle);
+  }
+
   void setNfcResult(NfcPassportResult result) {
     state = state.copyWith(nfcResult: result, isNfcSkipped: false);
   }

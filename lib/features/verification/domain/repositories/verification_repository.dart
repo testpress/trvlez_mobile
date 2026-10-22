@@ -10,6 +10,9 @@ import 'package:trvlez_mobile/features/verification/domain/verification_submit_r
 
 /// Domain contract for traveler identity verification operations.
 abstract interface class VerificationRepository {
+  /// Initiates an enterprise re-verification session for an already-verified traveler.
+  Future<void> startReverification();
+
   /// Uploads a passport photo to storage with upload progress tracking.
   Future<void> uploadPassport(
     File imageFile, {

@@ -31,6 +31,23 @@ void main() {
       expect(recordedOptions?.path, '/traveler/verification/start');
     });
 
+    test('startReverification posts to /traveler/verification/reverify', () async {
+      RequestOptions? recordedOptions;
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            recordedOptions = options;
+            handler.resolve(
+              Response(requestOptions: options, statusCode: 200, data: {}),
+            );
+          },
+        ),
+      );
+
+      await dataSource.startReverification();
+      expect(recordedOptions?.path, '/traveler/verification/reverify');
+    });
+
     test('initPassportUpload returns uploadUrl and fileId', () async {
       dio.interceptors.add(
         InterceptorsWrapper(

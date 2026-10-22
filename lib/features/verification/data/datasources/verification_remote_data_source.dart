@@ -12,6 +12,8 @@ import 'package:trvlez_mobile/features/verification/domain/verification_submit_r
 abstract interface class VerificationRemoteDataSource {
   Future<void> startVerification();
 
+  Future<void> startReverification();
+
   Future<({String uploadUrl, String fileId})> initPassportUpload({
     required String mimeType,
     required int fileSizeBytes,
@@ -55,6 +57,11 @@ class VerificationRemoteDataSourceImpl implements VerificationRemoteDataSource {
   @override
   Future<void> startVerification() async {
     await dio.post('/traveler/verification/start', data: {});
+  }
+
+  @override
+  Future<void> startReverification() async {
+    await dio.post('/traveler/verification/reverify', data: {});
   }
 
   @override
