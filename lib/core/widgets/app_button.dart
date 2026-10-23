@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_motion.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Style variants for [AppButton].
 enum AppButtonVariant {
@@ -125,12 +125,8 @@ class AppButton extends StatelessWidget {
           SizedBox(width: space.inlineIconLabel),
           Text(
             label,
-            style: const TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14,
-              fontWeight: TypeScale.semiBold,
-              letterSpacing: 0.2,
-            ),
+            textAlign: TextAlign.center,
+            style: AppTypography.buttonLabel,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -139,29 +135,36 @@ class AppButton extends StatelessWidget {
     } else {
       child = Text(
         label,
-        style: const TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 14,
-          fontWeight: TypeScale.semiBold,
-          letterSpacing: 0.2,
-        ),
+        textAlign: TextAlign.center,
+        style: AppTypography.buttonLabel,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );
     }
 
-    final effectiveHeight = height ?? sizes.controlLg;
+    final effectiveHeight =
+        height ??
+        (variant == AppButtonVariant.brandWhite
+            ? sizes.controlXl
+            : sizes.controlLg);
+    final effectivePadding = variant == AppButtonVariant.brandWhite
+        ? space.insetControlLg
+        : space.insetControlMd;
     final buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       disabledBackgroundColor: disabledBackgroundColor,
       disabledForegroundColor: disabledForegroundColor,
       elevation: 0,
+      animationDuration: AppMotion.buttonFade,
+      splashFactory: variant == AppButtonVariant.brandWhite
+          ? NoSplash.splashFactory
+          : null,
       minimumSize: Size(
         isFullWidth ? double.infinity : sizes.avatarXl,
         effectiveHeight,
       ),
-      padding: space.insetControlMd,
+      padding: effectivePadding,
       shape: RoundedRectangleBorder(
         borderRadius: effectiveRadius,
         side: borderSide ?? BorderSide.none,

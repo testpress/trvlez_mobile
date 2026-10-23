@@ -350,8 +350,8 @@ class AppColors extends ThemeExtension<AppColors> {
     background: Palette.pageDark,
 
     // Brand tokens
-    brandPrimary: Palette.brandRedDark,
-    brandSurface: Palette.brandRedDark,
+    brandPrimary: Palette.brandRed,
+    brandSurface: Palette.brandRed,
     brandOnSurface: Palette.neutral0,
     brandSecondary: Palette.cream,
     brandSecondaryBody: Palette.creamBody,

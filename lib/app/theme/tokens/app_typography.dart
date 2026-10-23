@@ -19,6 +19,13 @@ class AppTypography {
   static TextStyle get label =>
       const TextStyle(fontFamily: fontFamily, fontWeight: TypeScale.semiBold);
 
+  /// Semantic typography token for button labels adhering to the typography scale.
+  static TextStyle get buttonLabel => label.copyWith(
+    fontSize: 15,
+    fontWeight: TypeScale.semiBold,
+    letterSpacing: 0.2,
+  );
+
   /// Generates the standard [TextTheme] bound to [AppColors.textPrimary].
   static TextTheme buildTextTheme(AppColors colors) {
     return createTextTheme(colors.textPrimary);

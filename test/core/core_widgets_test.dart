@@ -59,6 +59,43 @@ void main() {
       },
     );
 
+    testWidgets(
+      'AppButton brandWhite variant renders pill shape, tokens, and disabled state',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithDarkTheme(
+            AppButton(
+              label: 'Create account',
+              variant: AppButtonVariant.brandWhite,
+              onPressed: () {},
+            ),
+          ),
+        );
+
+        final buttonFinder = find.byType(ElevatedButton);
+        expect(buttonFinder, findsOneWidget);
+        expect(find.text('Create account'), findsOneWidget);
+
+        final textWidget = tester.widget<Text>(find.text('Create account'));
+        expect(textWidget.textAlign, TextAlign.center);
+
+        // Disabled state test
+        await tester.pumpWidget(
+          wrapWithDarkTheme(
+            AppButton(
+              label: 'Create account',
+              variant: AppButtonVariant.brandWhite,
+              enabled: false,
+              onPressed: () {},
+            ),
+          ),
+        );
+
+        final disabledButton = tester.widget<ElevatedButton>(buttonFinder);
+        expect(disabledButton.onPressed, isNull);
+      },
+    );
+
     testWidgets('AppTextField renders label, hint, and accepts user input', (
       tester,
     ) async {

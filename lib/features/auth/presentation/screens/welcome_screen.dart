@@ -240,8 +240,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                   // ── 4. CTA and Security Footer ────────────────────────────────
                   Positioned(
-                    left: space.stackSection,
-                    right: space.stackSection,
+                    left: space.stackHero,
+                    right: space.stackHero,
                     bottom: space.stackHero,
                     child: SafeArea(
                       child: Opacity(
