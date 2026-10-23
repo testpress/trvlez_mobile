@@ -124,6 +124,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             animation: _controller,
             builder: (context, _) {
               final space = context.space;
+              final sizes = context.sizes;
               return Stack(
                 children: [
                   // ── 1. Full-Bleed Opening Motifs Layer ────────────────────────
@@ -240,34 +241,47 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                   // ── 4. CTA and Security Footer ────────────────────────────────
                   Positioned(
-                    left: space.stackHero,
-                    right: space.stackHero,
+                    left: 0,
+                    right: 0,
                     bottom: space.stackHero,
                     child: SafeArea(
-                      child: Opacity(
-                        opacity: _ctaRise.value,
-                        child: Transform.translate(
-                          offset: Offset(0, 24 * (1 - _ctaRise.value)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const BrandSecurityNote(
-                                text:
-                                    'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: sizes.containerPhone,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: space.stackHero,
+                            ),
+                            child: Opacity(
+                              opacity: _ctaRise.value,
+                              child: Transform.translate(
+                                offset: Offset(0, 24 * (1 - _ctaRise.value)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const BrandSecurityNote(
+                                      text:
+                                          'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
+                                    ),
+                                    SizedBox(height: space.stackFormField),
+                                    AppButton(
+                                      label: 'Create account',
+                                      variant: AppButtonVariant.brandWhite,
+                                      onPressed: () =>
+                                          context.go(AppRoutes.register),
+                                    ),
+                                    SizedBox(height: space.stackFormField),
+                                    BrandAltLine(
+                                      prefix: 'Already have an account? ',
+                                      linkText: 'Log in',
+                                      onTap: () => context.go(AppRoutes.login),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              SizedBox(height: space.stackFormField),
-                              AppButton(
-                                label: 'Create account',
-                                variant: AppButtonVariant.brandWhite,
-                                onPressed: () => context.go(AppRoutes.register),
-                              ),
-                              SizedBox(height: space.stackFormField),
-                              BrandAltLine(
-                                prefix: 'Already have an account? ',
-                                linkText: 'Log in',
-                                onTap: () => context.go(AppRoutes.login),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),

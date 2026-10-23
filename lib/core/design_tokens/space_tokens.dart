@@ -7,6 +7,7 @@ import 'primitives.dart';
 class AppSpace extends ThemeExtension<AppSpace> {
   const AppSpace({
     required this.insetScreen,
+    required this.insetBrandScreen,
     required this.insetCard,
     required this.insetCardComfortable,
     required this.insetCardCompact,
@@ -33,6 +34,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
 
   // ─── Inset Tokens (return EdgeInsets) ────────────────────────────────
   final EdgeInsets insetScreen;
+  final EdgeInsets insetBrandScreen;
   final EdgeInsets insetCard;
   final EdgeInsets insetCardComfortable;
   final EdgeInsets insetCardCompact;
@@ -64,6 +66,10 @@ class AppSpace extends ThemeExtension<AppSpace> {
 
   static const comfortable = AppSpace(
     insetScreen: EdgeInsets.symmetric(horizontal: Prim.s16, vertical: Prim.s24),
+    insetBrandScreen: EdgeInsets.symmetric(
+      horizontal: Prim.s32,
+      vertical: Prim.s24,
+    ),
     insetCard: EdgeInsets.all(Prim.s16),
     insetCardComfortable: EdgeInsets.all(Prim.s20),
     insetCardCompact: EdgeInsets.all(Prim.s12),
@@ -99,6 +105,10 @@ class AppSpace extends ThemeExtension<AppSpace> {
 
   static const compact = AppSpace(
     insetScreen: EdgeInsets.symmetric(horizontal: Prim.s12, vertical: Prim.s16),
+    insetBrandScreen: EdgeInsets.symmetric(
+      horizontal: Prim.s24,
+      vertical: Prim.s16,
+    ),
     insetCard: EdgeInsets.all(Prim.s12),
     insetCardComfortable: EdgeInsets.all(Prim.s16),
     insetCardCompact: EdgeInsets.all(Prim.s8),
@@ -135,6 +145,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
   @override
   AppSpace copyWith({
     EdgeInsets? insetScreen,
+    EdgeInsets? insetBrandScreen,
     EdgeInsets? insetCard,
     EdgeInsets? insetCardComfortable,
     EdgeInsets? insetCardCompact,
@@ -160,6 +171,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
   }) {
     return AppSpace(
       insetScreen: insetScreen ?? this.insetScreen,
+      insetBrandScreen: insetBrandScreen ?? this.insetBrandScreen,
       insetCard: insetCard ?? this.insetCard,
       insetCardComfortable: insetCardComfortable ?? this.insetCardComfortable,
       insetCardCompact: insetCardCompact ?? this.insetCardCompact,
@@ -190,6 +202,11 @@ class AppSpace extends ThemeExtension<AppSpace> {
     if (other is! AppSpace) return this;
     return AppSpace(
       insetScreen: EdgeInsets.lerp(insetScreen, other.insetScreen, t)!,
+      insetBrandScreen: EdgeInsets.lerp(
+        insetBrandScreen,
+        other.insetBrandScreen,
+        t,
+      )!,
       insetCard: EdgeInsets.lerp(insetCard, other.insetCard, t)!,
       insetCardComfortable: EdgeInsets.lerp(
         insetCardComfortable,

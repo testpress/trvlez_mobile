@@ -43,7 +43,7 @@ class BrandScreen extends StatelessWidget {
     final space = context.space;
     final sizes = context.sizes;
 
-    final effectivePadding = contentPadding ?? space.insetScreen;
+    final effectivePadding = contentPadding ?? space.insetBrandScreen;
 
     return Scaffold(
       backgroundColor: colors.brandSurface,
@@ -64,66 +64,73 @@ class BrandScreen extends StatelessWidget {
 
           // ─── Content Layer ───────────────────────────────────────────────
           SafeArea(
-            child: Column(
-              children: [
-                // ── Header Bar ──────────────────────────────────────────────
-                SizedBox(
-                  height: sizes.appBarHeight,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      if (onBack != null)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Semantics(
-                            button: true,
-                            label: 'Back',
-                            child: IconButton(
-                              icon: Icon(
-                                AppIcons.arrowLeft,
-                                color: colors.brandOnSurface,
-                                size: sizes.iconMd,
-                              ),
-                              onPressed: onBack,
-                              splashRadius: sizes.iconDefault,
-                              constraints: BoxConstraints(
-                                minWidth: sizes.touchTargetMin,
-                                minHeight: sizes.touchTargetMin,
-                              ),
-                              padding: space.insetControlSm,
-                            ),
-                          ),
-                        ),
-                      if (showWordmark) const Center(child: BrandWordmark()),
-                    ],
-                  ),
-                ),
-
-                // ── Screen Body ─────────────────────────────────────────────
-                Expanded(
-                  child: isScrollable
-                      ? LayoutBuilder(
-                          builder: (context, constraints) {
-                            final resolvedPadding = effectivePadding.resolve(
-                              Directionality.maybeOf(context) ??
-                                  TextDirection.ltr,
-                            );
-                            return SingleChildScrollView(
-                              padding: effectivePadding,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minHeight:
-                                      constraints.maxHeight -
-                                      resolvedPadding.vertical,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: sizes.containerPhone),
+                child: Column(
+                  children: [
+                    // ── Header Bar ──────────────────────────────────────────────
+                    SizedBox(
+                      height: sizes.appBarHeight,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          if (onBack != null)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Semantics(
+                                button: true,
+                                label: 'Back',
+                                child: IconButton(
+                                  icon: Icon(
+                                    AppIcons.arrowLeft,
+                                    color: colors.brandOnSurface,
+                                    size: sizes.iconMd,
+                                  ),
+                                  onPressed: onBack,
+                                  splashRadius: sizes.iconDefault,
+                                  constraints: BoxConstraints(
+                                    minWidth: sizes.touchTargetMin,
+                                    minHeight: sizes.touchTargetMin,
+                                  ),
+                                  padding: space.insetControlSm,
                                 ),
-                                child: IntrinsicHeight(child: body),
                               ),
-                            );
-                          },
-                        )
-                      : Padding(padding: effectivePadding, child: body),
+                            ),
+                          if (showWordmark)
+                            const Center(child: BrandWordmark()),
+                        ],
+                      ),
+                    ),
+
+                    // ── Screen Body ─────────────────────────────────────────────
+                    Expanded(
+                      child: isScrollable
+                          ? LayoutBuilder(
+                              builder: (context, constraints) {
+                                final resolvedPadding = effectivePadding
+                                    .resolve(
+                                      Directionality.maybeOf(context) ??
+                                          TextDirection.ltr,
+                                    );
+                                return SingleChildScrollView(
+                                  padding: effectivePadding,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight:
+                                          constraints.maxHeight -
+                                          resolvedPadding.vertical,
+                                    ),
+                                    child: IntrinsicHeight(child: body),
+                                  ),
+                                );
+                              },
+                            )
+                          : Padding(padding: effectivePadding, child: body),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ],

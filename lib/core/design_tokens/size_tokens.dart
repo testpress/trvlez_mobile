@@ -18,6 +18,8 @@ class AppSize extends ThemeExtension<AppSize> {
     required this.controlMd,
     required this.controlLg,
     required this.controlXl,
+    required this.controlHero,
+    required this.containerPhone,
     required this.touchTargetMin,
     required this.avatarSm,
     required this.avatarMd,
@@ -48,6 +50,8 @@ class AppSize extends ThemeExtension<AppSize> {
   final double controlMd;
   final double controlLg;
   final double controlXl;
+  final double controlHero;
+  final double containerPhone;
   final double touchTargetMin;
 
   // ─── Avatar Sizing Tokens (return double) ────────────────────────────
@@ -79,6 +83,8 @@ class AppSize extends ThemeExtension<AppSize> {
     controlMd: Prim.s44,
     controlLg: Prim.s48,
     controlXl: Prim.s56,
+    controlHero: Prim.s64,
+    containerPhone: Prim.s440,
     touchTargetMin: Prim.s48,
     avatarSm: Prim.s28,
     avatarMd: Prim.s36,
@@ -108,6 +114,8 @@ class AppSize extends ThemeExtension<AppSize> {
     double? controlMd,
     double? controlLg,
     double? controlXl,
+    double? controlHero,
+    double? containerPhone,
     double? touchTargetMin,
     double? avatarSm,
     double? avatarMd,
@@ -135,6 +143,8 @@ class AppSize extends ThemeExtension<AppSize> {
       controlMd: controlMd ?? this.controlMd,
       controlLg: controlLg ?? this.controlLg,
       controlXl: controlXl ?? this.controlXl,
+      controlHero: controlHero ?? this.controlHero,
+      containerPhone: containerPhone ?? this.containerPhone,
       touchTargetMin: touchTargetMin ?? this.touchTargetMin,
       avatarSm: avatarSm ?? this.avatarSm,
       avatarMd: avatarMd ?? this.avatarMd,
@@ -168,6 +178,8 @@ class AppSize extends ThemeExtension<AppSize> {
       controlMd: lerpDouble(controlMd, other.controlMd, t)!,
       controlLg: lerpDouble(controlLg, other.controlLg, t)!,
       controlXl: lerpDouble(controlXl, other.controlXl, t)!,
+      controlHero: lerpDouble(controlHero, other.controlHero, t)!,
+      containerPhone: lerpDouble(containerPhone, other.containerPhone, t)!,
       touchTargetMin: lerpDouble(touchTargetMin, other.touchTargetMin, t)!,
       avatarSm: lerpDouble(avatarSm, other.avatarSm, t)!,
       avatarMd: lerpDouble(avatarMd, other.avatarMd, t)!,

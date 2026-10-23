@@ -33,6 +33,7 @@ abstract final class Prim {
   static const double s160 = 160;
   static const double s200 = 200;
   static const double s220 = 220;
+  static const double s440 = 440;
 
   // ─── Corner Radius Scale ─────────────────────────────────────────────
   static const double r2 = 2;

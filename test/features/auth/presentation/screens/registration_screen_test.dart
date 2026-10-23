@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/auth/presentation/providers/auth_providers.dart';
 import 'package:trvlez_mobile/features/auth/presentation/screens/registration_screen.dart';
 
@@ -50,7 +51,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Create your account'), findsOneWidget);
-      expect(find.text('Create account'), findsNWidgets(1));
+      final btn = find.widgetWithText(AppButton, 'Create account');
+      expect(btn, findsOneWidget);
       expect(find.text('Already have an account? '), findsOneWidget);
       expect(find.byType(TextFormField), findsNWidgets(2));
     });

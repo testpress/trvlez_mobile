@@ -145,7 +145,7 @@ class AppButton extends StatelessWidget {
     final effectiveHeight =
         height ??
         (variant == AppButtonVariant.brandWhite
-            ? sizes.controlXl
+            ? sizes.controlHero
             : sizes.controlLg);
     final effectivePadding = variant == AppButtonVariant.brandWhite
         ? space.insetControlLg

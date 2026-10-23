@@ -59,8 +59,18 @@ void main() {
 
     test('AppSpace ThemeExtension copyWith and lerp', () {
       const space = AppSpace.comfortable;
-      final copied = space.copyWith(stackFormField: 20.0);
+      final copied = space.copyWith(
+        stackFormField: 20.0,
+        insetBrandScreen: const EdgeInsets.symmetric(
+          horizontal: 28,
+          vertical: 20,
+        ),
+      );
       expect(copied.stackFormField, 20.0);
+      expect(
+        copied.insetBrandScreen,
+        const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+      );
       expect(copied.insetCard, space.insetCard);
 
       final lerped = space.lerp(AppSpace.compact, 0.5);
@@ -70,9 +80,15 @@ void main() {
 
     test('AppSize ThemeExtension copyWith and lerp', () {
       const size = AppSize.regular;
-      final copied = size.copyWith(iconDefault: 26.0);
+      final copied = size.copyWith(
+        iconDefault: 26.0,
+        controlHero: 64.0,
+        containerPhone: 440.0,
+      );
       expect(copied.iconDefault, 26.0);
       expect(copied.controlLg, size.controlLg);
+      expect(copied.controlHero, 64.0);
+      expect(copied.containerPhone, 440.0);
 
       final lerped = size.lerp(size, 0.5);
       expect(lerped, isA<AppSize>());
