@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_screen.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -90,8 +89,6 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
-    final shape = context.shape;
-    final sizes = context.sizes;
     final code = _controller.text;
 
     return BrandScreen(
@@ -126,95 +123,15 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
 
           SizedBox(height: space.stackSection),
 
-          // ── 6-Box Visual Code Input ──────────────────────────────────
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              // Hidden actual TextField handling input, paste, autofill
-              Opacity(
-                opacity: 0,
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(6),
-                  ],
-                ),
-              ),
-
-              // Visual 6-box presentation
-              GestureDetector(
-                onTap: () => _focusNode.requestFocus(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(6, (index) {
-                    final char = index < code.length ? code[index] : '';
-                    final isCurrent = index == code.length;
-
-                    return Container(
-                      width: sizes.controlMd,
-                      height: sizes.controlLg,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isCurrent
-                            ? colors.brandCardBackground
-                            : colors.brandCodeBoxBackground,
-                        borderRadius: shape.radiusControl,
-                        border: isCurrent
-                            ? Border.all(
-                                color: colors.brandOnSurface,
-                                width: shape.borderMedium,
-                              )
-                            : null,
-                      ),
-                      child: Text(
-                        char,
-                        style: context.text.headlineMedium?.copyWith(
-                          color: colors.brandOnSurface,
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ],
+          _CodeInputBoxes(
+            controller: _controller,
+            focusNode: _focusNode,
+            code: code,
           ),
 
-          SizedBox(height: space.stackSection),
+          SizedBox(height: space.stackFormField),
 
-          // ── Resend Line ──────────────────────────────────────────────
-          Center(
-            child: _remaining > 0
-                ? Text(
-                    'Resend in 0:${_remaining.toString().padLeft(2, '0')}',
-                    style: context.text.labelMedium?.copyWith(
-                      color: colors.brandSecondarySmall,
-                      fontWeight: TypeScale.regular,
-                    ),
-                  )
-                : Semantics(
-                    button: true,
-                    label: 'Resend code',
-                    child: InkWell(
-                      onTap: _startTimer,
-                      borderRadius: shape.radiusSubtle,
-                      child: Padding(
-                        padding: space.insetTag,
-                        child: Text(
-                          'Resend code',
-                          style: context.text.labelMedium?.copyWith(
-                            fontWeight: TypeScale.semiBold,
-                            color: colors.brandOnSurface,
-                            decoration: TextDecoration.underline,
-                            decorationColor: colors.brandUnderline,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
+          _ResendCountdownRow(remaining: _remaining, onResend: _startTimer),
 
           const Spacer(),
 
@@ -225,10 +142,170 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
           AppButton(
             label: 'Verify',
             variant: AppButtonVariant.brandWhite,
+            active: code.length == 6,
             enabled: code.length == 6,
             onPressed: code.length == 6 ? _onVerify : null,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Visual 6-box input with responsive flexible sizing and underlying invisible text field.
+class _CodeInputBoxes extends StatelessWidget {
+  const _CodeInputBoxes({
+    required this.controller,
+    required this.focusNode,
+    required this.code,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final String code;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
+    return Stack(
+      children: [
+        // Visual 6-box presentation
+        Row(
+          children: [
+            for (var i = 0; i < 6; i++) ...[
+              if (i > 0) SizedBox(width: space.stackTight),
+              Expanded(
+                child: Container(
+                  height: sizes.controlMd,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: i == code.length
+                        ? colors.brandCardBackground
+                        : colors.brandCodeBoxBackground,
+                    borderRadius: shape.radiusControl,
+                    border: i == code.length
+                        ? Border.all(
+                            color: colors.brandOnSurface,
+                            width: shape.borderMedium,
+                          )
+                        : null,
+                  ),
+                  child: Text(
+                    i < code.length ? code[i] : '',
+                    style: context.text.headlineMedium?.copyWith(
+                      color: colors.brandOnSurface,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+
+        // Hidden actual TextField handling input, paste, autofill
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0,
+            child: TextField(
+              controller: controller,
+              focusNode: focusNode,
+              keyboardType: TextInputType.number,
+              autofillHints: const [AutofillHints.oneTimeCode],
+              maxLength: 6,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(6),
+              ],
+              decoration: const InputDecoration(
+                counterText: '',
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Standardized resend countdown row with accessible >=48dp touch target and underlined link.
+class _ResendCountdownRow extends StatelessWidget {
+  const _ResendCountdownRow({required this.remaining, required this.onResend});
+
+  final int remaining;
+  final VoidCallback onResend;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
+    final isExpired = remaining == 0;
+    final label = isExpired
+        ? 'Resend'
+        : 'Resend in 0:${remaining.toString().padLeft(2, '0')}';
+
+    return Center(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Didn't get it? ",
+              style: context.text.labelMedium?.copyWith(
+                color: colors.brandSecondaryBody,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            Semantics(
+              button: true,
+              label: label,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: sizes.touchTargetMin,
+                  minWidth: sizes.touchTargetMin,
+                ),
+                child: InkWell(
+                  onTap: isExpired ? onResend : null,
+                  borderRadius: shape.radiusSubtle,
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: space.inlineMicro,
+                        vertical: space.stackTight,
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: shape.borderDefault),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: colors.brandUnderline,
+                              width: shape.borderDefault,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          label,
+                          style: context.text.labelMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: colors.brandOnSurface,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

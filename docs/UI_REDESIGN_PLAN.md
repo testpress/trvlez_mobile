@@ -67,11 +67,11 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** Security note "Codes expire after 10 minutes." (`BrandSecurityNote`) and "Verify" button (`AppButton` variant `brandWhite`, disabled until 6 digits entered).
 - **Dependencies:** `BrandScreen`, `AppButton`, `BrandSecurityNote`.
 - **Implementation & Verification Checklist:**
-  - [ ] Remove any hardcoded sizes/margins and apply `context.space.*` and `context.sizes.*`.
-  - [ ] Verify 6-box input layout and active box border highlighting.
-  - [ ] Verify masked email presentation and timer countdown transition.
-  - [ ] Ensure tap target on "Resend code" is at least 48dp.
-  - [ ] Run `dart format`, `flutter analyze`, and `flutter test test/features/auth/`.
+  - [x] Remove any hardcoded sizes/margins and apply `context.space.*` and `context.sizes.*`.
+  - [x] Verify 6-box input layout and active box border highlighting.
+  - [x] Verify masked email presentation and timer countdown transition.
+  - [x] Ensure tap target on "Resend code" is at least 48dp.
+  - [x] Run `dart format`, `flutter analyze`, and `flutter test test/features/auth/`.
 
 #### 1.2 New Password Screen
 - **Target File:** [`lib/features/auth/presentation/screens/new_password_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/auth/presentation/screens/new_password_screen.dart)
@@ -83,9 +83,9 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** Security note "At least 8 characters. Make it something you don't use elsewhere." and button "Save and sign in" (`brandWhite`).
 - **Dependencies:** `BrandScreen`, `BrandTextField`, `AppButton`, `BrandSecurityNote`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify mismatch heading/subtitle dynamic states without breaking controllers.
-  - [ ] Ensure button transitions smoothly from disabled grey to brand white when valid.
-  - [ ] Run analyzer and widget tests.
+  - [x] Verify mismatch heading/subtitle dynamic states without breaking controllers.
+  - [x] Ensure button transitions smoothly from disabled grey to brand white when valid.
+  - [x] Run analyzer and widget tests.
 
 ---
 
