@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Callout banner displayed when an online check-in window is open.
 class CheckInBanner extends StatelessWidget {
@@ -87,10 +85,8 @@ class CheckInBanner extends StatelessWidget {
                                 children: [
                                   Text(
                                     title,
-                                    style: TextStyle(
-                                      fontFamily: AppTypography.fontFamily,
-                                      fontSize: 13,
-                                      fontWeight: TypeScale.bold,
+                                    style: context.text.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w700,
                                       color: colors.textPrimary,
                                     ),
                                     maxLines: 1,
@@ -99,9 +95,7 @@ class CheckInBanner extends StatelessWidget {
                                   SizedBox(height: space.stackText),
                                   Text(
                                     subtitle,
-                                    style: TextStyle(
-                                      fontFamily: AppTypography.fontFamily,
-                                      fontSize: 11,
+                                    style: context.text.bodySmall?.copyWith(
                                       color: colors.textSecondary,
                                     ),
                                     maxLines: 1,

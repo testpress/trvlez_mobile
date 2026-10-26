@@ -101,9 +101,9 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Typography & Icons:** Active color `colors.brandPrimary` (red), inactive color `colors.inkTertiary`. Icon size `sizes.iconSm` (18dp), text style `context.text.labelSmall` (10dp) with `TypeScale.semiBold` when active. Minimum tap target 48dp width per tab.
 - **Dependencies:** `AppColors`, `AppSize`, `AppSpace`, `AppIcons`.
 - **Implementation & Verification Checklist:**
-  - [ ] Eliminate raw `TextStyle(fontSize: 10)` in `_TabBarItem`.
-  - [ ] Verify tab bar height alignment and safe area padding on iOS home indicator devices.
-  - [ ] Ensure tap target accessibility semantics on all 4 tabs.
+  - [x] Eliminate raw `TextStyle(fontSize: 10)` in `_TabBarItem`.
+  - [x] Verify tab bar height alignment and safe area padding on iOS home indicator devices.
+  - [x] Ensure tap target accessibility semantics on all 4 tabs.
 
 #### 2.2 Home Hub Screen
 - **Target File:** [`lib/features/home/presentation/screens/home_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/home/presentation/screens/home_screen.dart)
@@ -120,9 +120,9 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Next Stay Row (`NextStayRow`):** Photo thumbnail box (`PhotoBox` 44×44dp), property name, location, dates, and "ezStays" badge.
 - **Dependencies:** `AppPinnedHeader`, `CheckInBanner`, `FindrCard`, `ServiceGrid`, `PhotoBox`.
 - **Implementation & Verification Checklist:**
-  - [ ] Remove all inline `TextStyle` instances.
-  - [ ] Verify header padding, location picker tap, and notification bell sheet triggers.
-  - [ ] Verify visual hierarchy on both compact and standard phone viewports.
+  - [x] Remove all inline `TextStyle` instances.
+  - [x] Verify header padding, location picker tap, and notification bell sheet triggers.
+  - [x] Verify visual hierarchy on both compact and standard phone viewports.
 
 #### 2.3 Location Picker Sheet & Notifications Sheet
 - **Target Files:**
@@ -137,8 +137,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Notifications:** "Notifications" title with "Clear all" link button; items styled with circular icon container, title, body, timestamp, and unread dot indicator (`colors.brandPrimary`).
 - **Dependencies:** `AppColors`, `AppSpace`, `AppShape`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify bottom sheet styling, insets, and keyboard handling.
-  - [ ] Ensure clear all and selection callbacks remain fully functional.
+  - [x] Verify bottom sheet styling, insets, and keyboard handling.
+  - [x] Ensure clear all and selection callbacks remain fully functional.
 
 ---
 

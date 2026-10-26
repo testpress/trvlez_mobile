@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Modal bottom sheet allowing travellers to select their active location.
 class LocationPickerSheet extends StatelessWidget {
@@ -78,59 +76,58 @@ class LocationPickerSheet extends StatelessWidget {
           SizedBox(height: space.stackItem),
           Text(
             'Select city',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 16,
-              fontWeight: TypeScale.bold,
+            style: context.text.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
           ),
           SizedBox(height: space.stackItem),
           ...availableLocations.map((city) {
             final isSelected = city == currentLocation;
-            return InkWell(
-              borderRadius: shape.radiusControl,
-              onTap: () {
-                onLocationSelected(city);
-                Navigator.of(context).pop();
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: space.stackFormField,
-                  horizontal: space.inlineMicro,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      AppIcons.mapPin,
-                      size: sizes.iconSm,
-                      color: isSelected
-                          ? colors.brandPrimary
-                          : colors.inkTertiary,
-                    ),
-                    SizedBox(width: space.inlineItem),
-                    Expanded(
-                      child: Text(
-                        city,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 14,
-                          fontWeight: isSelected
-                              ? TypeScale.semiBold
-                              : TypeScale.regular,
-                          color: isSelected
-                              ? colors.brandPrimary
-                              : colors.textPrimary,
+            return ConstrainedBox(
+              constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+              child: InkWell(
+                borderRadius: shape.radiusControl,
+                onTap: () {
+                  onLocationSelected(city);
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: space.stackFormField,
+                    horizontal: space.inlineMicro,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        AppIcons.mapPin,
+                        size: sizes.iconSm,
+                        color: isSelected
+                            ? colors.brandPrimary
+                            : colors.inkTertiary,
+                      ),
+                      SizedBox(width: space.inlineItem),
+                      Expanded(
+                        child: Text(
+                          city,
+                          style: context.text.labelLarge?.copyWith(
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            color: isSelected
+                                ? colors.brandPrimary
+                                : colors.textPrimary,
+                          ),
                         ),
                       ),
-                    ),
-                    if (isSelected)
-                      Icon(
-                        AppIcons.check,
-                        size: sizes.iconSm,
-                        color: colors.brandPrimary,
-                      ),
-                  ],
+                      if (isSelected)
+                        Icon(
+                          AppIcons.check,
+                          size: sizes.iconSm,
+                          color: colors.brandPrimary,
+                        ),
+                    ],
+                  ),
                 ),
               ),
             );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 
 /// Single interactive card representing an ez-service.
@@ -34,99 +32,97 @@ class ServiceCard extends StatelessWidget {
     return Semantics(
       button: !soon,
       label: 'ez$title service: $subtitle${soon ? ", coming soon" : ""}',
-      child: InkWell(
-        borderRadius: shape.radiusSurface,
-        onTap: soon ? null : onTap,
-        child: Container(
-          padding: space.insetCard,
-          decoration: BoxDecoration(
-            color: soon ? colors.page : colors.surface,
-            borderRadius: shape.radiusSurface,
-            border: Border.all(
-              color: colors.cardBorderSoft,
-              width: shape.borderDefault,
-            ),
-            boxShadow: soon
-                ? null
-                : [
-                    BoxShadow(
-                      color: colors.cardShadow,
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: sizes.controlSm,
-                    height: sizes.controlSm,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: soon ? colors.surface : colors.redTint,
-                      borderRadius: shape.radiusControl,
-                    ),
-                    child: Icon(
-                      icon,
-                      size: sizes.iconSm,
-                      color: soon ? colors.inkTertiary : colors.brandPrimary,
-                    ),
-                  ),
-                  SizedBox(height: space.stackItem),
-                  EzWord(
-                    rest: title,
-                    ezColor: soon ? colors.inkTertiary : colors.brandPrimary,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 14,
-                      fontWeight: TypeScale.bold,
-                      color: soon ? colors.inkTertiary : colors.textPrimary,
-                    ),
-                  ),
-                  SizedBox(height: space.stackText),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 11,
-                      color: colors.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: shape.radiusCard,
+          onTap: soon ? null : onTap,
+          child: Container(
+            padding: space.insetCardComfortable,
+            decoration: BoxDecoration(
+              color: soon ? colors.soonCard : colors.surface,
+              borderRadius: shape.radiusCard,
+              border: Border.all(
+                color: colors.cardBorderSoft,
+                width: shape.borderDefault,
               ),
-              if (soon)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: space.insetTagSm,
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: shape.radiusPill,
-                      border: Border.all(
-                        color: colors.cardBorderSoft,
-                        width: shape.borderDefault,
+              boxShadow: soon
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: colors.cardShadow,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: sizes.controlXl,
+                      height: sizes.controlXl,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: soon ? colors.page : colors.redTint,
+                        borderRadius: shape.radiusSurface,
+                      ),
+                      child: Icon(
+                        icon,
+                        size: sizes.iconLg,
+                        color: soon ? colors.soonIcon : colors.brandPrimary,
                       ),
                     ),
-                    child: Text(
-                      'SOON',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 8,
-                        fontWeight: TypeScale.bold,
-                        color: colors.inkTertiary,
-                        letterSpacing: 0.5,
+                    if (soon)
+                      Container(
+                        padding: space.insetTag,
+                        decoration: BoxDecoration(
+                          color: colors.page,
+                          borderRadius: shape.radiusPill,
+                        ),
+                        child: Text(
+                          'SOON',
+                          style: (context.text.labelSmall ?? const TextStyle())
+                              .copyWith(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: colors.inkTertiary,
+                                letterSpacing: 0.6,
+                              ),
+                        ),
                       ),
-                    ),
-                  ),
+                  ],
                 ),
-            ],
+                SizedBox(height: space.stackFormField),
+                EzWord(
+                  rest: title,
+                  ezColor: soon ? colors.inkTertiary : colors.brandPrimary,
+                  style: (context.text.headlineSmall ?? const TextStyle())
+                      .copyWith(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        color: soon ? colors.inkTertiary : colors.textPrimary,
+                      ),
+                ),
+                SizedBox(height: space.stackTight),
+                Text(
+                  subtitle,
+                  style: (context.text.bodyMedium ?? const TextStyle())
+                      .copyWith(
+                        fontSize: 13.5,
+                        height: 1.35,
+                        color: colors.textSecondary,
+                      ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),

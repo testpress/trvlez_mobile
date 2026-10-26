@@ -31,7 +31,7 @@ class AppPinnedHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.vertical(
-          bottom: shape.radiusSurface.topLeft,
+          bottom: shape.radiusCard.bottomLeft,
         ),
         boxShadow: [
           BoxShadow(

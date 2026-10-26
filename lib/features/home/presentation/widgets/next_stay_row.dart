@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 
 /// Row previewing the traveller's nearest upcoming stay.
@@ -69,10 +67,8 @@ class NextStayRow extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                         color: colors.textPrimary,
                       ),
                       maxLines: 1,
@@ -81,9 +77,7 @@ class NextStayRow extends StatelessWidget {
                     SizedBox(height: space.stackText),
                     Text(
                       detail,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                      style: context.text.bodySmall?.copyWith(
                         color: colors.textSecondary,
                       ),
                       maxLines: 1,
@@ -102,10 +96,8 @@ class NextStayRow extends StatelessWidget {
                   ),
                   child: Text(
                     badge!,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 10,
-                      fontWeight: TypeScale.semiBold,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: colors.brandPrimary,
                     ),
                   ),

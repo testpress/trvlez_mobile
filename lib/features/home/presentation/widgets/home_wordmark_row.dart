@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Header top row displaying the TRVLez wordmark and notification bell.
 class HomeWordmarkRow extends StatelessWidget {
@@ -26,6 +24,11 @@ class HomeWordmarkRow extends StatelessWidget {
     final shape = context.shape;
     final sizes = context.sizes;
 
+    final wordmarkBaseStyle = context.text.headlineMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      letterSpacing: -0.5,
+    );
+
     return Row(
       children: [
         Text.rich(
@@ -33,23 +36,11 @@ class HomeWordmarkRow extends StatelessWidget {
             children: [
               TextSpan(
                 text: 'TRVL',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 20,
-                  fontWeight: TypeScale.extraBold,
-                  letterSpacing: -0.5,
-                  color: colors.textPrimary,
-                ),
+                style: wordmarkBaseStyle?.copyWith(color: colors.textPrimary),
               ),
               TextSpan(
                 text: 'ez',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 20,
-                  fontWeight: TypeScale.extraBold,
-                  letterSpacing: -0.5,
-                  color: colors.brandPrimary,
-                ),
+                style: wordmarkBaseStyle?.copyWith(color: colors.brandPrimary),
               ),
             ],
           ),
@@ -59,15 +50,20 @@ class HomeWordmarkRow extends StatelessWidget {
           Semantics(
             button: true,
             label: isDarkMode ? 'Switch to light mode' : 'Switch to dark mode',
-            child: InkWell(
-              borderRadius: shape.radiusOverlay,
-              onTap: onThemeToggle,
-              child: Padding(
-                padding: EdgeInsets.all(space.inlineIconLabel),
-                child: Icon(
-                  isDarkMode ? AppIcons.sun : AppIcons.bulb,
-                  size: sizes.iconMd,
-                  color: colors.textPrimary,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: sizes.touchTargetMin,
+                minHeight: sizes.touchTargetMin,
+              ),
+              child: InkWell(
+                borderRadius: shape.radiusOverlay,
+                onTap: onThemeToggle,
+                child: Center(
+                  child: Icon(
+                    isDarkMode ? AppIcons.sun : AppIcons.bulb,
+                    size: sizes.iconMd,
+                    color: colors.textPrimary,
+                  ),
                 ),
               ),
             ),
@@ -79,37 +75,42 @@ class HomeWordmarkRow extends StatelessWidget {
           label: unreadCount > 0
               ? 'Notifications, $unreadCount unread'
               : 'Notifications',
-          child: InkWell(
-            borderRadius: shape.radiusOverlay,
-            onTap: onBellTap,
-            child: Padding(
-              padding: EdgeInsets.all(space.inlineIconLabel),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    AppIcons.bell,
-                    size: sizes.iconDefault,
-                    color: colors.textPrimary,
-                  ),
-                  if (unreadCount > 0)
-                    Positioned(
-                      top: -1,
-                      right: -1,
-                      child: Container(
-                        width: sizes.indicatorDot,
-                        height: sizes.indicatorDot,
-                        decoration: BoxDecoration(
-                          color: colors.brandPrimary,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: colors.surface,
-                            width: shape.borderMedium,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: sizes.touchTargetMin,
+              minHeight: sizes.touchTargetMin,
+            ),
+            child: InkWell(
+              borderRadius: shape.radiusOverlay,
+              onTap: onBellTap,
+              child: Center(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(
+                      AppIcons.bell,
+                      size: sizes.iconDefault,
+                      color: colors.textPrimary,
+                    ),
+                    if (unreadCount > 0)
+                      Positioned(
+                        top: -1,
+                        right: -1,
+                        child: Container(
+                          width: sizes.indicatorDot,
+                          height: sizes.indicatorDot,
+                          decoration: BoxDecoration(
+                            color: colors.brandPrimary,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: colors.surface,
+                              width: shape.borderMedium,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

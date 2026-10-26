@@ -8,6 +8,7 @@ class AppSize extends ThemeExtension<AppSize> {
   const AppSize({
     required this.iconMicro,
     required this.iconXs,
+    required this.iconCompact,
     required this.iconSm,
     required this.iconMd,
     required this.iconDefault,
@@ -45,6 +46,7 @@ class AppSize extends ThemeExtension<AppSize> {
   // ─── Icon Sizing Tokens (return double) ──────────────────────────────
   final double iconMicro;
   final double iconXs;
+  final double iconCompact;
   final double iconSm;
   final double iconMd;
   final double iconDefault;
@@ -87,6 +89,7 @@ class AppSize extends ThemeExtension<AppSize> {
   static const regular = AppSize(
     iconMicro: Prim.s12,
     iconXs: Prim.s14,
+    iconCompact: Prim.s16,
     iconSm: Prim.s18,
     iconMd: Prim.s20,
     iconDefault: Prim.s24,
@@ -125,6 +128,7 @@ class AppSize extends ThemeExtension<AppSize> {
   AppSize copyWith({
     double? iconMicro,
     double? iconXs,
+    double? iconCompact,
     double? iconSm,
     double? iconMd,
     double? iconDefault,
@@ -161,6 +165,7 @@ class AppSize extends ThemeExtension<AppSize> {
     return AppSize(
       iconMicro: iconMicro ?? this.iconMicro,
       iconXs: iconXs ?? this.iconXs,
+      iconCompact: iconCompact ?? this.iconCompact,
       iconSm: iconSm ?? this.iconSm,
       iconMd: iconMd ?? this.iconMd,
       iconDefault: iconDefault ?? this.iconDefault,
@@ -203,6 +208,7 @@ class AppSize extends ThemeExtension<AppSize> {
     return AppSize(
       iconMicro: lerpDouble(iconMicro, other.iconMicro, t)!,
       iconXs: lerpDouble(iconXs, other.iconXs, t)!,
+      iconCompact: lerpDouble(iconCompact, other.iconCompact, t)!,
       iconSm: lerpDouble(iconSm, other.iconSm, t)!,
       iconMd: lerpDouble(iconMd, other.iconMd, t)!,
       iconDefault: lerpDouble(iconDefault, other.iconDefault, t)!,
@@ -216,8 +222,11 @@ class AppSize extends ThemeExtension<AppSize> {
       controlXl: lerpDouble(controlXl, other.controlXl, t)!,
       controlHero: lerpDouble(controlHero, other.controlHero, t)!,
       containerPhone: lerpDouble(containerPhone, other.containerPhone, t)!,
-      containerViewfinder:
-          lerpDouble(containerViewfinder, other.containerViewfinder, t)!,
+      containerViewfinder: lerpDouble(
+        containerViewfinder,
+        other.containerViewfinder,
+        t,
+      )!,
       containerForm: lerpDouble(containerForm, other.containerForm, t)!,
       touchTargetMin: lerpDouble(touchTargetMin, other.touchTargetMin, t)!,
       avatarSm: lerpDouble(avatarSm, other.avatarSm, t)!,
@@ -246,7 +255,11 @@ class AppSize extends ThemeExtension<AppSize> {
         t,
       )!,
       previewDocWidth: lerpDouble(previewDocWidth, other.previewDocWidth, t)!,
-      previewDocHeight: lerpDouble(previewDocHeight, other.previewDocHeight, t)!,
+      previewDocHeight: lerpDouble(
+        previewDocHeight,
+        other.previewDocHeight,
+        t,
+      )!,
       previewDocMaxHeight: lerpDouble(
         previewDocMaxHeight,
         other.previewDocMaxHeight,

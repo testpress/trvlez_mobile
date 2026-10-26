@@ -49,6 +49,7 @@ abstract final class Prim {
   static const double r16 = 16;
   static const double r20 = 20;
   static const double r24 = 24;
+  static const double r28 = 28;
   static const double rFull = 999;
 
   // ─── Border & Stroke Width Scale ─────────────────────────────────────

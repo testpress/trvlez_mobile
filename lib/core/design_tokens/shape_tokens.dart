@@ -12,7 +12,9 @@ class AppShape extends ThemeExtension<AppShape> {
     required this.radiusControlSm,
     required this.radiusControl,
     required this.radiusSurface,
+    required this.radiusCard,
     required this.radiusOverlay,
+    required this.radiusHeader,
     required this.radiusPill,
     required this.borderHairline,
     required this.borderDefault,
@@ -28,7 +30,9 @@ class AppShape extends ThemeExtension<AppShape> {
   final BorderRadius radiusControlSm;
   final BorderRadius radiusControl;
   final BorderRadius radiusSurface;
+  final BorderRadius radiusCard;
   final BorderRadius radiusOverlay;
+  final BorderRadius radiusHeader;
   final BorderRadius radiusPill;
 
   // ─── Border & Stroke Widths (return double) ──────────────────────────
@@ -45,7 +49,9 @@ class AppShape extends ThemeExtension<AppShape> {
     radiusControlSm: BorderRadius.all(Radius.circular(Prim.r8)),
     radiusControl: BorderRadius.all(Radius.circular(Prim.r12)),
     radiusSurface: BorderRadius.all(Radius.circular(Prim.r16)),
+    radiusCard: BorderRadius.all(Radius.circular(Prim.r24)),
     radiusOverlay: BorderRadius.all(Radius.circular(Prim.r20)),
+    radiusHeader: BorderRadius.all(Radius.circular(Prim.r28)),
     radiusPill: BorderRadius.all(Radius.circular(Prim.rFull)),
     borderHairline: Prim.bHairline,
     borderDefault: Prim.bDefault,
@@ -78,7 +84,9 @@ class AppShape extends ThemeExtension<AppShape> {
     BorderRadius? radiusControlSm,
     BorderRadius? radiusControl,
     BorderRadius? radiusSurface,
+    BorderRadius? radiusCard,
     BorderRadius? radiusOverlay,
+    BorderRadius? radiusHeader,
     BorderRadius? radiusPill,
     double? borderHairline,
     double? borderDefault,
@@ -93,7 +101,9 @@ class AppShape extends ThemeExtension<AppShape> {
       radiusControlSm: radiusControlSm ?? this.radiusControlSm,
       radiusControl: radiusControl ?? this.radiusControl,
       radiusSurface: radiusSurface ?? this.radiusSurface,
+      radiusCard: radiusCard ?? this.radiusCard,
       radiusOverlay: radiusOverlay ?? this.radiusOverlay,
+      radiusHeader: radiusHeader ?? this.radiusHeader,
       radiusPill: radiusPill ?? this.radiusPill,
       borderHairline: borderHairline ?? this.borderHairline,
       borderDefault: borderDefault ?? this.borderDefault,
@@ -117,7 +127,9 @@ class AppShape extends ThemeExtension<AppShape> {
       )!,
       radiusControl: BorderRadius.lerp(radiusControl, other.radiusControl, t)!,
       radiusSurface: BorderRadius.lerp(radiusSurface, other.radiusSurface, t)!,
+      radiusCard: BorderRadius.lerp(radiusCard, other.radiusCard, t)!,
       radiusOverlay: BorderRadius.lerp(radiusOverlay, other.radiusOverlay, t)!,
+      radiusHeader: BorderRadius.lerp(radiusHeader, other.radiusHeader, t)!,
       radiusPill: BorderRadius.lerp(radiusPill, other.radiusPill, t)!,
       borderHairline: lerpDouble(borderHairline, other.borderHairline, t)!,
       borderDefault: lerpDouble(borderDefault, other.borderDefault, t)!,

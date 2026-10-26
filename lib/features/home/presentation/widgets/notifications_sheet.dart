@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 class NotificationItem {
   final String id;
@@ -102,10 +100,8 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
             children: [
               Text(
                 'Notifications',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
                   color: colors.textPrimary,
                 ),
               ),
@@ -119,10 +115,8 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                   ),
                   child: Text(
                     '$unreadCount',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 10,
-                      fontWeight: TypeScale.bold,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
                       color: colors.textOnAction,
                     ),
                   ),
@@ -150,10 +144,8 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                   },
                   child: Text(
                     'Mark all read',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      fontWeight: TypeScale.semiBold,
+                    style: context.text.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: colors.brandPrimary,
                     ),
                   ),
@@ -167,9 +159,7 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
               child: Center(
                 child: Text(
                   'No notifications right now',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
+                  style: context.text.bodyMedium?.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -215,30 +205,24 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
                             children: [
                               Text(
                                 item.title,
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 13,
+                                style: context.text.bodyMedium?.copyWith(
                                   fontWeight: item.isUnread
-                                      ? TypeScale.bold
-                                      : TypeScale.semiBold,
+                                      ? FontWeight.w700
+                                      : FontWeight.w600,
                                   color: colors.textPrimary,
                                 ),
                               ),
                               SizedBox(height: space.stackText),
                               Text(
                                 item.body,
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 12,
+                                style: context.text.labelMedium?.copyWith(
                                   color: colors.textSecondary,
                                 ),
                               ),
                               SizedBox(height: space.stackText),
                               Text(
                                 item.timeAgo,
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 10,
+                                style: context.text.labelSmall?.copyWith(
                                   color: colors.inkTertiary,
                                 ),
                               ),

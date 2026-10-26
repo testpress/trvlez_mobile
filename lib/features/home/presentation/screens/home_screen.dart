@@ -6,8 +6,6 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -156,6 +154,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           // ── Pinned Header ──────────────────────────────────────────────
           AppPinnedHeader(
+            paddingBottom: space.insetCard.bottom,
+            horizontalPadding: space.insetCardComfortable.left,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -167,21 +167,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onThemeToggle: () =>
                       ref.read(themeModeProvider.notifier).toggleTheme(),
                 ),
-                SizedBox(height: space.stackItem),
+                SizedBox(height: space.stackItem + space.stackText),
                 HomeLocationRow(
                   location: _selectedLocation,
                   onTap: _onLocationTap,
                 ),
-                SizedBox(height: space.stackFormField),
+                SizedBox(height: space.stackTight),
                 Text(
                   _greetingText(travelerName),
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 20,
-                    fontWeight: TypeScale.bold,
-                    letterSpacing: -0.3,
-                    color: colors.textPrimary,
-                  ),
+                  style: (context.text.headlineMedium ?? const TextStyle())
+                      .copyWith(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: colors.textPrimary,
+                        letterSpacing: -0.3,
+                        height: 1.25,
+                      ),
                 ),
                 SizedBox(height: space.stackText),
                 Text(
@@ -190,9 +191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       : (verificationState.isProcessing
                             ? 'Verification in review · usually under a minute'
                             : 'Verify once, book without re-checking'),
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12,
+                  style: context.text.bodyMedium?.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -226,7 +225,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   // ── Services Section ───────────────────────────────────
                   const HomeSectionHeader(title: 'Services'),
-                  SizedBox(height: space.stackItem),
+                  SizedBox(height: space.stackFormField),
                   ServiceGrid(
                     cards: [
                       ServiceCard(

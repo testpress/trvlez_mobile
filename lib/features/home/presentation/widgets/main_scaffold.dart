@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Top-level scaffold managing the 4-tab bottom navigation shell for authenticated users.
 class MainScaffold extends StatelessWidget {
@@ -139,18 +137,14 @@ class _TabBarItem extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: sizes.iconMd,
+                size: sizes.iconSm,
                 color: isSelected ? activeColor : inactiveColor,
               ),
               SizedBox(height: space.stackText),
               Text(
                 label,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 10,
-                  fontWeight: isSelected
-                      ? TypeScale.semiBold
-                      : TypeScale.medium,
+                style: context.text.labelSmall?.copyWith(
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? activeColor : inactiveColor,
                   letterSpacing: 0.1,
                 ),

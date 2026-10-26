@@ -227,6 +227,8 @@ class AppColors extends ThemeExtension<AppColors> {
   Color get chevron => isDark ? Palette.neutral600 : Palette.chevron;
   Color get scrim => Palette.scrim;
   Color get cardBorderSoft => cardBorder;
+  Color get soonCard => isDark ? surfaceSubtle : Palette.soonCard;
+  Color get soonIcon => isDark ? inkTertiary : Palette.soonIcon;
 
   // ─── Static Feature Gradients & Constants ────────────────────────────
   static const Color white = Palette.neutral0;

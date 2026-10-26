@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Clean section header widget with an optional action link.
 class HomeSectionHeader extends StatelessWidget {
@@ -20,6 +18,7 @@ class HomeSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
+    final sizes = context.sizes;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -28,29 +27,29 @@ class HomeSectionHeader extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14,
-              fontWeight: TypeScale.bold,
+            style: context.text.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
           ),
         ),
         if (action != null)
-          InkWell(
-            onTap: onAction,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: space.inlineMicro,
-                vertical: space.stackText,
-              ),
-              child: Text(
-                action!,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12,
-                  fontWeight: TypeScale.semiBold,
-                  color: colors.brandPrimary,
+          ConstrainedBox(
+            constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+            child: InkWell(
+              onTap: onAction,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: space.inlineMicro,
+                  vertical: space.stackText,
+                ),
+                child: Text(
+                  action!,
+                  style: (context.text.titleMedium ?? const TextStyle())
+                      .copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colors.brandPrimary,
+                      ),
                 ),
               ),
             ),
