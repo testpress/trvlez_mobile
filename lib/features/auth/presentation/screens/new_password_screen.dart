@@ -112,7 +112,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             autofillHints: const [AutofillHints.newPassword],
           ),
 
-          SizedBox(height: space.stackFormField),
+          SizedBox(height: space.stackSection),
 
           BrandTextField(
             label: 'Confirm password',

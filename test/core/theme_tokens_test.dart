@@ -72,6 +72,10 @@ void main() {
         const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
       );
       expect(copied.insetCard, space.insetCard);
+      expect(
+        space.insetControlXl,
+        const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+      );
 
       final lerped = space.lerp(AppSpace.compact, 0.5);
       expect(lerped, isA<AppSpace>());
@@ -82,12 +86,13 @@ void main() {
       const size = AppSize.regular;
       final copied = size.copyWith(
         iconDefault: 26.0,
-        controlHero: 64.0,
+        controlHero: 80.0,
         containerPhone: 440.0,
       );
       expect(copied.iconDefault, 26.0);
       expect(copied.controlLg, size.controlLg);
-      expect(copied.controlHero, 64.0);
+      expect(copied.controlHero, 80.0);
+      expect(size.controlHero, 72.0);
       expect(copied.containerPhone, 440.0);
 
       final lerped = size.lerp(size, 0.5);

@@ -83,7 +83,7 @@ class AppSize extends ThemeExtension<AppSize> {
     controlMd: Prim.s44,
     controlLg: Prim.s48,
     controlXl: Prim.s56,
-    controlHero: Prim.s64,
+    controlHero: Prim.s72,
     containerPhone: Prim.s440,
     touchTargetMin: Prim.s48,
     avatarSm: Prim.s28,

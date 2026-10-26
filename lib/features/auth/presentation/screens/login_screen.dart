@@ -121,7 +121,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 height: 1.25,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               'Sign in to continue your journey',
               style: TextStyle(
@@ -133,7 +133,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
 
-            SizedBox(height: space.stackSection),
+            SizedBox(height: space.stackHero),
 
             // ── Form Inputs ──────────────────────────────────────────────
             BrandTextField(
@@ -146,7 +146,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               validator: validateEmail,
             ),
 
-            SizedBox(height: space.stackFormField),
+            SizedBox(height: space.stackSection),
 
             BrandTextField(
               label: 'Password',
@@ -159,7 +159,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               onSubmitted: onSubmit,
             ),
 
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackFormField),
 
             // ── Forgot Password Link ─────────────────────────────────────
             Align(

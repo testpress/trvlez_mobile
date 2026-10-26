@@ -15,6 +15,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
     required this.insetControlSm,
     required this.insetControlMd,
     required this.insetControlLg,
+    required this.insetControlXl,
     required this.insetInput,
     required this.insetTag,
     required this.insetTagSm,
@@ -42,6 +43,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
   final EdgeInsets insetControlSm;
   final EdgeInsets insetControlMd;
   final EdgeInsets insetControlLg;
+  final EdgeInsets insetControlXl;
   final EdgeInsets insetInput;
   final EdgeInsets insetTag;
   final EdgeInsets insetTagSm;
@@ -86,6 +88,10 @@ class AppSpace extends ThemeExtension<AppSpace> {
       horizontal: Prim.s24,
       vertical: Prim.s16,
     ),
+    insetControlXl: EdgeInsets.symmetric(
+      horizontal: Prim.s24,
+      vertical: Prim.s18,
+    ),
     insetInput: EdgeInsets.symmetric(horizontal: Prim.s16, vertical: Prim.s14),
     insetTag: EdgeInsets.symmetric(horizontal: Prim.s8, vertical: Prim.s4),
     insetTagSm: EdgeInsets.symmetric(horizontal: Prim.s6, vertical: Prim.s2),
@@ -125,6 +131,10 @@ class AppSpace extends ThemeExtension<AppSpace> {
       horizontal: Prim.s16,
       vertical: Prim.s12,
     ),
+    insetControlXl: EdgeInsets.symmetric(
+      horizontal: Prim.s16,
+      vertical: Prim.s14,
+    ),
     insetInput: EdgeInsets.symmetric(horizontal: Prim.s12, vertical: Prim.s10),
     insetTag: EdgeInsets.symmetric(horizontal: Prim.s6, vertical: Prim.s2),
     insetTagSm: EdgeInsets.symmetric(horizontal: Prim.s4, vertical: Prim.s2),
@@ -153,6 +163,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
     EdgeInsets? insetControlSm,
     EdgeInsets? insetControlMd,
     EdgeInsets? insetControlLg,
+    EdgeInsets? insetControlXl,
     EdgeInsets? insetInput,
     EdgeInsets? insetTag,
     EdgeInsets? insetTagSm,
@@ -179,6 +190,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
       insetControlSm: insetControlSm ?? this.insetControlSm,
       insetControlMd: insetControlMd ?? this.insetControlMd,
       insetControlLg: insetControlLg ?? this.insetControlLg,
+      insetControlXl: insetControlXl ?? this.insetControlXl,
       insetInput: insetInput ?? this.insetInput,
       insetTag: insetTag ?? this.insetTag,
       insetTagSm: insetTagSm ?? this.insetTagSm,
@@ -222,6 +234,7 @@ class AppSpace extends ThemeExtension<AppSpace> {
       insetControlSm: EdgeInsets.lerp(insetControlSm, other.insetControlSm, t)!,
       insetControlMd: EdgeInsets.lerp(insetControlMd, other.insetControlMd, t)!,
       insetControlLg: EdgeInsets.lerp(insetControlLg, other.insetControlLg, t)!,
+      insetControlXl: EdgeInsets.lerp(insetControlXl, other.insetControlXl, t)!,
       insetInput: EdgeInsets.lerp(insetInput, other.insetInput, t)!,
       insetTag: EdgeInsets.lerp(insetTag, other.insetTag, t)!,
       insetTagSm: EdgeInsets.lerp(insetTagSm, other.insetTagSm, t)!,

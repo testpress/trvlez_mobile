@@ -12,7 +12,7 @@ class BrandWordmark extends StatelessWidget {
     super.key,
     this.planeWidth,
     this.gap,
-    this.fontSize = 16,
+    this.fontSize = 24,
     this.trvlColor,
     this.ezColor,
   });
@@ -39,8 +39,8 @@ class BrandWordmark extends StatelessWidget {
     final space = context.space;
     final sizes = context.sizes;
 
-    final effectivePlaneWidth = planeWidth ?? sizes.iconXs;
-    final effectiveGap = gap ?? space.inlineMicro;
+    final effectivePlaneWidth = planeWidth ?? sizes.iconMd;
+    final effectiveGap = gap ?? space.inlineIconLabel;
 
     final baseStyle = TextStyle(
       fontFamily: AppTypography.fontFamily,

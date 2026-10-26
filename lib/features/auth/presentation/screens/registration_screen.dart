@@ -165,7 +165,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                 height: 1.25,
               ),
             ),
-            SizedBox(height: space.stackText),
+            SizedBox(height: space.stackTight),
             Text(
               'Start your seamless travel journey',
               style: TextStyle(
@@ -177,7 +177,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
             ),
 
-            SizedBox(height: space.stackSection),
+            SizedBox(height: space.stackHero),
 
             // ── Form Inputs ──────────────────────────────────────────────
             BrandTextField(
@@ -190,7 +190,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               validator: validateEmail,
             ),
 
-            SizedBox(height: space.stackFormField),
+            SizedBox(height: space.stackSection),
 
             BrandTextField(
               label: 'Password',

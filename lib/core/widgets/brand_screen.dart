@@ -70,36 +70,42 @@ class BrandScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // ── Header Bar ──────────────────────────────────────────────
-                    SizedBox(
-                      height: sizes.appBarHeight,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          if (onBack != null)
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Semantics(
-                                button: true,
-                                label: 'Back',
-                                child: IconButton(
-                                  icon: Icon(
-                                    AppIcons.arrowLeft,
-                                    color: colors.brandOnSurface,
-                                    size: sizes.iconMd,
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: sizes.controlLg,
+                        bottom: space.stackItem,
+                      ),
+                      child: SizedBox(
+                        height: sizes.iconXl,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            if (onBack != null)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Semantics(
+                                  button: true,
+                                  label: 'Back',
+                                  child: IconButton(
+                                    icon: Icon(
+                                      AppIcons.arrowLeft,
+                                      color: colors.brandOnSurface,
+                                      size: sizes.iconMd,
+                                    ),
+                                    onPressed: onBack,
+                                    splashRadius: sizes.iconDefault,
+                                    constraints: BoxConstraints(
+                                      minWidth: sizes.touchTargetMin,
+                                      minHeight: sizes.touchTargetMin,
+                                    ),
+                                    padding: space.insetControlSm,
                                   ),
-                                  onPressed: onBack,
-                                  splashRadius: sizes.iconDefault,
-                                  constraints: BoxConstraints(
-                                    minWidth: sizes.touchTargetMin,
-                                    minHeight: sizes.touchTargetMin,
-                                  ),
-                                  padding: space.insetControlSm,
                                 ),
                               ),
-                            ),
-                          if (showWordmark)
-                            const Center(child: BrandWordmark()),
-                        ],
+                            if (showWordmark)
+                              const Center(child: BrandWordmark()),
+                          ],
+                        ),
                       ),
                     ),
 

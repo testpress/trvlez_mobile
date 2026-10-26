@@ -75,6 +75,7 @@ void main() {
         final buttonFinder = find.byType(ElevatedButton);
         expect(buttonFinder, findsOneWidget);
         expect(find.text('Create account'), findsOneWidget);
+        expect(tester.getSize(buttonFinder).height, 72.0);
 
         final textWidget = tester.widget<Text>(find.text('Create account'));
         expect(textWidget.textAlign, TextAlign.center);

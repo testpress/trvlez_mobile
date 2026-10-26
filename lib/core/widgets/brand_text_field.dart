@@ -83,13 +83,13 @@ class _BrandTextFieldState extends State<BrandTextField> {
         Padding(
           padding: EdgeInsets.only(
             left: space.inlineMicro,
-            bottom: space.stackTight,
+            bottom: space.stackItem,
           ),
           child: Text(
             widget.label,
             style: TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: TypeScale.medium,
               color: colors.brandSecondaryBody,
             ),
@@ -110,7 +110,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
           cursorHeight: sizes.iconMd,
           style: TextStyle(
             fontFamily: AppTypography.fontFamily,
-            fontSize: 14.5,
+            fontSize: 15,
             fontWeight: TypeScale.regular,
             color: colors.brandOnSurface,
             height: 1.25,
@@ -119,6 +119,9 @@ class _BrandTextFieldState extends State<BrandTextField> {
             isDense: false,
             filled: true,
             fillColor: colors.brandFieldBackground,
+            constraints: BoxConstraints(
+              minHeight: sizes.controlXl,
+            ),
             border: OutlineInputBorder(
               borderRadius: shape.radiusPill,
               borderSide: BorderSide.none,
@@ -129,10 +132,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: shape.radiusPill,
-              borderSide: BorderSide(
-                color: colors.brandOnSurface.withValues(alpha: 0.6),
-                width: shape.borderDefault,
-              ),
+              borderSide: BorderSide.none,
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: shape.radiusPill,
@@ -149,13 +149,13 @@ class _BrandTextFieldState extends State<BrandTextField> {
               ),
             ),
             contentPadding: EdgeInsets.symmetric(
-              horizontal: space.insetCard.left,
-              vertical: space.stackFormField,
+              horizontal: space.insetControlXl.left,
+              vertical: space.insetControlXl.top,
             ),
             hintText: widget.placeholder,
             hintStyle: TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 14.5,
+              fontSize: 15,
               fontWeight: TypeScale.regular,
               color: colors.brandSecondaryPlaceholder,
               height: 1.25,
@@ -168,8 +168,8 @@ class _BrandTextFieldState extends State<BrandTextField> {
               height: 1.3,
             ),
             suffixIconConstraints: BoxConstraints(
-              minWidth: sizes.controlLg,
-              minHeight: sizes.controlLg,
+              minWidth: sizes.touchTargetMin,
+              minHeight: sizes.touchTargetMin,
             ),
             suffixIcon: widget.obscurable
                 ? Semantics(
@@ -179,7 +179,9 @@ class _BrandTextFieldState extends State<BrandTextField> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () => setState(() => _obscured = !_obscured),
                       child: Padding(
-                        padding: EdgeInsets.only(right: space.inlineItem),
+                        padding: EdgeInsets.only(
+                          right: space.insetControlLg.left,
+                        ),
                         child: Icon(
                           _obscured ? AppIcons.eye : AppIcons.eyeOff,
                           size: sizes.iconSm,
