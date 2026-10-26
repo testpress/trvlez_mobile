@@ -217,7 +217,7 @@ class _JoinFindrSheetState extends ConsumerState<JoinFindrSheet> {
                             ? Icon(
                                 AppIcons.check,
                                 size: sizes.iconXs,
-                                color: Colors.white,
+                                color: colors.textOnAction,
                               )
                             : null,
                       ),

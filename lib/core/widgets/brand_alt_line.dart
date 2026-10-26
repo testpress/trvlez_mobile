@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The alternative action line at the foot of brand screens
@@ -11,7 +10,7 @@ class BrandAltLine extends StatelessWidget {
     this.prefix,
     required this.linkText,
     required this.onTap,
-    this.fontSize = 12,
+    this.fontSize,
     this.underlineColor,
   });
 
@@ -24,8 +23,8 @@ class BrandAltLine extends StatelessWidget {
   /// Callback when the link is tapped
   final VoidCallback onTap;
 
-  /// Font size for the line
-  final double fontSize;
+  /// Optional font size override for the line. Defaults to [TextTheme.labelLarge].
+  final double? fontSize;
 
   /// Optional underline color override
   final Color? underlineColor;
@@ -35,16 +34,16 @@ class BrandAltLine extends StatelessWidget {
     final space = context.space;
     final shape = context.shape;
 
-    final prefixStyle = TextStyle(
-      fontFamily: AppTypography.fontFamily,
-      fontSize: fontSize,
+    final effectiveFontSize = fontSize ?? context.text.labelLarge?.fontSize;
+
+    final prefixStyle = (context.text.labelLarge ?? const TextStyle()).copyWith(
+      fontSize: effectiveFontSize,
       fontWeight: TypeScale.regular,
       color: context.colors.brandSecondaryBody,
     );
 
-    final linkStyle = TextStyle(
-      fontFamily: AppTypography.fontFamily,
-      fontSize: fontSize,
+    final linkStyle = (context.text.labelLarge ?? const TextStyle()).copyWith(
+      fontSize: effectiveFontSize,
       fontWeight: TypeScale.semiBold,
       color: context.colors.brandOnSurface,
     );
@@ -55,8 +54,8 @@ class BrandAltLine extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (prefix != null) ...[
-              Text(prefix!, style: prefixStyle),
+            if (prefix case final prefixText?) ...[
+              Text(prefixText, style: prefixStyle),
               SizedBox(width: space.inlineMicro),
             ],
             Semantics(
@@ -72,8 +71,7 @@ class BrandAltLine extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color:
-                              underlineColor ?? context.colors.brandUnderline,
+                          color: underlineColor ?? context.colors.brandUnderline,
                           width: shape.borderDefault,
                         ),
                       ),

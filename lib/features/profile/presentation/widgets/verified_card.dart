@@ -54,7 +54,8 @@ class VerifiedCard extends StatelessWidget {
                   color: primary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: sizes.iconSm, color: Colors.white),
+                child:
+                    Icon(icon, size: sizes.iconSm, color: colors.textOnAction),
               ),
               SizedBox(width: space.inlineIconLabel),
               Expanded(

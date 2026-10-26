@@ -48,9 +48,15 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     super.dispose();
   }
 
-  bool get credentialsEntered =>
+  bool get hasCredentialsEntered =>
       emailController.text.trim().isNotEmpty &&
       passwordController.text.length >= 8;
+
+  bool get isCredentialsValid {
+    final email = emailController.text.trim();
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    return emailRegex.hasMatch(email) && passwordController.text.length >= 8;
+  }
 
   void showSuccessAndNavigate() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -75,14 +81,15 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       if (!mounted) return;
       try {
         context.go(AppRoutes.login);
-      } catch (_) {
+      } on FlutterError {
         // Fallback for standalone tests
       }
     });
   }
 
   void onSubmit() {
-    if (!formKey.currentState!.validate()) return;
+    final form = formKey.currentState;
+    if (form == null || !form.validate()) return;
 
     ref
         .read(registrationControllerProvider.notifier)
@@ -155,25 +162,27 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
 
             // ── Header Typography ────────────────────────────────────────
-            Text(
-              'Create your account',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 20,
-                fontWeight: TypeScale.semiBold,
-                color: colors.brandOnSurface,
-                height: 1.25,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Create your account',
+                style: context.text.headlineLarge?.copyWith(
+                  color: colors.brandOnSurface,
+                  height: 1.25,
+                ),
               ),
             ),
-            SizedBox(height: space.stackTight),
-            Text(
-              'Start your seamless travel journey',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13,
-                fontWeight: TypeScale.regular,
-                color: colors.brandSecondaryBody,
-                height: 1.45,
+            SizedBox(height: space.stackItem),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Start your seamless travel journey',
+                style: context.text.bodyLarge?.copyWith(
+                  color: colors.brandSecondaryBody,
+                  height: 1.45,
+                ),
               ),
             ),
 
@@ -217,6 +226,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
             AppButton(
               label: 'Create account',
               variant: AppButtonVariant.brandWhite,
+              active: isCredentialsValid,
               isLoading: regState.isLoading,
               onPressed: onSubmit,
             ),

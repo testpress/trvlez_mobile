@@ -95,9 +95,9 @@ class PropertyCard extends StatelessWidget {
                       ),
                       child: Text(
                         badgeLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: AppTypography.fontFamily,
-                          color: Colors.white,
+                          color: colors.textOnAction,
                           fontSize: 9,
                           fontWeight: TypeScale.bold,
                           letterSpacing: 0.5,

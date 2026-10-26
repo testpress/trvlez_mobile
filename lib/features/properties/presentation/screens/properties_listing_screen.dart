@@ -241,7 +241,9 @@ class _PropertiesListingScreenState
                           fontWeight: isSelected
                               ? TypeScale.bold
                               : TypeScale.medium,
-                          color: isSelected ? Colors.white : colors.textPrimary,
+                          color: isSelected
+                              ? colors.textOnAction
+                              : colors.textPrimary,
                         ),
                         side: BorderSide(
                           color: isSelected
@@ -296,7 +298,7 @@ class _PropertiesListingScreenState
                                   .fetchProperties(),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: colors.brandPrimary,
-                                foregroundColor: Colors.white,
+                                foregroundColor: colors.textOnAction,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: shape.radiusPill,
                                 ),
@@ -372,7 +374,7 @@ class _PropertiesListingScreenState
                           ),
                           SizedBox(height: space.stackItem),
                           SizedBox(
-                            height: 226,
+                            height: sizes.cardHeightCarousel,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: properties.length,

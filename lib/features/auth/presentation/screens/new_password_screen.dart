@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_screen.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -77,31 +75,33 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            showMismatch ? "Those don't match" : 'Choose a new password',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 20,
-              fontWeight: TypeScale.semiBold,
-              color: colors.brandOnSurface,
-              height: 1.25,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              showMismatch ? "Those don't match" : 'Choose a new password',
+              style: context.text.headlineLarge?.copyWith(
+                color: colors.brandOnSurface,
+                height: 1.25,
+              ),
             ),
           ),
-          SizedBox(height: space.stackText),
-          Text(
-            showMismatch
-                ? 'Type the same one in both boxes'
-                : "You'll be signed in once it's saved",
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              fontWeight: TypeScale.regular,
-              color: colors.brandSecondaryBody,
-              height: 1.45,
+          SizedBox(height: space.stackItem),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              showMismatch
+                  ? 'Type the same one in both boxes'
+                  : "You'll be signed in once it's saved",
+              style: context.text.bodyLarge?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.45,
+              ),
             ),
           ),
 
-          SizedBox(height: space.stackHero),
+          SizedBox(height: space.stackSection),
 
           BrandTextField(
             label: 'Password',
@@ -112,7 +112,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             autofillHints: const [AutofillHints.newPassword],
           ),
 
-          SizedBox(height: space.stackSection),
+          SizedBox(height: space.stackFormField),
 
           BrandTextField(
             label: 'Confirm password',
@@ -136,8 +136,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
           AppButton(
             label: 'Save and sign in',
             variant: AppButtonVariant.brandWhite,
-            enabled: isFormFilled,
-            onPressed: _onSubmit,
+            active: isFormFilled,
+            onPressed: isFormFilled ? _onSubmit : null,
           ),
         ],
       ),

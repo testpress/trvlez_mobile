@@ -6,6 +6,7 @@ import 'primitives.dart';
 @immutable
 class AppSize extends ThemeExtension<AppSize> {
   const AppSize({
+    required this.iconMicro,
     required this.iconXs,
     required this.iconSm,
     required this.iconMd,
@@ -20,6 +21,8 @@ class AppSize extends ThemeExtension<AppSize> {
     required this.controlXl,
     required this.controlHero,
     required this.containerPhone,
+    required this.containerViewfinder,
+    required this.containerForm,
     required this.touchTargetMin,
     required this.avatarSm,
     required this.avatarMd,
@@ -33,9 +36,14 @@ class AppSize extends ThemeExtension<AppSize> {
     required this.thumbPhotoMd,
     required this.thumbPhotoLg,
     required this.cardWidthCarousel,
+    required this.cardHeightCarousel,
+    required this.previewDocWidth,
+    required this.previewDocHeight,
+    required this.previewDocMaxHeight,
   });
 
   // ─── Icon Sizing Tokens (return double) ──────────────────────────────
+  final double iconMicro;
   final double iconXs;
   final double iconSm;
   final double iconMd;
@@ -52,6 +60,8 @@ class AppSize extends ThemeExtension<AppSize> {
   final double controlXl;
   final double controlHero;
   final double containerPhone;
+  final double containerViewfinder;
+  final double containerForm;
   final double touchTargetMin;
 
   // ─── Avatar Sizing Tokens (return double) ────────────────────────────
@@ -69,8 +79,13 @@ class AppSize extends ThemeExtension<AppSize> {
   final double thumbPhotoMd;
   final double thumbPhotoLg;
   final double cardWidthCarousel;
+  final double cardHeightCarousel;
+  final double previewDocWidth;
+  final double previewDocHeight;
+  final double previewDocMaxHeight;
 
   static const regular = AppSize(
+    iconMicro: Prim.s12,
     iconXs: Prim.s14,
     iconSm: Prim.s18,
     iconMd: Prim.s20,
@@ -85,6 +100,8 @@ class AppSize extends ThemeExtension<AppSize> {
     controlXl: Prim.s56,
     controlHero: Prim.s72,
     containerPhone: Prim.s440,
+    containerViewfinder: Prim.s320,
+    containerForm: Prim.s480,
     touchTargetMin: Prim.s48,
     avatarSm: Prim.s28,
     avatarMd: Prim.s36,
@@ -98,10 +115,15 @@ class AppSize extends ThemeExtension<AppSize> {
     thumbPhotoMd: Prim.s120,
     thumbPhotoLg: Prim.s160,
     cardWidthCarousel: Prim.s220,
+    cardHeightCarousel: Prim.s226,
+    previewDocWidth: Prim.s200,
+    previewDocHeight: Prim.s140,
+    previewDocMaxHeight: Prim.s280,
   );
 
   @override
   AppSize copyWith({
+    double? iconMicro,
     double? iconXs,
     double? iconSm,
     double? iconMd,
@@ -116,6 +138,8 @@ class AppSize extends ThemeExtension<AppSize> {
     double? controlXl,
     double? controlHero,
     double? containerPhone,
+    double? containerViewfinder,
+    double? containerForm,
     double? touchTargetMin,
     double? avatarSm,
     double? avatarMd,
@@ -129,8 +153,13 @@ class AppSize extends ThemeExtension<AppSize> {
     double? thumbPhotoMd,
     double? thumbPhotoLg,
     double? cardWidthCarousel,
+    double? cardHeightCarousel,
+    double? previewDocWidth,
+    double? previewDocHeight,
+    double? previewDocMaxHeight,
   }) {
     return AppSize(
+      iconMicro: iconMicro ?? this.iconMicro,
       iconXs: iconXs ?? this.iconXs,
       iconSm: iconSm ?? this.iconSm,
       iconMd: iconMd ?? this.iconMd,
@@ -145,6 +174,8 @@ class AppSize extends ThemeExtension<AppSize> {
       controlXl: controlXl ?? this.controlXl,
       controlHero: controlHero ?? this.controlHero,
       containerPhone: containerPhone ?? this.containerPhone,
+      containerViewfinder: containerViewfinder ?? this.containerViewfinder,
+      containerForm: containerForm ?? this.containerForm,
       touchTargetMin: touchTargetMin ?? this.touchTargetMin,
       avatarSm: avatarSm ?? this.avatarSm,
       avatarMd: avatarMd ?? this.avatarMd,
@@ -159,6 +190,10 @@ class AppSize extends ThemeExtension<AppSize> {
       thumbPhotoMd: thumbPhotoMd ?? this.thumbPhotoMd,
       thumbPhotoLg: thumbPhotoLg ?? this.thumbPhotoLg,
       cardWidthCarousel: cardWidthCarousel ?? this.cardWidthCarousel,
+      cardHeightCarousel: cardHeightCarousel ?? this.cardHeightCarousel,
+      previewDocWidth: previewDocWidth ?? this.previewDocWidth,
+      previewDocHeight: previewDocHeight ?? this.previewDocHeight,
+      previewDocMaxHeight: previewDocMaxHeight ?? this.previewDocMaxHeight,
     );
   }
 
@@ -166,6 +201,7 @@ class AppSize extends ThemeExtension<AppSize> {
   AppSize lerp(ThemeExtension<AppSize>? other, double t) {
     if (other is! AppSize) return this;
     return AppSize(
+      iconMicro: lerpDouble(iconMicro, other.iconMicro, t)!,
       iconXs: lerpDouble(iconXs, other.iconXs, t)!,
       iconSm: lerpDouble(iconSm, other.iconSm, t)!,
       iconMd: lerpDouble(iconMd, other.iconMd, t)!,
@@ -180,6 +216,9 @@ class AppSize extends ThemeExtension<AppSize> {
       controlXl: lerpDouble(controlXl, other.controlXl, t)!,
       controlHero: lerpDouble(controlHero, other.controlHero, t)!,
       containerPhone: lerpDouble(containerPhone, other.containerPhone, t)!,
+      containerViewfinder:
+          lerpDouble(containerViewfinder, other.containerViewfinder, t)!,
+      containerForm: lerpDouble(containerForm, other.containerForm, t)!,
       touchTargetMin: lerpDouble(touchTargetMin, other.touchTargetMin, t)!,
       avatarSm: lerpDouble(avatarSm, other.avatarSm, t)!,
       avatarMd: lerpDouble(avatarMd, other.avatarMd, t)!,
@@ -199,6 +238,18 @@ class AppSize extends ThemeExtension<AppSize> {
       cardWidthCarousel: lerpDouble(
         cardWidthCarousel,
         other.cardWidthCarousel,
+        t,
+      )!,
+      cardHeightCarousel: lerpDouble(
+        cardHeightCarousel,
+        other.cardHeightCarousel,
+        t,
+      )!,
+      previewDocWidth: lerpDouble(previewDocWidth, other.previewDocWidth, t)!,
+      previewDocHeight: lerpDouble(previewDocHeight, other.previewDocHeight, t)!,
+      previewDocMaxHeight: lerpDouble(
+        previewDocMaxHeight,
+        other.previewDocMaxHeight,
         t,
       )!,
     );

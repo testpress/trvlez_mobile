@@ -203,10 +203,7 @@ class _VerifyHeader extends StatelessWidget {
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 15.0,
-                fontWeight: TypeScale.semiBold,
+              style: context.text.titleMedium?.copyWith(
                 color: colors.brandOnSurface,
                 height: 1.2,
               ),

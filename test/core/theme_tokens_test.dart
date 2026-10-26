@@ -4,7 +4,9 @@ import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_motion.dart';
+import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/palette.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 void main() {
   group('Theme Tokens & Primitives', () {
@@ -54,8 +56,17 @@ void main() {
         expect(activeColors.actionPrimary, AppColors.light.actionPrimary);
         expect(activeColors.surface, AppColors.light.surface);
         expect(activeText.bodyMedium, isNotNull);
+        expect(activeText.headlineLarge?.fontSize, TypeScale.s26);
+        expect(activeText.bodyLarge?.fontSize, TypeScale.s16);
       },
     );
+
+    test('AppTypography provides brand heading and subtitle tokens', () {
+      expect(AppTypography.brandHeading.fontSize, TypeScale.s26);
+      expect(AppTypography.brandHeading.fontWeight, TypeScale.bold);
+      expect(AppTypography.brandSubtitle.fontSize, TypeScale.s16);
+      expect(AppTypography.brandSubtitle.fontWeight, TypeScale.medium);
+    });
 
     test('AppSpace ThemeExtension copyWith and lerp', () {
       const space = AppSpace.comfortable;
@@ -88,12 +99,21 @@ void main() {
         iconDefault: 26.0,
         controlHero: 80.0,
         containerPhone: 440.0,
+        cardHeightCarousel: 230.0,
       );
       expect(copied.iconDefault, 26.0);
       expect(copied.controlLg, size.controlLg);
       expect(copied.controlHero, 80.0);
       expect(size.controlHero, 72.0);
       expect(copied.containerPhone, 440.0);
+      expect(size.iconMicro, 12.0);
+      expect(size.cardHeightCarousel, 226.0);
+      expect(copied.cardHeightCarousel, 230.0);
+      expect(size.previewDocWidth, 200.0);
+      expect(size.previewDocHeight, 140.0);
+      expect(size.previewDocMaxHeight, 280.0);
+      expect(size.containerViewfinder, 320.0);
+      expect(size.containerForm, 480.0);
 
       final lerped = size.lerp(size, 0.5);
       expect(lerped, isA<AppSize>());

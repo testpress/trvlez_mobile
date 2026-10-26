@@ -21,9 +21,22 @@ class AppTypography {
 
   /// Semantic typography token for button labels adhering to the typography scale.
   static TextStyle get buttonLabel => label.copyWith(
-    fontSize: 15,
+    fontSize: TypeScale.s15,
     fontWeight: TypeScale.semiBold,
     letterSpacing: 0.2,
+  );
+
+  /// Semantic typography token for brand screen main headings.
+  static TextStyle get brandHeading => heading.copyWith(
+    fontSize: TypeScale.s26,
+    fontWeight: TypeScale.bold,
+  );
+
+  /// Semantic typography token for brand screen subheadings.
+  static TextStyle get brandSubtitle => body.copyWith(
+    fontSize: TypeScale.s16,
+    fontWeight: TypeScale.medium,
+    height: 1.45,
   );
 
   /// Generates the standard [TextTheme] bound to [AppColors.textPrimary].
@@ -36,80 +49,84 @@ class AppTypography {
     return TextTheme(
       // Headings & Displays
       displayLarge: heading.copyWith(
-        fontSize: 36,
+        fontSize: TypeScale.s36,
         color: foregroundColor,
         letterSpacing: -0.5,
       ),
       displayMedium: heading.copyWith(
-        fontSize: 30,
+        fontSize: TypeScale.s30,
         color: foregroundColor,
         letterSpacing: -0.25,
       ),
-      displaySmall: heading.copyWith(fontSize: 24, color: foregroundColor),
+      displaySmall: heading.copyWith(
+        fontSize: TypeScale.s24,
+        color: foregroundColor,
+      ),
       headlineLarge: heading.copyWith(
-        fontSize: 22,
-        fontWeight: TypeScale.semiBold,
+        fontSize: TypeScale.s26,
+        fontWeight: TypeScale.bold,
         color: foregroundColor,
       ),
       headlineMedium: heading.copyWith(
-        fontSize: 20,
+        fontSize: TypeScale.s20,
         fontWeight: TypeScale.semiBold,
         color: foregroundColor,
       ),
       headlineSmall: heading.copyWith(
-        fontSize: 18,
+        fontSize: TypeScale.s18,
         fontWeight: TypeScale.semiBold,
         color: foregroundColor,
       ),
 
       // Titles
       titleLarge: heading.copyWith(
-        fontSize: 16,
+        fontSize: TypeScale.s16,
         fontWeight: TypeScale.semiBold,
         color: foregroundColor,
       ),
       titleMedium: heading.copyWith(
-        fontSize: 15,
+        fontSize: TypeScale.s15,
         fontWeight: TypeScale.semiBold,
         color: foregroundColor,
       ),
       titleSmall: heading.copyWith(
-        fontSize: 13,
+        fontSize: TypeScale.s13,
         fontWeight: TypeScale.medium,
         color: foregroundColor,
       ),
 
       // Body
       bodyLarge: body.copyWith(
-        fontSize: 15,
+        fontSize: TypeScale.s16,
+        fontWeight: TypeScale.medium,
         color: foregroundColor,
         height: 1.45,
       ),
       bodyMedium: body.copyWith(
-        fontSize: 13,
+        fontSize: TypeScale.s13,
         color: foregroundColor,
         height: 1.4,
       ),
       bodySmall: body.copyWith(
-        fontSize: 11,
+        fontSize: TypeScale.s11,
         color: foregroundColor,
         height: 1.35,
       ),
 
       // Labels
       labelLarge: label.copyWith(
-        fontSize: 14,
+        fontSize: TypeScale.s14,
         fontWeight: TypeScale.semiBold,
         color: foregroundColor,
         letterSpacing: 0.2,
       ),
       labelMedium: label.copyWith(
-        fontSize: 12,
+        fontSize: TypeScale.s12,
         fontWeight: TypeScale.medium,
         color: foregroundColor,
       ),
       labelSmall: label.copyWith(
-        fontSize: 10,
+        fontSize: TypeScale.s10,
         fontWeight: TypeScale.medium,
         color: foregroundColor,
       ),

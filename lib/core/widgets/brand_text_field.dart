@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The pill text field designed specifically for brand red screens.
 ///
@@ -46,8 +44,9 @@ class _BrandTextFieldState extends State<BrandTextField> {
   @override
   void initState() {
     super.initState();
-    if (widget.controller != null) {
-      _controller = widget.controller!;
+    final externalController = widget.controller;
+    if (externalController != null) {
+      _controller = externalController;
     } else {
       _controller = TextEditingController();
       _isInternalController = true;
@@ -87,10 +86,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
           ),
           child: Text(
             widget.label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              fontWeight: TypeScale.medium,
+            style: context.text.titleSmall?.copyWith(
               color: colors.brandSecondaryBody,
             ),
           ),
@@ -108,10 +104,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
           cursorColor: colors.brandOnSurface,
           cursorWidth: shape.borderMedium,
           cursorHeight: sizes.iconMd,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 15,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodyLarge?.copyWith(
             color: colors.brandOnSurface,
             height: 1.25,
           ),
@@ -153,17 +146,11 @@ class _BrandTextFieldState extends State<BrandTextField> {
               vertical: space.insetControlXl.top,
             ),
             hintText: widget.placeholder,
-            hintStyle: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 15,
-              fontWeight: TypeScale.regular,
+            hintStyle: context.text.bodyLarge?.copyWith(
               color: colors.brandSecondaryPlaceholder,
               height: 1.25,
             ),
-            errorStyle: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: TypeScale.medium,
+            errorStyle: context.text.labelMedium?.copyWith(
               color: colors.brandSecondary,
               height: 1.3,
             ),
@@ -175,8 +162,8 @@ class _BrandTextFieldState extends State<BrandTextField> {
                 ? Semantics(
                     button: true,
                     label: _obscured ? 'Show password' : 'Hide password',
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
+                    child: InkWell(
+                      borderRadius: shape.radiusPill,
                       onTap: () => setState(() => _obscured = !_obscured),
                       child: Padding(
                         padding: EdgeInsets.only(

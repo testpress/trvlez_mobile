@@ -207,11 +207,11 @@ class _DarkHotelScreen extends StatelessWidget {
                   children: [
                     Text(
                       guestName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 15,
                         fontWeight: TypeScale.bold,
-                        color: Colors.white,
+                        color: colors.brandOnSurface,
                       ),
                     ),
                     SizedBox(height: space.stackText),
@@ -296,11 +296,11 @@ class _TerminalRow extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 12,
               fontWeight: TypeScale.medium,
-              color: Colors.white,
+              color: colors.brandOnSurface,
             ),
           ),
         ),

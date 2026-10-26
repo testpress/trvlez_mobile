@@ -51,11 +51,11 @@ class BrandScreen extends StatelessWidget {
       body: Stack(
         children: [
           // ─── Background Motif Layer ──────────────────────────────────────
-          if (backgroundAsset != null)
+          if (backgroundAsset case final assetPath?)
             Positioned.fill(
               child: ClipRect(
                 child: SvgPicture.asset(
-                  backgroundAsset!,
+                  assetPath,
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                 ),
@@ -72,7 +72,7 @@ class BrandScreen extends StatelessWidget {
                     // ── Header Bar ──────────────────────────────────────────────
                     Padding(
                       padding: EdgeInsets.only(
-                        top: sizes.controlLg,
+                        top: space.stackSection,
                         bottom: space.stackItem,
                       ),
                       child: SizedBox(

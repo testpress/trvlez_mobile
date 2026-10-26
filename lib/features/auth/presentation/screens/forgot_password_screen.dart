@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_alt_line.dart';
@@ -78,31 +76,33 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            isAlreadyLoggedIn ? 'Change your password' : 'Reset your password',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 20,
-              fontWeight: TypeScale.semiBold,
-              color: colors.brandOnSurface,
-              height: 1.25,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              isAlreadyLoggedIn ? 'Change your password' : 'Reset your password',
+              style: context.text.headlineLarge?.copyWith(
+                color: colors.brandOnSurface,
+                height: 1.25,
+              ),
             ),
           ),
-          SizedBox(height: space.stackText),
-          Text(
-            isAlreadyLoggedIn
-                ? "We'll email you a code to update your password"
-                : "We'll email you a code to get back in",
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              fontWeight: TypeScale.regular,
-              color: colors.brandSecondaryBody,
-              height: 1.45,
+          SizedBox(height: space.stackItem),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              isAlreadyLoggedIn
+                  ? "We'll email you a code to update your password"
+                  : "We'll email you a code to get back in",
+              style: context.text.bodyLarge?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.45,
+              ),
             ),
           ),
 
-          SizedBox(height: space.stackHero),
+          SizedBox(height: space.stackSection),
 
           BrandTextField(
             label: 'Email',

@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The security commitment note at the bottom of brand authentication & verification screens.
@@ -9,9 +8,9 @@ class BrandSecurityNote extends StatelessWidget {
     super.key,
     required this.text,
     this.color,
-    this.fontSize = 10,
-    this.iconWidth = 10,
-    this.iconHeight = 11,
+    this.fontSize,
+    this.iconWidth,
+    this.iconHeight,
   });
 
   /// The promise string (e.g. "Encrypted and never shared with external AI")
@@ -20,20 +19,24 @@ class BrandSecurityNote extends StatelessWidget {
   /// Optional text/icon color override. Defaults to [AppColors.brandSecondaryNote].
   final Color? color;
 
-  /// Font size for the note
-  final double fontSize;
+  /// Optional font size override for the note. Defaults to [TextTheme.bodySmall].
+  final double? fontSize;
 
-  /// Dimensions for the padlock icon
-  final double iconWidth;
-  final double iconHeight;
+  /// Optional dimensions for the padlock icon. Defaults to [AppSize.iconMicro].
+  final double? iconWidth;
+  final double? iconHeight;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final sizes = context.sizes;
 
     final noteColor = color ?? colors.brandSecondaryNote;
+    final effectiveWidth = iconWidth ?? sizes.iconMicro;
+    final effectiveHeight = iconHeight ?? sizes.iconMicro;
+    final effectiveFontSize = fontSize ?? context.text.bodySmall?.fontSize;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -42,8 +45,8 @@ class BrandSecurityNote extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: shape.borderMedium),
           child: SizedBox(
-            width: iconWidth,
-            height: iconHeight,
+            width: effectiveWidth,
+            height: effectiveHeight,
             child: CustomPaint(
               painter: _PadlockPainter(noteColor, shape.borderMedium),
             ),
@@ -54,9 +57,8 @@ class BrandSecurityNote extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: fontSize,
+            style: (context.text.bodySmall ?? const TextStyle()).copyWith(
+              fontSize: effectiveFontSize,
               fontWeight: TypeScale.regular,
               color: noteColor,
               height: 1.45,

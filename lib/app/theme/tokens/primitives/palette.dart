@@ -90,6 +90,7 @@ abstract final class Palette {
   static const underlineSoft = Color(0x8CFFFFFF); // 0.55 opacity
   static const codeBoxFill = Color(0x21FFFFFF); // 0.13 opacity
   static const codeBoxFocus = Color(0x2EFFFFFF); // 0.18 opacity
+  static const borderSubtleOnRed = Color(0x59FFFFFF); // 0.35 border white
 
   // ─── Section 02 Verification Primitives ───────────────────────────
   static const stepInactiveText = Color(0x99FFFFFF);

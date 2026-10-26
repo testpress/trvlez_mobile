@@ -101,7 +101,7 @@ class VerifyZoomPanel extends ConsumerWidget {
             Center(
               child: Container(
                 width: double.infinity,
-                constraints: const BoxConstraints(maxHeight: 54.0),
+                constraints: BoxConstraints(maxHeight: sizes.controlXl),
                 padding: EdgeInsets.all(space.stackTight / 2),
                 decoration: BoxDecoration(
                   color: colors.brandShotBackdrop,

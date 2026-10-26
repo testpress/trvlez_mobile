@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -48,12 +46,19 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  bool get credentialsEntered =>
+  bool get hasCredentialsEntered =>
       emailController.text.trim().isNotEmpty &&
       passwordController.text.isNotEmpty;
 
+  bool get isCredentialsValid {
+    final email = emailController.text.trim();
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    return emailRegex.hasMatch(email) && passwordController.text.isNotEmpty;
+  }
+
   void onSubmit() {
-    if (!formKey.currentState!.validate()) return;
+    final form = formKey.currentState;
+    if (form == null || !form.validate()) return;
 
     ref
         .read(loginControllerProvider.notifier)
@@ -111,29 +116,31 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               ),
 
             // ── Header Typography ────────────────────────────────────────
-            Text(
-              'Welcome back',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 20,
-                fontWeight: TypeScale.semiBold,
-                color: colors.brandOnSurface,
-                height: 1.25,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Welcome back',
+                style: context.text.headlineLarge?.copyWith(
+                  color: colors.brandOnSurface,
+                  height: 1.25,
+                ),
               ),
             ),
-            SizedBox(height: space.stackTight),
-            Text(
-              'Sign in to continue your journey',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13,
-                fontWeight: TypeScale.regular,
-                color: colors.brandSecondaryBody,
-                height: 1.45,
+            SizedBox(height: space.stackItem),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Sign in to continue your journey',
+                style: context.text.bodyLarge?.copyWith(
+                  color: colors.brandSecondaryBody,
+                  height: 1.45,
+                ),
               ),
             ),
 
-            SizedBox(height: space.stackHero),
+            SizedBox(height: space.stackSection),
 
             // ── Form Inputs ──────────────────────────────────────────────
             BrandTextField(
@@ -146,7 +153,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               validator: validateEmail,
             ),
 
-            SizedBox(height: space.stackSection),
+            SizedBox(height: space.stackFormField),
 
             BrandTextField(
               label: 'Password',
@@ -159,7 +166,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               onSubmitted: onSubmit,
             ),
 
-            SizedBox(height: space.stackFormField),
+            SizedBox(height: space.stackItem),
 
             // ── Forgot Password Link ─────────────────────────────────────
             Align(
@@ -187,10 +194,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       child: Text(
                         'Forgot password?',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
-                          fontWeight: TypeScale.semiBold,
+                        style: context.text.labelLarge?.copyWith(
                           color: colors.brandOnSurface,
                         ),
                       ),
@@ -214,6 +218,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
             AppButton(
               label: 'Log in',
               variant: AppButtonVariant.brandWhite,
+              active: isCredentialsValid,
               isLoading: loginState.isLoading,
               onPressed: onSubmit,
             ),

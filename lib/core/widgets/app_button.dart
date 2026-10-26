@@ -27,6 +27,7 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.primary,
     this.isLoading = false,
     this.enabled = true,
+    this.active,
     this.isFullWidth = true,
     this.icon,
     this.height,
@@ -39,6 +40,10 @@ class AppButton extends StatelessWidget {
   final AppButtonVariant variant;
   final bool isLoading;
   final bool enabled;
+
+  /// Optional visual active state (used on brand screens for grey -> white form state).
+  final bool? active;
+
   final bool isFullWidth;
   final Widget? icon;
   final double? height;
@@ -82,8 +87,13 @@ class AppButton extends StatelessWidget {
         disabledForegroundColor = foregroundColor.withValues(alpha: 0.6);
         break;
       case AppButtonVariant.brandWhite:
-        backgroundColor = colors.brandOnSurface;
-        foregroundColor = colors.brandActionLabel;
+        final isButtonActive = active ?? true;
+        backgroundColor = isButtonActive
+            ? colors.brandOnSurface
+            : colors.brandButtonDisabledBackground;
+        foregroundColor = isButtonActive
+            ? colors.brandActionLabel
+            : colors.brandButtonDisabledForeground;
         disabledBackgroundColor = colors.brandButtonDisabledBackground;
         disabledForegroundColor = colors.brandButtonDisabledForeground;
         effectiveRadius = borderRadius ?? shape.radiusPill;
@@ -103,6 +113,7 @@ class AppButton extends StatelessWidget {
 
     final effectiveOnPressed = (isLoading || !enabled) ? null : onPressed;
 
+    final leadingIcon = icon;
     Widget child;
     if (isLoading) {
       child = SizedBox.square(
@@ -116,12 +127,12 @@ class AppButton extends StatelessWidget {
           ),
         ),
       );
-    } else if (icon != null) {
+    } else if (leadingIcon != null) {
       child = Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          icon!,
+          leadingIcon,
           SizedBox(width: space.inlineIconLabel),
           Text(
             label,

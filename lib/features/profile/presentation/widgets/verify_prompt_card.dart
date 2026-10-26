@@ -82,7 +82,7 @@ class VerifyPromptCard extends StatelessWidget {
             onPressed: onStart,
             style: ElevatedButton.styleFrom(
               backgroundColor: colors.brandPrimary,
-              foregroundColor: Colors.white,
+              foregroundColor: colors.textOnAction,
               elevation: 0,
               minimumSize: Size.fromHeight(sizes.controlMd),
               shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),

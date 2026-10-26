@@ -71,14 +71,14 @@ class PassportReviewScreen extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: shape.radiusControlSm,
               child: SizedBox(
-                width: 200.0,
-                height: 140.0,
+                width: sizes.previewDocWidth,
+                height: sizes.previewDocHeight,
                 child: capturedImage != null
                     ? Image.file(capturedImage, fit: BoxFit.contain)
                     : SvgPicture.asset(
                         'assets/art/passport_shot.svg',
-                        width: 196.0,
-                        height: 122.0,
+                        width: sizes.previewDocWidth,
+                        height: sizes.previewDocHeight,
                         fit: BoxFit.contain,
                       ),
               ),

@@ -39,7 +39,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
   CameraController? _controller;
   bool _isCameraInitialized = false;
   bool _isCapturing = false;
-  Size _viewportSize = const Size(320.0, 336.0);
+  Size _viewportSize = Size.zero;
 
   @override
   void initState() {
@@ -199,7 +199,8 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         SizedBox(height: space.stackFormField),
         Center(
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 320),
+            constraints:
+                BoxConstraints(maxWidth: sizes.containerViewfinder),
             child: AspectRatio(
               aspectRatio: 1 / 1.05,
               child: ClipRRect(

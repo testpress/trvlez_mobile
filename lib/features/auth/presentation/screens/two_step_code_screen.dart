@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_screen.dart';
@@ -101,29 +100,31 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'Check your email',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 20,
-              fontWeight: TypeScale.semiBold,
-              color: colors.brandOnSurface,
-              height: 1.25,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Check your email',
+              style: context.text.headlineLarge?.copyWith(
+                color: colors.brandOnSurface,
+                height: 1.25,
+              ),
             ),
           ),
-          SizedBox(height: space.stackText),
-          Text(
-            'We sent a 6-digit code to ${_maskEmail(widget.email)}',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              fontWeight: TypeScale.regular,
-              color: colors.brandSecondaryBody,
-              height: 1.45,
+          SizedBox(height: space.stackItem),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'We sent a 6-digit code to ${_maskEmail(widget.email)}',
+              style: context.text.bodyLarge?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.45,
+              ),
             ),
           ),
 
-          SizedBox(height: space.stackHero),
+          SizedBox(height: space.stackSection),
 
           // ── 6-Box Visual Code Input ──────────────────────────────────
           Stack(
@@ -170,10 +171,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
                       ),
                       child: Text(
                         char,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 20,
-                          fontWeight: TypeScale.semiBold,
+                        style: context.text.headlineMedium?.copyWith(
                           color: colors.brandOnSurface,
                         ),
                       ),
@@ -191,11 +189,9 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
             child: _remaining > 0
                 ? Text(
                     'Resend in 0:${_remaining.toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      fontWeight: TypeScale.regular,
+                    style: context.text.labelMedium?.copyWith(
                       color: colors.brandSecondarySmall,
+                      fontWeight: TypeScale.regular,
                     ),
                   )
                 : Semantics(
@@ -208,9 +204,7 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
                         padding: space.insetTag,
                         child: Text(
                           'Resend code',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 12,
+                          style: context.text.labelMedium?.copyWith(
                             fontWeight: TypeScale.semiBold,
                             color: colors.brandOnSurface,
                             decoration: TextDecoration.underline,

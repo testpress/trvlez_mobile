@@ -106,6 +106,7 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final sizes = context.sizes;
     final profileState = ref.watch(currentProfileProvider);
     final error = profileState.error;
     String? errorMessage;
@@ -134,7 +135,7 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
               opacity: fadeAnimation,
               child: Container(
                 width: double.infinity,
-                constraints: const BoxConstraints(maxWidth: 480),
+                constraints: BoxConstraints(maxWidth: sizes.containerForm),
                 decoration: BoxDecoration(
                   color: colors.surface,
                   borderRadius: shape.radiusOverlay,

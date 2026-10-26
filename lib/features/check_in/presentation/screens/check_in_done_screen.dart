@@ -134,13 +134,13 @@ class CheckInDoneScreen extends ConsumerWidget {
                         data: token.token,
                         version: QrVersions.auto,
                         size: sizes.thumbPhotoMd,
-                        eyeStyle: const QrEyeStyle(
+                        eyeStyle: QrEyeStyle(
                           eyeShape: QrEyeShape.square,
-                          color: Colors.black,
+                          color: colors.textPrimary,
                         ),
-                        dataModuleStyle: const QrDataModuleStyle(
+                        dataModuleStyle: QrDataModuleStyle(
                           dataModuleShape: QrDataModuleShape.square,
-                          color: Colors.black,
+                          color: colors.textPrimary,
                         ),
                       )
                     : SvgPicture.asset(

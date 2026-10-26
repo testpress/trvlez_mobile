@@ -124,11 +124,11 @@ class SettingsRow extends StatelessWidget {
                     ),
                     child: Text(
                       '$count',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: AppTypography.fontFamily,
                         fontSize: 10,
                         fontWeight: TypeScale.bold,
-                        color: Colors.white,
+                        color: colors.textOnAction,
                       ),
                     ),
                   ),

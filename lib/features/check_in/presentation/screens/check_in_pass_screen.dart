@@ -186,20 +186,20 @@ class CheckInPassScreen extends ConsumerWidget {
                             ? QrImageView(
                                 data: token.token,
                                 version: QrVersions.auto,
-                                size: 110,
-                                eyeStyle: const QrEyeStyle(
+                                size: sizes.thumbPhotoMd,
+                                eyeStyle: QrEyeStyle(
                                   eyeShape: QrEyeShape.square,
-                                  color: Colors.black,
+                                  color: colors.textPrimary,
                                 ),
-                                dataModuleStyle: const QrDataModuleStyle(
+                                dataModuleStyle: QrDataModuleStyle(
                                   dataModuleShape: QrDataModuleShape.square,
-                                  color: Colors.black,
+                                  color: colors.textPrimary,
                                 ),
                               )
                             : SvgPicture.asset(
                                 'assets/art/checkin_qr.svg',
-                                width: 110,
-                                height: 110,
+                                width: sizes.thumbPhotoMd,
+                                height: sizes.thumbPhotoMd,
                               ),
                         Container(
                           margin: EdgeInsets.only(top: space.stackItem),
