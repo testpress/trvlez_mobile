@@ -183,7 +183,7 @@ class _VerificationLandingScreenState
                 ),
               ),
               BrandWordmark(
-                planeWidth: space.inlineItem,
+                planeWidth: sizes.iconCompact,
                 gap: space.inlineMicro,
                 fontSize: context.text.headlineMedium?.fontSize,
               ),
@@ -369,7 +369,7 @@ class _StepCard extends StatelessWidget {
                               : colors.brandOnSurface,
                         ),
                       ),
-                      SizedBox(height: space.stackText / 2),
+                      SizedBox(height: space.stackText),
                       Text(
                         stepData.subtitle,
                         maxLines: 2,

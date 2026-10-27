@@ -62,23 +62,20 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final mrz = state.mrzExtractionResult;
 
-    final firstName = mrz?.firstName?.isNotEmpty == true
-        ? mrz!.firstName!
-        : '—';
-    final lastName = mrz?.lastName?.isNotEmpty == true ? mrz!.lastName! : '—';
-    final docNumber = mrz?.documentNumber?.isNotEmpty == true
-        ? mrz!.documentNumber!
-        : (state.extractedDocumentNumber?.isNotEmpty == true
-            ? state.extractedDocumentNumber!
-            : '—');
-    final nationality = mrz?.nationality?.isNotEmpty == true
-        ? mrz!.nationality!
-        : '—';
-    final dob = mrz?.dateOfBirth?.isNotEmpty == true ? mrz!.dateOfBirth! : '—';
-    final expiry = mrz?.dateOfExpiry?.isNotEmpty == true
-        ? mrz!.dateOfExpiry!
-        : '—';
-    final sex = mrz?.sex?.isNotEmpty == true ? mrz!.sex! : '—';
+    String formatField(String? value) {
+      if (value != null && value.isNotEmpty) return value;
+      return '—';
+    }
+
+    final firstName = formatField(mrz?.firstName);
+    final lastName = formatField(mrz?.lastName);
+    final docNumber = formatField(
+      mrz?.documentNumber ?? state.extractedDocumentNumber,
+    );
+    final nationality = formatField(mrz?.nationality);
+    final dob = formatField(mrz?.dateOfBirth);
+    final expiry = formatField(mrz?.dateOfExpiry);
+    final sex = formatField(mrz?.sex);
 
     final rows = <(String, String)>[
       ('First name', firstName),

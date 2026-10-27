@@ -31,27 +31,29 @@ class VerifyProgressTrio extends StatelessWidget {
       children: [
         for (int i = 0; i < labels.length; i++) ...[
           if (i > 0)
-            Container(
-              width: sizes.controlSm + space.stackTight / 3,
-              height: shape.borderFocus,
-              margin: EdgeInsets.only(
-                top: space.stackItem + space.stackText / 2,
-              ),
-              decoration: BoxDecoration(
-                color: colors.verificationStepTrack,
-                borderRadius: shape.radiusMicro,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: AnimatedFractionallySizedBox(
-                  duration: const Duration(milliseconds: 450),
-                  curve: const Cubic(0.4, 0.0, 0.2, 1.0),
-                  widthFactor: states[i - 1] == TrioState.done ? 1.0 : 0.0,
-                  heightFactor: 1.0,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: colors.brandOnSurface,
-                      borderRadius: shape.radiusMicro,
+            SizedBox(
+              height: sizes.iconDefault,
+              child: Center(
+                child: Container(
+                  width: sizes.controlSm,
+                  height: shape.borderFocus,
+                  decoration: BoxDecoration(
+                    color: colors.verificationStepTrack,
+                    borderRadius: shape.radiusMicro,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: AnimatedFractionallySizedBox(
+                      duration: const Duration(milliseconds: 450),
+                      curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+                      widthFactor: states[i - 1] == TrioState.done ? 1.0 : 0.0,
+                      heightFactor: 1.0,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: colors.brandOnSurface,
+                          borderRadius: shape.radiusMicro,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -65,8 +67,8 @@ class VerifyProgressTrio extends StatelessWidget {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   curve: Curves.easeOut,
-                  width: sizes.iconDefault - shape.borderFocus,
-                  height: sizes.iconDefault - shape.borderFocus,
+                  width: sizes.iconDefault,
+                  height: sizes.iconDefault,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -84,12 +86,12 @@ class VerifyProgressTrio extends StatelessWidget {
                     TrioState.waiting => const SizedBox.shrink(),
                     TrioState.done => Icon(
                       AppIcons.check,
-                      size: sizes.iconXs - shape.borderDefault,
+                      size: sizes.iconXs,
                       color: colors.brandPrimary,
                     ),
                     TrioState.failed => Icon(
                       AppIcons.close,
-                      size: sizes.iconXs - shape.borderDefault,
+                      size: sizes.iconXs,
                       color: colors.brandActionLabel,
                     ),
                   },

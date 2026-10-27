@@ -219,7 +219,7 @@ class _ProblemChip extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: EdgeInsets.symmetric(
-            horizontal: space.stackFormField - space.stackText / 2,
+            horizontal: space.inlineItem,
             vertical: space.stackItem,
           ),
           decoration: BoxDecoration(

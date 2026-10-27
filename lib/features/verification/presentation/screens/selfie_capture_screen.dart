@@ -136,7 +136,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
 
   (IconData, String) get _captureGuidance {
     if (!_isRecording) {
-      return (AppIcons.moodSmile, 'Please look directly into the camera');
+      return (AppIcons.moodSmile, 'Good lighting • Eye level • No accessories');
     }
     if (_elapsed < 3) {
       return (AppIcons.userCircle, 'Look directly into the camera');
@@ -153,6 +153,7 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     final space = context.space;
     final sizes = context.sizes;
     final cam = _cameraController;
+    final preview = cam?.value.previewSize;
     final (guidanceIcon, guidanceText) = _captureGuidance;
 
     return BrandVerifyScreen(
@@ -194,12 +195,8 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
                       child: FittedBox(
                         fit: BoxFit.cover,
                         child: SizedBox(
-                          width: cam.value.previewSize != null
-                              ? cam.value.previewSize!.height
-                              : kOvalWidth,
-                          height: cam.value.previewSize != null
-                              ? cam.value.previewSize!.width
-                              : kOvalHeight,
+                          width: preview?.height ?? kOvalWidth,
+                          height: preview?.width ?? kOvalHeight,
                           child: CameraPreview(cam),
                         ),
                       ),
@@ -208,14 +205,12 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
                 : null,
           ),
         ),
-        if (_isRecording) ...[
-          SizedBox(height: space.stackText),
-          Center(
-            child: VerifyRecordingTime(
-              seconds: _elapsed.clamp(0, kSelfieSeconds),
-            ),
+        SizedBox(height: space.stackText),
+        Center(
+          child: VerifyRecordingTime(
+            seconds: _elapsed.clamp(0, kSelfieSeconds),
           ),
-        ],
+        ),
         SizedBox(height: space.stackText),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -81,8 +81,9 @@ class BrandVerifyScreen extends StatelessWidget {
   final bool isScrollable;
 
   void _defaultOnHelpTap(BuildContext context) {
-    if (onHelpTap != null) {
-      onHelpTap!();
+    final customHelp = onHelpTap;
+    if (customHelp != null) {
+      customHelp();
     } else {
       context.push(
         AppRoutes.reportProblem,
@@ -98,6 +99,7 @@ class BrandVerifyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
+    final bgAsset = backgroundAsset;
 
     final hPad = padHorizontal ?? space.insetScreen.left;
     final tPad = padTop ?? space.stackItem;
@@ -111,11 +113,11 @@ class BrandVerifyScreen extends StatelessWidget {
         child: Stack(
           children: [
             // ── Background motif ──────────────────────────────────────────
-            if (backgroundAsset != null)
+            if (bgAsset != null)
               Positioned.fill(
                 child: IgnorePointer(
                   child: SvgPicture.asset(
-                    backgroundAsset!,
+                    bgAsset,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                   ),
@@ -268,24 +270,26 @@ class _VerifyHelpLine extends StatelessWidget {
                 color: colors.brandSecondaryBody,
               ),
             ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onTap,
-              child: Container(
-                padding: EdgeInsets.only(bottom: shape.borderDefault),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: colors.brandUnderline,
-                      width: shape.borderDefault,
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onTap,
+                child: Container(
+                  padding: EdgeInsets.only(bottom: shape.borderDefault),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: colors.brandUnderline,
+                        width: shape.borderDefault,
+                      ),
                     ),
                   ),
-                ),
-                child: Text(
-                  linkText,
-                  style: context.text.bodySmall?.copyWith(
-                    fontWeight: TypeScale.bold,
-                    color: colors.brandOnSurface,
+                  child: Text(
+                    linkText,
+                    style: context.text.bodySmall?.copyWith(
+                      fontWeight: TypeScale.bold,
+                      color: colors.brandOnSurface,
+                    ),
                   ),
                 ),
               ),

@@ -42,8 +42,9 @@ class NfcFailedScreen extends ConsumerWidget {
       failedStepTitle.toLowerCase().contains('liveness');
 
   String _getResolvedButtonLabel() {
-    if (redoButtonLabel != null && redoButtonLabel!.isNotEmpty) {
-      return redoButtonLabel!;
+    final label = redoButtonLabel;
+    if (label != null && label.isNotEmpty) {
+      return label;
     }
     if (_isChipScan) return 'Try chip scan again';
     if (_isSelfie) return 'Record the video again';
@@ -51,8 +52,9 @@ class NfcFailedScreen extends ConsumerWidget {
   }
 
   String _getResolvedRedoRoute() {
-    if (redoRoute != null && redoRoute!.isNotEmpty) {
-      return redoRoute!;
+    final route = redoRoute;
+    if (route != null && route.isNotEmpty) {
+      return route;
     }
     if (_isChipScan) return AppRoutes.nfcScan;
     if (_isSelfie) return AppRoutes.selfieCapture;
@@ -60,7 +62,8 @@ class NfcFailedScreen extends ConsumerWidget {
   }
 
   String _getSubtitle(String? errorFromState) {
-    if (reason != null && reason!.isNotEmpty) return reason!;
+    final r = reason;
+    if (r != null && r.isNotEmpty) return r;
     if (errorFromState != null && errorFromState.isNotEmpty) {
       return errorFromState;
     }
@@ -74,7 +77,8 @@ class NfcFailedScreen extends ConsumerWidget {
   }
 
   String _getMitigation() {
-    if (mitigation != null && mitigation!.isNotEmpty) return mitigation!;
+    final m = mitigation;
+    if (m != null && m.isNotEmpty) return m;
     if (_isChipScan) {
       return 'Hold the top of your phone flat against the passport cover, remove thick phone cases, and keep it still for a few seconds.';
     }
@@ -205,7 +209,7 @@ class NfcFailedScreen extends ConsumerWidget {
         ),
         SizedBox(height: space.stackText),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
+          padding: EdgeInsets.symmetric(horizontal: space.inlineItem),
           child: Text(
             subtitle,
             textAlign: TextAlign.center,

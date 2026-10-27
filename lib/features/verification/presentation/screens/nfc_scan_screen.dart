@@ -144,6 +144,15 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
     final shape = context.shape;
     final sizes = context.sizes;
 
+    final String semanticsLabel;
+    if (_isReading) {
+      semanticsLabel = _stepDescription.isNotEmpty
+          ? _stepDescription
+          : 'Reading the chip';
+    } else {
+      semanticsLabel = 'Reading passport chip';
+    }
+
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc_scan.svg',
       title: 'Scanning passport',
@@ -170,11 +179,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
         ),
         SizedBox(height: space.stackItem),
         Semantics(
-          label: _isReading
-              ? (_stepDescription.isNotEmpty
-                  ? _stepDescription
-                  : 'Reading the chip')
-              : 'Reading passport chip',
+          label: semanticsLabel,
           value: '${(_progress * 100).toInt()}%',
           child: ClipRRect(
             borderRadius: shape.radiusPill,

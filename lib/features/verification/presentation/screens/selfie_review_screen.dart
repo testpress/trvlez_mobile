@@ -123,7 +123,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
         ),
         SizedBox(height: space.stackTight),
         Text(
-          'Watch it back before you upload. Your face should stay inside the oval throughout.',
+          'Watch it back before you upload. Make sure your face is clearly visible, well-lit, and centered throughout.',
           textAlign: TextAlign.center,
           style: context.text.bodyMedium?.copyWith(
             color: colors.brandSecondaryBody,
@@ -146,9 +146,14 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
+              InkWell(
                 onTap: _togglePlayback,
+                borderRadius: const BorderRadius.all(
+                  Radius.elliptical(
+                    (kReviewWidth + 12.0) / 2,
+                    (kReviewHeight + 12.0) / 2,
+                  ),
+                ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -198,9 +203,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                       ),
                     ),
                     // Play overlay button with white circle and red play icon
-                    if (!_isPlaying &&
-                        controller != null &&
-                        controller.value.isInitialized)
+                    if (!_isPlaying)
                       Container(
                         width: sizes.controlLg,
                         height: sizes.controlLg,
@@ -234,7 +237,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                       color: colors.brandOnSurface,
                     ),
                   ),
-                  SizedBox(width: space.stackFormField),
+                  SizedBox(width: space.inlineItem),
                   Expanded(
                     child: ClipRRect(
                       borderRadius: shape.radiusSubtle,
@@ -249,7 +252,7 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: space.stackFormField),
+                  SizedBox(width: space.inlineItem),
                   Text(
                     _isPlaying ? 'Tap to pause' : 'Tap to play',
                     style: context.text.bodySmall?.copyWith(

@@ -70,6 +70,11 @@ class PassportReviewScreen extends ConsumerWidget {
                     ? Image.file(
                         capturedImage,
                         fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            SvgPicture.asset(
+                          'assets/art/passport_shot.svg',
+                          fit: BoxFit.contain,
+                        ),
                       )
                     : SvgPicture.asset(
                         'assets/art/passport_shot.svg',

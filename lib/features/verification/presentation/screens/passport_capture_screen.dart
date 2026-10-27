@@ -213,27 +213,30 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
                           fit: StackFit.expand,
                           children: [
                             if (_isCameraInitialized && cam != null)
-                              ClipRect(
-                                child: SizedBox.expand(
-                                  child: FittedBox(
-                                    fit: BoxFit.cover,
-                                    child: SizedBox(
-                                      width: cam.value.previewSize != null
-                                          ? (viewportSize.width <
-                                                    viewportSize.height
-                                                ? cam.value.previewSize!.height
-                                                : cam.value.previewSize!.width)
-                                          : viewportSize.width,
-                                      height: cam.value.previewSize != null
-                                          ? (viewportSize.width <
-                                                    viewportSize.height
-                                                ? cam.value.previewSize!.width
-                                                : cam.value.previewSize!.height)
-                                          : viewportSize.height,
-                                      child: CameraPreview(cam),
+                              Builder(
+                                builder: (context) {
+                                  final preview = cam.value.previewSize;
+                                  final isPortrait = viewportSize.width < viewportSize.height;
+                                  final previewWidth = preview != null
+                                      ? (isPortrait ? preview.height : preview.width)
+                                      : viewportSize.width;
+                                  final previewHeight = preview != null
+                                      ? (isPortrait ? preview.width : preview.height)
+                                      : viewportSize.height;
+
+                                  return ClipRect(
+                                    child: SizedBox.expand(
+                                      child: FittedBox(
+                                        fit: BoxFit.cover,
+                                        child: SizedBox(
+                                          width: previewWidth,
+                                          height: previewHeight,
+                                          child: CameraPreview(cam),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                               )
                             else
                               SvgPicture.asset(

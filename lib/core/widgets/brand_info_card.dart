@@ -47,8 +47,9 @@ class BrandInfoCard extends StatelessWidget {
     final sizes = context.sizes;
     final shape = context.shape;
 
-    final effectiveRadius = borderRadius != null
-        ? BorderRadius.circular(borderRadius!)
+    final radius = borderRadius;
+    final effectiveRadius = radius != null
+        ? BorderRadius.circular(radius)
         : shape.radiusSurface;
     final effectivePaddingV = paddingVertical ?? space.insetCard.top;
     final effectivePaddingH = paddingHorizontal ?? space.insetCard.left;
@@ -87,7 +88,7 @@ class BrandInfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: space.inlineMicro / 2),
+                  padding: EdgeInsets.only(top: shape.borderFocus),
                   child: Icon(
                     bullets[i].icon,
                     size: effectiveIconSize,

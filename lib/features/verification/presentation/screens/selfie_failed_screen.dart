@@ -22,8 +22,9 @@ class SelfieFailedScreen extends ConsumerWidget {
   final String? failureReason;
 
   String _getExplanation(String? errorFromState) {
-    if (failureReason != null && failureReason!.isNotEmpty) {
-      return failureReason!;
+    final reason = failureReason;
+    if (reason != null && reason.isNotEmpty) {
+      return reason;
     }
     if (errorFromState != null && errorFromState.isNotEmpty) {
       return errorFromState;
@@ -74,7 +75,7 @@ class SelfieFailedScreen extends ConsumerWidget {
         ),
         SizedBox(height: space.stackTight),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.stackItem),
+          padding: EdgeInsets.symmetric(horizontal: space.inlineIconLabel),
           child: Text(
             _getExplanation(state.errorMessage),
             textAlign: TextAlign.center,

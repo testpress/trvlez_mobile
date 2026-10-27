@@ -76,13 +76,14 @@ class ChipDataScreen extends ConsumerWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_chip_data.svg',
       title: 'Chip scan',
-      isScrollable: false,
+      isScrollable: true,
+      onBack: () => context.pop(),
       body: [
-        const Spacer(flex: 2),
+        SizedBox(height: space.stackItem),
         Center(
           child: Container(
-            width: sizes.avatarXl,
-            height: sizes.avatarXl,
+            width: sizes.pulseIndicator,
+            height: sizes.pulseIndicator,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -95,7 +96,7 @@ class ChipDataScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const Spacer(flex: 2),
+        SizedBox(height: space.stackItem),
         Text(
           'Chip data received',
           textAlign: TextAlign.center,
@@ -113,7 +114,7 @@ class ChipDataScreen extends ConsumerWidget {
             height: 1.35,
           ),
         ),
-        const Spacer(flex: 2),
+        SizedBox(height: space.stackFormField),
         Container(
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
@@ -235,7 +236,6 @@ class ChipDataScreen extends ConsumerWidget {
             ],
           ),
         ),
-        const Spacer(flex: 1),
       ],
       foot: [
         AppButton(

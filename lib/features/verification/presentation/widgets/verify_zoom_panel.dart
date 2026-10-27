@@ -50,8 +50,8 @@ class VerifyZoomPanel extends ConsumerWidget {
           Row(
             children: [
               Container(
-                width: space.stackFormField,
-                height: space.stackFormField,
+                width: sizes.iconCompact,
+                height: sizes.iconCompact,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -66,7 +66,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                   ),
                 ),
               ),
-              SizedBox(width: space.stackTight),
+              SizedBox(width: space.inlineIconLabel),
               Text(
                 'Code lines, enlarged',
                 style: context.text.bodySmall?.copyWith(
@@ -94,7 +94,7 @@ class VerifyZoomPanel extends ConsumerWidget {
               child: Container(
                 width: double.infinity,
                 constraints: BoxConstraints(maxHeight: sizes.controlXl),
-                padding: EdgeInsets.all(space.stackTight / 2),
+                padding: space.insetTagSm,
                 decoration: BoxDecoration(
                   color: colors.brandShotBackdrop,
                   borderRadius: shape.radiusControlSm,
@@ -105,12 +105,17 @@ class VerifyZoomPanel extends ConsumerWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: shape.radiusSubtle,
-                  child: Image.file(image, fit: BoxFit.contain),
+                  child: Image.file(
+                    image,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ),
             if (lines != null && lines.isNotEmpty) ...[
-              SizedBox(height: space.inlineMicro),
+              SizedBox(height: space.stackText),
               Container(
                 width: double.infinity,
                 padding: space.insetTag,

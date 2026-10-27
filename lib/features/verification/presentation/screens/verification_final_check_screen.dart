@@ -73,10 +73,11 @@ class _VerificationFinalCheckScreenState
       return;
     }
 
-    if (widget.verificationJobId != null) {
+    final jobId = widget.verificationJobId;
+    if (jobId != null) {
       ref
           .read(verificationNotifierProvider.notifier)
-          .startPollingVerificationJob(widget.verificationJobId!);
+          .startPollingVerificationJob(jobId);
       return;
     }
 
@@ -177,6 +178,8 @@ class _VerificationFinalCheckScreenState
       context.go(AppRoutes.home);
     }
 
+    final isError = state.phase == VerificationPhase.error;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -187,17 +190,24 @@ class _VerificationFinalCheckScreenState
         backgroundAsset: 'assets/art/bg_nfc.svg',
         title: 'Verification',
         helpLine: false,
-        isScrollable: false,
+        isScrollable: isError,
+        onBack: navigateExit,
         body: [
           const VerificationStepper(current: 4),
-          const Spacer(flex: 3),
+          if (isError)
+            SizedBox(height: space.stackItem)
+          else
+            const Spacer(flex: 3),
           Center(
             child: VerifyHourglass(
-              size: sizes.avatarXl,
+              size: isError ? sizes.avatarLg : sizes.avatarXl,
               glyphSize: sizes.controlSm,
             ),
           ),
-          const Spacer(flex: 3),
+          if (isError)
+            SizedBox(height: space.stackItem)
+          else
+            const Spacer(flex: 3),
           Text(
             'Checking everything',
             textAlign: TextAlign.center,
@@ -218,7 +228,10 @@ class _VerificationFinalCheckScreenState
               ),
             ),
           ),
-          const Spacer(flex: 2),
+          if (isError)
+            SizedBox(height: space.stackItem)
+          else
+            const Spacer(flex: 2),
           VerifyStatusRows(
             borderRadius: shape.radiusCard,
             rows: [
@@ -320,7 +333,8 @@ class _VerificationFinalCheckScreenState
               ),
             ),
           ],
-          const Spacer(flex: 1),
+          if (state.phase != VerificationPhase.error)
+            const Spacer(flex: 1),
         ],
         foot: [
           Center(

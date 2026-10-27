@@ -27,22 +27,25 @@ class PassportFailedScreen extends ConsumerWidget {
   final VerificationPhase? failurePhase;
 
   String _getExplanation(VerificationState state) {
-    if (failureReason != null && failureReason!.isNotEmpty) {
-      return failureReason!;
+    final reason = failureReason;
+    if (reason != null && reason.isNotEmpty) {
+      return reason;
     }
     final effectivePhase = failurePhase ?? state.phase;
     if (effectivePhase == VerificationPhase.imageQualityFailed) {
-      if (state.imageQualityResult?.uiGuidance != null &&
-          state.imageQualityResult!.uiGuidance!.isNotEmpty) {
-        return state.imageQualityResult!.uiGuidance!;
+      final guidance = state.imageQualityResult?.uiGuidance;
+      if (guidance != null && guidance.isNotEmpty) {
+        return guidance;
       }
-      if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-        return state.errorMessage!;
+      final errorMsg = state.errorMessage;
+      if (errorMsg != null && errorMsg.isNotEmpty) {
+        return errorMsg;
       }
       return "Your passport photo isn't clear enough. Please ensure good lighting and no glare or blur.";
     }
-    if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-      return state.errorMessage!;
+    final errorMsg = state.errorMessage;
+    if (errorMsg != null && errorMsg.isNotEmpty) {
+      return errorMsg;
     }
     return "We couldn't read the two lines at the bottom of the page. A little more light usually fixes it.";
   }
@@ -94,7 +97,7 @@ class PassportFailedScreen extends ConsumerWidget {
         ),
         SizedBox(height: space.stackTight),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.stackItem),
+          padding: EdgeInsets.symmetric(horizontal: space.inlineIconLabel),
           child: Text(
             _getExplanation(state),
             textAlign: TextAlign.center,
