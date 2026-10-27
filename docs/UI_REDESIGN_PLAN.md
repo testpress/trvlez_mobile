@@ -2,7 +2,8 @@
 
 > **Source of Truth Reference Design:** `/home/kumaraguhan/Downloads/trvlez_app`  
 > **Target Codebase:** `/home/kumaraguhan/workspace/trvlez_mobile`  
-> **Status:** Planning & Audit Phase (No UI modifications implemented in this step)
+> **How-to guide (tokens, mapping, checklist):** [`UI_REDESIGN_COMPARISON_GUIDE.md`](./UI_REDESIGN_COMPARISON_GUIDE.md)  
+> **Status:** Incremental redesign in progress (Auth + Home shell done; Phases 3–9 open)
 
 ---
 
