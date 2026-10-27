@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -198,9 +197,7 @@ class NfcFailedScreen extends ConsumerWidget {
         Text(
           'One step needs redoing',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineSmall?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -212,10 +209,7 @@ class NfcFailedScreen extends ConsumerWidget {
           child: Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
+            style: context.text.bodySmall?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
@@ -236,9 +230,7 @@ class NfcFailedScreen extends ConsumerWidget {
             children: [
               Text(
                 'What usually fixes it',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12.5,
+                style: context.text.labelMedium?.copyWith(
                   fontWeight: TypeScale.semiBold,
                   color: colors.brandOnSurface,
                 ),
@@ -246,10 +238,7 @@ class NfcFailedScreen extends ConsumerWidget {
               SizedBox(height: space.stackText),
               Text(
                 fixText,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11.5,
-                  fontWeight: TypeScale.regular,
+                style: context.text.bodySmall?.copyWith(
                   color: colors.brandSecondaryBody,
                   height: 1.4,
                 ),
@@ -295,27 +284,27 @@ class NfcFailedScreen extends ConsumerWidget {
                 ),
               );
             },
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
-                    color: colors.brandSecondaryBody,
-                  ),
-                  children: [
-                    const TextSpan(text: 'Still stuck? '),
-                    TextSpan(
-                      text: "Tell us what's wrong",
-                      style: TextStyle(
-                        color: colors.brandSecondary,
-                        decoration: TextDecoration.underline,
-                        fontWeight: TypeScale.medium,
-                      ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+              child: Center(
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: context.text.bodySmall?.copyWith(
+                      color: colors.brandSecondaryBody,
                     ),
-                  ],
+                    children: [
+                      const TextSpan(text: 'Still stuck? '),
+                      TextSpan(
+                        text: "Tell us what's wrong",
+                        style: context.text.bodySmall?.copyWith(
+                          color: colors.brandSecondary,
+                          decoration: TextDecoration.underline,
+                          fontWeight: TypeScale.medium,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

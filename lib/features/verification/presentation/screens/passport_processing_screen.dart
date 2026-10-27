@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -71,8 +70,8 @@ class _PassportProcessingScreenState
   int _calculateDone(VerificationPhase phase) {
     return switch (phase) {
       VerificationPhase.idle ||
-      VerificationPhase.preparingImage ||
-      VerificationPhase.uploading => 0,
+      VerificationPhase.preparingImage => 0,
+      VerificationPhase.uploading ||
       VerificationPhase.checkingImageQuality => 1,
       VerificationPhase.extractingMrz => 2,
       VerificationPhase.uploadSuccess ||
@@ -146,20 +145,19 @@ class _PassportProcessingScreenState
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_flow.svg',
       title: 'Verification',
-      helpLine: false,
-      isScrollable: true,
+      isScrollable: false,
       body: [
-        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
-        SizedBox(height: space.stackHero),
+        const VerificationStepper(current: 0),
+        const Spacer(flex: 3),
         Center(
           child: SvgPicture.asset(
             'assets/art/passport_processing.svg',
-            width: 104.0,
-            height: 104.0,
+            width: sizes.thumbPhotoLg,
+            height: sizes.thumbPhotoLg,
             fit: BoxFit.contain,
           ),
         ),
-        SizedBox(height: space.stackSection),
+        const Spacer(flex: 3),
         VerifyProgressTrio(
           labels: const ['Upload', 'Check', 'Read'],
           states: [
@@ -167,26 +165,28 @@ class _PassportProcessingScreenState
               i < doneCount ? TrioState.done : TrioState.waiting,
           ],
         ),
-        SizedBox(height: space.stackSection),
-        SizedBox(
-          height: sizes.avatarSm,
-          child: Center(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: Text(
-                currentStatus,
-                key: ValueKey<String>(currentStatus),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 13.0,
-                  fontWeight: TypeScale.medium,
-                  color: colors.brandSecondary,
-                ),
-              ),
+        const Spacer(flex: 2),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: Text(
+            currentStatus,
+            key: ValueKey<String>(currentStatus),
+            textAlign: TextAlign.center,
+            style: context.text.headlineSmall?.copyWith(
+              fontWeight: TypeScale.bold,
+              color: colors.brandOnSurface,
             ),
           ),
         ),
+        SizedBox(height: space.stackTight),
+        Text(
+          'This usually takes a few seconds.',
+          textAlign: TextAlign.center,
+          style: context.text.bodyMedium?.copyWith(
+            color: colors.brandSecondaryBody,
+          ),
+        ),
+        const Spacer(flex: 2),
       ],
       foot: const [
         BrandSecurityNote(

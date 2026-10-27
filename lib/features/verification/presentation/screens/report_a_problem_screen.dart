@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -96,9 +95,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
         SizedBox(height: space.stackSection),
         Text(
           'Tell us what went wrong',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineSmall?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -107,10 +104,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
         SizedBox(height: space.stackTight),
         Text(
           "We'll attach your step, device model and app version so support has context.",
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodySmall?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.4,
           ),
@@ -140,16 +134,12 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
         TextField(
           controller: _notes,
           maxLines: 4,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 13.0,
+          style: context.text.bodyMedium?.copyWith(
             color: colors.brandOnSurface,
           ),
           decoration: InputDecoration(
             hintText: 'Additional details (optional)…',
-            hintStyle: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13.0,
+            hintStyle: context.text.bodyMedium?.copyWith(
               color: colors.brandSecondaryBody,
             ),
             filled: true,
@@ -180,9 +170,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
               Expanded(
                 child: Text(
                   'Never send photos of your passport by message. We will never ask you to.',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
+                  style: context.text.bodySmall?.copyWith(
                     fontWeight: TypeScale.medium,
                     color: colors.brandSecondary,
                     height: 1.35,
@@ -248,9 +236,7 @@ class _ProblemChip extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
+            style: context.text.labelMedium?.copyWith(
               fontWeight: isSelected ? TypeScale.semiBold : TypeScale.regular,
               color: isSelected ? colors.brandPrimary : colors.brandOnSurface,
             ),

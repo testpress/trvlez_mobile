@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
-import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
+import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -146,104 +146,91 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc_scan.svg',
-      title: 'Chip scan',
-      helpLine: false,
-      isScrollable: false,
+      title: 'Scanning passport',
+      closeIcon: true,
       onBack: () => context.pop(),
+      helpLine: true,
+      helpPrefix: 'Not working? ',
+      helpLinkText: "Tell us what's wrong",
+      helpArea: ProblemArea.verification,
+      isScrollable: false,
       body: [
-        SizedBox(height: space.stackItem),
+        const Spacer(flex: 3),
+        Center(
+          child: VerifyNfcPulse(size: sizes.cardWidthCarousel),
+        ),
+        const Spacer(flex: 3),
         Text(
-          _isReading ? 'Reading chip…' : 'Hold near passport',
+          'Reading the chip',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineLarge?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
-            letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
-          child: Text(
-            _isReading
-                ? 'Keep phone still against the passport cover.'
-                : 'Rest the top of your phone on the front or back cover of the passport.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.regular,
-              color: colors.brandSecondaryBody,
-              height: 1.4,
+        SizedBox(height: space.stackItem),
+        Semantics(
+          label: _isReading
+              ? (_stepDescription.isNotEmpty
+                  ? _stepDescription
+                  : 'Reading the chip')
+              : 'Reading passport chip',
+          value: '${(_progress * 100).toInt()}%',
+          child: ClipRRect(
+            borderRadius: shape.radiusPill,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0.0, end: _progress),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, _) {
+                return LinearProgressIndicator(
+                  value: value,
+                  minHeight: sizes.indicatorProgressHeight,
+                  backgroundColor: colors.verificationProgressTrack,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colors.brandOnSurface,
+                  ),
+                );
+              },
             ),
           ),
         ),
-        SizedBox(height: space.stackFormField),
-        const Center(child: VerifyNfcPulse()),
-        SizedBox(height: space.stackSection),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.stackSection),
-          child: Column(
+        SizedBox(height: space.stackItem),
+        Text(
+          'Keep the phone still against the passport',
+          textAlign: TextAlign.center,
+          style: context.text.bodyMedium?.copyWith(
+            color: colors.brandSecondaryBody,
+          ),
+        ),
+        const Spacer(flex: 2),
+        Container(
+          padding: space.insetCard,
+          decoration: BoxDecoration(
+            color: colors.brandCardBackground,
+            borderRadius: shape.radiusSurface,
+          ),
+          child: Row(
             children: [
-              ClipRRect(
-                borderRadius: shape.radiusSubtle,
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: 0.0, end: _progress),
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOutCubic,
-                  builder: (context, value, _) {
-                    return LinearProgressIndicator(
-                      value: value,
-                      minHeight: sizes.indicatorProgressHeight,
-                      backgroundColor: colors.verificationProgressTrack,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        colors.brandOnSurface,
-                      ),
-                    );
-                  },
-                ),
+              Icon(
+                AppIcons.handStop,
+                size: sizes.iconDefault,
+                color: colors.brandOnSurface,
               ),
-              SizedBox(height: space.stackText),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      _isReading && _stepDescription.isNotEmpty
-                          ? _stepDescription
-                          : 'Ready to scan',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11.5,
-                        fontWeight: TypeScale.medium,
-                        color: colors.brandSecondaryBody,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+              SizedBox(width: space.inlineButtonGroup),
+              Expanded(
+                child: Text(
+                  'Almost there. Moving the phone now will start the read again.',
+                  style: context.text.bodySmall?.copyWith(
+                    color: colors.brandOnSurface,
+                    height: 1.35,
                   ),
-                  if (_isReading)
-                    Text(
-                      '${(_progress * 100).toInt()}%',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11.5,
-                        fontWeight: TypeScale.bold,
-                        color: colors.brandOnSurface,
-                      ),
-                    ),
-                ],
+                ),
               ),
             ],
           ),
         ),
-      ],
-      foot: const [
-        BrandSecurityNote(
-          text: 'Read on your phone.\nNever shared with external AI.',
-        ),
+        const Spacer(flex: 1),
       ],
     );
   }

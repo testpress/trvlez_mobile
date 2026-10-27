@@ -7,15 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
-import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
-import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_image_processor.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -168,18 +165,17 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_capture.svg',
       title: 'Verification',
-      helpLine: false,
-      isScrollable: true,
+      helpPrefix: 'Trouble with the camera? ',
+      helpLinkText: "Tell us what's wrong",
+      isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
-        SizedBox(height: space.stackFormField),
+        const VerificationStepper(current: 0),
+        SizedBox(height: space.stackItem),
         Text(
           'Fit the page in the frame',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineSmall?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -189,71 +185,70 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         Text(
           'Both the photo page and the code lines.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodySmall?.copyWith(
             color: colors.brandSecondaryBody,
           ),
         ),
-        SizedBox(height: space.stackFormField),
-        Center(
-          child: Container(
-            constraints:
-                BoxConstraints(maxWidth: sizes.containerViewfinder),
-            child: AspectRatio(
-              aspectRatio: 1 / 1.05,
-              child: ClipRRect(
-                borderRadius: shape.radiusControl,
-                child: Container(
-                  color: colors.brandShotBackdrop.withValues(alpha: 0.35),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final viewportSize = Size(
-                        constraints.maxWidth,
-                        constraints.maxHeight,
-                      );
-                      _viewportSize = viewportSize;
+        SizedBox(height: space.stackItem),
+        Expanded(
+          child: Center(
+            child: Container(
+              constraints:
+                  BoxConstraints(maxWidth: sizes.containerViewfinder),
+              child: AspectRatio(
+                aspectRatio: 1 / 1.05,
+                child: ClipRRect(
+                  borderRadius: shape.radiusControl,
+                  child: Container(
+                    color: colors.brandShotBackdrop.withValues(alpha: 0.35),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final viewportSize = Size(
+                          constraints.maxWidth,
+                          constraints.maxHeight,
+                        );
+                        _viewportSize = viewportSize;
 
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          if (_isCameraInitialized && cam != null)
-                            ClipRect(
-                              child: SizedBox.expand(
-                                child: FittedBox(
-                                  fit: BoxFit.cover,
-                                  child: SizedBox(
-                                    width: cam.value.previewSize != null
-                                        ? (viewportSize.width <
-                                                  viewportSize.height
-                                              ? cam.value.previewSize!.height
-                                              : cam.value.previewSize!.width)
-                                        : viewportSize.width,
-                                    height: cam.value.previewSize != null
-                                        ? (viewportSize.width <
-                                                  viewportSize.height
-                                              ? cam.value.previewSize!.width
-                                              : cam.value.previewSize!.height)
-                                        : viewportSize.height,
-                                    child: CameraPreview(cam),
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            if (_isCameraInitialized && cam != null)
+                              ClipRect(
+                                child: SizedBox.expand(
+                                  child: FittedBox(
+                                    fit: BoxFit.cover,
+                                    child: SizedBox(
+                                      width: cam.value.previewSize != null
+                                          ? (viewportSize.width <
+                                                    viewportSize.height
+                                                ? cam.value.previewSize!.height
+                                                : cam.value.previewSize!.width)
+                                          : viewportSize.width,
+                                      height: cam.value.previewSize != null
+                                          ? (viewportSize.width <
+                                                    viewportSize.height
+                                                ? cam.value.previewSize!.width
+                                                : cam.value.previewSize!.height)
+                                          : viewportSize.height,
+                                      child: CameraPreview(cam),
+                                    ),
                                   ),
                                 ),
+                              )
+                            else
+                              SvgPicture.asset(
+                                'assets/art/camera_passport.svg',
+                                fit: BoxFit.cover,
                               ),
-                            )
-                          else
-                            SvgPicture.asset(
-                              'assets/art/camera_passport.svg',
-                              fit: BoxFit.cover,
+                            // Framing overlay guide with ICAO TD3 aspect ratio, corners, and dashed MRZ box
+                            PassportFramingGuide(
+                              viewportSize: viewportSize,
+                              colors: colors,
                             ),
-                          // Framing overlay guide with ICAO TD3 aspect ratio, corners, and dashed MRZ box
-                          PassportFramingGuide(
-                            viewportSize: viewportSize,
-                            colors: colors,
-                          ),
-                        ],
-                      );
-                    },
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -261,22 +256,20 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           ),
         ),
         SizedBox(height: space.stackItem),
+        Text(
+          'Hold steady ~20 cm away',
+          textAlign: TextAlign.center,
+          style: context.text.bodySmall?.copyWith(
+            color: colors.brandSecondaryBody,
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              AppIcons.numbers,
-              size: sizes.iconXs,
-              color: colors.brandSecondary,
-            ),
-            SizedBox(width: space.inlineMicro),
             Flexible(
               child: Text(
-                'Keep the dashed box over the code lines',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11.5,
-                  fontWeight: TypeScale.regular,
+                'Keep the dashed box over the bottom 2 lines of text',
+                style: context.text.bodySmall?.copyWith(
                   color: colors.brandSecondaryBody,
                 ),
               ),
@@ -288,44 +281,6 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         BrandShutter(
           square: true,
           onPressed: _isCapturing ? null : _capturePhoto,
-        ),
-        SizedBox(height: space.stackItem),
-        Center(
-          child: InkWell(
-            onTap: () {
-              context.push(
-                AppRoutes.reportProblem,
-                extra: const ProblemReportContext(
-                  area: ProblemArea.verification,
-                  screen: AppRoutes.passportCapture,
-                ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
-                    color: colors.brandSecondaryBody,
-                  ),
-                  children: [
-                    const TextSpan(text: 'Trouble with the camera? '),
-                    TextSpan(
-                      text: "Tell us what's wrong",
-                      style: TextStyle(
-                        color: colors.brandSecondary,
-                        decoration: TextDecoration.underline,
-                        fontWeight: TypeScale.medium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );

@@ -29,9 +29,18 @@ void main() {
   }
 
   group('PassportInstructionScreen', () {
+    setUp(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
     testWidgets('renders Verification header and stepper at step 0', (
       tester,
     ) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -46,6 +55,11 @@ void main() {
     testWidgets('renders clear passport title and user-friendly guidelines', (
       tester,
     ) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -68,6 +82,11 @@ void main() {
     });
 
     testWidgets('does not contain technical MRZ jargon', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -79,6 +98,11 @@ void main() {
     testWidgets('tapping Open camera navigates to passport capture screen', (
       tester,
     ) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -90,6 +114,20 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Passport Capture Screen'), findsOneWidget);
+    });
+
+    testWidgets('fits on standard phone viewport without overflow', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(375, 812);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
     });
   });
 }

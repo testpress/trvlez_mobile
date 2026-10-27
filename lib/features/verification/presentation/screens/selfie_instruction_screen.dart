@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -28,12 +29,12 @@ class SelfieInstructionScreen extends StatelessWidget {
       isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
-        const Spacer(flex: 1),
+        const VerificationStepper(current: 2),
+        const Spacer(),
         Center(
           child: Container(
-            width: sizes.controlXl,
-            height: sizes.controlXl,
+            width: sizes.avatarXl,
+            height: sizes.avatarXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -41,16 +42,17 @@ class SelfieInstructionScreen extends StatelessWidget {
             ),
             child: Icon(
               AppIcons.moodSmile,
-              size: sizes.iconLg,
+              size: sizes.iconFeature,
               color: colors.brandOnSurface,
             ),
           ),
         ),
-        const Spacer(flex: 1),
+        const Spacer(),
         Text(
           'Selfie check',
           textAlign: TextAlign.center,
-          style: context.text.headlineMedium?.copyWith(
+          style: context.text.headlineLarge?.copyWith(
+            fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -59,22 +61,36 @@ class SelfieInstructionScreen extends StatelessWidget {
         Text(
           "A few seconds of video, to confirm you're the person in the passport photo.",
           textAlign: TextAlign.center,
-          style: context.text.labelMedium?.copyWith(
+          style: context.text.bodyMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.4,
           ),
         ),
-        const Spacer(flex: 1),
-        const BrandInfoCard(
+        const Spacer(flex: 2),
+        BrandInfoCard(
           heading: 'Please make sure',
-          bullets: [
+          headingStyle: context.text.titleMedium?.copyWith(
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+          ),
+          iconSize: sizes.iconSm,
+          itemGap: space.stackTight,
+          bullets: const [
+            BrandBullet(
+              icon: AppIcons.userCircle,
+              text: 'Look directly at the camera with face centered',
+            ),
+            BrandBullet(
+              icon: AppIcons.eye,
+              text: 'Blink naturally during the recording',
+            ),
+            BrandBullet(
+              icon: AppIcons.rotate,
+              text: 'Slowly turn your head a little left and right',
+            ),
             BrandBullet(
               icon: AppIcons.bulb,
               text: "You're in a well-lit room, with light on your face",
-            ),
-            BrandBullet(
-              icon: AppIcons.userCircle,
-              text: 'Your whole face is inside the oval',
             ),
             BrandBullet(
               icon: AppIcons.eyeglassOff,
@@ -82,14 +98,16 @@ class SelfieInstructionScreen extends StatelessWidget {
             ),
           ],
         ),
+        const Spacer(),
       ],
       foot: [
         AppButton(
           label: "I'm ready",
           variant: AppButtonVariant.brandWhite,
+          height: sizes.controlLg,
           onPressed: () => context.push(AppRoutes.selfieCapture),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         const BrandSecurityNote(
           text: 'Checked on our own systems.\nNever shared with external AI.',
         ),

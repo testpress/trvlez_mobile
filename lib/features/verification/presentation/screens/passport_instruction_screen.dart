@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
@@ -24,13 +23,12 @@ class PassportInstructionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
-    final shape = context.shape;
     final sizes = context.sizes;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_howto.svg',
       title: 'Verification',
-      isScrollable: true,
+      isScrollable: false,
       onBack: () {
         if (context.canPop()) {
           context.pop();
@@ -39,54 +37,70 @@ class PassportInstructionScreen extends StatelessWidget {
         }
       },
       body: [
-        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
-        SizedBox(height: space.stackFormField),
+        const VerificationStepper(current: 0),
+        const Spacer(flex: 1),
         Text(
           'Passport photo',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineSmall?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackTight),
+        SizedBox(height: space.stackText),
         Text(
           'We need both of these. Most retakes happen because the bottom two lines were cut off.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodySmall?.copyWith(
             color: colors.brandSecondaryBody,
-            height: 1.4,
+            height: 1.3,
           ),
         ),
-        SizedBox(height: space.stackSection),
-        Center(
-          child: SvgPicture.asset(
-            'assets/art/passport_diagram.svg',
-            width: 170.0,
-            height: 129.0,
-            fit: BoxFit.contain,
+        const Spacer(flex: 1),
+        Flexible(
+          flex: 6,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: sizes.thumbPhotoMd,
+              ),
+              child: SvgPicture.asset(
+                'assets/art/passport_diagram.svg',
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
         ),
-        SizedBox(height: space.stackFormField),
-        const BrandPointerPair(
-          items: [
+        const Spacer(flex: 1),
+        BrandPointerPair(
+          padding: space.insetCardCompact,
+          badgeSize: sizes.iconSm,
+          gapBadgeToTitle: space.stackTight,
+          gapTitleToDescription: space.stackText,
+          titleStyle: context.text.labelLarge?.copyWith(
+            fontWeight: TypeScale.bold,
+            color: colors.brandOnSurface,
+          ),
+          descriptionStyle: context.text.labelSmall?.copyWith(
+            color: colors.brandSecondaryBody,
+            height: 1.25,
+          ),
+          items: const [
             ('1', 'Photo page', 'Your picture and details, sharp'),
             ('2', 'Code lines', 'Every character, nothing cropped'),
           ],
         ),
-        SizedBox(height: space.stackFormField),
+        const Spacer(flex: 1),
         BrandInfoCard(
-          borderRadius: shape.radiusControl.topLeft.x,
-          paddingVertical: space.inlineButtonGroup,
-          paddingHorizontal: space.inlineButtonGroup,
-          itemGap: space.stackItem,
+          paddingVertical: space.stackTight,
+          paddingHorizontal: space.insetCardCompact.left,
+          itemGap: space.stackText,
           iconSize: sizes.iconXs,
+          textStyle: context.text.labelSmall?.copyWith(
+            color: colors.brandSecondaryBody,
+            height: 1.2,
+          ),
           bullets: const [
             BrandBullet(
               icon: AppIcons.bulb,
@@ -102,14 +116,16 @@ class PassportInstructionScreen extends StatelessWidget {
             ),
           ],
         ),
+        const Spacer(flex: 1),
       ],
       foot: [
         AppButton(
           label: 'Open camera',
           variant: AppButtonVariant.brandWhite,
+          height: sizes.controlLg,
           onPressed: () => context.push(AppRoutes.passportCapture),
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         const BrandSecurityNote(
           text:
               'Proprietary ID verification. Encrypted.\nNever shared with external AI.',

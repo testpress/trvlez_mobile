@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 enum VerifyRowStatus { done, running, redo }
@@ -27,10 +26,12 @@ class VerifyStatusRows extends StatelessWidget {
     super.key,
     required this.rows,
     this.dimCompleted = false,
+    this.borderRadius,
   });
 
   final List<VerifyStatusItem> rows;
   final bool dimCompleted;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class VerifyStatusRows extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: colors.brandCardBackground,
-        borderRadius: shape.radiusControl,
+        borderRadius: borderRadius ?? shape.radiusCard,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -96,8 +97,8 @@ class _StatusRowTile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: sizes.iconSm,
-            height: sizes.iconSm,
+            width: sizes.iconDefault,
+            height: sizes.iconDefault,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -121,9 +122,7 @@ class _StatusRowTile extends StatelessWidget {
           Expanded(
             child: Text(
               item.label,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12.0,
+              style: context.text.labelMedium?.copyWith(
                 fontWeight: TypeScale.medium,
                 color: isDimmed
                     ? colors.verificationStepInactiveText
@@ -150,9 +149,7 @@ class _StatusRowTile extends StatelessWidget {
                 VerifyRowStatus.running => 'Running',
                 VerifyRowStatus.redo => 'Redo',
               },
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 10.0,
+              style: context.text.labelSmall?.copyWith(
                 fontWeight: TypeScale.semiBold,
                 color: isWaiting
                     ? colors.brandOnSurface

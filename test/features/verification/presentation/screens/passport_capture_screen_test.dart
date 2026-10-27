@@ -58,7 +58,11 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.text('Keep the dashed box over the code lines'),
+          find.text('Hold steady ~20 cm away'),
+          findsOneWidget,
+        );
+        expect(
+          find.text('Keep the dashed box over the bottom 2 lines of text'),
           findsOneWidget,
         );
         expect(find.text('Upload from photo library'), findsNothing);

@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -29,8 +28,8 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
   VideoPlayerController? _videoController;
   bool _isPlaying = false;
 
-  static const double kReviewWidth = 210.0;
-  static const double kReviewHeight = 280.0;
+  static const double kReviewWidth = 196.0;
+  static const double kReviewHeight = 260.0;
 
   @override
   void initState() {
@@ -98,23 +97,25 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
         ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
         : 0.0;
 
-    final seconds = position.inSeconds.clamp(0, 59);
-    final timeStr = '0:${seconds.toString().padLeft(2, '0')}';
+    final durationSeconds = duration.inSeconds.clamp(0, 59);
+    final positionSeconds = position.inSeconds.clamp(0, 59);
+    final displaySeconds = _isPlaying ? positionSeconds : durationSeconds;
+    final timeStr = '0:${displaySeconds.toString().padLeft(2, '0')}';
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_capture.svg',
       title: 'Verification',
+      helpPrefix: 'Having difficulties? ',
+      helpLinkText: "Tell us what's wrong",
       isScrollable: true,
       onBack: () => context.pop(),
       body: [
-        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
-        SizedBox(height: space.stackFormField),
+        const VerificationStepper(current: 2),
+        SizedBox(height: space.stackItem),
         Text(
           'Check your video',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineLarge?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -122,112 +123,124 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
         ),
         SizedBox(height: space.stackTight),
         Text(
-          'Watch it back before you upload. Make sure your face is clearly visible, well-lit, and centered throughout.',
+          'Watch it back before you upload. Your face should stay inside the oval throughout.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodyMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.4,
           ),
         ),
-        SizedBox(height: space.stackSection),
-        Center(
-          child: Container(
-            padding: EdgeInsets.all(space.inlineMicro),
-            decoration: BoxDecoration(
-              color: colors.brandShotBackdrop,
-              borderRadius: shape.radiusControl,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: _togglePlayback,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Outer halo matching capture aesthetic
-                      Container(
-                        width: kReviewWidth + 14.0,
-                        height: kReviewHeight + 14.0,
-                        decoration: BoxDecoration(
-                          color: colors.brandOnSurface.withValues(alpha: 0.08),
-                          borderRadius: const BorderRadius.all(
-                            Radius.elliptical(
-                              (kReviewWidth + 14.0) / 2,
-                              (kReviewHeight + 14.0) / 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Clipped oval video player with cover fit
-                      ClipOval(
-                        child: SizedBox(
-                          width: kReviewWidth,
-                          height: kReviewHeight,
-                          child:
-                              controller != null &&
-                                  controller.value.isInitialized
-                              ? FittedBox(
-                                  fit: BoxFit.cover,
-                                  child: SizedBox(
-                                    width: controller.value.size.width > 0
-                                        ? controller.value.size.width
-                                        : kReviewWidth,
-                                    height: controller.value.size.height > 0
-                                        ? controller.value.size.height
-                                        : kReviewHeight,
-                                    child: VideoPlayer(controller),
-                                  ),
-                                )
-                              : SvgPicture.asset(
-                                  'assets/art/selfie_video.svg',
-                                  width: kReviewWidth,
-                                  height: kReviewHeight,
-                                  fit: BoxFit.contain,
-                                ),
-                        ),
-                      ),
-                      // Play overlay button when paused
-                      if (!_isPlaying)
-                        Container(
-                          width: sizes.controlLg,
-                          height: sizes.controlLg,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colors.brandSurface.withValues(alpha: 0.7),
-                          ),
-                          child: Icon(
-                            Icons.play_arrow_rounded,
-                            size: sizes.iconXl,
-                            color: colors.brandOnSurface,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: space.stackItem),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+        SizedBox(height: space.stackItem),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(
+            space.insetScreen.left,
+            space.stackItem,
+            space.insetScreen.left,
+            space.stackItem,
+          ),
+          decoration: BoxDecoration(
+            color: colors.brandCardBackground,
+            borderRadius: shape.radiusSurface,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _togglePlayback,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Text(
-                      timeStr,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11.5,
-                        fontWeight: TypeScale.semiBold,
-                        color: colors.brandOnSurface,
+                    // Outer subtle halo ring matching capture aesthetic
+                    Container(
+                      width: kReviewWidth + 12.0,
+                      height: kReviewHeight + 12.0,
+                      decoration: BoxDecoration(
+                        color: colors.brandOnSurface.withValues(alpha: 0.06),
+                        borderRadius: const BorderRadius.all(
+                          Radius.elliptical(
+                            (kReviewWidth + 12.0) / 2,
+                            (kReviewHeight + 12.0) / 2,
+                          ),
+                        ),
+                        border: Border.all(
+                          color: colors.brandOnSurface.withValues(alpha: 0.15),
+                          width: shape.borderDefault,
+                        ),
                       ),
                     ),
-                    SizedBox(width: space.inlineMicro),
-                    ClipRRect(
+                    // Clipped oval video player or placeholder
+                    ClipOval(
+                      child: SizedBox(
+                        width: kReviewWidth,
+                        height: kReviewHeight,
+                        child:
+                            controller != null && controller.value.isInitialized
+                            ? FittedBox(
+                                fit: BoxFit.cover,
+                                child: SizedBox(
+                                  width: controller.value.size.width > 0
+                                      ? controller.value.size.width
+                                      : kReviewWidth,
+                                  height: controller.value.size.height > 0
+                                      ? controller.value.size.height
+                                      : kReviewHeight,
+                                  child: VideoPlayer(controller),
+                                ),
+                              )
+                            : SvgPicture.asset(
+                                'assets/art/selfie_video.svg',
+                                width: kReviewWidth,
+                                height: kReviewHeight,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                    // Play overlay button with white circle and red play icon
+                    if (!_isPlaying &&
+                        controller != null &&
+                        controller.value.isInitialized)
+                      Container(
+                        width: sizes.controlLg,
+                        height: sizes.controlLg,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colors.brandOnSurface,
+                          boxShadow: [
+                            BoxShadow(
+                              color: colors.cardShadow.withValues(alpha: 0.3),
+                              blurRadius: 8.0,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.play_arrow_rounded,
+                          size: sizes.iconFeature,
+                          color: colors.brandSurface,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              SizedBox(height: space.stackItem),
+              Row(
+                children: [
+                  Text(
+                    timeStr,
+                    style: context.text.labelMedium?.copyWith(
+                      fontWeight: TypeScale.bold,
+                      color: colors.brandOnSurface,
+                    ),
+                  ),
+                  SizedBox(width: space.stackFormField),
+                  Expanded(
+                    child: ClipRRect(
                       borderRadius: shape.radiusSubtle,
                       child: Container(
-                        width: 120.0,
                         height: sizes.indicatorProgressHeight,
-                        color: colors.brandScrubTrack,
+                        color: colors.brandOnSurface.withValues(alpha: 0.25),
                         alignment: Alignment.centerLeft,
                         child: FractionallySizedBox(
                           widthFactor: progress,
@@ -235,20 +248,17 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: space.inlineMicro),
-                    Text(
-                      _isPlaying ? 'Tap to pause' : 'Tap to play',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 10.5,
-                        fontWeight: TypeScale.regular,
-                        color: colors.brandSecondaryBody,
-                      ),
+                  ),
+                  SizedBox(width: space.stackFormField),
+                  Text(
+                    _isPlaying ? 'Tap to pause' : 'Tap to play',
+                    style: context.text.bodySmall?.copyWith(
+                      color: colors.brandSecondaryBody,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ],
@@ -256,15 +266,17 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
         AppButton(
           label: 'Looks good, upload',
           variant: AppButtonVariant.brandWhite,
+          height: sizes.controlLg,
           onPressed: () {
             notifier.uploadSelfie();
             context.pushReplacement(AppRoutes.selfieProcessing);
           },
         ),
-        SizedBox(height: space.stackItem),
+        SizedBox(height: space.stackFormField),
         AppButton(
           label: 'Record again',
           variant: AppButtonVariant.brandOutline,
+          height: sizes.controlLg,
           onPressed: () {
             notifier.clearVideo();
             context.pushReplacement(AppRoutes.selfieCapture);

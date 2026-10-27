@@ -158,9 +158,9 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** Security note and "Having difficulties? Tell us what's wrong" help footer.
 - **Dependencies:** `BrandVerifyScreen`, `VerificationStepper`, `BrandWordmark`, `BrandSecurityNote`.
 - **Implementation & Verification Checklist:**
-  - [ ] Remove raw text font size from `BrandWordmark`.
-  - [ ] Verify card visual states (locked, active, completed) and smooth step transitions.
-  - [ ] Confirm step calculation logic (`_calculateDoneSteps`) and backend reconciliation remain intact.
+  - [x] Remove raw text font size from `BrandWordmark`.
+  - [x] Verify card visual states (locked, active, completed) and smooth step transitions.
+  - [x] Confirm step calculation logic (`_calculateDoneSteps`) and backend reconciliation remain intact.
 
 #### 3.2 Passport Instruction Screen (How-To)
 - **Target File:** [`lib/features/verification/presentation/screens/passport_instruction_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/passport_instruction_screen.dart)
@@ -173,8 +173,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** "Open camera" white action button (`AppButtonVariant.brandWhite`).
 - **Dependencies:** `BrandVerifyScreen`, `VerificationStepper`, `BrandPointerPair`, `BrandInfoCard`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Convert all text styles to semantic tokens.
-  - [ ] Verify camera launch and back navigation.
+  - [x] Convert all text styles to semantic tokens.
+  - [x] Verify camera launch and back navigation.
 
 #### 3.3 Passport Capture Screen
 - **Target File:** [`lib/features/verification/presentation/screens/passport_capture_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/passport_capture_screen.dart)
@@ -187,8 +187,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** Square shutter button (`BrandShutter(square: true)`) with touch target min 56dp.
 - **Dependencies:** `BrandVerifyScreen`, `PassportFramingGuide`, `BrandShutter`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify square shutter styling vs circular selfie shutter.
-  - [ ] Ensure camera preview aspect ratio and crop mathematics remain unaffected.
+  - [x] Verify square shutter styling vs circular selfie shutter.
+  - [x] Ensure camera preview aspect ratio and crop mathematics remain unaffected.
 
 #### 3.4 Passport Processing Screen
 - **Target File:** [`lib/features/verification/presentation/screens/passport_processing_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/passport_processing_screen.dart)
@@ -199,8 +199,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Status Rows:** Stage progress rows with checkmarks for completed sub-steps.
 - **Dependencies:** `BrandVerifyScreen`, `VerifyHourglass`, `VerifyStatusRows`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify smooth stage transitions without UI stutter.
-  - [ ] Confirm background OCR and crop processing logic is preserved.
+  - [x] Verify smooth stage transitions without UI stutter.
+  - [x] Confirm background OCR and crop processing logic is preserved.
 
 #### 3.5 Passport Review Screen
 - **Target File:** [`lib/features/verification/presentation/screens/passport_review_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/passport_review_screen.dart)
@@ -211,8 +211,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot Actions:** Primary "Looks good, continue" button and secondary outline "Retake photo" button.
 - **Dependencies:** `BrandVerifyScreen`, `VerifyZoomPanel`, `VerifyDetailRow`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Check image aspect ratio and layout fit across screen densities.
-  - [ ] Verify confirm and retake flows.
+  - [x] Check image aspect ratio and layout fit across screen densities.
+  - [x] Verify confirm and retake flows.
 
 #### 3.6 Confirm Details Screen (MRZ Confirmation)
 - **Target File:** [`lib/features/verification/presentation/screens/confirm_details_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/confirm_details_screen.dart)
@@ -223,8 +223,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** "These match my passport" action button and "Need to edit? Tap a field" helper note.
 - **Dependencies:** `BrandVerifyScreen`, `VerificationStepper`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify field alignment and read-only presentation.
-  - [ ] Ensure payload confirmation and navigation to Selfie step.
+  - [x] Verify field alignment and read-only presentation.
+  - [x] Ensure payload confirmation and navigation to Selfie step.
 
 #### 3.7 Passport Failed Screen
 - **Target File:** [`lib/features/verification/presentation/screens/passport_failed_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/passport_failed_screen.dart)
@@ -235,7 +235,7 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** White button "Take photo again" and "Report a problem" footer link.
 - **Dependencies:** `BrandVerifyScreen`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify failure reason display and retake button route navigation.
+  - [x] Verify failure reason display and retake button route navigation.
 
 #### 3.8 Selfie Instruction Screen (Intro)
 - **Target File:** [`lib/features/verification/presentation/screens/selfie_instruction_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/selfie_instruction_screen.dart)
@@ -248,7 +248,7 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Foot:** "Start video selfie" button.
 - **Dependencies:** `BrandVerifyScreen`, `VerificationStepper`, `BrandInfoCard`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify layout proportions and button action.
+  - [x] Verify layout proportions and button action.
 
 #### 3.9 Selfie Capture Screen (Recording)
 - **Target File:** [`lib/features/verification/presentation/screens/selfie_capture_screen.dart`](file:///home/kumaraguhan/workspace/trvlez_mobile/lib/features/verification/presentation/screens/selfie_capture_screen.dart)
@@ -259,8 +259,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Recording Indicator:** Animated countdown ring (`VerifyRecordingTime`) showing 3-second elapsed time.
 - **Dependencies:** `BrandVerifyScreen`, `VerifyFaceOval`, `BrandShutter`, `VerifyRecordingTime`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify circular shutter styling.
-  - [ ] Ensure front camera recording lifecycle, timer, and file persistence remain intact.
+  - [x] Verify circular shutter styling.
+  - [x] Ensure front camera recording lifecycle, timer, and file persistence remain intact.
 
 #### 3.10 Selfie Processing, Review, Success & Failed Screens
 - **Target Files:**
@@ -276,7 +276,7 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Failed:** Failure card with retake option and support link.
 - **Dependencies:** `BrandVerifyScreen`, `AppButton`, `VerifyHourglass`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify visual alignment and review playback controls.
+  - [x] Verify visual alignment and review playback controls.
 
 #### 3.11 NFC Flow Screens (Intro, Scan, Chip Data, Final Check, Failed)
 - **Target Files:**
@@ -294,8 +294,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
   - **Failed:** NFC error card with repositioning tips and retry action.
 - **Dependencies:** `BrandVerifyScreen`, `VerifyNfcPulse`, `VerifyProgressTrio`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Verify pulse and progress animations.
-  - [ ] Confirm platform NFC service event handling is untouched.
+  - [x] Verify pulse and progress animations.
+  - [x] Confirm platform NFC service event handling is untouched.
 
 #### 3.12 Verification Success Screen & Report a Problem Screen
 - **Target Files:**
@@ -315,8 +315,8 @@ All redesigned screens must strictly conform to `.agents/rules/DESIGN_SYSTEM.md`
     - "Send report" button.
 - **Dependencies:** `BrandVerifyScreen`, `AppButton`.
 - **Implementation & Verification Checklist:**
-  - [ ] Remove raw text font sizes in `report_a_problem_screen.dart`.
-  - [ ] Verify multi-select chips and auto-ticking behavior on notes entry.
+  - [x] Remove raw text font sizes in `report_a_problem_screen.dart`.
+  - [x] Verify multi-select chips and auto-ticking behavior on notes entry.
 
 ---
 

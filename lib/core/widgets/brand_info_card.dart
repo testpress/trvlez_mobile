@@ -21,20 +21,24 @@ class BrandInfoCard extends StatelessWidget {
     super.key,
     required this.bullets,
     this.heading,
+    this.headingStyle,
     this.borderRadius,
     this.paddingVertical,
     this.paddingHorizontal,
     this.itemGap,
     this.iconSize,
+    this.textStyle,
   });
 
   final List<BrandBullet> bullets;
   final String? heading;
+  final TextStyle? headingStyle;
   final double? borderRadius;
   final double? paddingVertical;
   final double? paddingHorizontal;
   final double? itemGap;
   final double? iconSize;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +49,11 @@ class BrandInfoCard extends StatelessWidget {
 
     final effectiveRadius = borderRadius != null
         ? BorderRadius.circular(borderRadius!)
-        : shape.radiusControl;
-    final effectivePaddingV = paddingVertical ?? space.insetCardCompact.top;
-    final effectivePaddingH = paddingHorizontal ?? space.insetCardCompact.left;
-    final effectiveItemGap = itemGap ?? space.stackItem;
-    final effectiveIconSize = iconSize ?? sizes.iconXs;
+        : shape.radiusSurface;
+    final effectivePaddingV = paddingVertical ?? space.insetCard.top;
+    final effectivePaddingH = paddingHorizontal ?? space.insetCard.left;
+    final effectiveItemGap = itemGap ?? space.stackFormField;
+    final effectiveIconSize = iconSize ?? sizes.iconSm;
 
     final currentHeading = heading;
 
@@ -69,10 +73,11 @@ class BrandInfoCard extends StatelessWidget {
           if (currentHeading != null) ...[
             Text(
               currentHeading,
-              style: context.text.labelMedium?.copyWith(
-                fontWeight: TypeScale.semiBold,
-                color: colors.brandOnSurface,
-              ),
+              style: headingStyle ??
+                  context.text.labelMedium?.copyWith(
+                    fontWeight: TypeScale.semiBold,
+                    color: colors.brandOnSurface,
+                  ),
             ),
             SizedBox(height: effectiveItemGap),
           ],
@@ -89,11 +94,11 @@ class BrandInfoCard extends StatelessWidget {
                     color: colors.brandSecondary,
                   ),
                 ),
-                SizedBox(width: space.inlineIconLabel),
+                SizedBox(width: space.inlineButtonGroup),
                 Expanded(
                   child: Text(
                     bullets[i].text,
-                    style: context.text.bodySmall?.copyWith(
+                    style: (textStyle ?? context.text.bodyMedium)?.copyWith(
                       fontWeight: bullets[i].emphasis
                           ? TypeScale.medium
                           : TypeScale.regular,

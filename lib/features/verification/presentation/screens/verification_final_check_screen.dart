@@ -188,173 +188,184 @@ class _VerificationFinalCheckScreenState
         title: 'Verification',
         helpLine: false,
         isScrollable: false,
-        onBack: navigateExit,
-      body: [
-        VerificationStepper(current: 4, circleSize: sizes.iconDefault),
-        const Spacer(flex: 1),
-        const Center(child: VerifyHourglass()),
-        const Spacer(flex: 1),
-        Text(
-          'Checking everything',
-          textAlign: TextAlign.center,
-          style: context.text.headlineMedium?.copyWith(
-            color: colors.brandOnSurface,
-            letterSpacing: -0.2,
+        body: [
+          const VerificationStepper(current: 4),
+          const Spacer(flex: 3),
+          Center(
+            child: VerifyHourglass(
+              size: sizes.avatarXl,
+              glyphSize: sizes.controlSm,
+            ),
           ),
-        ),
-        SizedBox(height: space.stackText),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
-          child: Text(
-            "Usually under a minute. You can close the app — we'll let you know.",
+          const Spacer(flex: 3),
+          Text(
+            'Checking everything',
             textAlign: TextAlign.center,
-            style: context.text.labelMedium?.copyWith(
-              color: colors.brandSecondaryBody,
-              height: 1.4,
+            style: context.text.headlineLarge?.copyWith(
+              fontWeight: TypeScale.bold,
+              color: colors.brandOnSurface,
             ),
           ),
-        ),
-        const Spacer(flex: 1),
-        VerifyStatusRows(
-          rows: [
-            const VerifyStatusRow(
-              title: 'Your details',
-              state: VerifyRowStatus.done,
+          SizedBox(height: space.stackTight),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: space.stackFormField),
+            child: Text(
+              "Usually under a minute. You can close the app — we'll let you know.",
+              textAlign: TextAlign.center,
+              style: context.text.bodyMedium?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.35,
+              ),
             ),
-            const VerifyStatusRow(
-              title: 'Passport photo',
-              state: VerifyRowStatus.done,
-            ),
-            const VerifyStatusRow(title: 'Selfie', state: VerifyRowStatus.done),
-            if (!state.isNfcSkipped)
+          ),
+          const Spacer(flex: 2),
+          VerifyStatusRows(
+            borderRadius: shape.radiusCard,
+            rows: [
               const VerifyStatusRow(
-                title: 'Chip scan',
+                title: 'Your details',
                 state: VerifyRowStatus.done,
               ),
-            const VerifyStatusRow(
-              title: 'Final check',
-              state: VerifyRowStatus.running,
+              const VerifyStatusRow(
+                title: 'Passport photo',
+                state: VerifyRowStatus.done,
+              ),
+              const VerifyStatusRow(
+                title: 'Selfie',
+                state: VerifyRowStatus.done,
+              ),
+              if (!state.isNfcSkipped)
+                const VerifyStatusRow(
+                  title: 'Chip scan',
+                  state: VerifyRowStatus.done,
+                ),
+              const VerifyStatusRow(
+                title: 'Final check',
+                state: VerifyRowStatus.running,
+              ),
+            ],
+          ),
+          if (state.phase == VerificationPhase.error) ...[
+            SizedBox(height: space.stackFormField),
+            Container(
+              padding: space.insetCard,
+              decoration: BoxDecoration(
+                color: colors.brandCardBackground,
+                borderRadius: shape.radiusControl,
+                border: Border.all(
+                  color: colors.brandDivider,
+                  width: shape.borderDefault,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    state.errorMessage ?? 'Submission encountered an issue.',
+                    textAlign: TextAlign.center,
+                    style: context.text.labelMedium?.copyWith(
+                      color: colors.brandOnSurface,
+                    ),
+                  ),
+                  SizedBox(height: space.stackItem),
+                  Builder(
+                    builder: (context) {
+                      final errorMsg = state.errorMessage?.toLowerCase() ?? '';
+                      final isNoActiveSession = errorMsg.contains('session') ||
+                          errorMsg.contains('active verification');
+                      final canRetry = !isNoActiveSession;
+
+                      if (canRetry) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: AppButton(
+                                label: 'Start over',
+                                variant: AppButtonVariant.brandOutline,
+                                onPressed: () {
+                                  ref
+                                      .read(verificationNotifierProvider.notifier)
+                                      .reset();
+                                  context.go(AppRoutes.passportCapture);
+                                },
+                              ),
+                            ),
+                            SizedBox(width: space.inlineButtonGroup),
+                            Expanded(
+                              child: AppButton(
+                                label: 'Retry submission',
+                                variant: AppButtonVariant.brandWhite,
+                                onPressed: () {
+                                  ref
+                                      .read(verificationNotifierProvider.notifier)
+                                      .submitVerificationAsync();
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return AppButton(
+                        label: 'Start over',
+                        variant: AppButtonVariant.brandWhite,
+                        onPressed: () {
+                          ref
+                              .read(verificationNotifierProvider.notifier)
+                              .reset();
+                          context.go(AppRoutes.passportCapture);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
-        ),
-        if (state.phase == VerificationPhase.error) ...[
-          SizedBox(height: space.stackFormField),
-          Container(
-            padding: space.insetCard,
-            decoration: BoxDecoration(
-              color: colors.brandCardBackground,
-              borderRadius: shape.radiusControl,
-              border: Border.all(
-                color: colors.brandDivider,
-                width: shape.borderDefault,
-              ),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  state.errorMessage ?? 'Submission encountered an issue.',
-                  textAlign: TextAlign.center,
-                  style: context.text.labelMedium?.copyWith(
-                    color: colors.brandOnSurface,
+          const Spacer(flex: 1),
+        ],
+        foot: [
+          Center(
+            child: InkWell(
+              onTap: () {
+                context.push(
+                  AppRoutes.reportProblem,
+                  extra: const ProblemReportContext(
+                    area: ProblemArea.verification,
+                    screen: AppRoutes.verificationFinalCheck,
+                  ),
+                );
+              },
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+                child: Center(
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: context.text.bodyMedium?.copyWith(
+                        color: colors.brandSecondaryBody,
+                      ),
+                      children: [
+                        const TextSpan(text: 'Taking too long? '),
+                        TextSpan(
+                          text: "Tell us what's wrong",
+                          style: context.text.bodyMedium?.copyWith(
+                            color: colors.brandOnSurface,
+                            decoration: TextDecoration.underline,
+                            fontWeight: TypeScale.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                SizedBox(height: space.stackItem),
-                Builder(
-                  builder: (context) {
-                    final errorMsg = state.errorMessage?.toLowerCase() ?? '';
-                    final isNoActiveSession = errorMsg.contains('session') ||
-                        errorMsg.contains('active verification');
-                    final canRetry = !isNoActiveSession;
-
-                    if (canRetry) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: AppButton(
-                              label: 'Start over',
-                              variant: AppButtonVariant.brandOutline,
-                              onPressed: () {
-                                ref
-                                    .read(verificationNotifierProvider.notifier)
-                                    .reset();
-                                context.go(AppRoutes.passportCapture);
-                              },
-                            ),
-                          ),
-                          SizedBox(width: space.inlineButtonGroup),
-                          Expanded(
-                            child: AppButton(
-                              label: 'Retry submission',
-                              variant: AppButtonVariant.brandWhite,
-                              onPressed: () {
-                                ref
-                                    .read(verificationNotifierProvider.notifier)
-                                    .submitVerificationAsync();
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return AppButton(
-                      label: 'Start over',
-                      variant: AppButtonVariant.brandWhite,
-                      onPressed: () {
-                        ref
-                            .read(verificationNotifierProvider.notifier)
-                            .reset();
-                        context.go(AppRoutes.passportCapture);
-                      },
-                    );
-                  },
-                ),
-              ],
+              ),
             ),
+          ),
+          SizedBox(height: space.stackItem),
+          const BrandSecurityNote(
+            text: 'Checked on our own systems.\nNever shared with external AI.',
           ),
         ],
-      ],
-      foot: [
-        Center(
-          child: InkWell(
-            onTap: () {
-              context.push(
-                AppRoutes.reportProblem,
-                extra: const ProblemReportContext(
-                  area: ProblemArea.verification,
-                  screen: AppRoutes.verificationFinalCheck,
-                ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: context.text.bodySmall?.copyWith(
-                    color: colors.brandSecondaryBody,
-                  ),
-                  children: [
-                    const TextSpan(text: 'Taking too long? '),
-                    TextSpan(
-                      text: "Tell us what's wrong",
-                      style: TextStyle(
-                        color: colors.brandSecondary,
-                        decoration: TextDecoration.underline,
-                        fontWeight: TypeScale.medium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: space.stackItem),
-        const BrandSecurityNote(
-          text: 'Checked on our own systems.\nNever shared with external AI.',
-        ),
-      ],
-    ),
+      ),
   );
 }
 }

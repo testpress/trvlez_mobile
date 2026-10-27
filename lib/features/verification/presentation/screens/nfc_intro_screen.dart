@@ -226,7 +226,7 @@ class NfcIntroScreen extends ConsumerWidget {
       isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        VerificationStepper(current: 3, circleSize: sizes.iconDefault),
+        const VerificationStepper(current: 3),
         const Spacer(flex: 1),
         Center(
           child: Container(

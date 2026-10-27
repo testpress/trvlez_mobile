@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -53,7 +52,7 @@ class _SelfieSuccessScreenState extends State<SelfieSuccessScreen> {
       helpLine: false,
       isScrollable: true,
       body: [
-        VerificationStepper(current: 3, circleSize: sizes.iconDefault),
+        const VerificationStepper(current: 3),
         SizedBox(height: space.stackHero),
         Center(
           child: Container(
@@ -80,9 +79,7 @@ class _SelfieSuccessScreenState extends State<SelfieSuccessScreen> {
         Text(
           'Selfie verified',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineSmall?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -92,10 +89,7 @@ class _SelfieSuccessScreenState extends State<SelfieSuccessScreen> {
         Text(
           'Going to the chip scan…',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodySmall?.copyWith(
             color: colors.brandSecondaryBody,
           ),
         ),

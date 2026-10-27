@@ -131,14 +131,15 @@ class _VerificationLandingScreenState
       },
       isScrollable: false,
       body: [
-        VerificationStepper(current: doneCount, circleSize: sizes.iconDefault),
+        VerificationStepper(current: doneCount),
         const Spacer(flex: 2),
 
         // Welcome Header
         if (isVerified) ...[
           Text(
             'Identity verified',
-            style: context.text.headlineSmall?.copyWith(
+            style: context.text.headlineMedium?.copyWith(
+              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
               height: 1.2,
             ),
@@ -154,7 +155,8 @@ class _VerificationLandingScreenState
         ] else if (isSubmitted) ...[
           Text(
             'Verification in review',
-            style: context.text.headlineSmall?.copyWith(
+            style: context.text.headlineMedium?.copyWith(
+              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
               height: 1.2,
             ),
@@ -170,19 +172,20 @@ class _VerificationLandingScreenState
         ] else ...[
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: space.stackTight,
+            spacing: space.inlineIconLabel,
             children: [
               Text(
                 'Welcome to',
-                style: context.text.headlineSmall?.copyWith(
+                style: context.text.headlineMedium?.copyWith(
+                  fontWeight: TypeScale.bold,
                   color: colors.brandOnSurface,
                   height: 1.2,
                 ),
               ),
               BrandWordmark(
-                planeWidth: space.inlineButtonGroup,
+                planeWidth: space.inlineItem,
                 gap: space.inlineMicro,
-                fontSize: 18.0,
+                fontSize: context.text.headlineMedium?.fontSize,
               ),
             ],
           ),
@@ -204,7 +207,7 @@ class _VerificationLandingScreenState
             Text(
               '$doneCount of 4 steps completed',
               style: context.text.bodySmall?.copyWith(
-                fontWeight: TypeScale.medium,
+                fontWeight: TypeScale.semiBold,
                 color: colors.brandOnSurface,
               ),
             ),
@@ -212,7 +215,7 @@ class _VerificationLandingScreenState
               '${(doneCount / 4 * 100).round()}%',
               style: context.text.bodySmall?.copyWith(
                 fontWeight: TypeScale.semiBold,
-                color: colors.brandSecondary,
+                color: colors.brandOnSurface,
               ),
             ),
           ],
@@ -240,10 +243,11 @@ class _VerificationLandingScreenState
             ),
           ),
         ),
+        const Spacer(flex: 2),
 
         // 4 Step Cards
         for (int i = 0; i < _steps.length; i++) ...[
-          const Spacer(flex: 1),
+          if (i > 0) SizedBox(height: space.stackItem),
           _StepCard(
             index: i,
             isDone: i < doneCount,
@@ -254,6 +258,7 @@ class _VerificationLandingScreenState
                 : null,
           ),
         ],
+        const Spacer(flex: 1),
       ],
       foot: [
         if (isVerified)
@@ -272,7 +277,6 @@ class _VerificationLandingScreenState
         const BrandSecurityNote(
           text:
               'Proprietary ID verification. Encrypted.\nNever shared with external AI.',
-          fontSize: 10.0,
         ),
       ],
     );
@@ -314,7 +318,7 @@ class _StepCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: shape.radiusControl,
+          borderRadius: shape.radiusSurface,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             padding: space.insetCard,
@@ -322,7 +326,7 @@ class _StepCard extends StatelessWidget {
               color: isActive
                   ? colors.verificationCardActiveFill
                   : colors.brandCardBackground,
-              borderRadius: shape.radiusControl,
+              borderRadius: shape.radiusSurface,
               border: isActive
                   ? Border.all(
                       color: colors.brandOnSurface,
@@ -333,8 +337,8 @@ class _StepCard extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: sizes.iconXl,
-                  height: sizes.iconXl,
+                  width: sizes.avatarMd,
+                  height: sizes.avatarMd,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -347,7 +351,7 @@ class _StepCard extends StatelessWidget {
                     size: sizes.iconSm,
                     color: (isActive || isDone)
                         ? colors.brandPrimary
-                        : colors.verificationStepInactiveText,
+                        : colors.brandOnSurface,
                   ),
                 ),
                 SizedBox(width: space.inlineButtonGroup),
@@ -358,8 +362,8 @@ class _StepCard extends StatelessWidget {
                     children: [
                       Text(
                         stepData.title,
-                        style: context.text.titleSmall?.copyWith(
-                          fontWeight: TypeScale.semiBold,
+                        style: context.text.titleMedium?.copyWith(
+                          fontWeight: TypeScale.bold,
                           color: isLocked
                               ? colors.verificationCardLockedTitle
                               : colors.brandOnSurface,

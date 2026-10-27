@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The 4 standard verification step labels per the design system.
@@ -41,7 +40,7 @@ class VerificationStepper extends StatelessWidget {
     final space = context.space;
     final shape = context.shape;
     final sizes = context.sizes;
-    final resolvedSize = circleSize ?? sizes.iconDefault;
+    final resolvedSize = circleSize ?? sizes.iconLg;
     final inset = resolvedSize / 2 + space.inlineMicro;
 
     return LayoutBuilder(
@@ -173,10 +172,9 @@ class _StepNode extends StatelessWidget {
                 )
               : Text(
                   '${index + 1}',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
+                  style: (context.text.labelSmall ?? const TextStyle()).copyWith(
                     fontSize: size * 0.44,
-                    fontWeight: isOn ? TypeScale.semiBold : TypeScale.medium,
+                    fontWeight: isOn ? TypeScale.bold : TypeScale.medium,
                     color: isOn
                         ? colors.verificationStepActiveText
                         : colors.verificationStepInactiveText,
@@ -189,10 +187,8 @@ class _StepNode extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           maxLines: 2,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 10.5,
-            fontWeight: isOn ? TypeScale.semiBold : TypeScale.regular,
+          style: context.text.labelSmall?.copyWith(
+            fontWeight: isOn ? TypeScale.bold : TypeScale.regular,
             color: isOn
                 ? colors.brandOnSurface
                 : colors.verificationStepInactiveText,

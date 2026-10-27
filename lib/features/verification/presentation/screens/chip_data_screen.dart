@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -55,6 +56,11 @@ class ChipDataScreen extends ConsumerWidget {
     final nameParts = [givenNames, surname].where((s) => s.isNotEmpty).toList();
     final displayName = nameParts.isNotEmpty ? nameParts.join(' ') : '—';
 
+    final docNumber = parsedMrz?.documentNumber ??
+        state.extractedDocumentNumber ??
+        mrz?.documentNumber ??
+        '—';
+
     final nationality = parsedMrz?.nationality ?? mrz?.nationality ?? '—';
     final dob = parsedMrz?.dateOfBirth ?? state.extractedDateOfBirth;
     final dobFormatted = dob != null
@@ -71,13 +77,12 @@ class ChipDataScreen extends ConsumerWidget {
       backgroundAsset: 'assets/art/bg_chip_data.svg',
       title: 'Chip scan',
       isScrollable: false,
-      onBack: () => context.pop(),
       body: [
-        const Spacer(flex: 1),
+        const Spacer(flex: 2),
         Center(
           child: Container(
-            width: sizes.pulseIndicator,
-            height: sizes.pulseIndicator,
+            width: sizes.avatarXl,
+            height: sizes.avatarXl,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -85,33 +90,34 @@ class ChipDataScreen extends ConsumerWidget {
             ),
             child: Icon(
               AppIcons.nfc,
-              size: sizes.iconXl,
+              size: sizes.iconFeature,
               color: colors.brandPrimary,
             ),
           ),
         ),
-        const Spacer(flex: 1),
+        const Spacer(flex: 2),
         Text(
           'Chip data received',
           textAlign: TextAlign.center,
-          style: context.text.headlineMedium?.copyWith(
+          style: context.text.headlineLarge?.copyWith(
+            fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
-            letterSpacing: -0.2,
           ),
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackTight),
         Text(
           "This is what your passport's chip holds. Check it looks right.",
           textAlign: TextAlign.center,
-          style: context.text.labelMedium?.copyWith(
+          style: context.text.bodyMedium?.copyWith(
             color: colors.brandSecondaryBody,
+            height: 1.35,
           ),
         ),
-        const Spacer(flex: 1),
+        const Spacer(flex: 2),
         Container(
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
-            borderRadius: shape.radiusControl,
+            borderRadius: shape.radiusCard,
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -122,40 +128,56 @@ class ChipDataScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: shape.radiusControlSm,
+                      borderRadius: shape.radiusControl,
                       child: faceBytes != null
                           ? Image.memory(
                               faceBytes,
-                              width: sizes.controlLg + space.inlineMicro,
-                              height: sizes.pulseIndicator,
+                              width: sizes.pulseIndicator,
+                              height: sizes.avatarXl,
                               fit: BoxFit.cover,
                             )
                           : SvgPicture.asset(
                               'assets/art/chip_photo.svg',
-                              width: sizes.controlLg + space.inlineMicro,
-                              height: sizes.pulseIndicator,
+                              width: sizes.pulseIndicator,
+                              height: sizes.avatarXl,
                               fit: BoxFit.cover,
                             ),
                     ),
-                    SizedBox(width: space.stackFormField),
+                    SizedBox(width: space.inlineItem),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             displayName,
-                            style: context.text.titleMedium?.copyWith(
+                            style: context.text.titleLarge?.copyWith(
+                              fontWeight: TypeScale.bold,
                               color: colors.brandOnSurface,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: space.stackText),
+                          SizedBox(height: space.stackTight),
+                          Text(
+                            'Document no. $docNumber',
+                            style: context.text.bodySmall?.copyWith(
+                              color: colors.brandSecondaryBody,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: space.stackItem),
                           Container(
-                            padding: space.insetTagSm,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: space.inlineIconLabel,
+                              vertical: space.inlineMicro,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.brandOnSurface.withValues(
                                 alpha: 0.2,
                               ),
-                              borderRadius: shape.radiusSubtle,
+                              borderRadius: shape.radiusPill,
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -169,6 +191,7 @@ class ChipDataScreen extends ConsumerWidget {
                                 Text(
                                   'From the chip',
                                   style: context.text.labelSmall?.copyWith(
+                                    fontWeight: TypeScale.medium,
                                     color: colors.brandOnSurface,
                                   ),
                                 ),
@@ -212,6 +235,7 @@ class ChipDataScreen extends ConsumerWidget {
             ],
           ),
         ),
+        const Spacer(flex: 1),
       ],
       foot: [
         AppButton(

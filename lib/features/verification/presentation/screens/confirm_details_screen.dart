@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
-import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
@@ -58,7 +58,6 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
-    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final mrz = state.mrzExtractionResult;
@@ -70,8 +69,8 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
     final docNumber = mrz?.documentNumber?.isNotEmpty == true
         ? mrz!.documentNumber!
         : (state.extractedDocumentNumber?.isNotEmpty == true
-              ? state.extractedDocumentNumber!
-              : '—');
+            ? state.extractedDocumentNumber!
+            : '—');
     final nationality = mrz?.nationality?.isNotEmpty == true
         ? mrz!.nationality!
         : '—';
@@ -96,14 +95,17 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
       title: 'Verification',
       isScrollable: false,
       onBack: () => context.pop(),
+      helpPrefix: 'Something wrong? ',
+      helpLinkText: "Tell us what's wrong",
       body: [
-        VerificationStepper(current: 1, circleSize: sizes.iconDefault),
+        const VerificationStepper(current: 1),
         const Spacer(flex: 1),
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
             'Confirm your details',
-            style: context.text.headlineMedium?.copyWith(
+            style: context.text.headlineLarge?.copyWith(
+              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
               letterSpacing: -0.2,
             ),
@@ -114,7 +116,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
           alignment: Alignment.centerLeft,
           child: Text(
             "We read these from your passport. Check they're right before we continue.",
-            style: context.text.labelMedium?.copyWith(
+            style: context.text.bodyMedium?.copyWith(
               color: colors.brandSecondaryBody,
               height: 1.4,
             ),
@@ -122,10 +124,11 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
         ),
         const Spacer(flex: 1),
         Container(
+          width: double.infinity,
           padding: space.insetCard,
           decoration: BoxDecoration(
             color: colors.brandCardBackground,
-            borderRadius: shape.radiusControl,
+            borderRadius: shape.radiusSurface,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -139,6 +142,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
             ],
           ),
         ),
+        const Spacer(flex: 1),
       ],
       foot: [
         AppButton(
@@ -146,50 +150,14 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
           variant: AppButtonVariant.brandWhite,
           onPressed: _isConfirming ? null : _handleConfirm,
         ),
-        SizedBox(height: space.stackText),
+        SizedBox(height: space.stackItem),
         AppButton(
-          label: 'Retake passport photo',
+          label: 'Re-upload passport',
           variant: AppButtonVariant.brandOutline,
           onPressed: () {
             notifier.clearImage();
             context.pushReplacement(AppRoutes.passportInstructions);
           },
-        ),
-        SizedBox(height: space.stackItem),
-        Center(
-          child: InkWell(
-            onTap: () {
-              context.push(
-                AppRoutes.reportProblem,
-                extra: const ProblemReportContext(
-                  area: ProblemArea.verification,
-                  screen: AppRoutes.confirmDetails,
-                ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: space.stackText),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: context.text.bodySmall?.copyWith(
-                    color: colors.brandSecondaryBody,
-                  ),
-                  children: [
-                    const TextSpan(text: 'Something wrong? '),
-                    TextSpan(
-                      text: "Tell us what's wrong",
-                      style: TextStyle(
-                        color: colors.brandSecondary,
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );

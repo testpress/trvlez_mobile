@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
@@ -155,10 +154,10 @@ class BrandVerifyScreen extends StatelessWidget {
 
                   // Pinned Foot
                   if (foot != null || helpLine) ...[
-                    SizedBox(height: space.stackItem),
+                    SizedBox(height: space.stackFormField),
                     ...?foot,
                     if (helpLine) ...[
-                      SizedBox(height: space.stackItem),
+                      SizedBox(height: space.stackFormField),
                       _VerifyHelpLine(
                         prefix: helpPrefix,
                         linkText: helpLinkText,
@@ -204,6 +203,7 @@ class _VerifyHeader extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: context.text.titleMedium?.copyWith(
+                fontWeight: TypeScale.bold,
                 color: colors.brandOnSurface,
                 height: 1.2,
               ),
@@ -263,9 +263,7 @@ class _VerifyHelpLine extends StatelessWidget {
           children: [
             Text(
               prefix,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 11.5,
+              style: context.text.bodySmall?.copyWith(
                 fontWeight: TypeScale.regular,
                 color: colors.brandSecondaryBody,
               ),
@@ -285,10 +283,8 @@ class _VerifyHelpLine extends StatelessWidget {
                 ),
                 child: Text(
                   linkText,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
-                    fontWeight: TypeScale.medium,
+                  style: context.text.bodySmall?.copyWith(
+                    fontWeight: TypeScale.bold,
                     color: colors.brandOnSurface,
                   ),
                 ),

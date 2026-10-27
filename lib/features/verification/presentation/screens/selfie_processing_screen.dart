@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -128,15 +127,14 @@ class _SelfieProcessingScreenState
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_upload_check.svg',
       title: 'Verification',
-      helpLine: false,
-      isScrollable: true,
+      isScrollable: false,
       body: [
-        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
-        SizedBox(height: space.stackHero),
+        const VerificationStepper(current: 2),
+        const Spacer(flex: 3),
         Center(
           child: Container(
-            width: sizes.avatarXl,
-            height: sizes.avatarXl,
+            width: sizes.thumbPhotoLg,
+            height: sizes.thumbPhotoLg,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -144,13 +142,13 @@ class _SelfieProcessingScreenState
             ),
             child: SvgPicture.asset(
               'assets/art/video_glyph.svg',
-              width: sizes.avatarMd,
-              height: sizes.avatarMd,
+              width: sizes.avatarXl,
+              height: sizes.avatarXl,
               fit: BoxFit.contain,
             ),
           ),
         ),
-        SizedBox(height: space.stackSection),
+        const Spacer(flex: 3),
         VerifyProgressTrio(
           labels: const ['Upload', 'Check'],
           states: [
@@ -158,26 +156,28 @@ class _SelfieProcessingScreenState
               i < doneCount ? TrioState.done : TrioState.waiting,
           ],
         ),
-        SizedBox(height: space.stackSection),
-        SizedBox(
-          height: sizes.avatarSm,
-          child: Center(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: Text(
-                currentStatus,
-                key: ValueKey<String>(currentStatus),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 13.0,
-                  fontWeight: TypeScale.medium,
-                  color: colors.brandSecondary,
-                ),
-              ),
+        const Spacer(flex: 2),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: Text(
+            currentStatus,
+            key: ValueKey<String>(currentStatus),
+            textAlign: TextAlign.center,
+            style: context.text.headlineSmall?.copyWith(
+              fontWeight: TypeScale.bold,
+              color: colors.brandOnSurface,
             ),
           ),
         ),
+        SizedBox(height: space.stackTight),
+        Text(
+          'This usually takes a few seconds.',
+          textAlign: TextAlign.center,
+          style: context.text.bodyMedium?.copyWith(
+            color: colors.brandSecondaryBody,
+          ),
+        ),
+        const Spacer(flex: 2),
       ],
       foot: const [
         BrandSecurityNote(

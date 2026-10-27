@@ -83,15 +83,15 @@ class VerificationSuccessScreen extends ConsumerWidget {
       child: BrandVerifyScreen(
         backgroundAsset: 'assets/art/bg_success.svg',
         title: 'Verification',
-        helpLine: false,
+        helpLine: true,
         isScrollable: false,
         body: [
-          VerificationStepper(current: 4, circleSize: sizes.iconDefault),
-          const Spacer(flex: 1),
+          const VerificationStepper(current: 4),
+          const Spacer(flex: 3),
           Center(
             child: Container(
-              width: sizes.avatarXl + space.stackText,
-              height: sizes.avatarXl + space.stackText,
+              width: sizes.thumbPhotoMd,
+              height: sizes.thumbPhotoMd,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -99,39 +99,36 @@ class VerificationSuccessScreen extends ConsumerWidget {
               ),
               child: Icon(
                 AppIcons.rosetteDiscountCheck,
-                size: sizes.controlMd,
+                size: sizes.controlHero,
                 color: colors.brandPrimary,
               ),
             ),
           ),
-          const Spacer(flex: 1),
+          const Spacer(flex: 3),
           Text(
             "You're verified",
             textAlign: TextAlign.center,
-            style: context.text.headlineMedium?.copyWith(
+            style: context.text.headlineLarge?.copyWith(
+              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
-              letterSpacing: -0.2,
             ),
           ),
-          SizedBox(height: space.stackText),
+          SizedBox(height: space.stackTight),
           Text(
             expiryFormatted.isNotEmpty
                 ? '$displayName · passport valid to $expiryFormatted'
                 : displayName,
             textAlign: TextAlign.center,
-            style: context.text.labelMedium?.copyWith(
+            style: context.text.bodyMedium?.copyWith(
               color: colors.brandSecondaryBody,
             ),
           ),
-          const Spacer(flex: 1),
+          const Spacer(flex: 2),
           Container(
-            padding: EdgeInsets.symmetric(
-              vertical: space.inlineButtonGroup,
-              horizontal: space.stackFormField,
-            ),
+            padding: space.insetCard,
             decoration: BoxDecoration(
               color: colors.brandCardBackground,
-              borderRadius: shape.radiusControl,
+              borderRadius: shape.radiusCard,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,8 +136,8 @@ class VerificationSuccessScreen extends ConsumerWidget {
               children: [
                 Text(
                   'What this unlocks',
-                  style: context.text.titleSmall?.copyWith(
-                    fontWeight: TypeScale.semiBold,
+                  style: context.text.titleMedium?.copyWith(
+                    fontWeight: TypeScale.bold,
                     color: colors.brandOnSurface,
                   ),
                 ),
@@ -151,18 +148,17 @@ class VerificationSuccessScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: space.inlineItem,
-                        height: space.inlineItem,
-                        margin: EdgeInsets.only(top: space.stackText / 2),
+                        width: sizes.iconDefault,
+                        height: sizes.iconDefault,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: colors.brandOnSurface,
+                          color: colors.brandOnSurface.withValues(alpha: 0.18),
                         ),
                         child: Icon(
                           AppIcons.check,
-                          size: sizes.indicatorDot + space.stackText / 2,
-                          color: colors.brandPrimary,
+                          size: sizes.iconXs,
+                          color: colors.brandOnSurface,
                         ),
                       ),
                       SizedBox(width: space.inlineIconLabel),
@@ -172,8 +168,8 @@ class VerificationSuccessScreen extends ConsumerWidget {
                           children: [
                             Text(
                               _unlocks[i].title,
-                              style: context.text.labelMedium?.copyWith(
-                                fontWeight: TypeScale.semiBold,
+                              style: context.text.bodyLarge?.copyWith(
+                                fontWeight: TypeScale.bold,
                                 color: colors.brandOnSurface,
                               ),
                             ),
@@ -192,6 +188,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
               ],
             ),
           ),
+          const Spacer(flex: 1),
         ],
         foot: [
           AppButton(

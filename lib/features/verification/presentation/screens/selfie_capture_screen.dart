@@ -8,13 +8,11 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
-import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/widgets/verification_parts.dart';
 
@@ -136,28 +134,41 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
     }
   }
 
+  (IconData, String) get _captureGuidance {
+    if (!_isRecording) {
+      return (AppIcons.moodSmile, 'Please look directly into the camera');
+    }
+    if (_elapsed < 3) {
+      return (AppIcons.userCircle, 'Look directly into the camera');
+    } else if (_elapsed < 6) {
+      return (AppIcons.eye, 'Blink naturally — do not stare');
+    } else {
+      return (AppIcons.rotate, 'Slowly turn your head a little left and right');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
     final sizes = context.sizes;
     final cam = _cameraController;
+    final (guidanceIcon, guidanceText) = _captureGuidance;
 
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_capture.svg',
       title: 'Verification',
-      helpLine: false,
+      helpPrefix: 'Trouble with the camera? ',
+      helpLinkText: "Tell us what's wrong",
       isScrollable: true,
       onBack: _isRecording ? null : () => context.pop(),
       body: [
-        VerificationStepper(current: 2, circleSize: sizes.iconDefault),
+        const VerificationStepper(current: 2),
         SizedBox(height: space.stackItem),
         Text(
-          _isRecording ? 'Keep still' : 'Centre your face',
+          'Centre your face',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineLarge?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -165,14 +176,9 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
         ),
         SizedBox(height: space.stackText),
         Text(
-          _isRecording
-              ? 'Hold steady until the progress ring completes.'
-              : 'Hold still until the ring fills.',
+          'Hold still until the ring fills.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodyMedium?.copyWith(
             color: colors.brandSecondaryBody,
           ),
         ),
@@ -202,31 +208,28 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
                 : null,
           ),
         ),
-        SizedBox(height: space.stackText),
-        Center(
-          child: VerifyRecordingTime(
-            seconds: _elapsed.clamp(0, kSelfieSeconds),
+        if (_isRecording) ...[
+          SizedBox(height: space.stackText),
+          Center(
+            child: VerifyRecordingTime(
+              seconds: _elapsed.clamp(0, kSelfieSeconds),
+            ),
           ),
-        ),
+        ],
         SizedBox(height: space.stackText),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              _isRecording ? AppIcons.video : AppIcons.moodSmile,
+              guidanceIcon,
               size: sizes.iconXs,
               color: colors.brandSecondary,
             ),
             SizedBox(width: space.inlineMicro),
             Flexible(
               child: Text(
-                _isRecording
-                    ? 'Recording video... stay centered'
-                    : 'Good lighting • Eye level • No accessories',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11.5,
-                  fontWeight: TypeScale.regular,
+                guidanceText,
+                style: context.text.bodySmall?.copyWith(
                   color: colors.brandSecondaryBody,
                 ),
               ),
@@ -239,44 +242,6 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
           square: false,
           recording: _isRecording,
           onPressed: _isRecording ? _stopRecording : _startRecording,
-        ),
-        SizedBox(height: space.stackItem),
-        Center(
-          child: InkWell(
-            onTap: () {
-              context.push(
-                AppRoutes.reportProblem,
-                extra: const ProblemReportContext(
-                  area: ProblemArea.verification,
-                  screen: AppRoutes.selfieCapture,
-                ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: space.inlineMicro),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.5,
-                    color: colors.brandSecondaryBody,
-                  ),
-                  children: [
-                    const TextSpan(text: 'Trouble with the camera? '),
-                    TextSpan(
-                      text: "Tell us what's wrong",
-                      style: TextStyle(
-                        color: colors.brandSecondary,
-                        decoration: TextDecoration.underline,
-                        fontWeight: TypeScale.medium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );

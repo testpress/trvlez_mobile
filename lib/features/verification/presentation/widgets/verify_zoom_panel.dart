@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
@@ -60,9 +59,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                 ),
                 child: Text(
                   '2',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 10.0,
+                  style: context.text.labelSmall?.copyWith(
                     fontWeight: TypeScale.bold,
                     color: colors.brandActionLabel,
                     height: 1.0,
@@ -72,9 +69,7 @@ class VerifyZoomPanel extends ConsumerWidget {
               SizedBox(width: space.stackTight),
               Text(
                 'Code lines, enlarged',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11.5,
+                style: context.text.bodySmall?.copyWith(
                   fontWeight: TypeScale.semiBold,
                   color: colors.brandOnSurface,
                 ),
@@ -86,10 +81,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 10.0,
-                    fontWeight: TypeScale.regular,
+                  style: context.text.labelSmall?.copyWith(
                     color: colors.brandSecondaryBody,
                   ),
                 ),
@@ -133,9 +125,8 @@ class VerifyZoomPanel extends ConsumerWidget {
                       .map(
                         (line) => Text(
                           line,
-                          style: TextStyle(
+                          style: context.text.labelSmall?.copyWith(
                             fontFamily: 'monospace',
-                            fontSize: 10.5,
                             fontWeight: TypeScale.bold,
                             letterSpacing: 1.0,
                             color: colors.brandOnSurface,
@@ -169,9 +160,8 @@ class VerifyZoomPanel extends ConsumerWidget {
                       .map(
                         (line) => Text(
                           line,
-                          style: TextStyle(
+                          style: context.text.bodySmall?.copyWith(
                             fontFamily: 'monospace',
-                            fontSize: 11.0,
                             fontWeight: TypeScale.bold,
                             letterSpacing: 1.1,
                             color: colors.brandOnSurface,
@@ -198,10 +188,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                 ),
                 child: Text(
                   'Passport code lines preview will appear here',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.0,
-                    fontWeight: TypeScale.regular,
+                  style: context.text.bodySmall?.copyWith(
                     color: colors.brandSecondaryBody,
                   ),
                 ),

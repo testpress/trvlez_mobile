@@ -41,7 +41,7 @@ class VerifyDetailRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: context.text.labelMedium?.copyWith(
+            style: context.text.bodyMedium?.copyWith(
               color: colors.brandSecondaryBody,
             ),
           ),
@@ -52,8 +52,8 @@ class VerifyDetailRow extends StatelessWidget {
               textAlign: TextAlign.right,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: context.text.labelMedium?.copyWith(
-                fontWeight: TypeScale.semiBold,
+              style: context.text.bodyMedium?.copyWith(
+                fontWeight: TypeScale.bold,
                 color: colors.brandOnSurface,
               ),
             ),

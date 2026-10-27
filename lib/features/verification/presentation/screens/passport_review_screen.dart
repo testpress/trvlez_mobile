@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -25,7 +24,6 @@ class PassportReviewScreen extends ConsumerWidget {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
-    final sizes = context.sizes;
     final state = ref.watch(verificationNotifierProvider);
     final notifier = ref.read(verificationNotifierProvider.notifier);
     final capturedImage = state.capturedImage;
@@ -33,17 +31,15 @@ class PassportReviewScreen extends ConsumerWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_howto.svg',
       title: 'Verification',
-      isScrollable: true,
+      isScrollable: false,
       onBack: () => context.pop(),
       body: [
-        VerificationStepper(current: 0, circleSize: sizes.iconDefault),
-        SizedBox(height: space.stackFormField),
+        const VerificationStepper(current: 0),
+        SizedBox(height: space.stackItem),
         Text(
           'Check your photo',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20.0,
+          style: context.text.headlineLarge?.copyWith(
             fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
@@ -53,39 +49,37 @@ class PassportReviewScreen extends ConsumerWidget {
         Text(
           'Both parts need to be sharp. Look closely before you upload.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12.0,
-            fontWeight: TypeScale.regular,
+          style: context.text.bodyMedium?.copyWith(
             color: colors.brandSecondaryBody,
+            height: 1.4,
           ),
         ),
-        SizedBox(height: space.stackSection),
-        Center(
+        SizedBox(height: space.stackItem),
+        Expanded(
           child: Container(
-            padding: EdgeInsets.all(space.inlineMicro),
+            width: double.infinity,
+            padding: space.insetCard,
             decoration: BoxDecoration(
-              color: colors.brandShotBackdrop,
-              borderRadius: shape.radiusControl,
+              color: colors.brandCardBackground,
+              borderRadius: shape.radiusSurface,
             ),
-            child: ClipRRect(
-              borderRadius: shape.radiusControlSm,
-              child: SizedBox(
-                width: sizes.previewDocWidth,
-                height: sizes.previewDocHeight,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: shape.radiusControl,
                 child: capturedImage != null
-                    ? Image.file(capturedImage, fit: BoxFit.contain)
+                    ? Image.file(
+                        capturedImage,
+                        fit: BoxFit.contain,
+                      )
                     : SvgPicture.asset(
                         'assets/art/passport_shot.svg',
-                        width: sizes.previewDocWidth,
-                        height: sizes.previewDocHeight,
                         fit: BoxFit.contain,
                       ),
               ),
             ),
           ),
         ),
-        SizedBox(height: space.stackFormField),
+        SizedBox(height: space.stackItem),
         VerifyZoomPanel(mrzImage: state.mrzImage, mrzLines: state.mrzLines),
       ],
       foot: [
@@ -106,7 +100,7 @@ class PassportReviewScreen extends ConsumerWidget {
             context.pushReplacement(AppRoutes.passportCapture);
           },
         ),
-        SizedBox(height: space.stackFormField),
+        SizedBox(height: space.stackItem),
         const BrandSecurityNote(text: 'Nothing is sent until you tap upload.'),
       ],
     );
