@@ -86,7 +86,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               ),
             ),
           ),
-          SizedBox(height: space.stackItem),
+          SizedBox(height: space.stackText),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,

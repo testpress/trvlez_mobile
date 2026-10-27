@@ -51,8 +51,8 @@ class ServiceCard extends StatelessWidget {
                   : [
                       BoxShadow(
                         color: colors.cardShadow,
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 1),
                       ),
                     ],
             ),
@@ -87,13 +87,11 @@ class ServiceCard extends StatelessWidget {
                         ),
                         child: Text(
                           'SOON',
-                          style: (context.text.labelSmall ?? const TextStyle())
-                              .copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: colors.inkTertiary,
-                                letterSpacing: 0.6,
-                              ),
+                          style: context.text.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: colors.inkTertiary,
+                            letterSpacing: 0.6,
+                          ),
                         ),
                       ),
                   ],
@@ -104,7 +102,6 @@ class ServiceCard extends StatelessWidget {
                   ezColor: soon ? colors.inkTertiary : colors.brandPrimary,
                   style: (context.text.headlineSmall ?? const TextStyle())
                       .copyWith(
-                        fontSize: 19,
                         fontWeight: FontWeight.w700,
                         color: soon ? colors.inkTertiary : colors.textPrimary,
                       ),
@@ -112,12 +109,10 @@ class ServiceCard extends StatelessWidget {
                 SizedBox(height: space.stackTight),
                 Text(
                   subtitle,
-                  style: (context.text.bodyMedium ?? const TextStyle())
-                      .copyWith(
-                        fontSize: 13.5,
-                        height: 1.35,
-                        color: colors.textSecondary,
-                      ),
+                  style: context.text.bodySmall?.copyWith(
+                    height: 1.35,
+                    color: colors.textSecondary,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

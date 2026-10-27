@@ -27,7 +27,7 @@ class HomeSectionHeader extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: context.text.headlineMedium?.copyWith(
+            style: context.text.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
@@ -45,11 +45,10 @@ class HomeSectionHeader extends StatelessWidget {
                 ),
                 child: Text(
                   action!,
-                  style: (context.text.titleMedium ?? const TextStyle())
-                      .copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colors.brandPrimary,
-                      ),
+                  style: context.text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: colors.brandPrimary,
+                  ),
                 ),
               ),
             ),

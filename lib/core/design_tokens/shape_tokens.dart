@@ -49,7 +49,7 @@ class AppShape extends ThemeExtension<AppShape> {
     radiusControlSm: BorderRadius.all(Radius.circular(Prim.r8)),
     radiusControl: BorderRadius.all(Radius.circular(Prim.r12)),
     radiusSurface: BorderRadius.all(Radius.circular(Prim.r16)),
-    radiusCard: BorderRadius.all(Radius.circular(Prim.r24)),
+    radiusCard: BorderRadius.all(Radius.circular(Prim.r28)),
     radiusOverlay: BorderRadius.all(Radius.circular(Prim.r20)),
     radiusHeader: BorderRadius.all(Radius.circular(Prim.r28)),
     radiusPill: BorderRadius.all(Radius.circular(Prim.rFull)),

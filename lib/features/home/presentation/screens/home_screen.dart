@@ -175,14 +175,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 SizedBox(height: space.stackTight),
                 Text(
                   _greetingText(travelerName),
-                  style: (context.text.headlineMedium ?? const TextStyle())
-                      .copyWith(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: colors.textPrimary,
-                        letterSpacing: -0.3,
-                        height: 1.25,
-                      ),
+                  style: context.text.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colors.textPrimary,
+                    letterSpacing: -0.3,
+                    height: 1.25,
+                  ),
                 ),
                 SizedBox(height: space.stackText),
                 Text(

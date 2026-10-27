@@ -173,7 +173,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                 ),
               ),
             ),
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackText),
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
@@ -186,7 +186,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
             ),
 
-            SizedBox(height: space.stackHero),
+            SizedBox(height: space.stackSection),
 
             // ── Form Inputs ──────────────────────────────────────────────
             BrandTextField(
@@ -199,7 +199,7 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               validator: validateEmail,
             ),
 
-            SizedBox(height: space.stackSection),
+            SizedBox(height: space.stackFormField),
 
             BrandTextField(
               label: 'Password',

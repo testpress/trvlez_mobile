@@ -127,7 +127,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(height: space.stackItem),
+            SizedBox(height: space.stackText),
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,

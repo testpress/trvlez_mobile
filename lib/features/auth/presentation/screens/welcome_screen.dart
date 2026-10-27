@@ -132,9 +132,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   Opacity(
                     opacity: (1.0 - _motifsOut.value).clamp(0.0, 1.0),
                     child: const IgnorePointer(
-                      child: SizedBox.expand(
-                        child: _MotifLayer(),
-                      ),
+                      child: SizedBox.expand(child: _MotifLayer()),
                     ),
                   ),
 
@@ -250,7 +248,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: space.stackHero,
+                              horizontal: space.insetBrandScreen.left,
                             ),
                             child: Opacity(
                               opacity: _ctaRise.value,
@@ -437,4 +435,3 @@ class _MotifLayerState extends State<_MotifLayer> {
     );
   }
 }
-

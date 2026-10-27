@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Reusable dismissible error banner for authentication screens.
@@ -52,11 +51,10 @@ class AuthErrorBanner extends StatelessWidget {
               Expanded(
                 child: Text(
                   errorMessage!,
-                  style: const TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
+                  style: context.text.titleSmall?.copyWith(
                     fontWeight: TypeScale.regular,
-                  ).copyWith(color: colors.brandOnSurface),
+                    color: colors.brandOnSurface,
+                  ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),

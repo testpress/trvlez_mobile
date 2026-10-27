@@ -80,14 +80,16 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
-              isAlreadyLoggedIn ? 'Change your password' : 'Reset your password',
+              isAlreadyLoggedIn
+                  ? 'Change your password'
+                  : 'Reset your password',
               style: context.text.headlineLarge?.copyWith(
                 color: colors.brandOnSurface,
                 height: 1.25,
               ),
             ),
           ),
-          SizedBox(height: space.stackItem),
+          SizedBox(height: space.stackText),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
@@ -123,6 +125,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           AppButton(
             label: 'Send code',
             variant: AppButtonVariant.brandWhite,
+            active: isEmailValid,
             enabled: isEmailValid,
             onPressed: isEmailValid ? _onSendCode : null,
           ),
