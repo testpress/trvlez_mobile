@@ -13,7 +13,6 @@ import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_blocked
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_status_banner.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/findr_not_joined_section.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/findr_portfolio_section.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 
 /// Screen 4.1: The Findr rewards & referral programme dashboard.
 /// Reactive to live backend Finder identity, eligibility, and lifecycle state.
@@ -95,15 +94,7 @@ class _FinderContent extends ConsumerWidget {
     final isActivated = finder?.isActive ?? false;
     final isSuspendedOrTerminated =
         finder?.isSuspended ?? finder?.isTerminated ?? false;
-    final profileAsync = ref.watch(currentProfileProvider);
-    final profile = profileAsync.valueOrNull;
-    final isPassportEligible =
-        profile == null || isGbrNationality(profile.nationality);
-
-    final isMarketIneligible = !isPassportEligible ||
-        (!summary.eligibility.isEligible &&
-            summary.eligibility.reason ==
-                FinderEligibilityReason.marketUnavailable);
+    final isBlocked = !summary.eligibility.isEligible;
 
     final sizes = context.sizes;
 
@@ -123,16 +114,9 @@ class _FinderContent extends ConsumerWidget {
               ),
 
               // 1. Ineligible and Not Activated: Render Blocked View
-              if (!isActivated &&
-                  !isSuspendedOrTerminated &&
-                  (!summary.eligibility.isEligible || isMarketIneligible))
+              if (!isActivated && !isSuspendedOrTerminated && isBlocked)
                 FinderBlockedView(
-                  eligibility: !summary.eligibility.isEligible
-                      ? summary.eligibility
-                      : const FinderEligibility(
-                          isEligible: false,
-                          reason: FinderEligibilityReason.marketUnavailable,
-                        ),
+                  eligibility: summary.eligibility,
                   onActionCompleted: () =>
                       ref.read(finderNotifierProvider.notifier).refresh(),
                 )

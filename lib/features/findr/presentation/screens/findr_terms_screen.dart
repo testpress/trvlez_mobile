@@ -8,6 +8,7 @@ import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_blocked_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_terms_step_view.dart';
 
 /// Screen 4.2 · Step 1 of 2: Findr Terms & Conditions of Participation.
@@ -29,6 +30,9 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
     final shape = context.shape;
     final sizes = context.sizes;
     final terms = ref.watch(finderTermsProvider);
+    final finderAsync = ref.watch(finderNotifierProvider);
+    final summary = finderAsync.valueOrNull;
+    final isBlocked = summary != null && !summary.eligibility.isEligible;
 
     return Scaffold(
       backgroundColor: colors.page,
@@ -49,7 +53,7 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
                 ),
                 Expanded(
                   child: Text(
-                    'Terms & Conditions',
+                    isBlocked ? 'Programme Status' : 'Terms & Conditions',
                     textAlign: TextAlign.center,
                     style: context.text.titleLarge?.copyWith(
                       color: colors.textPrimary,
@@ -66,50 +70,58 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
 
           // ── Content ────────────────────────────────────────────────────
           Expanded(
-            child: FinderTermsStepView(
-              terms: terms,
-              hasAcceptedTerms: _hasAcceptedTerms,
-              onAcceptanceChanged: (value) {
-                setState(() => _hasAcceptedTerms = value);
-              },
-              showHeaderPills: true,
-            ),
+            child: isBlocked
+                ? FinderBlockedView(
+                    eligibility: summary.eligibility,
+                    onActionCompleted: () => context.pop(),
+                  )
+                : FinderTermsStepView(
+                    terms: terms,
+                    hasAcceptedTerms: _hasAcceptedTerms,
+                    onAcceptanceChanged: (value) {
+                      setState(() => _hasAcceptedTerms = value);
+                    },
+                    showHeaderPills: true,
+                  ),
           ),
 
           // ── Sticky Footer ──────────────────────────────────────────────
-          Container(
-            padding: space.insetCard,
-            decoration: BoxDecoration(
-              color: colors.surface,
-              border: Border(
-                top: BorderSide(
-                  color: colors.borderSubtle,
-                  width: shape.borderDefault,
+          if (!isBlocked)
+            Container(
+              padding: space.insetCard,
+              decoration: BoxDecoration(
+                color: colors.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: colors.borderSubtle,
+                    width: shape.borderDefault,
+                  ),
                 ),
               ),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: sizes.containerForm),
-                  child: AppButton(
-                    label: 'Continue to Address',
-                    icon: Icon(
-                      AppIcons.arrowRight,
-                      size: sizes.iconSm,
-                      color: colors.textOnAction,
+              child: SafeArea(
+                top: false,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: sizes.containerForm),
+                    child: AppButton(
+                      label: 'Continue to Address',
+                      icon: Icon(
+                        AppIcons.arrowRight,
+                        size: sizes.iconSm,
+                        color: colors.textOnAction,
+                      ),
+                      onPressed: _hasAcceptedTerms
+                          ? () => context.push(AppRoutes.findrAddress)
+                          : null,
                     ),
-                    onPressed: _hasAcceptedTerms
-                        ? () => context.push(AppRoutes.findrAddress)
-                        : null,
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
 }
+
+

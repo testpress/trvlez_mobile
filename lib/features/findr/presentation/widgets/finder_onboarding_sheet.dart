@@ -77,6 +77,9 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
     final terms = ref.read(finderTermsProvider);
     final agreementVersion = terms.version;
 
+    final profile = ref.read(currentProfileProvider).valueOrNull;
+    final countryCode = resolveCountryCode(profile?.nationality);
+
     final params = FinderActivationParams(
       addressLine1: _addressLine1Controller.text.trim(),
       addressLine2: _addressLine2Controller.text.trim().isEmpty
@@ -87,7 +90,7 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
           ? null
           : _regionController.text.trim(),
       postalCode: _postalCodeController.text.trim(),
-      residentialCountryCode: 'GB',
+      residentialCountryCode: countryCode,
       agreementVersion: agreementVersion,
       agreementAccepted: true,
     );
@@ -128,16 +131,8 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
     final summary = finderAsync.valueOrNull;
     final profileAsync = ref.watch(currentProfileProvider);
     final profile = profileAsync.valueOrNull;
-    final isPassportEligible =
-        profile == null || isGbrNationality(profile.nationality);
 
-    final isMarketIneligible = !isPassportEligible ||
-        (summary != null &&
-            !summary.eligibility.isEligible &&
-            summary.eligibility.reason ==
-                FinderEligibilityReason.marketUnavailable);
-    final isBlocked = summary != null &&
-        (!summary.eligibility.isEligible || isMarketIneligible);
+    final isBlocked = summary != null && !summary.eligibility.isEligible;
 
     final sheetContent = Container(
       constraints: BoxConstraints(
@@ -235,7 +230,9 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                               ? 'Programme Eligibility'
                               : (_currentStep == _OnboardingStep.terms
                                   ? 'Findr Agreement'
-                                  : 'UK Residential Address'),
+                                  : (resolveCountryCode(profile?.nationality) == 'GB'
+                                      ? 'UK Residential Address'
+                                      : 'Residential Address')),
                           style: context.text.titleLarge?.copyWith(
                             color: colors.textPrimary,
                             fontWeight: TypeScale.bold,
@@ -270,12 +267,7 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
             Expanded(
               child: isBlocked
                   ? FinderBlockedView(
-                      eligibility: !summary.eligibility.isEligible
-                          ? summary.eligibility
-                          : const FinderEligibility(
-                              isEligible: false,
-                              reason: FinderEligibilityReason.marketUnavailable,
-                            ),
+                      eligibility: summary.eligibility,
                       onActionCompleted: () => Navigator.of(context).pop(),
                     )
                   : (_currentStep == _OnboardingStep.terms
@@ -293,6 +285,7 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                           cityController: _cityController,
                           regionController: _regionController,
                           postalCodeController: _postalCodeController,
+                          countryLabel: resolveCountryLabel(profile?.nationality),
                         )),
             ),
 

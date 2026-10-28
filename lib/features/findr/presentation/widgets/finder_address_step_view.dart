@@ -16,6 +16,7 @@ class FinderAddressStepView extends StatelessWidget {
     required this.regionController,
     required this.postalCodeController,
     this.showHeaderPills = false,
+    this.countryLabel = 'United Kingdom (GBR)',
   });
 
   final GlobalKey<FormState> formKey;
@@ -25,6 +26,7 @@ class FinderAddressStepView extends StatelessWidget {
   final TextEditingController regionController;
   final TextEditingController postalCodeController;
   final bool showHeaderPills;
+  final String countryLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +75,7 @@ class FinderAddressStepView extends StatelessWidget {
                   ),
                   SizedBox(height: space.stackText),
                   Text(
-                    'Enter your residential address in the United Kingdom. This is used for programme compliance and payout verification.',
+                    'Enter your residential address in $countryLabel. This is used for programme compliance and payout verification.',
                     style: context.text.bodyMedium?.copyWith(
                       color: colors.textSecondary,
                       height: 1.45,
@@ -113,7 +115,7 @@ class FinderAddressStepView extends StatelessWidget {
                             ),
                             SizedBox(height: space.stackTight),
                             Text(
-                              'United Kingdom (GBR)',
+                              countryLabel,
                               style: context.text.titleSmall?.copyWith(
                                 color: colors.textPrimary,
                                 fontWeight: TypeScale.bold,

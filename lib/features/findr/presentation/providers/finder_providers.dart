@@ -19,17 +19,34 @@ final finderTermsProvider = Provider<FinderTerms>((ref) {
   return repository.getFinderTerms();
 });
 
-/// Checks whether a given traveler profile nationality qualifies for the UK-exclusive Findr programme.
-bool isGbrNationality(String? nationality) {
+/// Resolves a 2-letter ISO country code from a traveler profile nationality.
+String resolveCountryCode(String? nationality) {
   if (nationality == null || nationality.trim().isEmpty) {
-    return false;
+    return 'GB';
   }
-  final code = nationality.trim().toUpperCase();
-  return code == 'GBR' ||
-      code == 'GB' ||
-      code == 'UNITED KINGDOM' ||
-      code == 'GREAT BRITAIN' ||
-      code == 'UK';
+  final cleaned = nationality.trim().toUpperCase();
+  if (cleaned == 'IND' || cleaned == 'IN') {
+    return 'IN';
+  }
+  if (cleaned == 'GBR' || cleaned == 'GB' || cleaned == 'UK') {
+    return 'GB';
+  }
+  if (cleaned.length >= 2) {
+    return cleaned.substring(0, 2);
+  }
+  return 'GB';
+}
+
+/// Resolves a human-readable country/market label for display.
+String resolveCountryLabel(String? nationality) {
+  final code = resolveCountryCode(nationality);
+  if (code == 'IN') {
+    return 'India (IND)';
+  }
+  if (code == 'GB') {
+    return 'United Kingdom (GBR)';
+  }
+  return nationality ?? 'United Kingdom (GBR)';
 }
 
 /// Provider for the live Finder state and lifecycle operations.
