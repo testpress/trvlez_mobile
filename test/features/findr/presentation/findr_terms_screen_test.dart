@@ -84,5 +84,36 @@ void main() {
         expect(button.onPressed, isNotNull);
       }
     });
+
+    testWidgets('header and content adapt safely to status bar padding and 1.5x text scale',
+        (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            finderTermsProvider.overrideWithValue(testTerms),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: const MediaQuery(
+              data: MediaQueryData(
+                textScaler: TextScaler.linear(1.5),
+                padding: EdgeInsets.only(top: 48.0),
+              ),
+              child: FindrTermsScreen(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Terms & Conditions'), findsOneWidget);
+    });
   });
 }
+

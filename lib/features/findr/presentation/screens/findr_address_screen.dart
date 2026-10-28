@@ -110,31 +110,30 @@ class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
         children: [
           // ── Pinned Header ──────────────────────────────────────────────
           AppPinnedHeader(
-            child: Stack(
-              alignment: Alignment.center,
+            child: Row(
               children: [
-                Center(
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: Icon(
+                    AppIcons.arrowLeft,
+                    size: sizes.iconMd,
+                    color: colors.textPrimary,
+                  ),
+                  tooltip: 'Back',
+                ),
+                Expanded(
                   child: Text(
                     'Residential Address',
+                    textAlign: TextAlign.center,
                     style: context.text.titleLarge?.copyWith(
                       color: colors.textPrimary,
                       fontWeight: TypeScale.bold,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Positioned(
-                  left: 0,
-                  child: IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(
-                      AppIcons.arrowLeft,
-                      size: sizes.iconMd,
-                      color: colors.textPrimary,
-                    ),
-                    splashRadius: sizes.iconMd,
-                    tooltip: 'Back',
-                  ),
-                ),
+                SizedBox(width: sizes.controlLg),
               ],
             ),
           ),
@@ -166,10 +165,15 @@ class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
             ),
             child: SafeArea(
               top: false,
-              child: AppButton(
-                label: 'Activate Findr',
-                isLoading: _isSubmitting,
-                onPressed: _isSubmitting ? null : _handleActivation,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: sizes.containerForm),
+                  child: AppButton(
+                    label: 'Activate Findr',
+                    isLoading: _isSubmitting,
+                    onPressed: _isSubmitting ? null : _handleActivation,
+                  ),
+                ),
               ),
             ),
           ),

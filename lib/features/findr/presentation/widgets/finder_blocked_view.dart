@@ -38,75 +38,80 @@ class FinderBlockedView extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: space.insetCard,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const FindrHeading(),
-          SizedBox(height: space.stackSection),
-          Container(
-            padding: space.insetCard,
-            decoration: BoxDecoration(
-              color: colors.surface,
-              borderRadius: shape.radiusSurface,
-              border: Border.all(
-                color: colors.borderSubtle,
-                width: shape.borderDefault,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: sizes.containerForm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const FindrHeading(),
+              SizedBox(height: space.stackSection),
+              Container(
+                padding: space.insetCard,
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: shape.radiusSurface,
+                  border: Border.all(
+                    color: colors.borderSubtle,
+                    width: shape.borderDefault,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.cardShadow,
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: sizes.controlLg,
+                      height: sizes.controlLg,
+                      decoration: BoxDecoration(
+                        color: colors.surfaceSubtle,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        size: sizes.iconMd,
+                        color: colors.brandPrimary,
+                      ),
+                    ),
+                    SizedBox(height: space.stackItem),
+                    Text(
+                      displayTitle,
+                      style: context.text.titleLarge?.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: TypeScale.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: space.stackText),
+                    Text(
+                      displayMessage,
+                      style: context.text.bodyMedium?.copyWith(
+                        color: colors.textSecondary,
+                        height: 1.45,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (actionLabel != null && actionRoute != null) ...[
+                      SizedBox(height: space.stackSection),
+                      AppButton(
+                        label: actionLabel,
+                        onPressed: () async {
+                          await context.push(actionRoute);
+                          onActionCompleted?.call();
+                        },
+                      ),
+                    ],
+                  ],
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.cardShadow,
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: sizes.controlLg,
-                  height: sizes.controlLg,
-                  decoration: BoxDecoration(
-                    color: colors.surfaceSubtle,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    icon,
-                    size: sizes.iconMd,
-                    color: colors.brandPrimary,
-                  ),
-                ),
-                SizedBox(height: space.stackItem),
-                Text(
-                  displayTitle,
-                  style: context.text.titleLarge?.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: TypeScale.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: space.stackText),
-                Text(
-                  displayMessage,
-                  style: context.text.bodyMedium?.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.45,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                if (actionLabel != null && actionRoute != null) ...[
-                  SizedBox(height: space.stackSection),
-                  AppButton(
-                    label: actionLabel,
-                    onPressed: () async {
-                      await context.push(actionRoute);
-                      onActionCompleted?.call();
-                    },
-                  ),
-                ],
-              ],
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
+import 'package:trvlez_mobile/core/widgets/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
-import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_onboarding_sheet.dart';
 
 class _MockOnboardingFinderNotifier extends FinderNotifier {
   FinderActivationParams? lastParams;
@@ -154,5 +154,66 @@ void main() {
       expect(notifier.lastParams?.residentialCountryCode, 'GB');
       expect(notifier.lastParams?.agreementAccepted, isTrue);
     });
+
+    testWidgets(
+        'renders JoinFindrSheet inside Scaffold and SafeArea without drag handle',
+        (tester) async {
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            finderNotifierProvider.overrideWith(() => notifier),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: const JoinFindrSheet(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Scaffold), findsOneWidget);
+      expect(find.byType(SafeArea), findsWidgets);
+      expect(find.text('Step 1 of 2'), findsOneWidget);
+      expect(find.text('Findr Agreement'), findsOneWidget);
+    });
+
+    testWidgets('adapts safely to elevated text scale (1.5x) without overflow',
+        (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            finderNotifierProvider.overrideWith(() => notifier),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            home: const MediaQuery(
+              data: MediaQueryData(
+                textScaler: TextScaler.linear(1.5),
+                padding: EdgeInsets.only(top: 44.0),
+              ),
+              child: Scaffold(
+                body: FinderOnboardingSheet(isStandalone: true),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Step 1 of 2'), findsOneWidget);
+      expect(find.text('Findr Agreement'), findsOneWidget);
+    });
   });
 }
+

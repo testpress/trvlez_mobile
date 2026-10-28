@@ -32,31 +32,33 @@ class FindrProgrammeScreen extends ConsumerWidget {
         children: [
           // ── Pinned Header ──────────────────────────────────────────────
           AppPinnedHeader(
-            child: Stack(
-              alignment: Alignment.center,
+            child: Row(
               children: [
-                Center(
-                  child: Text(
-                    'Findr',
-                    style: context.text.titleLarge?.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 0,
-                  child: IconButton(
+                if (Navigator.canPop(context))
+                  IconButton(
                     onPressed: () => context.pop(),
                     icon: Icon(
                       AppIcons.arrowLeft,
                       size: sizes.iconMd,
                       color: colors.textPrimary,
                     ),
-                    splashRadius: sizes.iconMd,
                     tooltip: 'Back',
+                  )
+                else
+                  SizedBox(width: sizes.controlLg),
+                Expanded(
+                  child: Text(
+                    'Findr',
+                    textAlign: TextAlign.center,
+                    style: context.text.titleLarge?.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: TypeScale.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                SizedBox(width: sizes.controlLg),
               ],
             ),
           ),
@@ -103,50 +105,57 @@ class _FinderContent extends ConsumerWidget {
             summary.eligibility.reason ==
                 FinderEligibilityReason.marketUnavailable);
 
+    final sizes = context.sizes;
+
     return RefreshIndicator(
       onRefresh: () => ref.read(finderNotifierProvider.notifier).refresh(),
-      child: ListView(
-        padding: space.insetCard,
-        children: [
-          // Lifecycle / Re-verification banner
-          FinderStatusBanner(
-            summary: summary,
-            onReverificationReturned: () =>
-                ref.read(finderNotifierProvider.notifier).refresh(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: sizes.containerForm),
+          child: ListView(
+            padding: space.insetCard,
+            children: [
+              // Lifecycle / Re-verification banner
+              FinderStatusBanner(
+                summary: summary,
+                onReverificationReturned: () =>
+                    ref.read(finderNotifierProvider.notifier).refresh(),
+              ),
+
+              // 1. Ineligible and Not Activated: Render Blocked View
+              if (!isActivated &&
+                  !isSuspendedOrTerminated &&
+                  (!summary.eligibility.isEligible || isMarketIneligible))
+                FinderBlockedView(
+                  eligibility: !summary.eligibility.isEligible
+                      ? summary.eligibility
+                      : const FinderEligibility(
+                          isEligible: false,
+                          reason: FinderEligibilityReason.marketUnavailable,
+                        ),
+                  onActionCompleted: () =>
+                      ref.read(finderNotifierProvider.notifier).refresh(),
+                )
+
+              // 2. Not Activated but Eligible: Prompt Onboarding
+              else if (!isActivated && !isSuspendedOrTerminated)
+                FindrNotJoinedSection(
+                  onActivate: () async {
+                    await context.push(AppRoutes.findrTerms);
+                    ref.read(finderNotifierProvider.notifier).refresh();
+                  },
+                )
+
+              // 3. Activated or Retained Suspended/Terminated State
+              else ...[
+                FindrPortfolioSection(
+                  isSuspendedOrTerminated: isSuspendedOrTerminated,
+                  summary: summary,
+                ),
+              ],
+            ],
           ),
-
-          // 1. Ineligible and Not Activated: Render Blocked View
-          if (!isActivated &&
-              !isSuspendedOrTerminated &&
-              (!summary.eligibility.isEligible || isMarketIneligible))
-            FinderBlockedView(
-              eligibility: !summary.eligibility.isEligible
-                  ? summary.eligibility
-                  : const FinderEligibility(
-                      isEligible: false,
-                      reason: FinderEligibilityReason.marketUnavailable,
-                    ),
-              onActionCompleted: () =>
-                  ref.read(finderNotifierProvider.notifier).refresh(),
-            )
-
-          // 2. Not Activated but Eligible: Prompt Onboarding
-          else if (!isActivated && !isSuspendedOrTerminated)
-            FindrNotJoinedSection(
-              onActivate: () async {
-                await context.push(AppRoutes.findrTerms);
-                ref.read(finderNotifierProvider.notifier).refresh();
-              },
-            )
-
-          // 3. Activated or Retained Suspended/Terminated State
-          else ...[
-            FindrPortfolioSection(
-              isSuspendedOrTerminated: isSuspendedOrTerminated,
-              summary: summary,
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }

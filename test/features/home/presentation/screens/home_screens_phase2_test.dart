@@ -10,6 +10,7 @@ import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_segmented_control.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 import 'package:trvlez_mobile/core/widgets/findr_card.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_onboarding_sheet.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/home_wordmark_row.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
@@ -84,9 +85,17 @@ void main() {
         expect(find.byType(FindrCard), findsOneWidget);
         expect(find.text('Activate Findr'), findsOneWidget);
 
-        // Tap Activate Findr and verify it transitions to active
+        // Tap Activate Findr to open the onboarding sheet
         await tester.ensureVisible(find.text('Activate Findr'));
         await tester.tap(find.text('Activate Findr'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(FinderOnboardingSheet), findsOneWidget);
+
+        // Simulate successful onboarding completion returning true
+        Navigator.of(
+          tester.element(find.byType(FinderOnboardingSheet)),
+        ).pop(true);
         await tester.pumpAndSettle();
 
         expect(find.text('Recommend a hotel'), findsOneWidget);

@@ -132,5 +132,36 @@ void main() {
       expect(capturingNotifier.capturedParams?.residentialCountryCode, 'GB');
       expect(capturingNotifier.capturedParams?.agreementAccepted, isTrue);
     });
+
+    testWidgets('adapts safely to status bar padding and 1.5x text scale',
+        (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      capturingNotifier = _CapturingFinderNotifier();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            finderNotifierProvider.overrideWith(() => capturingNotifier),
+          ],
+          child: const MaterialApp(
+            home: MediaQuery(
+              data: MediaQueryData(
+                textScaler: TextScaler.linear(1.5),
+                padding: EdgeInsets.only(top: 48.0),
+              ),
+              child: FindrAddressScreen(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Residential Address'), findsWidgets);
+    });
   });
 }
+

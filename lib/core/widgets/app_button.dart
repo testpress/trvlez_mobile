@@ -134,12 +134,14 @@ class AppButton extends StatelessWidget {
         children: [
           leadingIcon,
           SizedBox(width: space.inlineIconLabel),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: AppTypography.buttonLabel,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Flexible(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: AppTypography.buttonLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       );

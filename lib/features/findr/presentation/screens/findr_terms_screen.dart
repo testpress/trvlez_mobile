@@ -36,31 +36,30 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
         children: [
           // ── Pinned Header ──────────────────────────────────────────────
           AppPinnedHeader(
-            child: Stack(
-              alignment: Alignment.center,
+            child: Row(
               children: [
-                Center(
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: Icon(
+                    AppIcons.arrowLeft,
+                    size: sizes.iconMd,
+                    color: colors.textPrimary,
+                  ),
+                  tooltip: 'Back',
+                ),
+                Expanded(
                   child: Text(
                     'Terms & Conditions',
+                    textAlign: TextAlign.center,
                     style: context.text.titleLarge?.copyWith(
                       color: colors.textPrimary,
                       fontWeight: TypeScale.bold,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Positioned(
-                  left: 0,
-                  child: IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(
-                      AppIcons.arrowLeft,
-                      size: sizes.iconMd,
-                      color: colors.textPrimary,
-                    ),
-                    splashRadius: sizes.iconMd,
-                    tooltip: 'Back',
-                  ),
-                ),
+                SizedBox(width: sizes.controlLg),
               ],
             ),
           ),
@@ -91,16 +90,21 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
             ),
             child: SafeArea(
               top: false,
-              child: AppButton(
-                label: 'Continue to Address',
-                icon: Icon(
-                  AppIcons.arrowRight,
-                  size: sizes.iconSm,
-                  color: colors.textOnAction,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: sizes.containerForm),
+                  child: AppButton(
+                    label: 'Continue to Address',
+                    icon: Icon(
+                      AppIcons.arrowRight,
+                      size: sizes.iconSm,
+                      color: colors.textOnAction,
+                    ),
+                    onPressed: _hasAcceptedTerms
+                        ? () => context.push(AppRoutes.findrAddress)
+                        : null,
+                  ),
                 ),
-                onPressed: _hasAcceptedTerms
-                    ? () => context.push(AppRoutes.findrAddress)
-                    : null,
               ),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
@@ -21,10 +22,15 @@ class AppPinnedHeader extends StatelessWidget {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
-    final topInset = MediaQuery.viewPaddingOf(context).top;
+    final sizes = context.sizes;
+    final topPadding = MediaQuery.paddingOf(context).top;
+    final viewPadding = MediaQuery.viewPaddingOf(context).top;
+    final topInset = math.max(topPadding, viewPadding);
 
-    final effectiveTop = (paddingTop ?? space.insetCard.top) + topInset;
-    final effectiveBottom = paddingBottom ?? space.insetCard.bottom;
+    final effectiveTop =
+        (paddingTop ?? (topInset > 0 ? space.stackItem : space.insetCard.top)) +
+            topInset;
+    final effectiveBottom = paddingBottom ?? space.stackItem;
     final effectiveHorizontal = horizontalPadding ?? space.insetCard.left;
 
     return Container(
@@ -47,7 +53,13 @@ class AppPinnedHeader extends StatelessWidget {
         effectiveHorizontal,
         effectiveBottom,
       ),
-      child: child,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: sizes.controlLg,
+        ),
+        child: child,
+      ),
     );
   }
 }
+
