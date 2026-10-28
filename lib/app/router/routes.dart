@@ -66,6 +66,8 @@ class AppRoutes {
   // Section 04 · Findr Programme
   static const String findr = '/findr';
   static const String joinFindr = '/findr/join';
+  static const String findrTerms = '/findr/terms';
+  static const String findrAddress = '/findr/address';
 
   // Section 06b · Check in Anywhere
   static const String anywhereFind = '/anywhere/find';

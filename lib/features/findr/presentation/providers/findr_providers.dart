@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/findr_portfolio.dart';
 
 export 'package:trvlez_mobile/features/findr/domain/entities/findr_portfolio.dart';
+export 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
 
 final findrPortfolioProvider =
     StateNotifierProvider<FindrPortfolioNotifier, FindrPortfolio>((ref) {

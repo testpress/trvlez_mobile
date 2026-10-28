@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
+import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/app_button.dart';
+import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_address_step_view.dart';
+
+/// Screen 4.3 · Step 2 of 2: Findr Residential Address Form.
+/// Country is restricted to United Kingdom (GBR).
+class FindrAddressScreen extends ConsumerStatefulWidget {
+  const FindrAddressScreen({super.key});
+
+  @override
+  ConsumerState<FindrAddressScreen> createState() => _FindrAddressScreenState();
+}
+
+class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _addressLine1Controller = TextEditingController();
+  final _addressLine2Controller = TextEditingController();
+  final _cityController = TextEditingController();
+  final _regionController = TextEditingController();
+  final _postalCodeController = TextEditingController();
+
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _addressLine1Controller.dispose();
+    _addressLine2Controller.dispose();
+    _cityController.dispose();
+    _regionController.dispose();
+    _postalCodeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleActivation() async {
+    final form = _formKey.currentState;
+    if (form == null || !form.validate() || _isSubmitting) {
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final terms = ref.read(finderTermsProvider);
+    final agreementVersion = terms.version;
+
+    final params = FinderActivationParams(
+      addressLine1: _addressLine1Controller.text.trim(),
+      addressLine2: _addressLine2Controller.text.trim().isEmpty
+          ? null
+          : _addressLine2Controller.text.trim(),
+      city: _cityController.text.trim(),
+      region: _regionController.text.trim().isEmpty
+          ? null
+          : _regionController.text.trim(),
+      postalCode: _postalCodeController.text.trim(),
+      residentialCountryCode: 'GB',
+      agreementVersion: agreementVersion,
+      agreementAccepted: true,
+    );
+
+    final isSuccess =
+        await ref.read(finderNotifierProvider.notifier).activate(params);
+
+    if (!mounted) return;
+
+    setState(() => _isSubmitting = false);
+
+    if (isSuccess) {
+      ref.read(findrPortfolioProvider.notifier).joinFindr();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Findr activated successfully! Welcome to the programme.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      context.go(AppRoutes.findr);
+    } else {
+      final state = ref.read(finderNotifierProvider);
+      final errorMessage = state.hasError
+          ? state.error.toString()
+          : 'Activation failed. Please check your address and try again.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: context.colors.feedbackError,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final space = context.space;
+    final shape = context.shape;
+    final sizes = context.sizes;
+
+    return Scaffold(
+      backgroundColor: colors.page,
+      body: Column(
+        children: [
+          // ── Pinned Header ──────────────────────────────────────────────
+          AppPinnedHeader(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    'Residential Address',
+                    style: context.text.titleLarge?.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: TypeScale.bold,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  child: IconButton(
+                    onPressed: () => context.pop(),
+                    icon: Icon(
+                      AppIcons.arrowLeft,
+                      size: sizes.iconMd,
+                      color: colors.textPrimary,
+                    ),
+                    splashRadius: sizes.iconMd,
+                    tooltip: 'Back',
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Scrollable Form ────────────────────────────────────────────
+          Expanded(
+            child: FinderAddressStepView(
+              formKey: _formKey,
+              addressLine1Controller: _addressLine1Controller,
+              addressLine2Controller: _addressLine2Controller,
+              cityController: _cityController,
+              regionController: _regionController,
+              postalCodeController: _postalCodeController,
+              showHeaderPills: true,
+            ),
+          ),
+
+          // ── Sticky Footer ──────────────────────────────────────────────
+          Container(
+            padding: space.insetCard,
+            decoration: BoxDecoration(
+              color: colors.surface,
+              border: Border(
+                top: BorderSide(
+                  color: colors.borderSubtle,
+                  width: shape.borderDefault,
+                ),
+              ),
+            ),
+            child: SafeArea(
+              top: false,
+              child: AppButton(
+                label: 'Activate Findr',
+                isLoading: _isSubmitting,
+                onPressed: _isSubmitting ? null : _handleActivation,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

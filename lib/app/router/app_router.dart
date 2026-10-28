@@ -36,7 +36,9 @@ import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_det
 import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_raised_screen.dart';
 import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_reason_screen.dart';
 import 'package:trvlez_mobile/features/disputes/presentation/screens/dispute_status_screen.dart';
+import 'package:trvlez_mobile/features/findr/presentation/screens/findr_address_screen.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_programme_screen.dart';
+import 'package:trvlez_mobile/features/findr/presentation/screens/findr_terms_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/screens/home_screen.dart';
 import 'package:trvlez_mobile/features/home/presentation/widgets/main_scaffold.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/account_screen.dart';
@@ -363,6 +365,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.findr,
         builder: (context, state) => const FindrProgrammeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.findrTerms,
+        builder: (context, state) => const FindrTermsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.findrAddress,
+        builder: (context, state) => const FindrAddressScreen(),
       ),
       GoRoute(
         path: AppRoutes.joinFindr,
