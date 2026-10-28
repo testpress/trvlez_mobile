@@ -79,7 +79,7 @@ void main() {
       'when traveler is verified, displays 4 of 4 completed and cards are NOT clickable',
       (tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
-        tester.view.devicePixelRatio = 1.0;
+        tester.view.devicePixelRatio = 2.75;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
@@ -125,12 +125,12 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Selfie Instructions Page'), findsNothing);
 
+        await tester.scrollUntilVisible(find.text('NFC Verification'), 100);
         await tester.tap(find.text('NFC Verification'));
         await tester.pumpAndSettle();
         expect(find.text('NFC Intro Page'), findsNothing);
 
-        // Tapping CTA navigates to status
-        await tester.ensureVisible(find.text('View verification status'));
+        // Tapping CTA navigates to status (CTA is pinned in footer)
         await tester.tap(find.text('View verification status'));
         await tester.pumpAndSettle();
         expect(find.text('Verification Status Page'), findsOneWidget);
@@ -141,7 +141,7 @@ void main() {
       'when all things are done including NFC, 4 of 4 completed and cards are NOT clickable',
       (tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
-        tester.view.devicePixelRatio = 1.0;
+        tester.view.devicePixelRatio = 2.75;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
@@ -170,6 +170,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Passport Instructions Page'), findsNothing);
 
+        await tester.scrollUntilVisible(find.text('NFC Verification'), 100);
         await tester.tap(find.text('NFC Verification'));
         await tester.pumpAndSettle();
         expect(find.text('NFC Intro Page'), findsNothing);
@@ -180,7 +181,7 @@ void main() {
       'when traveler is on step 2 (Selfie), only Selfie is active and clickable',
       (tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
-        tester.view.devicePixelRatio = 1.0;
+        tester.view.devicePixelRatio = 2.75;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
@@ -231,7 +232,7 @@ void main() {
       'when traveler is fresh on step 0, only step 0 is active and clickable',
       (tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
-        tester.view.devicePixelRatio = 1.0;
+        tester.view.devicePixelRatio = 2.75;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 

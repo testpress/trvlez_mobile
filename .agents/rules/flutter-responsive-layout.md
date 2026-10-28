@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: Mandatory Flutter responsive layout, constraints, system UI safe-area, and cross-device consistency rules.
+---
+
 # Flutter Responsive Layout Rule
 
 > Companion to `ARCHITECTURE.md`, `CODE_STANDARDS.md`, and `DESIGN_SYSTEM.md`.

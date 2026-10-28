@@ -116,28 +116,24 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               ),
 
             // ── Header Typography ────────────────────────────────────────
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Welcome back',
-                style: context.text.headlineLarge?.copyWith(
-                  color: colors.brandOnSurface,
-                  height: 1.25,
-                ),
+            Text(
+              'Welcome back',
+              style: context.text.headlineLarge?.copyWith(
+                color: colors.brandOnSurface,
+                height: 1.25,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: space.stackText),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Sign in to continue your journey',
-                style: context.text.bodyLarge?.copyWith(
-                  color: colors.brandSecondaryBody,
-                  height: 1.45,
-                ),
+            Text(
+              'Sign in to continue your journey',
+              style: context.text.bodyLarge?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.45,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
 
             SizedBox(height: space.stackSection),

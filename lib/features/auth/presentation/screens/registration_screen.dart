@@ -162,28 +162,24 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
 
             // ── Header Typography ────────────────────────────────────────
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Create your account',
-                style: context.text.headlineLarge?.copyWith(
-                  color: colors.brandOnSurface,
-                  height: 1.25,
-                ),
+            Text(
+              'Create your account',
+              style: context.text.headlineLarge?.copyWith(
+                color: colors.brandOnSurface,
+                height: 1.25,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: space.stackText),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Start your seamless travel journey',
-                style: context.text.bodyLarge?.copyWith(
-                  color: colors.brandSecondaryBody,
-                  height: 1.45,
-                ),
+            Text(
+              'Start your seamless travel journey',
+              style: context.text.bodyLarge?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.45,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
 
             SizedBox(height: space.stackSection),

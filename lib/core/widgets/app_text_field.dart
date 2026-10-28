@@ -64,18 +64,16 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       maxLines: maxLines,
       onFieldSubmitted: onFieldSubmitted,
-      style: const TextStyle(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 14,
+      style: (context.text.bodyMedium ?? const TextStyle()).copyWith(
+        color: colors.textPrimary,
         fontWeight: TypeScale.regular,
-      ).copyWith(color: colors.textPrimary),
+      ),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 14,
+        hintStyle: (context.text.bodyMedium ?? const TextStyle()).copyWith(
+          color: colors.textDisabled,
           fontWeight: TypeScale.regular,
-        ).copyWith(color: colors.textDisabled),
+        ),
         filled: true,
         fillColor: colors.surfaceSubtle,
         contentPadding: space.insetInput,

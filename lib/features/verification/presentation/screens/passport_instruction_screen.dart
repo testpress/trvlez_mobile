@@ -28,7 +28,7 @@ class PassportInstructionScreen extends StatelessWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_howto.svg',
       title: 'Verification',
-      isScrollable: false,
+      isScrollable: true,
       onBack: () {
         if (context.canPop()) {
           context.pop();
@@ -38,7 +38,7 @@ class PassportInstructionScreen extends StatelessWidget {
       },
       body: [
         const VerificationStepper(current: 0),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
         Text(
           'Passport photo',
           textAlign: TextAlign.center,
@@ -57,22 +57,19 @@ class PassportInstructionScreen extends StatelessWidget {
             height: 1.3,
           ),
         ),
-        const Spacer(flex: 1),
-        Flexible(
-          flex: 6,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: sizes.thumbPhotoMd,
-              ),
-              child: SvgPicture.asset(
-                'assets/art/passport_diagram.svg',
-                fit: BoxFit.contain,
-              ),
+        SizedBox(height: space.stackItem),
+        Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: sizes.thumbPhotoMd,
+            ),
+            child: SvgPicture.asset(
+              'assets/art/passport_diagram.svg',
+              fit: BoxFit.contain,
             ),
           ),
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
         BrandPointerPair(
           padding: space.insetCardCompact,
           badgeSize: sizes.iconSm,
@@ -91,7 +88,7 @@ class PassportInstructionScreen extends StatelessWidget {
             ('2', 'Code lines', 'Every character, nothing cropped'),
           ],
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
         BrandInfoCard(
           paddingVertical: space.stackTight,
           paddingHorizontal: space.insetCardCompact.left,
@@ -116,7 +113,7 @@ class PassportInstructionScreen extends StatelessWidget {
             ),
           ],
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
       ],
       foot: [
         AppButton(

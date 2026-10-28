@@ -76,32 +76,28 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              isAlreadyLoggedIn
-                  ? 'Change your password'
-                  : 'Reset your password',
-              style: context.text.headlineLarge?.copyWith(
-                color: colors.brandOnSurface,
-                height: 1.25,
-              ),
+          Text(
+            isAlreadyLoggedIn
+                ? 'Change your password'
+                : 'Reset your password',
+            style: context.text.headlineLarge?.copyWith(
+              color: colors.brandOnSurface,
+              height: 1.25,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: space.stackText),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              isAlreadyLoggedIn
-                  ? "We'll email you a code to update your password"
-                  : "We'll email you a code to get back in",
-              style: context.text.bodyLarge?.copyWith(
-                color: colors.brandSecondaryBody,
-                height: 1.45,
-              ),
+          Text(
+            isAlreadyLoggedIn
+                ? "We'll email you a code to update your password"
+                : "We'll email you a code to get back in",
+            style: context.text.bodyLarge?.copyWith(
+              color: colors.brandSecondaryBody,
+              height: 1.45,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
 
           SizedBox(height: space.stackSection),

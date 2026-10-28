@@ -101,9 +101,10 @@ class BrandVerifyScreen extends StatelessWidget {
     final space = context.space;
     final bgAsset = backgroundAsset;
 
+    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     final hPad = padHorizontal ?? space.insetScreen.left;
     final tPad = padTop ?? space.stackItem;
-    final bPad = padBottom ?? space.insetScreen.left;
+    final bPad = (padBottom ?? space.insetScreen.left) + bottomInset;
 
     return Scaffold(
       backgroundColor: colors.brandSurface,

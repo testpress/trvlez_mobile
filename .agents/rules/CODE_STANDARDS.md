@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: Flutter and Dart clean code standards, naming conventions, null-safety, widget standards, and Definition of Done.
+---
+
 # Flutter / Dart Clean Code Standards
 
 > Companion to `ARCHITECTURE.md` and `DESIGN_SYSTEM.md`.

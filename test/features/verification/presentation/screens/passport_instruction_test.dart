@@ -37,7 +37,7 @@ void main() {
       tester,
     ) async {
       tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
+      tester.view.devicePixelRatio = 2.75;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
@@ -56,7 +56,7 @@ void main() {
       tester,
     ) async {
       tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
+      tester.view.devicePixelRatio = 2.75;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
@@ -83,7 +83,7 @@ void main() {
 
     testWidgets('does not contain technical MRZ jargon', (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
+      tester.view.devicePixelRatio = 2.75;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
@@ -99,7 +99,7 @@ void main() {
       tester,
     ) async {
       tester.view.physicalSize = const Size(1080, 2400);
-      tester.view.devicePixelRatio = 1.0;
+      tester.view.devicePixelRatio = 2.75;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 

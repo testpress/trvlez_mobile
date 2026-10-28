@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: Feature-first clean architecture, dependency rule, layering (presentation, domain, data), and state management standards.
+---
+
 # Flutter App Architecture Guide
 
 > Feature-first clean architecture for Flutter. Every piece of code has one obvious home and one job.

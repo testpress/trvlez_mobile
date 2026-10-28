@@ -97,28 +97,24 @@ class _TwoStepCodeScreenState extends State<TwoStepCodeScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Check your email',
-              style: context.text.headlineLarge?.copyWith(
-                color: colors.brandOnSurface,
-                height: 1.25,
-              ),
+          Text(
+            'Check your email',
+            style: context.text.headlineLarge?.copyWith(
+              color: colors.brandOnSurface,
+              height: 1.25,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: space.stackText),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'We sent a 6-digit code to ${_maskEmail(widget.email)}',
-              style: context.text.bodyLarge?.copyWith(
-                color: colors.brandSecondaryBody,
-                height: 1.45,
-              ),
+          Text(
+            'We sent a 6-digit code to ${_maskEmail(widget.email)}',
+            style: context.text.bodyLarge?.copyWith(
+              color: colors.brandSecondaryBody,
+              height: 1.45,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
 
           SizedBox(height: space.stackSection),

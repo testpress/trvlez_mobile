@@ -75,30 +75,26 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              showMismatch ? "Those don't match" : 'Choose a new password',
-              style: context.text.headlineLarge?.copyWith(
-                color: colors.brandOnSurface,
-                height: 1.25,
-              ),
+          Text(
+            showMismatch ? "Those don't match" : 'Choose a new password',
+            style: context.text.headlineLarge?.copyWith(
+              color: colors.brandOnSurface,
+              height: 1.25,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: space.stackText),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              showMismatch
-                  ? 'Type the same one in both boxes'
-                  : "You'll be signed in once it's saved",
-              style: context.text.bodyLarge?.copyWith(
-                color: colors.brandSecondaryBody,
-                height: 1.45,
-              ),
+          Text(
+            showMismatch
+                ? 'Type the same one in both boxes'
+                : "You'll be signed in once it's saved",
+            style: context.text.bodyLarge?.copyWith(
+              color: colors.brandSecondaryBody,
+              height: 1.45,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
 
           SizedBox(height: space.stackSection),

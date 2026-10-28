@@ -129,10 +129,10 @@ class _VerificationLandingScreenState
           context.go(AppRoutes.home);
         }
       },
-      isScrollable: false,
+      isScrollable: true,
       body: [
         VerificationStepper(current: doneCount),
-        const Spacer(flex: 2),
+        SizedBox(height: space.stackSection),
 
         // Welcome Header
         if (isVerified) ...[
@@ -198,7 +198,7 @@ class _VerificationLandingScreenState
             ),
           ),
         ],
-        const Spacer(flex: 2),
+        SizedBox(height: space.stackSection),
 
         // Progress indicators
         Row(
@@ -243,7 +243,7 @@ class _VerificationLandingScreenState
             ),
           ),
         ),
-        const Spacer(flex: 2),
+        SizedBox(height: space.stackSection),
 
         // 4 Step Cards
         for (int i = 0; i < _steps.length; i++) ...[
@@ -258,7 +258,7 @@ class _VerificationLandingScreenState
                 : null,
           ),
         ],
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
       ],
       foot: [
         if (isVerified)

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Supported status states for booking and workflow status pills.
@@ -31,9 +30,7 @@ class StatusPill extends StatelessWidget {
       decoration: BoxDecoration(color: fill, borderRadius: shape.radiusPill),
       child: Text(
         label,
-        style: TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 10,
+        style: (context.text.labelSmall ?? const TextStyle()).copyWith(
           fontWeight: TypeScale.semiBold,
           color: ink,
           letterSpacing: 0.2,

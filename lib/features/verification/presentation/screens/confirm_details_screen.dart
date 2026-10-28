@@ -90,13 +90,13 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_flow.svg',
       title: 'Verification',
-      isScrollable: false,
+      isScrollable: true,
       onBack: () => context.pop(),
       helpPrefix: 'Something wrong? ',
       helpLinkText: "Tell us what's wrong",
       body: [
         const VerificationStepper(current: 1),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackSection),
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -119,7 +119,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
             ),
           ),
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackSection),
         Container(
           width: double.infinity,
           padding: space.insetCard,
@@ -139,7 +139,7 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
             ],
           ),
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackSection),
       ],
       foot: [
         AppButton(

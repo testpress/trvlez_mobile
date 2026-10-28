@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: Three-tier semantic design tokens (primitives, semantic, component), color tokens, spacing, sizing, shape, and typography guide.
+---
+
 # Design System & Semantic Tokens Guide
 
 > Companion to `ARCHITECTURE.md` and `CODE_STANDARDS.md`.
