@@ -16,7 +16,7 @@ void main() {
         'region': 'Greater London',
         'postal_code': 'SW1A 2AA',
         'residential_country_code': 'GB',
-        'agreement_version': 'v1.0',
+        'agreement_version': '1.0',
         'activated_at': '2026-05-01T12:00:00Z',
         'suspended_at': null,
         'suspension_ends_at': null,
@@ -115,7 +115,7 @@ void main() {
         region: 'Oregon',
         postalCode: '97477',
         residentialCountryCode: 'GB',
-        agreementVersion: 'v1.0',
+        agreementVersion: '1.0',
         agreementAccepted: true,
       );
 
@@ -128,7 +128,7 @@ void main() {
       expect(json['region'], 'Oregon');
       expect(json['postal_code'], '97477');
       expect(json['residential_country_code'], 'GB');
-      expect(json['agreement_version'], 'v1.0');
+      expect(json['agreement_version'], '1.0');
       expect(json['agreement_accepted'], isTrue);
     });
 

@@ -142,7 +142,7 @@ void main() {
         city: 'London',
         postalCode: 'SW1A 2AA',
         residentialCountryCode: 'GB',
-        agreementVersion: 'v1.0',
+        agreementVersion: '1.0',
         agreementAccepted: true,
       );
 
@@ -169,7 +169,7 @@ void main() {
 
     test('getFinderTerms returns domain terms synchronously', () {
       final terms = repository.getFinderTerms();
-      expect(terms.version, 'v1.0');
+      expect(terms.version, '1.0');
       expect(terms.sections.isNotEmpty, isTrue);
     });
   });

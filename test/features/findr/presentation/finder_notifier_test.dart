@@ -129,7 +129,7 @@ void main() {
         city: 'London',
         postalCode: 'SW1A 2AA',
         residentialCountryCode: 'GB',
-        agreementVersion: 'v1.0',
+        agreementVersion: '1.0',
         agreementAccepted: true,
       );
 
@@ -154,7 +154,7 @@ void main() {
         city: 'London',
         postalCode: 'SW1A 2AA',
         residentialCountryCode: 'GB',
-        agreementVersion: 'v1.0',
+        agreementVersion: '1.0',
         agreementAccepted: true,
       );
 

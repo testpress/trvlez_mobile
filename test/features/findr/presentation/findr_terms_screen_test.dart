@@ -9,7 +9,7 @@ import 'package:trvlez_mobile/features/findr/presentation/screens/findr_terms_sc
 void main() {
   group('FindrTermsScreen Widget Tests', () {
     const testTerms = FinderTerms(
-      version: 'v1.0',
+      version: '1.0',
       title: 'Findr Agreement & Terms',
       effectiveDate: '2026-01-01',
       summary: 'Test summary for programme terms.',
@@ -48,7 +48,7 @@ void main() {
       expect(find.text('1. Eligibility & UK Residency'), findsOneWidget);
       expect(find.text('2. Commission Rewards'), findsOneWidget);
       expect(find.text('Step 1 of 2'), findsOneWidget);
-      expect(find.text('v1.0'), findsOneWidget);
+      expect(find.text('1.0'), findsOneWidget);
     });
 
     testWidgets('acceptance checkbox is unchecked by default and button is disabled',

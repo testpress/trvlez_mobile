@@ -27,7 +27,7 @@ class FinderTerms {
 
   /// Standard fallback terms used when offline or degrading gracefully.
   static const FinderTerms defaultTerms = FinderTerms(
-    version: 'v1.0',
+    version: '1.0',
     title: 'Findr Programme Agreement & Participation Terms',
     effectiveDate: '2026-01-01',
     summary:
