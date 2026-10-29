@@ -9,6 +9,7 @@ class SettingsRepository {
   static const _themeKey = 'isDark';
   static const _textScaleKey = 'textScalePreset';
   static const _twoStepKey = 'isTwoStepVerificationEnabled';
+  static const _findrActivatedKey = 'isFindrActivated';
 
   final SharedPreferences _prefs;
 
@@ -48,6 +49,14 @@ class SettingsRepository {
 
   Future<void> setTwoStepVerificationEnabled(bool enabled) async {
     await _prefs.setBool(_twoStepKey, enabled);
+  }
+
+  bool isFindrActivated() {
+    return _prefs.getBool(_findrActivatedKey) ?? false;
+  }
+
+  Future<void> setFindrActivated(bool activated) async {
+    await _prefs.setBool(_findrActivatedKey, activated);
   }
 }
 

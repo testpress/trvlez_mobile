@@ -142,11 +142,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final unreadCount = notifications.where((n) => n.isUnread).length;
 
     final findrPortfolio = ref.watch(findrPortfolioProvider);
+    final finderSummary = ref.watch(finderNotifierProvider).valueOrNull;
+    final isFinderActive = finderSummary?.finder != null
+        ? finderSummary!.finder!.isActive
+        : findrPortfolio.joined;
+
     final findrCardState = !isVerified
         ? (verificationState.isProcessing
               ? FindrState.processing
               : FindrState.locked)
-        : (findrPortfolio.joined ? FindrState.active : FindrState.notJoined);
+        : (isFinderActive ? FindrState.active : FindrState.notJoined);
 
     return Scaffold(
       backgroundColor: colors.page,

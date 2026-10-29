@@ -80,6 +80,14 @@ void main() {
       await repo.setTwoStepVerificationEnabled(true);
       expect(repo.isTwoStepVerificationEnabled(), isTrue);
     });
+
+    test('Persists and retrieves Findr activation status', () async {
+      expect(repo.isFindrActivated(), isFalse);
+      await repo.setFindrActivated(true);
+      expect(repo.isFindrActivated(), isTrue);
+      await repo.setFindrActivated(false);
+      expect(repo.isFindrActivated(), isFalse);
+    });
   });
 
   group('PasscodeStorage Unit Tests', () {

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
+import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
-import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
-import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 export 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
@@ -87,6 +87,8 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         verificationState: TravelerVerificationState.profilePending,
       ),
     );
+    ref.invalidate(finderNotifierProvider);
+    ref.invalidate(findrPortfolioProvider);
     unawaited(refreshVerificationState());
   }
 
@@ -104,6 +106,13 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
     // Reset verification state first (stops polling, clears in-memory data)
     ref.read(verificationNotifierProvider.notifier).reset();
+
+    // Reset Findr activation state in settings and providers
+    try {
+      await ref.read(settingsRepositoryProvider).setFindrActivated(false);
+    } catch (_) {}
+    ref.invalidate(finderNotifierProvider);
+    ref.invalidate(findrPortfolioProvider);
 
     // Invalidate feature providers to clear sensitive data
     ref.invalidate(propertiesProvider);
