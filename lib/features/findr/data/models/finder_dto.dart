@@ -114,22 +114,26 @@ class FinderEligibilityDto {
   const FinderEligibilityDto({
     required this.isEligible,
     required this.reason,
+    this.message,
   });
 
   factory FinderEligibilityDto.fromJson(Map<String, dynamic> json) {
     return FinderEligibilityDto(
       isEligible: json['is_eligible'] as bool? ?? false,
       reason: json['reason'] as String? ?? 'terminal_status',
+      message: json['message'] as String?,
     );
   }
 
   final bool isEligible;
   final String reason;
+  final String? message;
 
   FinderEligibility toDomain() {
     return FinderEligibility(
       isEligible: isEligible,
       reason: FinderEligibilityReason.fromString(reason),
+      message: message,
     );
   }
 }

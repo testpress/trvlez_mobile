@@ -34,7 +34,7 @@ class FinderBlockedView extends StatelessWidget {
         _resolveBlockedContent(eligibility.reason);
 
     final displayTitle = title ?? defaultTitle;
-    final displayMessage = message ?? defaultMessage;
+    final displayMessage = message ?? eligibility.message ?? defaultMessage;
 
     return SingleChildScrollView(
       padding: space.insetCard,
@@ -152,6 +152,13 @@ class FinderBlockedView extends StatelessWidget {
           AppIcons.mapPin,
           'Market Unavailable',
           'The Findr programme is not currently available in your country or region. We are expanding to new regions soon and will notify you when Findr launches in your area.',
+          null,
+          null,
+        ),
+      FinderEligibilityReason.marketLimitReached => (
+          AppIcons.users,
+          'Market Capacity Reached',
+          'The Findr programme in your market has reached its maximum onboarding capacity. Please check back later.',
           null,
           null,
         ),

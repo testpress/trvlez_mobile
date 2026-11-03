@@ -47,6 +47,7 @@ enum FinderEligibilityReason {
   underage,
   addressRequired,
   marketUnavailable,
+  marketLimitReached,
   terminalStatus;
 
   static FinderEligibilityReason fromString(String value) {
@@ -60,6 +61,7 @@ enum FinderEligibilityReason {
       'underage' => FinderEligibilityReason.underage,
       'address_required' => FinderEligibilityReason.addressRequired,
       'market_unavailable' => FinderEligibilityReason.marketUnavailable,
+      'market_limit_reached' => FinderEligibilityReason.marketLimitReached,
       'terminal_status' => FinderEligibilityReason.terminalStatus,
       _ => FinderEligibilityReason.terminalStatus,
     };
@@ -76,6 +78,7 @@ enum FinderEligibilityReason {
       FinderEligibilityReason.underage => 'underage',
       FinderEligibilityReason.addressRequired => 'address_required',
       FinderEligibilityReason.marketUnavailable => 'market_unavailable',
+      FinderEligibilityReason.marketLimitReached => 'market_limit_reached',
       FinderEligibilityReason.terminalStatus => 'terminal_status',
     };
   }
@@ -199,21 +202,24 @@ class FinderEligibility {
   const FinderEligibility({
     required this.isEligible,
     required this.reason,
+    this.message,
   });
 
   final bool isEligible;
   final FinderEligibilityReason reason;
+  final String? message;
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is FinderEligibility &&
         other.isEligible == isEligible &&
-        other.reason == reason;
+        other.reason == reason &&
+        other.message == message;
   }
 
   @override
-  int get hashCode => Object.hash(isEligible, reason);
+  int get hashCode => Object.hash(isEligible, reason, message);
 }
 
 /// Aggregated Finder status model combining identity, eligibility, and re-verification requirements.

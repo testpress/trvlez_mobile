@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
@@ -107,9 +108,12 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
       Navigator.of(context).pop(true);
     } else {
       final state = ref.read(finderNotifierProvider);
-      final errorMessage = state.hasError
-          ? state.error.toString()
-          : 'Activation failed. Please check your address and try again.';
+      final error = state.error;
+      final errorMessage = error is AppException
+          ? error.message
+          : (state.hasError
+              ? state.error.toString()
+              : 'Activation failed. Please check your address and try again.');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),

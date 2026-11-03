@@ -107,6 +107,31 @@ void main() {
       expect(domain.finder?.address?.city, 'London');
     });
 
+    test('deserializes market_limit_reached eligibility and custom message correctly', () {
+      final json = {
+        'finder': null,
+        'eligibility': {
+          'is_eligible': false,
+          'reason': 'market_limit_reached',
+          'message': 'The maximum number of Finders for market GB has been reached.',
+        },
+        'reverification_required': false,
+        'reverification_url': null,
+      };
+
+      final dto = FinderStatusResponseDto.fromJson(json);
+      expect(dto.eligibility.isEligible, isFalse);
+      expect(dto.eligibility.reason, 'market_limit_reached');
+      expect(dto.eligibility.message,
+          'The maximum number of Finders for market GB has been reached.');
+
+      final domain = dto.toDomain();
+      expect(domain.eligibility.isEligible, isFalse);
+      expect(domain.eligibility.reason, FinderEligibilityReason.marketLimitReached);
+      expect(domain.eligibility.message,
+          'The maximum number of Finders for market GB has been reached.');
+    });
+
     test('serializes FinderActivationRequestDto to JSON correctly', () {
       const params = FinderActivationParams(
         addressLine1: '742 Evergreen Terrace',
