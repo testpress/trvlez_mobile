@@ -168,6 +168,95 @@ void main() {
     });
 
     test(
+      'preserves verified status when already-verified user has verificationStatus in upload_pending (re-verification)',
+      () async {
+        fakeRepo.verificationStatus = const VerificationStatus(
+          sessionId: 'session-reverify-1',
+          status: 'upload_pending',
+        );
+
+        final container = ProviderContainer(
+          overrides: [
+            verificationRepositoryProvider.overrideWithValue(fakeRepo),
+            currentProfileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const Profile(id: 'prof-1', onboardingStep: 'verified'),
+              ),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await container.read(verificationStatusProvider.future);
+
+        final state = container.read(travelerVerificationStateProvider);
+        expect(state, equals(TravelerVerificationState.verified));
+        expect(container.read(isKycVerifiedProvider), isTrue);
+      },
+    );
+
+    test(
+      'preserves verified status when already-verified user has verificationStatus failed (re-verification attempt failed)',
+      () async {
+        fakeRepo.verificationStatus = const VerificationStatus(
+          sessionId: 'session-reverify-fail',
+          status: 'failed',
+          errorReason: 'Passport image blurry',
+        );
+
+        final container = ProviderContainer(
+          overrides: [
+            verificationRepositoryProvider.overrideWithValue(fakeRepo),
+            currentProfileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const Profile(id: 'prof-1', onboardingStep: 'verified'),
+              ),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await container.read(verificationStatusProvider.future);
+
+        final state = container.read(travelerVerificationStateProvider);
+        expect(state, equals(TravelerVerificationState.verified));
+        expect(container.read(isKycVerifiedProvider), isTrue);
+      },
+    );
+
+    test(
+      'preserves verified status when VerificationNotifier enters verificationFailed phase for already-verified user',
+      () async {
+        final container = ProviderContainer(
+          overrides: [
+            verificationRepositoryProvider.overrideWithValue(fakeRepo),
+            currentProfileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const Profile(id: 'prof-1', onboardingStep: 'verified'),
+              ),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        expect(
+          container.read(travelerVerificationStateProvider),
+          equals(TravelerVerificationState.verified),
+        );
+
+        // Manually simulate verification failure in the notifier
+        container.read(verificationNotifierProvider.notifier).reset();
+        // Since state is package-private or accessible via copyWith/phase
+        // check effectiveState
+        final effective = const VerificationState(
+          phase: VerificationPhase.verificationFailed,
+        ).effectiveState(TravelerVerificationState.verified);
+
+        expect(effective, equals(TravelerVerificationState.verified));
+      },
+    );
+
+    test(
       'reconcileWithBackend recovers verified status and updates travelerVerificationStateProvider',
       () async {
         fakeRepo.verificationStatus = const VerificationStatus(

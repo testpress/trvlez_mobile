@@ -146,7 +146,8 @@ final travelerVerificationStateProvider = Provider<TravelerVerificationState>((
   if (verificationStatus != null) {
     if (verificationStatus.isVerified) {
       state = TravelerVerificationState.verified;
-    } else if (verificationStatus.isFailed) {
+    } else if (verificationStatus.isFailed &&
+        baseState != TravelerVerificationState.verified) {
       state = TravelerVerificationState.failed;
     } else if (verificationStatus.isProcessing) {
       state = TravelerVerificationState.submitted;

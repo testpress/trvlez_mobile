@@ -170,6 +170,31 @@ void main() {
         expect(fakeVerificationRepo.startReverificationCalled, isTrue);
       },
     );
+
+    testWidgets(
+      'Starting re-verification preserves verified personal details and legal name',
+      (tester) async {
+        await tester.pumpWidget(createTestWidget(isVerified: true));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Amara Chidinma Okafor'), findsOneWidget);
+        expect(find.text('Verified'), findsOneWidget);
+
+        final reverifyBtn = find.text('Re-verify');
+        await tester.tap(reverifyBtn);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Start re-scan'), findsOneWidget);
+        await tester.tap(find.text('Start re-scan'));
+        await tester.pumpAndSettle();
+
+        // Returning to Personal Details screen must preserve legal name and verified status
+        expect(find.text('Amara Chidinma Okafor'), findsOneWidget);
+        expect(find.text('Verified'), findsOneWidget);
+        expect(find.text('FROM YOUR PASSPORT'), findsOneWidget);
+        expect(find.text('Add with your passport'), findsNothing);
+      },
+    );
   });
 }
 

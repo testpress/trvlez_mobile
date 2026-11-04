@@ -108,12 +108,17 @@ class VerificationState {
   TravelerVerificationState effectiveState(
     TravelerVerificationState profileState,
   ) {
+    final isAlreadyVerified =
+        profileState == TravelerVerificationState.verified;
+
     if (phase == VerificationPhase.verified) {
       return TravelerVerificationState.verified;
     }
     if (phase == VerificationPhase.verificationFailed ||
         phase == VerificationPhase.error) {
-      return TravelerVerificationState.failed;
+      return isAlreadyVerified
+          ? TravelerVerificationState.verified
+          : TravelerVerificationState.failed;
     }
 
     final job = jobResult;
@@ -122,7 +127,9 @@ class VerificationState {
         return TravelerVerificationState.verified;
       }
       if (job.isFailed) {
-        return TravelerVerificationState.failed;
+        return isAlreadyVerified
+            ? TravelerVerificationState.verified
+            : TravelerVerificationState.failed;
       }
     }
 
@@ -130,7 +137,9 @@ class VerificationState {
       return TravelerVerificationState.verified;
     }
     if (submitResult?.isFailed == true) {
-      return TravelerVerificationState.failed;
+      return isAlreadyVerified
+          ? TravelerVerificationState.verified
+          : TravelerVerificationState.failed;
     }
 
     if (phase == VerificationPhase.submitting ||
@@ -146,7 +155,9 @@ class VerificationState {
         return TravelerVerificationState.verified;
       }
       if (status.isFailed) {
-        return TravelerVerificationState.failed;
+        return isAlreadyVerified
+            ? TravelerVerificationState.verified
+            : TravelerVerificationState.failed;
       }
       if (status.isProcessing) {
         return TravelerVerificationState.submitted;
