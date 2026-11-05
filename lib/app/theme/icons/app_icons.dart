@@ -115,4 +115,7 @@ abstract final class AppIcons {
   static const info = infoCircle;
   static const checkCircle = circleCheck;
   static const shieldAlert = alertTriangle;
+  static const copy = Icons.copy_rounded;
+  static const arrowUpRight = Icons.arrow_outward_rounded;
+  static const phone = Icons.phone_rounded;
 }

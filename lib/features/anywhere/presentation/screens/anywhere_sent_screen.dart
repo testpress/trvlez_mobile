@@ -7,7 +7,7 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
-    show findrPortfolioProvider;
+    show liveFindrPortfolioProvider;
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_big_ring.dart';
@@ -25,7 +25,7 @@ class AnywhereSentScreen extends ConsumerWidget {
     final colors = context.colors;
     final space = context.space;
     final draft = ref.watch(anywhereDraftProvider);
-    final findrPortfolio = ref.watch(findrPortfolioProvider);
+    final findrPortfolio = ref.watch(liveFindrPortfolioProvider);
     final hotel = draft.hotelName.isNotEmpty ? draft.hotelName : 'The hotel';
 
     return BrandVerifyScreen(

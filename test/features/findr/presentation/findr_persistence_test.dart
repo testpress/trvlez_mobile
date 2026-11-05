@@ -45,6 +45,44 @@ class _FakeFinderRepository implements FinderRepository {
   ) async {
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<HotelReferralItem>> listHotelReferrals({
+    String? status,
+    int skip = 0,
+    int limit = 50,
+  }) async => const [];
+
+  @override
+  Future<int> countAssociatedHotels() async => 0;
+
+  @override
+  Future<TravelerShareLink> getTravelerShareLink() async =>
+      const TravelerShareLink(
+        shareCode: 'TRV-TEST-1',
+        shareUrl: 'https://trvlez.com/r/TRV-TEST-1',
+      );
+
+  @override
+  Future<HotelReferralItem> createHotelReferral(
+    HotelReferralCreateParams params,
+  ) async {
+    return HotelReferralItem(
+      id: 'ref-1',
+      finderId: 'f-1',
+      hotelName: params.hotelName,
+      status: 'introduction_sent',
+      statusLabel: 'Invited',
+      state: FindrRecommendationState.awaiting,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<FindrPortfolio> getFindrPortfolio() async {
+    final active = currentSummary.finder?.isActive ?? false;
+    return FindrPortfolio.empty.copyWith(joined: active);
+  }
 }
 
 void main() {
@@ -61,7 +99,6 @@ void main() {
     });
 
     test('findrPortfolioProvider restores joined: true from SettingsRepository on startup', () {
-      // Simulate that user was previously activated and preference was saved
       prefs.setBool('isFindrActivated', true);
 
       final container = ProviderContainer(
@@ -71,7 +108,7 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final portfolio = container.read(findrPortfolioProvider);
+      final portfolio = container.read(liveFindrPortfolioProvider);
       expect(portfolio.joined, isTrue);
     });
 
@@ -83,35 +120,59 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final portfolio = container.read(findrPortfolioProvider);
+      final portfolio = container.read(liveFindrPortfolioProvider);
       expect(portfolio.joined, isFalse);
     });
 
-    test('joinFindr updates in-memory state and persists to SettingsRepository', () {
+    test('joinFindr updates in-memory state and persists to SettingsRepository', () async {
+      final fakeRepo = _FakeFinderRepository(
+        currentSummary: const FinderStateSummary(
+          finder: null,
+          eligibility: FinderEligibility(
+            isEligible: true,
+            reason: FinderEligibilityReason.eligible,
+          ),
+          reverificationRequired: false,
+        ),
+      );
+
       final container = ProviderContainer(
         overrides: [
           settingsRepositoryProvider.overrideWithValue(settingsRepo),
+          finderRepositoryProvider.overrideWithValue(fakeRepo),
         ],
       );
       addTearDown(container.dispose);
 
-      expect(container.read(findrPortfolioProvider).joined, isFalse);
+      expect(container.read(liveFindrPortfolioProvider).joined, isFalse);
       expect(settingsRepo.isFindrActivated(), isFalse);
 
-      container.read(findrPortfolioProvider.notifier).joinFindr();
+      await container.read(findrPortfolioProvider.notifier).joinFindr();
 
-      expect(container.read(findrPortfolioProvider).joined, isTrue);
+      expect(container.read(liveFindrPortfolioProvider).joined, isTrue);
       expect(settingsRepo.isFindrActivated(), isTrue);
     });
 
     testWidgets(
       'HomeScreen retains active state (Recommend a hotel) when clearing the app and returning',
       (tester) async {
+        final fakeRepo = _FakeFinderRepository(
+          currentSummary: const FinderStateSummary(
+            finder: null,
+            eligibility: FinderEligibility(
+              isEligible: true,
+              reason: FinderEligibilityReason.eligible,
+            ),
+            reverificationRequired: false,
+          ),
+        );
+
         // Step 1: User launches the app for the first time
         await tester.pumpWidget(
           ProviderScope(
             overrides: [
               settingsRepositoryProvider.overrideWithValue(settingsRepo),
+              finderRepositoryProvider.overrideWithValue(fakeRepo),
               travelerVerificationStateProvider.overrideWithValue(
                 TravelerVerificationState.verified,
               ),
@@ -129,7 +190,7 @@ void main() {
         // Step 2: User activates Findr
         final element = tester.element(find.byType(HomeScreen));
         final container = ProviderScope.containerOf(element);
-        container.read(findrPortfolioProvider.notifier).joinFindr();
+        await container.read(findrPortfolioProvider.notifier).joinFindr();
         await tester.pumpAndSettle();
 
         // Post-activation in active session: Shows "Recommend a hotel"
@@ -147,6 +208,7 @@ void main() {
           ProviderScope(
             overrides: [
               settingsRepositoryProvider.overrideWithValue(restartedSettingsRepo),
+              finderRepositoryProvider.overrideWithValue(fakeRepo),
               travelerVerificationStateProvider.overrideWithValue(
                 TravelerVerificationState.verified,
               ),
@@ -184,7 +246,7 @@ void main() {
       addTearDown(container.dispose);
 
       // Initially false
-      expect(container.read(findrPortfolioProvider).joined, isFalse);
+      expect(container.read(liveFindrPortfolioProvider).joined, isFalse);
 
       // Backend activates
       await container.read(finderNotifierProvider.notifier).activate(
@@ -198,8 +260,8 @@ void main() {
             ),
           );
 
-      // Expect findrPortfolioProvider to be synced
-      expect(container.read(findrPortfolioProvider).joined, isTrue);
+      // Expect liveFindrPortfolioProvider to be synced
+      expect(container.read(liveFindrPortfolioProvider).joined, isTrue);
       expect(settingsRepo.isFindrActivated(), isTrue);
     });
   });

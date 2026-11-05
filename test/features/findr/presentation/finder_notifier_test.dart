@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 
 class FakeFinderRepository implements FinderRepository {
   bool shouldFail = false;
@@ -92,6 +92,41 @@ class FakeFinderRepository implements FinderRepository {
 
     return updated;
   }
+
+  @override
+  Future<List<HotelReferralItem>> listHotelReferrals({
+    String? status,
+    int skip = 0,
+    int limit = 50,
+  }) async => const [];
+
+  @override
+  Future<int> countAssociatedHotels() async => 0;
+
+  @override
+  Future<TravelerShareLink> getTravelerShareLink() async =>
+      const TravelerShareLink(
+        shareCode: 'TRV-TEST-1',
+        shareUrl: 'https://trvlez.com/r/TRV-TEST-1',
+      );
+
+  @override
+  Future<HotelReferralItem> createHotelReferral(
+    HotelReferralCreateParams params,
+  ) async {
+    return HotelReferralItem(
+      id: 'ref-1',
+      finderId: 'f-1',
+      hotelName: params.hotelName,
+      status: 'introduction_sent',
+      statusLabel: 'Invited',
+      state: FindrRecommendationState.awaiting,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<FindrPortfolio> getFindrPortfolio() async => FindrPortfolio.empty;
 }
 
 void main() {

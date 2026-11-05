@@ -9,7 +9,13 @@ export 'package:trvlez_mobile/features/disputes/presentation/providers/dispute_p
     show disputeDraftProvider, disputesProvider;
 
 export 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart'
-    show finderNotifierProvider, findrPortfolioProvider;
+    show
+        finderNotifierProvider,
+        findrPortfolioProvider,
+        liveFindrPortfolioProvider,
+        FindrPortfolio,
+        FindrRecommendation,
+        FindrPayout;
 
 export 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart'
     show currentProfileProvider;

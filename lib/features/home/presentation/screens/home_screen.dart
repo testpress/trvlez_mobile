@@ -141,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
     final unreadCount = notifications.where((n) => n.isUnread).length;
 
-    final findrPortfolio = ref.watch(findrPortfolioProvider);
+    final findrPortfolio = ref.watch(liveFindrPortfolioProvider);
     final finderSummary = ref.watch(finderNotifierProvider).valueOrNull;
     final isFinderActive = finderSummary?.finder != null
         ? finderSummary!.finder!.isActive

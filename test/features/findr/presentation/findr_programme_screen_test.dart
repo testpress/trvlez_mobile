@@ -4,9 +4,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
-import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_programme_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
+
+class _MockFinderRepository implements FinderRepository {
+  @override
+  Future<FinderStateSummary> getFinderStatus() async => throw UnimplementedError();
+
+  @override
+  FinderTerms getFinderTerms() => FinderTerms.defaultTerms;
+
+  @override
+  Future<FinderIdentity> activateFinder(FinderActivationParams params) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<FinderIdentity> updateProfile(FinderProfileUpdateParams params) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<List<HotelReferralItem>> listHotelReferrals({
+    String? status,
+    int skip = 0,
+    int limit = 50,
+  }) async =>
+      const [];
+
+  @override
+  Future<int> countAssociatedHotels() async => 0;
+
+  @override
+  Future<TravelerShareLink> getTravelerShareLink() async =>
+      const TravelerShareLink(
+        shareCode: 'TRV-MOCK-1',
+        shareUrl: 'https://trvlez.com/r/TRV-MOCK-1',
+      );
+
+  @override
+  Future<HotelReferralItem> createHotelReferral(
+    HotelReferralCreateParams params,
+  ) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<FindrPortfolio> getFindrPortfolio() async =>
+      FindrPortfolio.empty.copyWith(joined: true);
+}
 
 class TestFinderNotifier extends FinderNotifier {
   TestFinderNotifier(this._initial);
@@ -43,6 +87,7 @@ void main() {
 
       return ProviderScope(
         overrides: [
+          finderRepositoryProvider.overrideWithValue(_MockFinderRepository()),
           finderNotifierProvider.overrideWith(
             () => TestFinderNotifier(asyncState),
           ),

@@ -8,7 +8,7 @@ import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
-import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_blocked_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_status_banner.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/findr_not_joined_section.dart';
@@ -99,7 +99,12 @@ class _FinderContent extends ConsumerWidget {
     final sizes = context.sizes;
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(finderNotifierProvider.notifier).refresh(),
+      onRefresh: () async {
+        await Future.wait<void>([
+          ref.read(finderNotifierProvider.notifier).refresh(),
+          ref.read(findrPortfolioProvider.notifier).refresh(),
+        ]);
+      },
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: sizes.containerForm),

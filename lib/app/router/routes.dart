@@ -68,6 +68,8 @@ class AppRoutes {
   static const String joinFindr = '/findr/join';
   static const String findrTerms = '/findr/terms';
   static const String findrAddress = '/findr/address';
+  static const String referHotel = '/findr/refer-hotel';
+  static const String findrReferrals = '/findr/referrals';
 
   // Section 06b · Check in Anywhere
   static const String anywhereFind = '/anywhere/find';

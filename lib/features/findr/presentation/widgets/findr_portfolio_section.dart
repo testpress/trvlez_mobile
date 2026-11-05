@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
+import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/findr_card.dart';
-import 'package:trvlez_mobile/core/widgets/status_pill.dart';
+import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/refer_hotel_bottom_sheet.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/refer_traveler_card.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/referral_card.dart';
+import 'package:trvlez_mobile/features/findr/presentation/widgets/referral_detail_sheet.dart';
 
-/// Active portfolio dashboard displaying earnings, recommendations, and payouts.
+/// Active portfolio dashboard displaying live earnings, referrals, and payouts.
 class FindrPortfolioSection extends ConsumerWidget {
   const FindrPortfolioSection({
     super.key,
@@ -23,11 +30,34 @@ class FindrPortfolioSection extends ConsumerWidget {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
-    final portfolio = ref.watch(findrPortfolioProvider);
+    final sizes = context.sizes;
+
+    final portfolioAsync = ref.watch(findrPortfolioProvider);
+
+    if (portfolioAsync.isLoading && !portfolioAsync.hasValue) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: space.stackHero),
+        child: const LoadingView(message: 'Loading portfolio data...'),
+      );
+    }
+
+    if (portfolioAsync.hasError && !portfolioAsync.hasValue) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: space.stackSection),
+        child: ErrorView(
+          message: portfolioAsync.error.toString(),
+          onRetry: () => ref.read(findrPortfolioProvider.notifier).refresh(),
+        ),
+      );
+    }
+
+    final portfolio = portfolioAsync.valueOrNull ?? FindrPortfolio.empty;
+    final recentReferrals = portfolio.hotelReferrals.take(5).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // 1. Primary Findr Card
         FindrCard(
           state: isSuspendedOrTerminated
               ? FindrState.locked
@@ -42,22 +72,20 @@ class FindrPortfolioSection extends ConsumerWidget {
           dueDate: portfolio.dueDate,
           onCta: isSuspendedOrTerminated
               ? null
-              : () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'To recommend a property, share your referral code or add hotel details.',
-                        style: TextStyle(color: colors.textPrimary),
-                      ),
-                      backgroundColor: colors.surface,
-                    ),
-                  );
-                },
+              : () => showReferHotelSheet(context),
         ),
 
         SizedBox(height: space.stackSection),
 
-        // Recent Recommendations Header
+        // 2. Refer a Traveler Action Card
+        ReferTravelerCard(
+          shareCode: portfolio.shareCode,
+          shareUrl: portfolio.shareUrl,
+        ),
+
+        SizedBox(height: space.stackSection),
+
+        // 3. Recent Recommendations Header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -68,23 +96,72 @@ class FindrPortfolioSection extends ConsumerWidget {
                 fontWeight: TypeScale.bold,
               ),
             ),
-            Text(
-              'All',
-              style: context.text.labelMedium?.copyWith(
-                color: colors.brandPrimary,
-                fontWeight: TypeScale.semiBold,
+            InkWell(
+              onTap: () => context.push(AppRoutes.findrReferrals),
+              borderRadius: shape.radiusControlSm,
+              child: Padding(
+                padding: space.insetTagSm,
+                child: Text(
+                  'All',
+                  style: context.text.labelMedium?.copyWith(
+                    color: colors.brandPrimary,
+                    fontWeight: TypeScale.semiBold,
+                  ),
+                ),
               ),
             ),
           ],
         ),
         SizedBox(height: space.stackItem),
 
-        for (final recommendation in portfolio.recommendations)
-          _RecommendationCard(recommendation: recommendation),
+        if (recentReferrals.isEmpty)
+          Container(
+            padding: space.insetCard,
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: shape.radiusControl,
+              border: Border.all(
+                color: colors.cardBorder,
+                width: shape.borderDefault,
+              ),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  AppIcons.building,
+                  size: sizes.iconLg,
+                  color: colors.textSecondary,
+                ),
+                SizedBox(height: space.stackItem),
+                Text(
+                  'No recommendations yet',
+                  style: context.text.titleSmall?.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: TypeScale.bold,
+                  ),
+                ),
+                SizedBox(height: space.stackTight),
+                Text(
+                  'Recommend a hotel partner to lock your 10% first-year and 1% forever commission.',
+                  textAlign: TextAlign.center,
+                  style: context.text.bodySmall?.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          for (final referral in recentReferrals)
+            ReferralCard(
+              key: ValueKey(referral.id),
+              referral: referral,
+              onTap: () => showReferralDetailSheet(context, referral),
+            ),
 
         SizedBox(height: space.stackSection),
 
-        // Payouts Header
+        // 4. Payouts Header
         Text(
           'Payouts',
           style: context.text.titleMedium?.copyWith(
@@ -94,97 +171,27 @@ class FindrPortfolioSection extends ConsumerWidget {
         ),
         SizedBox(height: space.stackItem),
 
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: space.insetCard.left,
-            vertical: space.stackItem,
-          ),
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: shape.radiusControl,
-            border: Border.all(
-              color: colors.cardBorder,
-              width: shape.borderDefault,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: colors.cardShadow,
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final payout in portfolio.payouts)
-                _PayoutRow(payout: payout),
-            ],
-          ),
-        ),
-
-        SizedBox(height: space.stackHero),
-      ],
-    );
-  }
-}
-
-class _RecommendationCard extends StatelessWidget {
-  const _RecommendationCard({required this.recommendation});
-
-  final FindrRecommendation recommendation;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final space = context.space;
-    final sizes = context.sizes;
-    final shape = context.shape;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: space.stackItem),
-      padding: space.insetCard,
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: shape.radiusControl,
-        border: Border.all(
-          color: colors.cardBorder,
-          width: shape.borderDefault,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.cardShadow,
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
+        if (portfolio.payouts.isEmpty)
           Container(
-            width: sizes.avatarSm,
-            height: sizes.avatarSm,
-            alignment: Alignment.center,
+            padding: space.insetCard,
             decoration: BoxDecoration(
-              color: colors.surfaceSubtle,
-              borderRadius: shape.radiusControlSm,
+              color: colors.surface,
+              borderRadius: shape.radiusControl,
+              border: Border.all(
+                color: colors.cardBorder,
+                width: shape.borderDefault,
+              ),
             ),
-            child: Icon(
-              AppIcons.building,
-              size: sizes.iconSm,
-              color: colors.textSecondary,
-            ),
-          ),
-          SizedBox(width: space.inlineIconLabel),
-          Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
+                Icon(
+                  AppIcons.creditCard,
+                  size: sizes.iconLg,
+                  color: colors.textSecondary,
+                ),
+                SizedBox(height: space.stackItem),
                 Text(
-                  recommendation.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  'No payout history yet',
                   style: context.text.titleSmall?.copyWith(
                     color: colors.textPrimary,
                     fontWeight: TypeScale.bold,
@@ -192,25 +199,44 @@ class _RecommendationCard extends StatelessWidget {
                 ),
                 SizedBox(height: space.stackTight),
                 Text(
-                  recommendation.when,
+                  'Monthly commission payouts are calculated on completed guest stays from your referred hotels.',
+                  textAlign: TextAlign.center,
                   style: context.text.bodySmall?.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
               ],
             ),
+          )
+        else
+          Container(
+            padding: space.insetCard,
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: shape.radiusControl,
+              border: Border.all(
+                color: colors.cardBorder,
+                width: shape.borderDefault,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.cardShadow,
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final payout in portfolio.payouts)
+                  _PayoutRow(payout: payout),
+              ],
+            ),
           ),
-          SizedBox(width: space.inlineIconLabel),
-          StatusPill(
-            label: recommendation.status,
-            state: switch (recommendation.state) {
-              FindrRecommendationState.awaiting => StatusPillState.awaiting,
-              FindrRecommendationState.confirmed => StatusPillState.confirmed,
-              FindrRecommendationState.declined => StatusPillState.cancelled,
-            },
-          ),
-        ],
-      ),
+
+        SizedBox(height: space.stackHero),
+      ],
     );
   }
 }

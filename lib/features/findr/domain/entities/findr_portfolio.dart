@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:trvlez_mobile/features/findr/domain/entities/hotel_referral_item.dart';
 
 /// State of a recommendation in the Findr review pipeline.
 enum FindrRecommendationState { awaiting, confirmed, declined }
@@ -45,6 +46,9 @@ class FindrPortfolio {
     required this.dueDate,
     required this.recommendations,
     required this.payouts,
+    this.hotelReferrals = const [],
+    this.shareCode,
+    this.shareUrl,
   });
 
   final bool joined;
@@ -55,6 +59,23 @@ class FindrPortfolio {
   final String dueDate;
   final List<FindrRecommendation> recommendations;
   final List<FindrPayout> payouts;
+  final List<HotelReferralItem> hotelReferrals;
+  final String? shareCode;
+  final String? shareUrl;
+
+  static const empty = FindrPortfolio(
+    joined: false,
+    earned: '£0.00',
+    joinedCount: 0,
+    inReviewCount: 0,
+    dueAmount: '£0.00',
+    dueDate: '—',
+    recommendations: [],
+    payouts: [],
+    hotelReferrals: [],
+    shareCode: null,
+    shareUrl: null,
+  );
 
   FindrPortfolio copyWith({
     bool? joined,
@@ -65,6 +86,9 @@ class FindrPortfolio {
     String? dueDate,
     List<FindrRecommendation>? recommendations,
     List<FindrPayout>? payouts,
+    List<HotelReferralItem>? hotelReferrals,
+    String? shareCode,
+    String? shareUrl,
   }) {
     return FindrPortfolio(
       joined: joined ?? this.joined,
@@ -75,6 +99,9 @@ class FindrPortfolio {
       dueDate: dueDate ?? this.dueDate,
       recommendations: recommendations ?? this.recommendations,
       payouts: payouts ?? this.payouts,
+      hotelReferrals: hotelReferrals ?? this.hotelReferrals,
+      shareCode: shareCode ?? this.shareCode,
+      shareUrl: shareUrl ?? this.shareUrl,
     );
   }
 }
