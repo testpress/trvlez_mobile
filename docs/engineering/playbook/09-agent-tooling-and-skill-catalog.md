@@ -2,6 +2,10 @@
 
 Project policy lives in this playbook, not in a custom skill. External skills are optional procedures and must never silently override the playbook.
 
+## Discovery bridge
+
+`AGENTS.md` at repository root is the single routing file for Codex, Cursor, and Antigravity-compatible hosts. `CLAUDE.md` imports it for Claude Code. Both files intentionally link to this playbook rather than duplicate policy. This compatibility is documented from vendor guidance; prompt-time discovery still requires a manual acceptance check in each host before legacy instructions are retired.
+
 ## Current candidates
 
 | Task | Candidate | Status |

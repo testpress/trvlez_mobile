@@ -61,6 +61,14 @@ The locally installed `flutter-build-responsive-layout` content is byte-identica
 
 No claim is made that `.agents/rules/` is automatically applied by every host. Phase 3 will add the smallest compatible discovery bridge only after the canonical documentation index is in place and each host’s behaviour is verified.
 
+### Bridge compatibility research (after baseline capture)
+
+- Cursor official documentation supports a root `AGENTS.md` as a plain-Markdown project instruction file.
+- Google Antigravity official documentation supports root `AGENTS.md`/`GEMINI.md` as always-active workspace rules and `.agents/skills/` for workspace skills.
+- Claude Code official documentation uses root `CLAUDE.md` for project instructions and supports `@path` imports. The repository therefore uses a two-line `CLAUDE.md` that imports the one canonical `AGENTS.md`, avoiding copied policy.
+
+The bridge files have been added, but actual prompt-time loading remains a manual acceptance test for each host; documentation compatibility and a CLI version alone are not proof of a loaded session.
+
 ## Design-reference availability
 
 Only `web/index.html` was found in the repository. No approved HTML/CSS mobile-screen reference set is versioned here. Existing documentation points to an external path (`/home/kumaraguhan/Downloads/trvlez_app`), which is not a repository input or an approved source of truth.

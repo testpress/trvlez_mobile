@@ -298,7 +298,7 @@ Potential tools are evaluated only after this gate. `golden_toolkit` is already 
 
 - [x] Create the target `docs/engineering/` structure in Section 5 and write the Android/iOS mobile-phone standard with correct/incorrect Dart examples.
 - [x] Preserve the useful current content by mapping it to one playbook chapter at a time. The plan identifies original sources and migration decisions in `docs/engineering/migration-map.md`.
-- [ ] Add the minimal root discovery bridge after the playbook index exists. The bridge names which chapter and official skill to load for: a new screen, a layout defect, a token change, a visual test, and a non-UI architecture change.
+- [x] Add the minimal root discovery bridge after the playbook index exists. `AGENTS.md` names the required playbook chapter and optional verified procedure for each task; `CLAUDE.md` imports it for Claude Code. Prompt-time host acceptance testing remains open before legacy material can be retired.
 - [x] Add an ADR template and use it only for durable decisions such as edge-to-edge policy, token density policy, or golden baseline environment.
 - [ ] Remove duplicate/contradictory content only after review and explicit approval. Preserve git history and add a migration map from each old instruction to its canonical replacement.
 
