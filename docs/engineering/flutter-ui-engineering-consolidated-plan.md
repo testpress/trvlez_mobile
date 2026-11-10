@@ -40,7 +40,7 @@ This audit is the factual starting point for consolidation. It must be refreshed
 - The app uses Flutter, Material 3, Riverpod (`flutter_riverpod`), GoRouter, Dio, and a local path dependency `../dmrtd`.
 - Existing visual foundations are in `lib/app/theme/` and `lib/core/design_tokens/`. `AppSpace`, `AppSize`, and `AppShape` are `ThemeExtension`s exposed through `BuildContext` accessors.
 - `analysis_options.yaml` includes `flutter_lints`, `strict-casts`, `prefer_const_constructors`, `avoid_print`, and `directives_ordering`.
-- Local SDK metadata records Flutter `3.44.4`, Dart `3.12.2`, and DevTools `2.57.0` on the stable channel. `flutter --version` itself could not be run in this audit environment because the SDK attempted to update cache files outside the writable workspace. Capture and retain the command output during Phase 1 on a writable developer or CI environment before executing tests or installation, rather than inferring a version from `pubspec.yaml`.
+- Executable evidence now records Flutter `3.44.4` stable, Dart `3.12.2`, and DevTools `2.57.0`; see `docs/engineering/evidence/phase-1-baseline-2026-11-10.md`. The initial restricted-environment limitation no longer applies to the recorded baseline.
 - Node `v20.20.2` and npm `10.8.2` are available. `npx skills --help` did not produce usable help output in the restricted audit environment, so command flags and target paths must be verified immediately before any installation.
 
 ### 3.2 Existing instructions and skills
@@ -268,38 +268,38 @@ Potential tools are evaluated only after this gate. `golden_toolkit` is already 
 - [x] Reference comparison with Cortex without importing its architecture.
 - [x] Official and named-community research; source/licence/overlap decisions recorded.
 - [x] Create this consolidated plan only.
-- [ ] Product/engineering owner approves the target documentation architecture, discovery bridge, and staged removal policy.
+- [x] Product/engineering owner approves the target documentation architecture, discovery bridge, and staged removal policy.
 
 **Exit criterion:** approval to create documentation and tooling changes described below. No app source is changed in this phase.
 
 ### Phase 1 — evidence and compatibility baseline
 
-- [ ] Record `flutter --version`, `dart --version`, Java/Gradle/Xcode versions, Android SDK/AVD and iOS simulator inventory, and `npx skills --help` output in a dated evidence note.
-- [ ] Run `flutter pub get`, `flutter analyze --fatal-infos`, the existing token guard, and `flutter test`; save failures as baseline findings rather than hiding them.
-- [ ] Verify current source and actual installation path/revision for each existing skill; reconcile `skills-lock.json` hash mismatch.
+- [x] Record `flutter --version`, `dart --version`, Java/Gradle/Xcode versions, Android SDK/AVD and iOS simulator inventory, and `npx skills --help` output in a dated evidence note. Unavailable Apple/AVD tooling is explicitly recorded as a host limitation.
+- [ ] Run `flutter pub get`, `flutter analyze --fatal-infos`, the existing token guard, and `flutter test`; save failures as baseline findings rather than hiding them. Analyzer and token guard pass; formatter reports 75 files would change; the bounded full test run did not reach a terminal result. `flutter pub get` remains to be recorded separately.
+- [x] Verify current source and actual installation path/revision for each existing skill; reconcile `skills-lock.json` hash mismatch.
 - [ ] Confirm whether Codex desktop and Antigravity discover `.agents/skills`, root `AGENTS.md`, and/or `.agents/rules` in this repository.
-- [ ] Obtain version-controlled or explicitly approved HTML/CSS design references; record source, revision/date, screen mapping, licence/usage permission, and assets.
+- [ ] Obtain version-controlled or explicitly approved HTML/CSS design references; record source, revision/date, screen mapping, licence/usage permission, and assets. No approved source is present; the external-reference blocker is recorded and parity claims remain prohibited.
 
 **Exit criterion:** reproducible, dated baseline; no reliance on guesses about SDK, skills CLI, or design inputs.
 
 ### Phase 2 — official skill installation (only after Phase 1)
 
-- [ ] Inspect the installed `skills` CLI version/help, then list the exact catalog and target path for each command from repository root.
+- [x] Inspect the installed `skills` CLI version/help, then list the exact catalog and target path for each command from repository root. CLI `1.7.6` and reviewed Flutter/Dart catalog names were verified using FNM Node `24.21.0`.
 - [ ] Verify no duplicate skill directory will be overwritten; back up/commit the pre-install state rather than relying on an installer rollback.
 - [ ] Install the approved Flutter subset, not `*`: responsive layout, fix layout issues, widget test, and the reviewed integration-test skill. Re-evaluate architecture skill before adding it.
 - [ ] Install the approved Dart subset, not `*`: unit test, static analysis, and coverage.
 - [ ] Use a command equivalent to `npx skills add <source> --skill <named-skill> --agent universal --yes` only after the exact current CLI syntax is verified. Run from this repository and inspect that files land under repository `.agents/skills/`, never user-global configuration.
-- [ ] Record upstream URLs, commit SHAs, licences, install commands, file hashes, review date, and update procedure in the catalog.
-- [ ] Do not execute any community installation script. No community catalogue is approved for bulk installation.
+- [ ] Record upstream URLs, commit SHAs, licences, install commands, file hashes, review date, and update procedure in the catalog. Source revisions and local hash evidence are recorded; the full per-installed-skill ledger remains pending because no new installation is approved.
+- [x] Do not execute any community installation script. No community catalogue is approved for bulk installation.
 
 **Exit criterion:** each installed skill has a valid frontmatter/name, known provenance, current licence, non-conflicting scope, and demonstrated discovery in the supported IDEs.
 
 ### Phase 3 — create the engineering playbook and discovery bridge
 
-- [ ] Create the target `docs/engineering/` structure in Section 5 and write the Android/iOS mobile-phone standard with correct/incorrect Dart examples.
-- [ ] Preserve the useful current content by mapping it to one playbook chapter at a time. The plan must identify the original source file and any wording changed.
+- [x] Create the target `docs/engineering/` structure in Section 5 and write the Android/iOS mobile-phone standard with correct/incorrect Dart examples.
+- [x] Preserve the useful current content by mapping it to one playbook chapter at a time. The plan identifies original sources and migration decisions in `docs/engineering/migration-map.md`.
 - [ ] Add the minimal root discovery bridge after the playbook index exists. The bridge names which chapter and official skill to load for: a new screen, a layout defect, a token change, a visual test, and a non-UI architecture change.
-- [ ] Add an ADR template and use it only for durable decisions such as edge-to-edge policy, token density policy, or golden baseline environment.
+- [x] Add an ADR template and use it only for durable decisions such as edge-to-edge policy, token density policy, or golden baseline environment.
 - [ ] Remove duplicate/contradictory content only after review and explicit approval. Preserve git history and add a migration map from each old instruction to its canonical replacement.
 
 **Exit criterion:** one canonical project policy location, a discovery test for each active IDE, no new custom skills unless a documented gap cannot be solved by official skills plus the playbook.
