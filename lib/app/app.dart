@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/router/app_router.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
+import 'package:trvlez_mobile/core/attribution/attribution_providers.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/design_tokens/text_scale_preset.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
@@ -23,6 +24,7 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
     _lifecycleListener = AppLifecycleListener(onResume: _onAppResumed);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _onAppResumed();
+      _triggerAttributionCapture();
     });
   }
 
@@ -30,6 +32,18 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
   void dispose() {
     _lifecycleListener.dispose();
     super.dispose();
+  }
+
+  /// Triggers background capture of Android Play Install Referrer attribution evidence.
+  void _triggerAttributionCapture() {
+    try {
+      ref.read(attributionServiceProvider).captureInstallReferrer().catchError((error) {
+        debugPrint('[App] Attribution capture background failure: $error');
+        return false;
+      });
+    } catch (exception) {
+      debugPrint('[App] Error dispatching attribution capture: $exception');
+    }
   }
 
   /// Reconciles verification state when the app returns from background.
@@ -42,6 +56,8 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
 
     if (isAuthenticated) {
       ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
+    } else {
+      _triggerAttributionCapture();
     }
   }
 

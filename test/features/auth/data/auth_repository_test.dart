@@ -49,6 +49,7 @@ class MockAuthRemoteDataSource extends Fake implements AuthRemoteDataSource {
   Future<TravelerSignupResponseDto> signUp({
     required String email,
     required String password,
+    String? clickReference,
   }) async {
     if (shouldThrow) {
       throw DioException(

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
+import 'package:trvlez_mobile/core/storage/attribution_storage.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:trvlez_mobile/features/auth/domain/entities/signup_result.dart';
@@ -11,10 +12,12 @@ import 'package:trvlez_mobile/features/auth/domain/repositories/auth_repository.
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final TokenStorage tokenStorage;
+  final AttributionStorage? attributionStorage;
 
   const AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.tokenStorage,
+    this.attributionStorage,
   });
 
   @override
@@ -23,9 +26,11 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
+      final clickReference = attributionStorage?.getClickReference();
       final dto = await remoteDataSource.signUp(
         email: email,
         password: password,
+        clickReference: clickReference,
       );
 
       return SignupResult(
@@ -58,5 +63,6 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
     tokenStorage: ref.watch(tokenStorageProvider),
+    attributionStorage: ref.watch(attributionStorageProvider),
   );
 });

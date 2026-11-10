@@ -22,10 +22,15 @@ class AuthRemoteDataSource {
   Future<TravelerSignupResponseDto> signUp({
     required String email,
     required String password,
+    String? clickReference,
   }) async {
     final response = await dio.post<Map<String, dynamic>>(
       '/traveler/signup',
-      data: {'email': email, 'password': password},
+      data: {
+        'email': email,
+        'password': password,
+        'click_reference': ?clickReference,
+      },
     );
 
     final data = response.data;
