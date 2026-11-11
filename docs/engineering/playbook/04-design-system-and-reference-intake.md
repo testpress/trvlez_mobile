@@ -206,6 +206,31 @@ ElevatedButton(
 )
 ```
 
+### Shared-component contract
+
+The public shared-component API and its component theme are the canonical component catalogue. Before creating a control, surface, dialog, sheet, or navigation element, search the existing shared widgets and component themes. Do not create a look-alike local implementation merely because its first consumer is a new screen.
+
+Every shared component must have a short contract in its public API documentation or adjacent source comment that names:
+
+- **Owner and intended role:** the component/theme responsible for the visual and behavioural contract.
+- **Supported variants:** named variants only; a variant represents a stable product meaning, not a one-screen colour or spacing override.
+- **Applicable states:** default plus disabled, loading, error, focused, selected, pressed, or validation states where the component supports them.
+- **Accessibility and content behaviour:** semantic role and label expectations, minimum target where interactive, directionality, and overflow/wrapping behaviour at supported text scales.
+- **Validation owner:** the widget test, golden test when feasible, or documented runtime evidence that protects the contract.
+
+Create a new shared component only when at least two credible consumers share the same visual, semantic, and behavioural contract. Otherwise keep the component local, consume the established tokens/themes, and promote it only when the contract becomes genuinely shared.
+
+### Screen-state presentation contract
+
+Data-driven screens must present loading, empty, error, and success/data states with a consistent intent. A feature may choose the composition appropriate to its content, but it must not invent contradictory behaviour:
+
+- **Loading:** communicate progress without implying data that is not available; preserve stable geometry where practical.
+- **Empty:** explain what is absent and provide the next meaningful action when one exists.
+- **Error:** use user-safe language, preserve useful existing content when possible, and place retry/recovery with the failed content rather than as an unrelated global control.
+- **Success/data:** confirm a completed destructive or high-consequence action when the result is not otherwise obvious; do not use transient confirmation as the only durable result when the user must verify it later.
+
+When two or more screens need the same state presentation, extract or extend a shared state component with the contract above. A new visual treatment requires an approved reference or documented product reason and validation in its applicable states.
+
 ---
 
 ## Adding new tokens: the workflow

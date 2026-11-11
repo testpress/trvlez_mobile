@@ -108,6 +108,22 @@ Test critical flows with TalkBack (Android) and VoiceOver (iOS). Verify:
 - Custom animations or transitions do not trap focus.
 - Dismissible elements (bottom sheets, dialogs, snackbars) announce their appearance and can be dismissed.
 
+### Repeatable accessibility checks
+
+For every shared interactive component and every material change to an interactive screen, add the applicable Flutter accessibility Guideline API assertions in its widget test. These checks complement, rather than replace, manual TalkBack and VoiceOver testing:
+
+```dart
+final semantics = tester.ensureSemantics();
+addTearDown(semantics.dispose);
+
+await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+await expectLater(tester, meetsGuideline(textContrastGuideline));
+```
+
+Use only the assertions relevant to the rendered platform and state. A documented exception is allowed only when the guideline produces a known framework limitation or a deliberately non-interactive visual element; it must explain why the user-facing accessibility contract remains satisfied.
+
 ### Reduced motion
 
 Respect the user's reduced-motion preference:

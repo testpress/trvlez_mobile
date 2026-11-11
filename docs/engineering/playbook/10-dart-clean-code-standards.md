@@ -44,7 +44,7 @@ Base reference: [Effective Dart](https://dart.dev/effective-dart).
 - Use `const` constructors everywhere possible to enable Flutter engine compile-time widget caching.
 
 ### 3.2 Null safety: Avoid the bang operator `!`
-Never force-unwrap with `!`. Handle nullable types safely with type promotion, early returns, or fallback defaults:
+Do not use `!` to bypass null safety. Prefer type promotion, early returns, or fallback defaults. A narrowly scoped `!` is permitted only when an immediately established invariant makes the value non-null and the surrounding code makes that invariant clear; otherwise refactor the nullable flow:
 ```dart
 // ❌ Dangerous:
 final city = user.address!.city!;
@@ -91,14 +91,14 @@ final label = switch (status) {
 - Use string interpolation (`'Hello $name'`), never string concatenation with `+`. Use single quotes by default.
 
 ### 3.7 Async safety
-- Always use `async/await`; never chain raw `.then()` calls.
+- Prefer `async`/`await` for sequential asynchronous control flow. Use `Future` composition or `.then()` only when it makes the flow clearer and preserves explicit error handling.
 - **Check mounted state after await:** `if (!context.mounted) return;` before using `BuildContext` across an async gap.
 - Never fire-and-forget silently; wrap intentional background futures with `unawaited(...)`.
 - Parallelize independent asynchronous tasks: `await Future.wait([fetchProfile(), fetchTrips()])`.
 
 ### 3.8 Typing
 - Explicit return types on all public functions and methods.
-- Avoid `dynamic`. Only permissible at raw JSON boundaries (`Map<String, dynamic>`).
+- Avoid `dynamic`. Confine it to an explicit deserialization or type-erased interoperability boundary, convert it immediately to a typed model/value, and do not let it leak into presentation code.
 - Parse API data safely once in DTOs; never scatter `as` casts throughout widgets.
 
 ---
@@ -180,7 +180,8 @@ chore: bump dependencies
 
 Before marking any change complete:
 - [ ] Code is formatted (`dart format .`) and passes analyzer (`flutter analyze --fatal-infos`).
-- [ ] No `!`, no `dynamic` outside JSON parsing, no hardcoded colors/magic numbers.
+- [ ] Null assertions and `dynamic` are avoided or confined to an explicit, justified boundary; no unsafe value reaches presentation code.
+- [ ] No inline colours or unexplained magic values; semantic tokens and documented component-private constants follow chapter 04.
 - [ ] All 4 async states (loading / error / empty / data) handled.
 - [ ] Resources cleanly disposed in `dispose()`.
 - [ ] `if (!context.mounted) return;` checked after every `await` using `BuildContext`.

@@ -218,6 +218,8 @@ Before adding a **new** golden test, all of the following must remain true:
 4. **Animation and async are settled.** Call `tester.pumpAndSettle()` or advance frames to a known state.
 5. **The widget state is stable.** Do not golden-test widgets that are actively iterating on design. Golden-test stable shared components and high-value reference states.
 
+**When a golden is not feasible:** Do not waive visual validation silently. Record which prerequisite is not met and why a golden would be misleading or unstable. Use a focused widget test for the component contract plus validated emulator/simulator or physical-device evidence at the affected states and required matrix configurations. Revisit the golden decision when the prerequisite becomes true. This exception does not apply merely because a golden would take longer to write.
+
 **Writing a golden test:**
 
 ```dart
@@ -354,14 +356,14 @@ When diagnosing a layout issue on a running app:
 
 | Change type | Minimum evidence |
 |---|---|
-| Shared widget styling | Widget test + golden test (pinned environment; see Layer 3) |
+| Shared widget styling | Widget test + golden test when the Layer 3 feasibility gate passes; otherwise the documented golden exception, focused widget contract test, and runtime evidence |
 | Screen layout or inset/keyboard change | Chapter 02 checklist: compact + regular viewports, text 1.0/1.3/2.0, keyboard/inset profile when inputs exist, validated `scripts/device_matrix.sh` capture |
 | Text-bearing screen or control where platform accessibility scale exceeds 2.0 | Standard widget matrix plus target-platform maximum-scale runtime evidence, or an explicit documented product support ceiling |
 | Reference-parity claim or reported typography discrepancy | ADR 0002 paired typography baseline before editing, same-state captures on both devices, and a conclusion that distinguishes baseline difference from a layout defect |
 | SafeArea, keyboard, pinned-footer, platform-typography, or system-UI change | Material screen matrix + validated Android emulator **and** iOS simulator capture |
 | Navigation/input/device-plugin flow | Integration test where feasible + platform runtime evidence |
 | Token/theme-wide change | Component goldens + affected widget tests + documented baseline review |
-| Accessibility improvement | Widget test with semantic assertions + text scale test + screen reader manual test |
+| Accessibility improvement or materially changed interactive UI | Widget test with semantic assertions, applicable Flutter accessibility-guideline assertions, text scale test, and screen-reader manual test |
 | Reported device-pair discrepancy | Paired MediaQuery worksheet (chapter 06) **before** edit + compact/regular widget matrix after |
 
 ---
@@ -391,7 +393,7 @@ When a visual mismatch is reported between devices or between a device and a des
 2. **Capture `MediaQuery` data** on both devices/configurations: `size`, `padding`, `viewPadding`, `viewInsets`, `devicePixelRatio`, `textScaler`.
 3. **Inspect constraints** at the affected widget using DevTools. What constraints does the parent offer? What size does the widget choose?
 4. **Compare system insets.** Different navigation modes (gesture vs 3-button), notch/punch-hole, and home indicators produce different inset values.
-5. **Check text scaling.** The user may have a different system text scale.
+5. **Check typography provenance.** For a typography discrepancy, complete the ADR 0002 paired-device worksheet in chapter 06: OS font and display settings, in-app preference, locale, app/font version, and `TextScaler` probes at 12/16/20/24. A single scale label or `textScaler` diagnostic is not conclusive.
 6. **Identify the root cause** before proposing a fix. Document it in the task.
 7. **Fix at the correct level.** If the parent constraint is wrong, fix the parent. If the scroll model is wrong, fix the scroll model. If an inset is double-applied, fix the inset ownership. Do not add a device-specific offset.
 

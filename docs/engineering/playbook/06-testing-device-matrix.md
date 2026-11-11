@@ -122,6 +122,8 @@ Physical devices are required for:
 - OEM font rendering and GPU composition differences.
 - Final visual sign-off before release.
 
+For a release containing a release-critical UI change, collect final evidence on at least one supported Android physical device and one supported iOS physical device. Add a representative OEM or hardware target when the change depends on its capability (for example camera, NFC, biometric prompt, foldable posture, or an OEM typography discrepancy). This is a minimum release claim, not a substitute for the emulator/simulator matrix.
+
 ### Recording physical device evidence
 
 | Field | What to record |
@@ -166,9 +168,9 @@ These scenarios should be tested across multiple viewport categories when the af
 - Test with and without **Dynamic Island / notch** on iOS.
 - **Expected:** Content does not overlap system UI. Bottom actions are not obscured. `SafeArea` is applied at the correct level (once, not doubled).
 
-### 5. Orientation test (if supported)
-- Rotate to landscape.
-- **Expected:** Content remains usable. No overflow. Navigation remains accessible. If landscape is not supported, verify the app correctly locks to portrait.
+### 5. Orientation and resizable-window test
+- When the product supports rotation, rotate to landscape and verify content remains usable, navigation remains accessible, and no overflow occurs.
+- Do not introduce portrait locking as a layout remedy. If a product requirement deliberately restricts orientation, record the reason and platform impact, then verify safe behaviour in the supported window envelope. Orientation restrictions do not remove the chapter 00 safe-degradation requirement for resizable, foldable, tablet, or large-window environments.
 
 ### 6. Non-phone and resizable-window safety
 

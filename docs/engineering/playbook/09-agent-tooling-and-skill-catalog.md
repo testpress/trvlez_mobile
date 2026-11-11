@@ -95,19 +95,6 @@ These locally authored skills were retired per user approval (Option c) once the
 
 ## Skill-to-task mapping
 
-When an agent is activated for a task, it should load the playbook chapter(s) first, then optionally use the indicated official skill as a procedural guide. This table is identical to the routing in `AGENTS.md`; keep them in sync.
+`AGENTS.md` is the single routing and evidence-discovery bridge. It names the required chapters and optional official skills for each task, including the ADR 0002 typography-baseline requirement. Do not duplicate that table or its Phase 5 completion summary here.
 
-| Task | Required playbook chapters | Optional official skill |
-|---|---|---|
-| New screen or material UI edit | 00, 02, 03, 04, 05, 06 | `flutter-build-responsive-layout` |
-| Layout defect or device inconsistency | 00, 03, 05, 06 | `flutter-fix-layout-issues` |
-| Theme, token, or shared component | 00, 04 | — |
-| Widget test creation | 00, 05 | `flutter-add-widget-test` |
-| Unit test or static analysis | 00 | `dart-add-unit-test`, `dart-run-static-analysis`, `dart-collect-coverage` |
-| Visual validation (golden, emulator, device) | 00, 05, 06 | — |
-| Accessibility or performance | 00, 07 | — |
-| Architecture or non-UI reliability | 00, 01, 08 | — |
-
-Phase 5 / material screen work is incomplete without the chapter 02 layout contract and the chapter 05/06 evidence minimum: compact + regular viewports, text scale 1.0/1.3/2.0, platform-maximum runtime validation when it exceeds 2.0, keyboard when inputs exist, and measured `MediaQuery` metadata for captures. Safe-area, keyboard, pinned-footer, platform-typography, or system-UI work requires Android emulator and iOS simulator evidence; paired `MediaQuery` capture is required for reported device discrepancies.
-
-The playbook is always the authority. The skill is a procedural helper. If they conflict, the playbook wins.
+When an agent is activated, it must load the chapters routed by `AGENTS.md` before using an optional official skill. The playbook remains the authority; a skill is a procedural helper and cannot override it.

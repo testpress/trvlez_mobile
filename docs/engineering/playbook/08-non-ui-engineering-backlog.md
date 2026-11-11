@@ -22,15 +22,14 @@ These observations cover code-health, delivery, and infrastructure concerns outs
 
 ### 2. Deterministic CI toolchain
 
-**Current state:** CI selects Flutter `stable` channel without pinning the exact version. Java, Gradle, and Android SDK versions are not pinned in CI configuration.
+**Updated status:** Flutter is pinned to 3.44.4 for CI and golden validation by ADR 0001. Java, Gradle, Android SDK, and the controlled upgrade cadence still need an explicit, repository-owned toolchain policy.
 
 **Risks:**
-- A Flutter stable update can change rendering behaviour, breaking golden tests.
+- An uncontrolled Flutter stable update can change rendering behaviour, breaking golden tests.
 - A Gradle/AGP update can break the Android build.
 - Non-deterministic builds make bug reproduction unreliable.
 
 **Enterprise approach:**
-- Pin Flutter version in CI using a version manager (FVM, asdf, or exact channel ref).
 - Pin Java and Gradle versions in CI.
 - Use a lockfile or version manifest that is committed and reviewed.
 - Establish a controlled upgrade cadence (e.g. monthly) with a dedicated PR, test run, and golden baseline update.
@@ -50,13 +49,13 @@ These observations cover code-health, delivery, and infrastructure concerns outs
 
 ### 4. Static analysis rigor
 
-**Current state:** `analysis_options.yaml` enables `strict-casts` and a handful of lint rules. `strict-inference`, `strict-raw-types`, and many useful lints are not enabled.
+**Current state:** Analyzer-policy coverage beyond the existing baseline should be assessed deliberately. Keep this section current when the analyzer configuration changes; do not rely on a historical list of enabled rules.
 
 **Enterprise approach:**
 - Baseline current analyzer output (warnings, infos, ignores).
 - Evaluate enabling incrementally:
   - `strict-inference: true` — catches implicit `dynamic` returns.
-  - `strict-raw-types: true` — catches unparameterized generics.
+  - `no_raw_types` — catches unparameterized generics; use this current lint rather than the replaced `strict-raw-types` analysis option.
   - `unawaited_futures` — catches fire-and-forget async calls.
   - `cancel_subscriptions` — catches un-cancelled stream subscriptions.
   - `close_sinks` — catches un-closed sinks.
@@ -67,13 +66,12 @@ These observations cover code-health, delivery, and infrastructure concerns outs
 
 ### 5. Test infrastructure and coverage
 
-**Current state:** Unit and widget tests exist but no mocking framework is declared. No test coverage measurement or thresholds are configured. The full test suite did not reach a terminal result in the Phase 1 baseline run. No integration test infrastructure exists.
+**Updated status:** Deterministic widget-test helpers, a golden-test pilot, and an `integration_test` workflow are now documented in chapters 05–06. Coverage measurement, critical-flow integration coverage, and any required mocking strategy remain deliberate backlog work. The historical Phase 1 test-run limitation is not a statement of the current suite state.
 
 **Enterprise approach:**
-- **Diagnose the test run:** Determine why the full suite does not complete. Timeout? Hanging test? Resource leak?
 - **Coverage measurement:** Add `flutter test --coverage` to CI. Establish a baseline, not a mandated percentage. Track trends, not absolutes.
 - **Mocking strategy:** Evaluate whether hand-written fakes are sufficient or whether `mocktail` would reduce maintenance. Do not add a mocking package just because an external guide mentions one — assess actual test-maintenance burden.
-- **Integration tests:** Add `integration_test` dependency. Start with one critical flow (e.g. login). Do not attempt to cover all flows at once.
+- **Integration tests:** Establish or expand critical-flow coverage using `integration_test`, starting with one flow (e.g. login). Do not attempt to cover all flows at once.
 - **Test helpers:** Create deterministic test wrappers for widget tests (fixed viewport, theme, locale, text scale).
 
 ### 6. Dependency security and SBOM
@@ -99,7 +97,7 @@ These observations cover code-health, delivery, and infrastructure concerns outs
 
 ### 8. Accessibility automation
 
-**Current state:** Token/touch-target guidance exists in the playbook, but no automated accessibility testing is configured.
+**Updated status:** Chapters 05 and 07 require applicable Flutter accessibility Guideline API checks for shared interactive components and materially changed interactive UI. CI adoption and broad baseline coverage remain delivery work.
 
 **Enterprise approach:**
 - **Semantic tests:** Add widget test assertions for `Semantics` labels on interactive elements.
