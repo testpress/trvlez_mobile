@@ -43,7 +43,7 @@ Scaffold(
       const Positioned.fill(child: BrandedBackground()),
       SafeArea(
         child: ListView(
-          padding: context.appSpace.screen,
+          padding: context.space.insetScreen,
           children: const [ProfileHeader(), ProfileForm()],
         ),
       ),
@@ -67,7 +67,7 @@ SizedBox(height: MediaQuery.sizeOf(context).height * 0.72, child: form);
 SingleChildScrollView(
   padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
   child: Padding(
-    padding: context.appSpace.screen,
+    padding: context.space.insetScreen,
     child: form,
   ),
 )
@@ -119,6 +119,4 @@ The keyboard is transient. Do not bake its height into design tokens or infer it
 Use Flutter DevTools layout inspection and debug paint/overflow diagnostics while resolving a constraint issue. The diagnostic question is: *what constraints and insets reach this widget?*—not *what number looked right on the first phone?*
 
 Before acceptance, test the standard device matrix, adverse content states, and the platform/system state that drove the change. Record exact logical viewport and evidence; see the visual-validation chapters.
-
-Use Flutter DevTools layout inspection and debug paint/overflow diagnostics while resolving a constraint issue. The diagnostic question is: *what constraints and insets reach this widget?*—not *what number looked right on the first phone?*
 

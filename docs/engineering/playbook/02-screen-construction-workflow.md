@@ -44,5 +44,3 @@ Exercise long text, large text scale, empty/error/loading states, keyboard open,
 
 Run the checks and capture the evidence required by the visual-validation chapters. Do not claim device parity from a single emulator or declare a change finished because a static screenshot looks correct.
 
-Exercise long text, large text scale, empty/error/loading states, keyboard open, narrow/tall phones, and relevant Android/iOS inset states. Check for `RenderFlex` overflow, hidden taps, clipped text, duplicate safe padding, image distortion, and focus hidden behind a keyboard.
-
