@@ -22,6 +22,31 @@ LayoutBuilder(
 
 Do not add `LayoutBuilder` merely because a widget is visual. If a `Text`, `Row`, `Column`, or image can size naturally under its existing constraints, the simpler tree is usually clearer.
 
+## Typography scaling and reference baseline
+
+The OS text-size label "Normal" is not a measured cross-device typography value. Android and iOS may expose different text-scaling strategies; Android can scale different font sizes nonlinearly. Display-size settings, logical window geometry, locale, font fallback, and an in-app reading preference can also change wrapping and perceived hierarchy.
+
+Follow ADR 0002:
+
+1. The default app behaviour is **Follow system**. Preserve the platform `TextScaler`; do not force a linear 1.0 scale to match a screenshot.
+2. An in-app reading preference is a user accessibility choice. Its label and implementation must explicitly state whether it follows the system, adjusts it relatively, or overrides it absolutely. A system-relative option must not be presented as a universal "Normal" baseline.
+3. Compare an approved reference only under its recorded typography baseline: OS font size, OS display size, in-app preference, locale, app/font version, logical window/insets, and effective `TextScaler` probes.
+4. A reference-baseline comparison evaluates hierarchy, wrapping intent, spacing relationships, readability, touchability, and non-overlap—not identical glyph rasterization or physical pixels.
+
+For a live `BuildContext`, record probes using the actual inherited strategy, not an assumed scalar:
+
+```dart
+final scaler = MediaQuery.textScalerOf(context);
+final probes = <double, double>{
+  12: scaler.scale(12),
+  16: scaler.scale(16),
+  20: scaler.scale(20),
+  24: scaler.scale(24),
+};
+```
+
+Do not add a device-name branch or tune a token until the paired-device worksheet in chapter 06 shows which input differs.
+
 ## Insets and edge-to-edge ownership
 
 Android cut-outs, status/navigation modes, gesture navigation, iOS status/home-indicator regions, and keyboard visibility create different kinds of insets:

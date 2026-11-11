@@ -36,6 +36,7 @@ Copy the template below into the task or PR. Filling it avoids “fixing” a ch
 - **Named fixed dimensions:** (token or private constant + why)
 - **Adverse states to verify:** (loading, empty, error, long content, text 1.3 and 2.0, keyboard open, compact viewport)
 - **Locale/directionality:** (current English-LTR validation; long-string/pseudolocale and RTL evidence when localization is enabled or the change affects text order, alignment, icons, or directional padding)
+- **Typography baseline:** (approved-reference comparison only: OS font/display size, in-app preference, locale, logical viewport, and effective `TextScaler` probes; see ADR 0002 and chapter 06)
 - **Device pair (if discrepancy report):** (e.g. realme 8 vs Pixel 10a — MediaQuery captured before edit? yes/no)
 ```
 
@@ -84,4 +85,5 @@ A material screen or layout change is **not complete** until all of the followin
 - [ ] Emulator/simulator screenshot captured via `scripts/device_matrix.sh` with validated runtime `MediaQuery` metadata and the chapter 05 naming convention.
 - [ ] If the change affects SafeArea ownership, keyboard avoidance, pinned footers, platform typography, or system UI: Android emulator **and** iOS simulator evidence captured.
 - [ ] For a reported device pair (e.g. realme 8 / Pixel 10a): both devices’ `size`, `padding`, `viewPadding`, `viewInsets`, `devicePixelRatio`, `textScaler`, and navigation mode were recorded **before** the layout edit.
+- [ ] For a reported typography discrepancy: both devices’ OS font/display settings, in-app preference, locale, app/font version, and `TextScaler` probes at 12/16/20/24 were recorded before any layout or token change.
 - [ ] No device-specific padding offsets, platform padding branches, or viewport-percentage spacing/fonts were introduced (see chapter 03 forbidden fixes).

@@ -31,6 +31,7 @@ Higher authority does not excuse an unexplained trade-off. When the implementati
 - Inspect the parent’s constraints, scroll owner, and system-inset ownership before changing a child’s `width`, `height`, `Expanded`, `Flexible`, `Positioned`, or `MediaQuery` calculation.
 - Preserve design intent, but never suppress system text scaling, safe-area handling, overflow, or keyboard behaviour solely to match one screenshot.
 - Support the platform's maximum text scale on supported phone configurations. The automated widget-test floor is 2.0x; where a platform exposes a larger accessibility range, validate that maximum on the platform runtime as described in chapters 05–07.
+- Treat a named text-size choice as user preference, not evidence of a common cross-device baseline. Use the recorded typography baseline from ADR 0002 when comparing an approved reference or diagnosing a device pair.
 - Make one layer own each concern: route/shell, page scroll, system insets, keyboard avoidance, theme/token lookup, and feature state must not be independently reimplemented by descendants.
 - Evidence is part of completion. State what was tested and what was not possible to test; emulator evidence and physical-device evidence are different claims.
 

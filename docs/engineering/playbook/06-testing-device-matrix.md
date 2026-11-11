@@ -201,6 +201,8 @@ The current release is English and LTR. Long English strings remain part of ever
 
 Use this **before editing** when investigating a discrepancy between two phones (for example realme 8 vs Pixel 10a). Do not change layout until both columns are filled.
 
+For a typography discrepancy, this worksheet is also the ADR 0002 typography baseline. Record the effective `TextScaler` probes rather than assuming that the two devices' "Normal" labels are equivalent.
+
 ```markdown
 ## Paired MediaQuery — <ScreenName>
 
@@ -208,9 +210,18 @@ Use this **before editing** when investigating a discrepancy between two phones 
 | --- | --- | --- |
 | Model / OS | | |
 | Navigation mode | gesture / 3-button / … | |
+| OS font-size setting | exact setting/percentage | exact setting/percentage |
+| OS display-size setting | exact setting/percentage | exact setting/percentage |
+| In-app reading preference | Follow system / relative / override + value | Follow system / relative / override + value |
+| Locale / text direction | | |
+| App version / font asset revision | | |
 | `size` (`MediaQuery.sizeOf`) | | |
 | `devicePixelRatio` | | |
-| `textScaler` | | |
+| `textScaler` strategy | `runtimeType` / diagnostic value | `runtimeType` / diagnostic value |
+| `textScaler.scale(12)` | | |
+| `textScaler.scale(16)` | | |
+| `textScaler.scale(20)` | | |
+| `textScaler.scale(24)` | | |
 | `padding` | | |
 | `viewPadding` | | |
 | `viewInsets` (keyboard open/closed) | | |
@@ -218,7 +229,8 @@ Use this **before editing** when investigating a discrepancy between two phones 
 | Observed defect | | |
 
 Hypothesis (constraint / inset ownership / scroll / text scale / other):
-Proposed fix level (parent / scroll / SafeArea owner / token — not device offset):
+Conclusion (same baseline / expected accessibility difference / layout defect):
+Proposed fix level (preference semantics / parent / scroll / SafeArea owner / token — not device offset):
 ```
 
 Capture screenshots with `scripts/device_matrix.sh` after recording the table.
@@ -257,6 +269,8 @@ flutter run -d <device_id>
 ### Runtime MediaQuery input for captures
 
 Before capture, record the runtime values from DevTools or a temporary local diagnostic (then remove that diagnostic). Save no identifiers or user data.
+
+The JSON below is the machine-readable screenshot sidecar. It records the capture window and a representative text-scale value. It does **not** replace the ADR 0002 paired typography worksheet: add the OS settings, in-app preference, locale, font/app version, and 12/16/20/24 `TextScaler` probes to the evidence note when parity is claimed or typography differs.
 
 ```json
 {

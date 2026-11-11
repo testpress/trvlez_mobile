@@ -52,6 +52,12 @@ Run these before committing. They are the lowest-cost, highest-frequency check.
 
 Use the smallest assertion set that proves the screen contract. Do not replace behavioural assertions with arbitrary pixel coordinates.
 
+### Typography-baseline validation
+
+For a reference-parity claim or a reported typography discrepancy, capture the ADR 0002 baseline before changing a layout: OS font size, OS display size, in-app reading preference, locale, app/font version, logical window/insets, and `TextScaler` probes at 12/16/20/24 logical pixels. A single reported `textScale` value is not enough because a platform strategy can be nonlinear.
+
+Compare the same screen state under the same recorded baseline. If the baseline inputs differ, first determine whether the observed result is expected accessibility behaviour or a layout defect. Do not compensate by selecting a different in-app preference on one device and then treat the screenshots as parity evidence.
+
 **Test helpers:** Use the deterministic wrappers in `test/helpers/` as the standard path for all widget tests. They provide controlled viewport, theme, text scale, locale, and Riverpod overrides.
 
 - `TestApp` / `testAppWithProviders()` — wraps the widget under test with `MaterialApp`, theme, and optional text scale injection via `MaterialApp.builder` (so the framework's own `MediaQuery` is not overwritten).
@@ -351,6 +357,7 @@ When diagnosing a layout issue on a running app:
 | Shared widget styling | Widget test + golden test (pinned environment; see Layer 3) |
 | Screen layout or inset/keyboard change | Chapter 02 checklist: compact + regular viewports, text 1.0/1.3/2.0, keyboard/inset profile when inputs exist, validated `scripts/device_matrix.sh` capture |
 | Text-bearing screen or control where platform accessibility scale exceeds 2.0 | Standard widget matrix plus target-platform maximum-scale runtime evidence, or an explicit documented product support ceiling |
+| Reference-parity claim or reported typography discrepancy | ADR 0002 paired typography baseline before editing, same-state captures on both devices, and a conclusion that distinguishes baseline difference from a layout defect |
 | SafeArea, keyboard, pinned-footer, platform-typography, or system-UI change | Material screen matrix + validated Android emulator **and** iOS simulator capture |
 | Navigation/input/device-plugin flow | Integration test where feasible + platform runtime evidence |
 | Token/theme-wide change | Component goldens + affected widget tests + documented baseline review |
