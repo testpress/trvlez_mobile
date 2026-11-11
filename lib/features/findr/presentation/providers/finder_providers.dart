@@ -52,8 +52,8 @@ String resolveCountryLabel(String? nationality) {
 /// Provider for the live Finder state and lifecycle operations.
 final finderNotifierProvider =
     AsyncNotifierProvider<FinderNotifier, FinderStateSummary>(
-  () => FinderNotifier(),
-);
+      () => FinderNotifier(),
+    );
 
 /// State notifier managing live Finder status, eligibility, and activation.
 class FinderNotifier extends AsyncNotifier<FinderStateSummary> {
@@ -83,8 +83,10 @@ class FinderNotifier extends AsyncNotifier<FinderStateSummary> {
       state = AsyncData(summary);
       return true;
     } catch (error, stackTrace) {
-      state = AsyncError<FinderStateSummary>(error, stackTrace)
-          .copyWithPrevious(state);
+      state = AsyncError<FinderStateSummary>(
+        error,
+        stackTrace,
+      ).copyWithPrevious(state);
       return false;
     }
   }
@@ -100,8 +102,10 @@ class FinderNotifier extends AsyncNotifier<FinderStateSummary> {
       state = AsyncData(summary);
       return true;
     } catch (error, stackTrace) {
-      state = AsyncError<FinderStateSummary>(error, stackTrace)
-          .copyWithPrevious(state);
+      state = AsyncError<FinderStateSummary>(
+        error,
+        stackTrace,
+      ).copyWithPrevious(state);
       return false;
     }
   }

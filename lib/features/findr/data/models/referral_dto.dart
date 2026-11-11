@@ -200,10 +200,7 @@ class HotelAssociationsResponseDto {
 
 /// DTO for permanent traveler referral share code and landing link.
 class TravelerShareLinkDto {
-  const TravelerShareLinkDto({
-    required this.shareCode,
-    required this.shareUrl,
-  });
+  const TravelerShareLinkDto({required this.shareCode, required this.shareUrl});
 
   factory TravelerShareLinkDto.fromJson(Map<String, dynamic> json) {
     return TravelerShareLinkDto(
@@ -216,10 +213,7 @@ class TravelerShareLinkDto {
   final String shareUrl;
 
   TravelerShareLink toDomain() {
-    return TravelerShareLink(
-      shareCode: shareCode,
-      shareUrl: shareUrl,
-    );
+    return TravelerShareLink(shareCode: shareCode, shareUrl: shareUrl);
   }
 }
 

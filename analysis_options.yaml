@@ -18,6 +18,9 @@ linter:
     prefer_const_constructors: true
     avoid_print: true
     directives_ordering: true
+    cancel_subscriptions: true
+    close_sinks: true
+    always_declare_return_types: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

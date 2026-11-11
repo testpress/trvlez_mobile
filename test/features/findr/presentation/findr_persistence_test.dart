@@ -40,9 +40,7 @@ class _FakeFinderRepository implements FinderRepository {
   }
 
   @override
-  Future<FinderIdentity> updateProfile(
-    FinderProfileUpdateParams params,
-  ) async {
+  Future<FinderIdentity> updateProfile(FinderProfileUpdateParams params) async {
     throw UnimplementedError();
   }
 
@@ -98,60 +96,69 @@ void main() {
       settingsRepo = SettingsRepository(prefs);
     });
 
-    test('findrPortfolioProvider restores joined: true from SettingsRepository on startup', () {
-      prefs.setBool('isFindrActivated', true);
+    test(
+      'findrPortfolioProvider restores joined: true from SettingsRepository on startup',
+      () {
+        prefs.setBool('isFindrActivated', true);
 
-      final container = ProviderContainer(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-        ],
-      );
-      addTearDown(container.dispose);
+        final container = ProviderContainer(
+          overrides: [
+            settingsRepositoryProvider.overrideWithValue(settingsRepo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      final portfolio = container.read(liveFindrPortfolioProvider);
-      expect(portfolio.joined, isTrue);
-    });
+        final portfolio = container.read(liveFindrPortfolioProvider);
+        expect(portfolio.joined, isTrue);
+      },
+    );
 
-    test('findrPortfolioProvider defaults to joined: false when unactivated', () {
-      final container = ProviderContainer(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-        ],
-      );
-      addTearDown(container.dispose);
+    test(
+      'findrPortfolioProvider defaults to joined: false when unactivated',
+      () {
+        final container = ProviderContainer(
+          overrides: [
+            settingsRepositoryProvider.overrideWithValue(settingsRepo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      final portfolio = container.read(liveFindrPortfolioProvider);
-      expect(portfolio.joined, isFalse);
-    });
+        final portfolio = container.read(liveFindrPortfolioProvider);
+        expect(portfolio.joined, isFalse);
+      },
+    );
 
-    test('joinFindr updates in-memory state and persists to SettingsRepository', () async {
-      final fakeRepo = _FakeFinderRepository(
-        currentSummary: const FinderStateSummary(
-          finder: null,
-          eligibility: FinderEligibility(
-            isEligible: true,
-            reason: FinderEligibilityReason.eligible,
+    test(
+      'joinFindr updates in-memory state and persists to SettingsRepository',
+      () async {
+        final fakeRepo = _FakeFinderRepository(
+          currentSummary: const FinderStateSummary(
+            finder: null,
+            eligibility: FinderEligibility(
+              isEligible: true,
+              reason: FinderEligibilityReason.eligible,
+            ),
+            reverificationRequired: false,
           ),
-          reverificationRequired: false,
-        ),
-      );
+        );
 
-      final container = ProviderContainer(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-          finderRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
-      );
-      addTearDown(container.dispose);
+        final container = ProviderContainer(
+          overrides: [
+            settingsRepositoryProvider.overrideWithValue(settingsRepo),
+            finderRepositoryProvider.overrideWithValue(fakeRepo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      expect(container.read(liveFindrPortfolioProvider).joined, isFalse);
-      expect(settingsRepo.isFindrActivated(), isFalse);
+        expect(container.read(liveFindrPortfolioProvider).joined, isFalse);
+        expect(settingsRepo.isFindrActivated(), isFalse);
 
-      await container.read(findrPortfolioProvider.notifier).joinFindr();
+        await container.read(findrPortfolioProvider.notifier).joinFindr();
 
-      expect(container.read(liveFindrPortfolioProvider).joined, isTrue);
-      expect(settingsRepo.isFindrActivated(), isTrue);
-    });
+        expect(container.read(liveFindrPortfolioProvider).joined, isTrue);
+        expect(settingsRepo.isFindrActivated(), isTrue);
+      },
+    );
 
     testWidgets(
       'HomeScreen retains active state (Recommend a hotel) when clearing the app and returning',
@@ -207,7 +214,9 @@ void main() {
         await tester.pumpWidget(
           ProviderScope(
             overrides: [
-              settingsRepositoryProvider.overrideWithValue(restartedSettingsRepo),
+              settingsRepositoryProvider.overrideWithValue(
+                restartedSettingsRepo,
+              ),
               finderRepositoryProvider.overrideWithValue(fakeRepo),
               travelerVerificationStateProvider.overrideWithValue(
                 TravelerVerificationState.verified,
@@ -225,44 +234,49 @@ void main() {
       },
     );
 
-    test('findrPortfolioProvider reactively syncs with live backend finderNotifierProvider', () async {
-      final fakeRepo = _FakeFinderRepository(
-        currentSummary: const FinderStateSummary(
-          finder: null,
-          eligibility: FinderEligibility(
-            isEligible: true,
-            reason: FinderEligibilityReason.eligible,
-          ),
-          reverificationRequired: false,
-        ),
-      );
-
-      final container = ProviderContainer(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-          finderRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      // Initially false
-      expect(container.read(liveFindrPortfolioProvider).joined, isFalse);
-
-      // Backend activates
-      await container.read(finderNotifierProvider.notifier).activate(
-            const FinderActivationParams(
-              addressLine1: '10 Downing St',
-              city: 'London',
-              postalCode: 'SW1A 2AA',
-              residentialCountryCode: 'GB',
-              agreementVersion: '2026-v1.0',
-              agreementAccepted: true,
+    test(
+      'findrPortfolioProvider reactively syncs with live backend finderNotifierProvider',
+      () async {
+        final fakeRepo = _FakeFinderRepository(
+          currentSummary: const FinderStateSummary(
+            finder: null,
+            eligibility: FinderEligibility(
+              isEligible: true,
+              reason: FinderEligibilityReason.eligible,
             ),
-          );
+            reverificationRequired: false,
+          ),
+        );
 
-      // Expect liveFindrPortfolioProvider to be synced
-      expect(container.read(liveFindrPortfolioProvider).joined, isTrue);
-      expect(settingsRepo.isFindrActivated(), isTrue);
-    });
+        final container = ProviderContainer(
+          overrides: [
+            settingsRepositoryProvider.overrideWithValue(settingsRepo),
+            finderRepositoryProvider.overrideWithValue(fakeRepo),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        // Initially false
+        expect(container.read(liveFindrPortfolioProvider).joined, isFalse);
+
+        // Backend activates
+        await container
+            .read(finderNotifierProvider.notifier)
+            .activate(
+              const FinderActivationParams(
+                addressLine1: '10 Downing St',
+                city: 'London',
+                postalCode: 'SW1A 2AA',
+                residentialCountryCode: 'GB',
+                agreementVersion: '2026-v1.0',
+                agreementAccepted: true,
+              ),
+            );
+
+        // Expect liveFindrPortfolioProvider to be synced
+        expect(container.read(liveFindrPortfolioProvider).joined, isTrue);
+        expect(settingsRepo.isFindrActivated(), isTrue);
+      },
+    );
   });
 }

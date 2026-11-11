@@ -87,4 +87,3 @@ class AttributionStorage {
 final attributionStorageProvider = Provider<AttributionStorage>((ref) {
   return AttributionStorage();
 });
-

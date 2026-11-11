@@ -65,9 +65,8 @@ class FindrProgrammeScreen extends ConsumerWidget {
           // ── Asynchronous Body ──────────────────────────────────────────
           Expanded(
             child: finderAsync.when(
-              loading: () => const LoadingView(
-                message: 'Checking Findr status...',
-              ),
+              loading: () =>
+                  const LoadingView(message: 'Checking Findr status...'),
               error: (error, _) => ErrorView(
                 message: error.toString(),
                 onRetry: () =>
@@ -125,7 +124,6 @@ class _FinderContent extends ConsumerWidget {
                   onActionCompleted: () =>
                       ref.read(finderNotifierProvider.notifier).refresh(),
                 )
-
               // 2. Not Activated but Eligible: Prompt Onboarding
               else if (!isActivated && !isSuspendedOrTerminated)
                 FindrNotJoinedSection(
@@ -134,7 +132,6 @@ class _FinderContent extends ConsumerWidget {
                     ref.read(finderNotifierProvider.notifier).refresh();
                   },
                 )
-
               // 3. Activated or Retained Suspended/Terminated State
               else ...[
                 FindrPortfolioSection(

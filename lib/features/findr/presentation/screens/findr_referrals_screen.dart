@@ -79,9 +79,8 @@ class _FindrReferralsScreenState extends ConsumerState<FindrReferralsScreen> {
           // Body
           Expanded(
             child: portfolioAsync.when(
-              loading: () => const LoadingView(
-                message: 'Loading recommendations...',
-              ),
+              loading: () =>
+                  const LoadingView(message: 'Loading recommendations...'),
               error: (error, _) => ErrorView(
                 message: error.toString(),
                 onRetry: () =>
@@ -121,10 +120,12 @@ class _ReferralsContent extends StatelessWidget {
 
     final allReferrals = portfolio.hotelReferrals;
     final liveCount = allReferrals.where((referral) => referral.isLive).length;
-    final pendingCount =
-        allReferrals.where((referral) => referral.isPending).length;
-    final outreachCount =
-        allReferrals.where((referral) => referral.isOutreach).length;
+    final pendingCount = allReferrals
+        .where((referral) => referral.isPending)
+        .length;
+    final outreachCount = allReferrals
+        .where((referral) => referral.isOutreach)
+        .length;
 
     final filteredList = switch (selectedFilter) {
       _ReferralFilter.all => allReferrals,
@@ -171,8 +172,10 @@ class _ReferralsContent extends StatelessWidget {
                         SizedBox(width: space.inlineIconLabel),
                         ReferralFilterChip(
                           label: 'Outreach ($outreachCount)',
-                          isSelected: selectedFilter == _ReferralFilter.outreach,
-                          onTap: () => onFilterChanged(_ReferralFilter.outreach),
+                          isSelected:
+                              selectedFilter == _ReferralFilter.outreach,
+                          onTap: () =>
+                              onFilterChanged(_ReferralFilter.outreach),
                         ),
                       ],
                     ),

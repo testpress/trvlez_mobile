@@ -23,8 +23,9 @@ void main() {
       );
     }
 
-    testWidgets('renders Market Capacity Reached with default message',
-        (tester) async {
+    testWidgets('renders Market Capacity Reached with default message', (
+      tester,
+    ) async {
       const eligibility = FinderEligibility(
         isEligible: false,
         reason: FinderEligibilityReason.marketLimitReached,
@@ -42,12 +43,14 @@ void main() {
       );
     });
 
-    testWidgets('renders dynamic backend message when present in eligibility',
-        (tester) async {
+    testWidgets('renders dynamic backend message when present in eligibility', (
+      tester,
+    ) async {
       const eligibility = FinderEligibility(
         isEligible: false,
         reason: FinderEligibilityReason.marketLimitReached,
-        message: 'The maximum number of Finders for market GB has been reached.',
+        message:
+            'The maximum number of Finders for market GB has been reached.',
       );
 
       await tester.pumpWidget(buildWidget(eligibility: eligibility));
@@ -62,12 +65,14 @@ void main() {
       );
     });
 
-    testWidgets('explicit message parameter overrides eligibility message',
-        (tester) async {
+    testWidgets('explicit message parameter overrides eligibility message', (
+      tester,
+    ) async {
       const eligibility = FinderEligibility(
         isEligible: false,
         reason: FinderEligibilityReason.marketLimitReached,
-        message: 'The maximum number of Finders for market GB has been reached.',
+        message:
+            'The maximum number of Finders for market GB has been reached.',
       );
 
       await tester.pumpWidget(

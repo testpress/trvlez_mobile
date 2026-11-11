@@ -56,7 +56,8 @@ class ChipDataScreen extends ConsumerWidget {
     final nameParts = [givenNames, surname].where((s) => s.isNotEmpty).toList();
     final displayName = nameParts.isNotEmpty ? nameParts.join(' ') : '—';
 
-    final docNumber = parsedMrz?.documentNumber ??
+    final docNumber =
+        parsedMrz?.documentNumber ??
         state.extractedDocumentNumber ??
         mrz?.documentNumber ??
         '—';

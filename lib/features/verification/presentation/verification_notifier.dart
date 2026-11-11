@@ -557,8 +557,9 @@ class VerificationNotifier extends Notifier<VerificationState> {
 
   /// Starts polling for a verification job with proper state management.
   void _startPollingForJob(String jobId) {
-    final polling = _pollingService ??=
-        VerificationPollingService(repository: ref.read(verificationRepositoryProvider));
+    final polling = _pollingService ??= VerificationPollingService(
+      repository: ref.read(verificationRepositoryProvider),
+    );
     polling.startPolling(
       jobId: jobId,
       onUpdate: (pollingResult, domainStatus) {

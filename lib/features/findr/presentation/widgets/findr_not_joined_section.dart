@@ -6,10 +6,7 @@ import 'package:trvlez_mobile/core/widgets/findr_card.dart';
 
 /// Pre-onboarding marketing and call-to-action section explaining the Findr programme.
 class FindrNotJoinedSection extends StatelessWidget {
-  const FindrNotJoinedSection({
-    super.key,
-    required this.onActivate,
-  });
+  const FindrNotJoinedSection({super.key, required this.onActivate});
 
   final VoidCallback onActivate;
 
@@ -99,11 +96,7 @@ class _BenefitTile extends StatelessWidget {
                 color: colors.surfaceSubtle,
                 borderRadius: shape.radiusControlSm,
               ),
-              child: Icon(
-                icon,
-                size: sizes.iconSm,
-                color: colors.brandPrimary,
-              ),
+              child: Icon(icon, size: sizes.iconSm, color: colors.brandPrimary),
             ),
             SizedBox(width: space.inlineIconLabel),
             Expanded(

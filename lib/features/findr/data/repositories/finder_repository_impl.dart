@@ -103,7 +103,9 @@ class FinderRepositoryImpl implements FinderRepository {
   ) async {
     try {
       final requestDto = HotelReferralCreateRequestDto.fromDomain(params);
-      final responseDto = await remoteDataSource.createHotelReferral(requestDto);
+      final responseDto = await remoteDataSource.createHotelReferral(
+        requestDto,
+      );
       return responseDto.referral.toDomain();
     } on DioException catch (dioException) {
       throw mapDioException(dioException);

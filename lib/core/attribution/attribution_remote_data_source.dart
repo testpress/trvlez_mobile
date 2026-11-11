@@ -32,6 +32,5 @@ class AttributionRemoteDataSource {
 /// Provider for [AttributionRemoteDataSource].
 final attributionRemoteDataSourceProvider =
     Provider<AttributionRemoteDataSource>((ref) {
-  return AttributionRemoteDataSource(dio: ref.watch(dioProvider));
-});
-
+      return AttributionRemoteDataSource(dio: ref.watch(dioProvider));
+    });

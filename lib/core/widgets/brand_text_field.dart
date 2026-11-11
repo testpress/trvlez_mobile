@@ -112,9 +112,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
             isDense: false,
             filled: true,
             fillColor: colors.brandFieldBackground,
-            constraints: BoxConstraints(
-              minHeight: sizes.controlXl,
-            ),
+            constraints: BoxConstraints(minHeight: sizes.controlXl),
             border: OutlineInputBorder(
               borderRadius: shape.radiusPill,
               borderSide: BorderSide.none,

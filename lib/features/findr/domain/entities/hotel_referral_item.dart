@@ -72,14 +72,20 @@ class HotelReferralItem {
   bool get isExpired => status == 'expired';
 
   String get location {
-    final parts =
-        [city, countryCode].where((part) => part != null && part.isNotEmpty);
+    final parts = [
+      city,
+      countryCode,
+    ].where((part) => part != null && part.isNotEmpty);
     return parts.isEmpty ? 'Location on file' : parts.join(', ');
   }
 
   String get fullAddress {
-    final parts = [streetAddress, city, postalCode, countryCode]
-        .where((part) => part != null && part.isNotEmpty);
+    final parts = [
+      streetAddress,
+      city,
+      postalCode,
+      countryCode,
+    ].where((part) => part != null && part.isNotEmpty);
     return parts.isEmpty ? 'Address on file' : parts.join(', ');
   }
 

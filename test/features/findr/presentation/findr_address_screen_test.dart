@@ -7,7 +7,6 @@ import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_address_screen.dart';
 
-
 class _CapturingFinderNotifier extends FinderNotifier {
   FinderActivationParams? capturedParams;
   bool shouldSucceed = true;
@@ -62,8 +61,9 @@ void main() {
       );
     }
 
-    testWidgets('renders UK locked market notice and required address inputs',
-        (tester) async {
+    testWidgets('renders UK locked market notice and required address inputs', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -100,8 +100,9 @@ void main() {
       expect(capturingNotifier.capturedParams, isNull);
     });
 
-    testWidgets('submits UK address and activates Findr when valid',
-        (tester) async {
+    testWidgets('submits UK address and activates Findr when valid', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -125,16 +126,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(capturingNotifier.capturedParams, isNotNull);
-      expect(capturingNotifier.capturedParams?.addressLine1,
-          '10 Downing Street');
+      expect(
+        capturingNotifier.capturedParams?.addressLine1,
+        '10 Downing Street',
+      );
       expect(capturingNotifier.capturedParams?.city, 'London');
       expect(capturingNotifier.capturedParams?.postalCode, 'SW1A 2AA');
       expect(capturingNotifier.capturedParams?.residentialCountryCode, 'GB');
       expect(capturingNotifier.capturedParams?.agreementAccepted, isTrue);
     });
 
-    testWidgets('adapts safely to status bar padding and 1.5x text scale',
-        (tester) async {
+    testWidgets('adapts safely to status bar padding and 1.5x text scale', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -164,4 +168,3 @@ void main() {
     });
   });
 }
-

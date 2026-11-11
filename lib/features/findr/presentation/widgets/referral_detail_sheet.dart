@@ -179,4 +179,3 @@ class _ReferralDetailRow extends StatelessWidget {
     );
   }
 }
-

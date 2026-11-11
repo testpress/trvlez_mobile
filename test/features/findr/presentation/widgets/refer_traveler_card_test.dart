@@ -5,8 +5,9 @@ import 'package:trvlez_mobile/features/findr/presentation/widgets/refer_traveler
 
 void main() {
   group('ReferTravelerCard Widget Tests', () {
-    testWidgets('renders permanent share code and copy/share buttons',
-        (tester) async {
+    testWidgets('renders permanent share code and copy/share buttons', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.lightTheme,
@@ -26,8 +27,9 @@ void main() {
       expect(find.text('Share'), findsOneWidget);
     });
 
-    testWidgets('tapping Copy Link triggers clipboard copy and toast',
-        (tester) async {
+    testWidgets('tapping Copy Link triggers clipboard copy and toast', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.lightTheme,

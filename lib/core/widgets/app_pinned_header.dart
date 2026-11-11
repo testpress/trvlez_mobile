@@ -29,7 +29,7 @@ class AppPinnedHeader extends StatelessWidget {
 
     final effectiveTop =
         (paddingTop ?? (topInset > 0 ? space.stackItem : space.insetCard.top)) +
-            topInset;
+        topInset;
     final effectiveBottom = paddingBottom ?? space.stackItem;
     final effectiveHorizontal = horizontalPadding ?? space.insetCard.left;
 
@@ -54,12 +54,9 @@ class AppPinnedHeader extends StatelessWidget {
         effectiveBottom,
       ),
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: sizes.controlLg,
-        ),
+        constraints: BoxConstraints(minHeight: sizes.controlLg),
         child: child,
       ),
     );
   }
 }
-

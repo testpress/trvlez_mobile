@@ -74,7 +74,8 @@ class BrandInfoCard extends StatelessWidget {
           if (currentHeading != null) ...[
             Text(
               currentHeading,
-              style: headingStyle ??
+              style:
+                  headingStyle ??
                   context.text.labelMedium?.copyWith(
                     fontWeight: TypeScale.semiBold,
                     color: colors.brandOnSurface,

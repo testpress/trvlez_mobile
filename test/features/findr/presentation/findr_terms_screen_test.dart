@@ -5,7 +5,6 @@ import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_terms_screen.dart';
 
-
 void main() {
   group('FindrTermsScreen Widget Tests', () {
     const testTerms = FinderTerms(
@@ -27,9 +26,7 @@ void main() {
 
     Widget buildScreen({FinderTerms terms = testTerms}) {
       return ProviderScope(
-        overrides: [
-          finderTermsProvider.overrideWithValue(terms),
-        ],
+        overrides: [finderTermsProvider.overrideWithValue(terms)],
         child: MaterialApp(
           theme: AppTheme.lightTheme,
           home: const FindrTermsScreen(),
@@ -37,8 +34,9 @@ void main() {
       );
     }
 
-    testWidgets('renders terms header, summary, and sections correctly',
-        (tester) async {
+    testWidgets('renders terms header, summary, and sections correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
 
@@ -51,20 +49,26 @@ void main() {
       expect(find.text('1.0'), findsOneWidget);
     });
 
-    testWidgets('acceptance checkbox is unchecked by default and button is disabled',
-        (tester) async {
-      await tester.pumpWidget(buildScreen());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'acceptance checkbox is unchecked by default and button is disabled',
+      (tester) async {
+        await tester.pumpWidget(buildScreen());
+        await tester.pumpAndSettle();
 
-      final buttonFinder = find.widgetWithText(ElevatedButton, 'Continue to Address');
-      if (buttonFinder.evaluate().isNotEmpty) {
-        final button = tester.widget<ElevatedButton>(buttonFinder);
-        expect(button.onPressed, isNull);
-      }
-    });
+        final buttonFinder = find.widgetWithText(
+          ElevatedButton,
+          'Continue to Address',
+        );
+        if (buttonFinder.evaluate().isNotEmpty) {
+          final button = tester.widget<ElevatedButton>(buttonFinder);
+          expect(button.onPressed, isNull);
+        }
+      },
+    );
 
-    testWidgets('checking acceptance checkbox enables Continue button',
-        (tester) async {
+    testWidgets('checking acceptance checkbox enables Continue button', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
 
@@ -78,42 +82,44 @@ void main() {
       final checkbox = tester.widget<Checkbox>(checkboxFinder);
       expect(checkbox.value, isTrue);
 
-      final buttonFinder = find.widgetWithText(ElevatedButton, 'Continue to Address');
+      final buttonFinder = find.widgetWithText(
+        ElevatedButton,
+        'Continue to Address',
+      );
       if (buttonFinder.evaluate().isNotEmpty) {
         final button = tester.widget<ElevatedButton>(buttonFinder);
         expect(button.onPressed, isNotNull);
       }
     });
 
-    testWidgets('header and content adapt safely to status bar padding and 1.5x text scale',
-        (tester) async {
-      tester.view.physicalSize = const Size(400, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets(
+      'header and content adapt safely to status bar padding and 1.5x text scale',
+      (tester) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            finderTermsProvider.overrideWithValue(testTerms),
-          ],
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const MediaQuery(
-              data: MediaQueryData(
-                textScaler: TextScaler.linear(1.5),
-                padding: EdgeInsets.only(top: 48.0),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [finderTermsProvider.overrideWithValue(testTerms)],
+            child: MaterialApp(
+              theme: AppTheme.lightTheme,
+              home: const MediaQuery(
+                data: MediaQueryData(
+                  textScaler: TextScaler.linear(1.5),
+                  padding: EdgeInsets.only(top: 48.0),
+                ),
+                child: FindrTermsScreen(),
               ),
-              child: FindrTermsScreen(),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('Terms & Conditions'), findsOneWidget);
-    });
+        expect(tester.takeException(), isNull);
+        expect(find.text('Terms & Conditions'), findsOneWidget);
+      },
+    );
   });
 }
-

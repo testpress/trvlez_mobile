@@ -103,7 +103,9 @@ void main() {
       expect(find.text('Eden Roc'), findsOneWidget);
     });
 
-    testWidgets('filtering by Live shows only converted hotels', (tester) async {
+    testWidgets('filtering by Live shows only converted hotels', (
+      tester,
+    ) async {
       final portfolio = FindrPortfolio(
         joined: true,
         earned: '£0.00',
@@ -166,10 +168,7 @@ void main() {
       await tester.pumpWidget(createScreen(emptyPortfolio));
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('No recommendations in this category'),
-        findsOneWidget,
-      );
+      expect(find.text('No recommendations in this category'), findsOneWidget);
       expect(find.text('Recommend a hotel'), findsOneWidget);
     });
   });

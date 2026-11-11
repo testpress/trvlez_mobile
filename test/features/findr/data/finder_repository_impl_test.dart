@@ -49,7 +49,8 @@ class MockFinderRemoteDataSource extends Fake
 
   @override
   Future<FinderDto> activateFinder(
-      FinderActivationRequestDto requestDto) async {
+    FinderActivationRequestDto requestDto,
+  ) async {
     lastActivationDto = requestDto;
     if (shouldThrow) {
       throw DioException(
@@ -113,7 +114,6 @@ void main() {
     repository = FinderRepositoryImpl(remoteDataSource: mockDataSource);
   });
 
-
   group('FinderRepositoryImpl Tests', () {
     test('getFinderStatus returns domain model successfully', () async {
       final summary = await repository.getFinderStatus();
@@ -135,24 +135,26 @@ void main() {
       );
     });
 
-    test('activateFinder forwards request DTO and returns domain entity',
-        () async {
-      const params = FinderActivationParams(
-        addressLine1: '10 Downing St',
-        city: 'London',
-        postalCode: 'SW1A 2AA',
-        residentialCountryCode: 'GB',
-        agreementVersion: '1.0',
-        agreementAccepted: true,
-      );
+    test(
+      'activateFinder forwards request DTO and returns domain entity',
+      () async {
+        const params = FinderActivationParams(
+          addressLine1: '10 Downing St',
+          city: 'London',
+          postalCode: 'SW1A 2AA',
+          residentialCountryCode: 'GB',
+          agreementVersion: '1.0',
+          agreementAccepted: true,
+        );
 
-      final identity = await repository.activateFinder(params);
+        final identity = await repository.activateFinder(params);
 
-      expect(identity.id, 'finder-activated-1');
-      expect(identity.status, FinderStatusType.active);
-      expect(mockDataSource.lastActivationDto?.addressLine1, '10 Downing St');
-      expect(mockDataSource.lastActivationDto?.agreementAccepted, isTrue);
-    });
+        expect(identity.id, 'finder-activated-1');
+        expect(identity.status, FinderStatusType.active);
+        expect(mockDataSource.lastActivationDto?.addressLine1, '10 Downing St');
+        expect(mockDataSource.lastActivationDto?.agreementAccepted, isTrue);
+      },
+    );
 
     test('updateProfile forwards update parameters', () async {
       const params = FinderProfileUpdateParams(
@@ -174,4 +176,3 @@ void main() {
     });
   });
 }
-

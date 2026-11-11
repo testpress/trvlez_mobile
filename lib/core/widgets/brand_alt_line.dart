@@ -71,7 +71,8 @@ class BrandAltLine extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: underlineColor ?? context.colors.brandUnderline,
+                          color:
+                              underlineColor ?? context.colors.brandUnderline,
                           width: shape.borderDefault,
                         ),
                       ),

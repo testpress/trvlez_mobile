@@ -285,7 +285,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       } else if (findrCardState == FindrState.notJoined) {
                         showJoinFindrSheet(context).then((joined) {
                           if (joined == true) {
-                            ref.read(findrPortfolioProvider.notifier).joinFindr();
+                            ref
+                                .read(findrPortfolioProvider.notifier)
+                                .joinFindr();
                             ref.read(finderNotifierProvider.notifier).refresh();
                           }
                         });

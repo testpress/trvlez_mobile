@@ -48,9 +48,12 @@ class _FakeFinderRemoteDataSource implements FinderRemoteDataSource {
   );
 
   HotelAssociationsResponseDto associatedHotels =
-      const HotelAssociationsResponseDto(items: [
-    {'id': 'assoc-1'},
-  ], count: 1);
+      const HotelAssociationsResponseDto(
+        items: [
+          {'id': 'assoc-1'},
+        ],
+        count: 1,
+      );
 
   TravelerShareLinkDto travelerShareLink = const TravelerShareLinkDto(
     shareCode: 'TRV-SHARE-99',
@@ -67,7 +70,9 @@ class _FakeFinderRemoteDataSource implements FinderRemoteDataSource {
   }
 
   @override
-  Future<FinderDto> activateFinder(FinderActivationRequestDto requestDto) async {
+  Future<FinderDto> activateFinder(
+    FinderActivationRequestDto requestDto,
+  ) async {
     _checkThrow();
     return finderStatus.finder!;
   }
@@ -144,46 +149,53 @@ void main() {
 
     setUp(() {
       fakeRemoteDataSource = _FakeFinderRemoteDataSource();
-      repository = FinderRepositoryImpl(
-        remoteDataSource: fakeRemoteDataSource,
-      );
+      repository = FinderRepositoryImpl(remoteDataSource: fakeRemoteDataSource);
     });
 
-    test('getFindrPortfolio returns empty when user is not active Finder', () async {
-      fakeRemoteDataSource.finderStatus = const FinderStatusResponseDto(
-        finder: null,
-        eligibility: FinderEligibilityDto(isEligible: false, reason: 'unverified'),
-        reverificationRequired: false,
-      );
+    test(
+      'getFindrPortfolio returns empty when user is not active Finder',
+      () async {
+        fakeRemoteDataSource.finderStatus = const FinderStatusResponseDto(
+          finder: null,
+          eligibility: FinderEligibilityDto(
+            isEligible: false,
+            reason: 'unverified',
+          ),
+          reverificationRequired: false,
+        );
 
-      final portfolio = await repository.getFindrPortfolio();
+        final portfolio = await repository.getFindrPortfolio();
 
-      expect(portfolio.joined, isFalse);
-      expect(portfolio.joinedCount, 0);
-      expect(portfolio.inReviewCount, 0);
-      expect(portfolio.earned, '£0.00');
-      expect(portfolio.dueAmount, '£0.00');
-      expect(portfolio.dueDate, '—');
-      expect(portfolio.hotelReferrals, isEmpty);
-      expect(portfolio.payouts, isEmpty);
-    });
+        expect(portfolio.joined, isFalse);
+        expect(portfolio.joinedCount, 0);
+        expect(portfolio.inReviewCount, 0);
+        expect(portfolio.earned, '£0.00');
+        expect(portfolio.dueAmount, '£0.00');
+        expect(portfolio.dueDate, '—');
+        expect(portfolio.hotelReferrals, isEmpty);
+        expect(portfolio.payouts, isEmpty);
+      },
+    );
 
-    test('getFindrPortfolio aggregates real backend counts and share link', () async {
-      final portfolio = await repository.getFindrPortfolio();
+    test(
+      'getFindrPortfolio aggregates real backend counts and share link',
+      () async {
+        final portfolio = await repository.getFindrPortfolio();
 
-      expect(portfolio.joined, isTrue);
-      expect(portfolio.joinedCount, 1);
-      expect(portfolio.inReviewCount, 1);
-      expect(portfolio.earned, '£0.00'); // Zero hardcoded values!
-      expect(portfolio.dueAmount, '£0.00');
-      expect(portfolio.dueDate, '—');
-      expect(portfolio.shareCode, 'TRV-SHARE-99');
-      expect(portfolio.shareUrl, 'https://trvlez.com/r/TRV-SHARE-99');
-      expect(portfolio.hotelReferrals.length, 2);
-      expect(portfolio.hotelReferrals[0].hotelName, 'Live Hotel');
-      expect(portfolio.hotelReferrals[1].hotelName, 'Pending Hotel');
-      expect(portfolio.payouts, isEmpty);
-    });
+        expect(portfolio.joined, isTrue);
+        expect(portfolio.joinedCount, 1);
+        expect(portfolio.inReviewCount, 1);
+        expect(portfolio.earned, '£0.00'); // Zero hardcoded values!
+        expect(portfolio.dueAmount, '£0.00');
+        expect(portfolio.dueDate, '—');
+        expect(portfolio.shareCode, 'TRV-SHARE-99');
+        expect(portfolio.shareUrl, 'https://trvlez.com/r/TRV-SHARE-99');
+        expect(portfolio.hotelReferrals.length, 2);
+        expect(portfolio.hotelReferrals[0].hotelName, 'Live Hotel');
+        expect(portfolio.hotelReferrals[1].hotelName, 'Pending Hotel');
+        expect(portfolio.payouts, isEmpty);
+      },
+    );
 
     test('createHotelReferral succeeds and returns domain entity', () async {
       const params = HotelReferralCreateParams(
@@ -202,31 +214,34 @@ void main() {
       expect(item.statusLabel, 'Invited');
     });
 
-    test('maps 409 conflict to ValidationException with backend message', () async {
-      fakeRemoteDataSource.shouldThrow = true;
-      fakeRemoteDataSource.statusCode = 409;
-      fakeRemoteDataSource.errorMessage =
-          'This hotel is already under an active invitation or 180-day opt-out cooldown.';
+    test(
+      'maps 409 conflict to ValidationException with backend message',
+      () async {
+        fakeRemoteDataSource.shouldThrow = true;
+        fakeRemoteDataSource.statusCode = 409;
+        fakeRemoteDataSource.errorMessage =
+            'This hotel is already under an active invitation or 180-day opt-out cooldown.';
 
-      const params = HotelReferralCreateParams(
-        hotelName: 'Collided Hotel',
-        streetAddress: '12 Beach Rd',
-        city: 'Nice',
-        postalCode: '06000',
-        countryCode: 'FR',
-        targetEmail: 'gm@collided.fr',
-      );
+        const params = HotelReferralCreateParams(
+          hotelName: 'Collided Hotel',
+          streetAddress: '12 Beach Rd',
+          city: 'Nice',
+          postalCode: '06000',
+          countryCode: 'FR',
+          targetEmail: 'gm@collided.fr',
+        );
 
-      expect(
-        () => repository.createHotelReferral(params),
-        throwsA(
-          isA<ValidationException>().having(
-            (e) => e.message,
-            'message',
-            contains('180-day opt-out cooldown'),
+        expect(
+          () => repository.createHotelReferral(params),
+          throwsA(
+            isA<ValidationException>().having(
+              (e) => e.message,
+              'message',
+              contains('180-day opt-out cooldown'),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   });
 }

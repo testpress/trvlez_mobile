@@ -193,8 +193,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
         Expanded(
           child: Center(
             child: Container(
-              constraints:
-                  BoxConstraints(maxWidth: sizes.containerViewfinder),
+              constraints: BoxConstraints(maxWidth: sizes.containerViewfinder),
               child: AspectRatio(
                 aspectRatio: 1 / 1.05,
                 child: ClipRRect(
@@ -216,12 +215,17 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
                               Builder(
                                 builder: (context) {
                                   final preview = cam.value.previewSize;
-                                  final isPortrait = viewportSize.width < viewportSize.height;
+                                  final isPortrait =
+                                      viewportSize.width < viewportSize.height;
                                   final previewWidth = preview != null
-                                      ? (isPortrait ? preview.height : preview.width)
+                                      ? (isPortrait
+                                            ? preview.height
+                                            : preview.width)
                                       : viewportSize.width;
                                   final previewHeight = preview != null
-                                      ? (isPortrait ? preview.width : preview.height)
+                                      ? (isPortrait
+                                            ? preview.width
+                                            : preview.height)
                                       : viewportSize.height;
 
                                   return ClipRect(

@@ -57,10 +57,7 @@ void main() {
           find.text('Both the photo page and the code lines.'),
           findsOneWidget,
         );
-        expect(
-          find.text('Hold steady ~20 cm away'),
-          findsOneWidget,
-        );
+        expect(find.text('Hold steady ~20 cm away'), findsOneWidget);
         expect(
           find.text('Keep the dashed box over the bottom 2 lines of text'),
           findsOneWidget,

@@ -98,9 +98,7 @@ class _VerificationFinalCheckScreenState
     final hasLocalDocuments =
         state.capturedImage != null || state.capturedVideo != null;
     if (hasLocalDocuments) {
-      ref
-          .read(verificationNotifierProvider.notifier)
-          .submitVerificationAsync();
+      ref.read(verificationNotifierProvider.notifier).submitVerificationAsync();
     } else {
       ref.read(verificationNotifierProvider.notifier).reconcileWithBackend();
     }
@@ -115,7 +113,8 @@ class _VerificationFinalCheckScreenState
   void _handleFailure(VerificationState state) {
     if (_hasNavigated || !mounted) return;
     _hasNavigated = true;
-    final status = state.verificationStatus ??
+    final status =
+        state.verificationStatus ??
         ref.read(verificationStatusProvider).valueOrNull;
     final (title, route, label) = _resolveFailedStep(status?.failedStep);
     context.pushReplacement(
@@ -171,8 +170,6 @@ class _VerificationFinalCheckScreenState
         _handleFailure(next);
       }
     });
-
-
 
     void navigateExit() {
       context.go(AppRoutes.home);
@@ -283,7 +280,8 @@ class _VerificationFinalCheckScreenState
                   Builder(
                     builder: (context) {
                       final errorMsg = state.errorMessage?.toLowerCase() ?? '';
-                      final isNoActiveSession = errorMsg.contains('session') ||
+                      final isNoActiveSession =
+                          errorMsg.contains('session') ||
                           errorMsg.contains('active verification');
                       final canRetry = !isNoActiveSession;
 
@@ -296,7 +294,9 @@ class _VerificationFinalCheckScreenState
                                 variant: AppButtonVariant.brandOutline,
                                 onPressed: () {
                                   ref
-                                      .read(verificationNotifierProvider.notifier)
+                                      .read(
+                                        verificationNotifierProvider.notifier,
+                                      )
                                       .reset();
                                   context.go(AppRoutes.passportCapture);
                                 },
@@ -309,7 +309,9 @@ class _VerificationFinalCheckScreenState
                                 variant: AppButtonVariant.brandWhite,
                                 onPressed: () {
                                   ref
-                                      .read(verificationNotifierProvider.notifier)
+                                      .read(
+                                        verificationNotifierProvider.notifier,
+                                      )
                                       .submitVerificationAsync();
                                 },
                               ),
@@ -333,8 +335,7 @@ class _VerificationFinalCheckScreenState
               ),
             ),
           ],
-          if (state.phase != VerificationPhase.error)
-            const Spacer(flex: 1),
+          if (state.phase != VerificationPhase.error) const Spacer(flex: 1),
         ],
         foot: [
           Center(
@@ -380,6 +381,6 @@ class _VerificationFinalCheckScreenState
           ),
         ],
       ),
-  );
-}
+    );
+  }
 }

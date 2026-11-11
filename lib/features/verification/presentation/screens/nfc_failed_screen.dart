@@ -179,143 +179,143 @@ class NfcFailedScreen extends ConsumerWidget {
         helpLine: false,
         isScrollable: true,
         onBack: navigateExit,
-      body: [
-        SizedBox(height: space.stackSection),
-        Center(
-          child: Container(
-            width: sizes.pulseIndicator,
-            height: sizes.pulseIndicator,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colors.brandOnSurface,
-            ),
-            child: Icon(
-              AppIcons.refresh,
-              size: sizes.iconXl,
-              color: colors.brandPrimary,
+        body: [
+          SizedBox(height: space.stackSection),
+          Center(
+            child: Container(
+              width: sizes.pulseIndicator,
+              height: sizes.pulseIndicator,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors.brandOnSurface,
+              ),
+              child: Icon(
+                AppIcons.refresh,
+                size: sizes.iconXl,
+                color: colors.brandPrimary,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: space.stackFormField),
-        Text(
-          'One step needs redoing',
-          textAlign: TextAlign.center,
-          style: context.text.headlineSmall?.copyWith(
-            fontWeight: TypeScale.bold,
-            color: colors.brandOnSurface,
-            letterSpacing: -0.2,
-          ),
-        ),
-        SizedBox(height: space.stackText),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: space.inlineItem),
-          child: Text(
-            subtitle,
+          SizedBox(height: space.stackFormField),
+          Text(
+            'One step needs redoing',
             textAlign: TextAlign.center,
-            style: context.text.bodySmall?.copyWith(
-              color: colors.brandSecondaryBody,
-              height: 1.4,
+            style: context.text.headlineSmall?.copyWith(
+              fontWeight: TypeScale.bold,
+              color: colors.brandOnSurface,
+              letterSpacing: -0.2,
             ),
           ),
-        ),
-        SizedBox(height: space.stackFormField),
-        VerifyStatusRows(dimCompleted: true, rows: rows),
-        SizedBox(height: space.stackFormField),
-        Container(
-          padding: space.insetCard,
-          decoration: BoxDecoration(
-            color: colors.brandCardIconBackground,
-            borderRadius: shape.radiusControl,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'What usually fixes it',
-                style: context.text.labelMedium?.copyWith(
-                  fontWeight: TypeScale.semiBold,
-                  color: colors.brandOnSurface,
-                ),
-              ),
-              SizedBox(height: space.stackText),
-              Text(
-                fixText,
-                style: context.text.bodySmall?.copyWith(
-                  color: colors.brandSecondaryBody,
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-      foot: [
-        AppButton(
-          label: resolvedLabel,
-          variant: AppButtonVariant.brandWhite,
-          onPressed: () =>
-              _onRedoTap(context, ref, resolvedRoute, resolvedLabel),
-        ),
-        if (_isChipScan) ...[
           SizedBox(height: space.stackText),
-          AppButton(
-            label: 'Skip chip scan and continue',
-            variant: AppButtonVariant.brandOutline,
-            onPressed: () {
-              ref.read(verificationNotifierProvider.notifier).skipNfc();
-              ref
-                  .read(verificationNotifierProvider.notifier)
-                  .submitVerificationAsync();
-              context.go(AppRoutes.verificationFinalCheck);
-            },
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: space.inlineItem),
+            child: Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: context.text.bodySmall?.copyWith(
+                color: colors.brandSecondaryBody,
+                height: 1.4,
+              ),
+            ),
+          ),
+          SizedBox(height: space.stackFormField),
+          VerifyStatusRows(dimCompleted: true, rows: rows),
+          SizedBox(height: space.stackFormField),
+          Container(
+            padding: space.insetCard,
+            decoration: BoxDecoration(
+              color: colors.brandCardIconBackground,
+              borderRadius: shape.radiusControl,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'What usually fixes it',
+                  style: context.text.labelMedium?.copyWith(
+                    fontWeight: TypeScale.semiBold,
+                    color: colors.brandOnSurface,
+                  ),
+                ),
+                SizedBox(height: space.stackText),
+                Text(
+                  fixText,
+                  style: context.text.bodySmall?.copyWith(
+                    color: colors.brandSecondaryBody,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
-        SizedBox(height: space.stackItem),
-        const BrandSecurityNote(
-          text: "Your other steps are saved. You won't repeat them.",
-        ),
-        SizedBox(height: space.stackText),
-        Center(
-          child: InkWell(
-            onTap: () {
-              context.push(
-                AppRoutes.reportProblem,
-                extra: const ProblemReportContext(
-                  area: ProblemArea.verification,
-                  screen: AppRoutes.nfcFailed,
-                ),
-              );
-            },
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
-              child: Center(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: context.text.bodySmall?.copyWith(
-                      color: colors.brandSecondaryBody,
-                    ),
-                    children: [
-                      const TextSpan(text: 'Still stuck? '),
-                      TextSpan(
-                        text: "Tell us what's wrong",
-                        style: context.text.bodySmall?.copyWith(
-                          color: colors.brandSecondary,
-                          decoration: TextDecoration.underline,
-                          fontWeight: TypeScale.medium,
-                        ),
+        foot: [
+          AppButton(
+            label: resolvedLabel,
+            variant: AppButtonVariant.brandWhite,
+            onPressed: () =>
+                _onRedoTap(context, ref, resolvedRoute, resolvedLabel),
+          ),
+          if (_isChipScan) ...[
+            SizedBox(height: space.stackText),
+            AppButton(
+              label: 'Skip chip scan and continue',
+              variant: AppButtonVariant.brandOutline,
+              onPressed: () {
+                ref.read(verificationNotifierProvider.notifier).skipNfc();
+                ref
+                    .read(verificationNotifierProvider.notifier)
+                    .submitVerificationAsync();
+                context.go(AppRoutes.verificationFinalCheck);
+              },
+            ),
+          ],
+          SizedBox(height: space.stackItem),
+          const BrandSecurityNote(
+            text: "Your other steps are saved. You won't repeat them.",
+          ),
+          SizedBox(height: space.stackText),
+          Center(
+            child: InkWell(
+              onTap: () {
+                context.push(
+                  AppRoutes.reportProblem,
+                  extra: const ProblemReportContext(
+                    area: ProblemArea.verification,
+                    screen: AppRoutes.nfcFailed,
+                  ),
+                );
+              },
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+                child: Center(
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: context.text.bodySmall?.copyWith(
+                        color: colors.brandSecondaryBody,
                       ),
-                    ],
+                      children: [
+                        const TextSpan(text: 'Still stuck? '),
+                        TextSpan(
+                          text: "Tell us what's wrong",
+                          style: context.text.bodySmall?.copyWith(
+                            color: colors.brandSecondary,
+                            decoration: TextDecoration.underline,
+                            fontWeight: TypeScale.medium,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
   }
 }

@@ -16,7 +16,9 @@ class ReferTravelerCard extends StatelessWidget {
   final String? shareUrl;
 
   void _copyToClipboard(BuildContext context) {
-    final effectiveUrl = shareUrl ?? (shareCode != null ? 'https://trvlez.com/r/$shareCode' : '');
+    final effectiveUrl =
+        shareUrl ??
+        (shareCode != null ? 'https://trvlez.com/r/$shareCode' : '');
     if (effectiveUrl.isEmpty) return;
 
     Clipboard.setData(ClipboardData(text: effectiveUrl));
@@ -30,7 +32,9 @@ class ReferTravelerCard extends StatelessWidget {
   }
 
   Future<void> _shareLink() async {
-    final effectiveUrl = shareUrl ?? (shareCode != null ? 'https://trvlez.com/r/$shareCode' : '');
+    final effectiveUrl =
+        shareUrl ??
+        (shareCode != null ? 'https://trvlez.com/r/$shareCode' : '');
     if (effectiveUrl.isEmpty) return;
 
     await SharePlus.instance.share(

@@ -16,20 +16,26 @@ class FinderRemoteDataSource {
     final response = await dio.get<Map<String, dynamic>>('/finders/me');
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response received from getFinderStatus');
+      throw const ServerException(
+        'Empty response received from getFinderStatus',
+      );
     }
     return FinderStatusResponseDto.fromJson(data);
   }
 
   /// Activates the caller's Finder account idempotently.
-  Future<FinderDto> activateFinder(FinderActivationRequestDto requestDto) async {
+  Future<FinderDto> activateFinder(
+    FinderActivationRequestDto requestDto,
+  ) async {
     final response = await dio.post<Map<String, dynamic>>(
       '/finders/me/activate',
       data: requestDto.toJson(),
     );
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response received from activateFinder');
+      throw const ServerException(
+        'Empty response received from activateFinder',
+      );
     }
     return FinderDto.fromJson(data);
   }
@@ -53,10 +59,7 @@ class FinderRemoteDataSource {
     int skip = 0,
     int limit = 50,
   }) async {
-    final queryParams = <String, dynamic>{
-      'skip': skip,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'skip': skip, 'limit': limit};
     if (status != null) {
       queryParams['status'] = status;
     }
@@ -66,7 +69,9 @@ class FinderRemoteDataSource {
     );
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response received from listHotelReferrals');
+      throw const ServerException(
+        'Empty response received from listHotelReferrals',
+      );
     }
     return HotelReferralsListResponseDto.fromJson(data);
   }
@@ -82,7 +87,9 @@ class FinderRemoteDataSource {
     );
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response received from listAssociatedHotels');
+      throw const ServerException(
+        'Empty response received from listAssociatedHotels',
+      );
     }
     return HotelAssociationsResponseDto.fromJson(data);
   }
@@ -94,7 +101,9 @@ class FinderRemoteDataSource {
     );
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response received from getTravelerShareLink');
+      throw const ServerException(
+        'Empty response received from getTravelerShareLink',
+      );
     }
     return TravelerShareLinkDto.fromJson(data);
   }
@@ -109,7 +118,9 @@ class FinderRemoteDataSource {
     );
     final data = response.data;
     if (data == null) {
-      throw const ServerException('Empty response received from createHotelReferral');
+      throw const ServerException(
+        'Empty response received from createHotelReferral',
+      );
     }
     return HotelReferralCreateResponseDto.fromJson(data);
   }

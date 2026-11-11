@@ -8,7 +8,8 @@ import 'package:trvlez_mobile/features/auth/data/repositories/auth_repository_im
 
 class MockSecureStorage extends Fake implements FlutterSecureStorage {}
 
-class RecordingAuthRemoteDataSource extends Fake implements AuthRemoteDataSource {
+class RecordingAuthRemoteDataSource extends Fake
+    implements AuthRemoteDataSource {
   String? lastEmail;
   String? lastPassword;
   String? lastClickReference;
@@ -53,20 +54,22 @@ void main() {
       );
     });
 
-    test('forwards captured click_reference to remoteDataSource.signUp',
-        () async {
-      const capturedRef = 'play_store_click_ref_1234567890';
-      await attributionStorage.saveClickReference(capturedRef);
+    test(
+      'forwards captured click_reference to remoteDataSource.signUp',
+      () async {
+        const capturedRef = 'play_store_click_ref_1234567890';
+        await attributionStorage.saveClickReference(capturedRef);
 
-      await repository.signUp(
-        email: 'traveler@example.com',
-        password: 'securePassword123!',
-      );
+        await repository.signUp(
+          email: 'traveler@example.com',
+          password: 'securePassword123!',
+        );
 
-      expect(mockRemoteDataSource.lastEmail, equals('traveler@example.com'));
-      expect(mockRemoteDataSource.lastPassword, equals('securePassword123!'));
-      expect(mockRemoteDataSource.lastClickReference, equals(capturedRef));
-    });
+        expect(mockRemoteDataSource.lastEmail, equals('traveler@example.com'));
+        expect(mockRemoteDataSource.lastPassword, equals('securePassword123!'));
+        expect(mockRemoteDataSource.lastClickReference, equals(capturedRef));
+      },
+    );
 
     test('signs up with null click_reference when none is stored', () async {
       await repository.signUp(
@@ -79,4 +82,3 @@ void main() {
     });
   });
 }
-

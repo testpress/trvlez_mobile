@@ -10,7 +10,8 @@ import 'package:trvlez_mobile/features/profile/presentation/providers/profile_pr
 
 class _MockFinderRepository implements FinderRepository {
   @override
-  Future<FinderStateSummary> getFinderStatus() async => throw UnimplementedError();
+  Future<FinderStateSummary> getFinderStatus() async =>
+      throw UnimplementedError();
 
   @override
   FinderTerms getFinderTerms() => FinderTerms.defaultTerms;
@@ -20,16 +21,16 @@ class _MockFinderRepository implements FinderRepository {
       throw UnimplementedError();
 
   @override
-  Future<FinderIdentity> updateProfile(FinderProfileUpdateParams params) async =>
-      throw UnimplementedError();
+  Future<FinderIdentity> updateProfile(
+    FinderProfileUpdateParams params,
+  ) async => throw UnimplementedError();
 
   @override
   Future<List<HotelReferralItem>> listHotelReferrals({
     String? status,
     int skip = 0,
     int limit = 50,
-  }) async =>
-      const [];
+  }) async => const [];
 
   @override
   Future<int> countAssociatedHotels() async => 0;
@@ -44,8 +45,7 @@ class _MockFinderRepository implements FinderRepository {
   @override
   Future<HotelReferralItem> createHotelReferral(
     HotelReferralCreateParams params,
-  ) async =>
-      throw UnimplementedError();
+  ) async => throw UnimplementedError();
 
   @override
   Future<FindrPortfolio> getFindrPortfolio() async =>
@@ -78,7 +78,8 @@ void main() {
       required AsyncValue<FinderStateSummary> asyncState,
       Profile? profile,
     }) {
-      final effectiveProfile = profile ??
+      final effectiveProfile =
+          profile ??
           const Profile(
             id: 'p-1',
             nationality: 'GBR',
@@ -102,7 +103,6 @@ void main() {
       );
     }
 
-
     testWidgets('shows loading view while loading status', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -122,14 +122,13 @@ void main() {
       expect(find.text('Checking Findr status...'), findsOneWidget);
     });
 
-    testWidgets('shows error view with retry action on failure',
-        (tester) async {
+    testWidgets('shows error view with retry action on failure', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            finderNotifierProvider.overrideWith(
-              () => _FailingFinderNotifier(),
-            ),
+            finderNotifierProvider.overrideWith(() => _FailingFinderNotifier()),
           ],
           child: MaterialApp(
             theme: AppTheme.lightTheme,
@@ -144,110 +143,114 @@ void main() {
     });
 
     testWidgets(
-        'shows blocked view with Start Verification CTA when verification incomplete',
-        (tester) async {
-      const summary = FinderStateSummary(
-        finder: null,
-        eligibility: FinderEligibility(
-          isEligible: false,
-          reason: FinderEligibilityReason.verificationIncomplete,
-        ),
-        reverificationRequired: false,
-      );
+      'shows blocked view with Start Verification CTA when verification incomplete',
+      (tester) async {
+        const summary = FinderStateSummary(
+          finder: null,
+          eligibility: FinderEligibility(
+            isEligible: false,
+            reason: FinderEligibilityReason.verificationIncomplete,
+          ),
+          reverificationRequired: false,
+        );
 
-      await tester.pumpWidget(
-        buildScreen(asyncState: const AsyncData(summary)),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          buildScreen(asyncState: const AsyncData(summary)),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Passport Verification Required'), findsOneWidget);
-      expect(find.text('Start Verification'), findsOneWidget);
-    });
-
-    testWidgets(
-        'shows blocked view with Age Requirement when user is underage',
-        (tester) async {
-      const summary = FinderStateSummary(
-        finder: null,
-        eligibility: FinderEligibility(
-          isEligible: false,
-          reason: FinderEligibilityReason.underage,
-        ),
-        reverificationRequired: false,
-      );
-
-      await tester.pumpWidget(
-        buildScreen(asyncState: const AsyncData(summary)),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Age Requirement (18+)'), findsOneWidget);
-      expect(find.text('Start Verification'), findsNothing);
-    });
+        expect(find.text('Passport Verification Required'), findsOneWidget);
+        expect(find.text('Start Verification'), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'shows Activate Findr CTA when user has GBR passport and is eligible',
-        (tester) async {
-      const summary = FinderStateSummary(
-        finder: null,
-        eligibility: FinderEligibility(
-          isEligible: true,
-          reason: FinderEligibilityReason.eligible,
-        ),
-        reverificationRequired: false,
-      );
+      'shows blocked view with Age Requirement when user is underage',
+      (tester) async {
+        const summary = FinderStateSummary(
+          finder: null,
+          eligibility: FinderEligibility(
+            isEligible: false,
+            reason: FinderEligibilityReason.underage,
+          ),
+          reverificationRequired: false,
+        );
 
-      const gbrProfile = Profile(
-        id: 'p-gb',
-        nationality: 'GBR',
-        onboardingStep: 'verified',
-      );
+        await tester.pumpWidget(
+          buildScreen(asyncState: const AsyncData(summary)),
+        );
+        await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        buildScreen(
-          asyncState: const AsyncData(summary),
-          profile: gbrProfile,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Activate Findr'), findsOneWidget);
-      expect(find.text('How it works'), findsOneWidget);
-    });
+        expect(find.text('Age Requirement (18+)'), findsOneWidget);
+        expect(find.text('Start Verification'), findsNothing);
+      },
+    );
 
     testWidgets(
-        'pre-informs user with UK Only blocked view when passport is non-GBR',
-        (tester) async {
-      const summary = FinderStateSummary(
-        finder: null,
-        eligibility: FinderEligibility(
-          isEligible: false,
-          reason: FinderEligibilityReason.marketUnavailable,
-        ),
-        reverificationRequired: false,
-      );
+      'shows Activate Findr CTA when user has GBR passport and is eligible',
+      (tester) async {
+        const summary = FinderStateSummary(
+          finder: null,
+          eligibility: FinderEligibility(
+            isEligible: true,
+            reason: FinderEligibilityReason.eligible,
+          ),
+          reverificationRequired: false,
+        );
 
-      const nonGbrProfile = Profile(
-        id: 'p-us',
-        nationality: 'USA',
-        onboardingStep: 'verified',
-      );
+        const gbrProfile = Profile(
+          id: 'p-gb',
+          nationality: 'GBR',
+          onboardingStep: 'verified',
+        );
 
-      await tester.pumpWidget(
-        buildScreen(
-          asyncState: const AsyncData(summary),
-          profile: nonGbrProfile,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          buildScreen(
+            asyncState: const AsyncData(summary),
+            profile: gbrProfile,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Market Unavailable'), findsOneWidget);
-      expect(find.text('Activate Findr'), findsNothing);
-    });
+        expect(find.text('Activate Findr'), findsOneWidget);
+        expect(find.text('How it works'), findsOneWidget);
+      },
+    );
 
+    testWidgets(
+      'pre-informs user with UK Only blocked view when passport is non-GBR',
+      (tester) async {
+        const summary = FinderStateSummary(
+          finder: null,
+          eligibility: FinderEligibility(
+            isEligible: false,
+            reason: FinderEligibilityReason.marketUnavailable,
+          ),
+          reverificationRequired: false,
+        );
 
-    testWidgets('shows active dashboard and recommendations when active',
-        (tester) async {
+        const nonGbrProfile = Profile(
+          id: 'p-us',
+          nationality: 'USA',
+          onboardingStep: 'verified',
+        );
+
+        await tester.pumpWidget(
+          buildScreen(
+            asyncState: const AsyncData(summary),
+            profile: nonGbrProfile,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Market Unavailable'), findsOneWidget);
+        expect(find.text('Activate Findr'), findsNothing);
+      },
+    );
+
+    testWidgets('shows active dashboard and recommendations when active', (
+      tester,
+    ) async {
       final summary = FinderStateSummary(
         finder: FinderIdentity(
           id: 'f-active-1',
@@ -269,9 +272,7 @@ void main() {
         reverificationRequired: false,
       );
 
-      await tester.pumpWidget(
-        buildScreen(asyncState: AsyncData(summary)),
-      );
+      await tester.pumpWidget(buildScreen(asyncState: AsyncData(summary)));
       await tester.pumpAndSettle();
 
       expect(find.text('Recommend a hotel'), findsOneWidget);
@@ -279,8 +280,9 @@ void main() {
       expect(find.text('Payouts'), findsOneWidget);
     });
 
-    testWidgets('shows reverification banner when reverificationRequired',
-        (tester) async {
+    testWidgets('shows reverification banner when reverificationRequired', (
+      tester,
+    ) async {
       final summary = FinderStateSummary(
         finder: FinderIdentity(
           id: 'f-active-1',
@@ -296,9 +298,7 @@ void main() {
         reverificationRequired: true,
       );
 
-      await tester.pumpWidget(
-        buildScreen(asyncState: AsyncData(summary)),
-      );
+      await tester.pumpWidget(buildScreen(asyncState: AsyncData(summary)));
       await tester.pumpAndSettle();
 
       expect(find.text('Passport Re-Verification Required'), findsOneWidget);
@@ -306,32 +306,31 @@ void main() {
     });
 
     testWidgets(
-        'shows suspension banner and Activity Paused when temporarily suspended',
-        (tester) async {
-      final summary = FinderStateSummary(
-        finder: FinderIdentity(
-          id: 'f-susp-1',
-          userId: 'u-1',
-          status: FinderStatusType.suspendedTemporary,
-          suspensionEndsAt: DateTime.parse('2026-12-01T00:00:00Z'),
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ),
-        eligibility: const FinderEligibility(
-          isEligible: false,
-          reason: FinderEligibilityReason.terminalStatus,
-        ),
-        reverificationRequired: false,
-      );
+      'shows suspension banner and Activity Paused when temporarily suspended',
+      (tester) async {
+        final summary = FinderStateSummary(
+          finder: FinderIdentity(
+            id: 'f-susp-1',
+            userId: 'u-1',
+            status: FinderStatusType.suspendedTemporary,
+            suspensionEndsAt: DateTime.parse('2026-12-01T00:00:00Z'),
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+          eligibility: const FinderEligibility(
+            isEligible: false,
+            reason: FinderEligibilityReason.terminalStatus,
+          ),
+          reverificationRequired: false,
+        );
 
-      await tester.pumpWidget(
-        buildScreen(asyncState: AsyncData(summary)),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildScreen(asyncState: AsyncData(summary)));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Membership Temporarily Suspended'), findsOneWidget);
-      expect(find.text('Activity Paused'), findsOneWidget);
-    });
+        expect(find.text('Membership Temporarily Suspended'), findsOneWidget);
+        expect(find.text('Activity Paused'), findsOneWidget);
+      },
+    );
   });
 }
 

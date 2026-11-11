@@ -32,12 +32,16 @@ class AttributionService {
   Future<bool> captureInstallReferrer() async {
     try {
       if (attributionStorage.isInstallEvidenceRecorded()) {
-        debugPrint('[Attribution] Install evidence already recorded; skipping.');
+        debugPrint(
+          '[Attribution] Install evidence already recorded; skipping.',
+        );
         return true;
       }
 
       if (!installReferrerClient.isSupportedPlatform) {
-        debugPrint('[Attribution] Non-Android platform; skipping install referrer.');
+        debugPrint(
+          '[Attribution] Non-Android platform; skipping install referrer.',
+        );
         return false;
       }
 
@@ -53,7 +57,9 @@ class AttributionService {
     } on DioException catch (dioException) {
       return _handleDioException(dioException);
     } catch (unexpectedError) {
-      debugPrint('[Attribution] Unexpected error capturing install referrer: $unexpectedError');
+      debugPrint(
+        '[Attribution] Unexpected error capturing install referrer: $unexpectedError',
+      );
       return false;
     }
   }
@@ -66,7 +72,9 @@ class AttributionService {
     }
 
     if (attributionStorage.isInstallReferrerChecked()) {
-      debugPrint('[Attribution] Install referrer already checked previously; none found.');
+      debugPrint(
+        '[Attribution] Install referrer already checked previously; none found.',
+      );
       return null;
     }
 
@@ -80,7 +88,9 @@ class AttributionService {
     }
 
     await attributionStorage.saveClickReference(capturedToken);
-    debugPrint('[Attribution] Captured click reference from Play Referrer: $capturedToken');
+    debugPrint(
+      '[Attribution] Captured click reference from Play Referrer: $capturedToken',
+    );
     return _PendingReferralCandidate(
       clickReference: capturedToken,
       occurredAt: referrerResult?.clickTimestamp,
@@ -92,7 +102,9 @@ class AttributionService {
     String clickReference, {
     DateTime? occurredAt,
   }) async {
-    debugPrint('[Attribution] Submitting install evidence for $clickReference...');
+    debugPrint(
+      '[Attribution] Submitting install evidence for $clickReference...',
+    );
     final response = await remoteDataSource.recordInstallEvidence(
       InstallEvidenceRequestDto(
         clickReference: clickReference,
@@ -102,7 +114,9 @@ class AttributionService {
 
     if (response.valid) {
       await attributionStorage.setInstallEvidenceRecorded(true);
-      debugPrint('[Attribution] Successfully verified install evidence: ${response.referralId}');
+      debugPrint(
+        '[Attribution] Successfully verified install evidence: ${response.referralId}',
+      );
       return true;
     }
 
@@ -116,17 +130,22 @@ class AttributionService {
         ? innerError.statusCode
         : dioException.response?.statusCode;
 
-    final isTerminalError = statusCode == _statusBadRequest ||
+    final isTerminalError =
+        statusCode == _statusBadRequest ||
         statusCode == _statusNotFound ||
         statusCode == _statusGone;
 
     if (isTerminalError) {
-      debugPrint('[Attribution] Terminal referral status $statusCode; marking recorded.');
+      debugPrint(
+        '[Attribution] Terminal referral status $statusCode; marking recorded.',
+      );
       await attributionStorage.setInstallEvidenceRecorded(true);
       return false;
     }
 
-    debugPrint('[Attribution] Transient network/server error recording install evidence: $dioException');
+    debugPrint(
+      '[Attribution] Transient network/server error recording install evidence: $dioException',
+    );
     return false;
   }
 }

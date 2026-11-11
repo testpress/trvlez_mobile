@@ -123,5 +123,3 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
     );
   }
 }
-
-

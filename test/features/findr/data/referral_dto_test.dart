@@ -5,45 +5,63 @@ import 'package:trvlez_mobile/features/findr/domain/entities/hotel_referral_crea
 
 void main() {
   group('Referral DTO Tests', () {
-    test('HotelReferralDto.fromJson parses full payload and maps to domain', () {
-      final json = {
-        'id': 'ref-123',
-        'finder_id': 'f-456',
-        'status': 'converted',
-        'hotel_name': 'Grand Hotel Riviera',
-        'target_email': 'gm@grandriviera.com',
-        'target_phone': '+39 081 123456',
-        'street_address': 'Via Marina 10',
-        'city': 'Sorrento',
-        'postal_code': '80067',
-        'country_code': 'IT',
-        'personal_note': 'Met GM during holiday',
-        'created_at': '2026-10-15T12:00:00Z',
-      };
+    test(
+      'HotelReferralDto.fromJson parses full payload and maps to domain',
+      () {
+        final json = {
+          'id': 'ref-123',
+          'finder_id': 'f-456',
+          'status': 'converted',
+          'hotel_name': 'Grand Hotel Riviera',
+          'target_email': 'gm@grandriviera.com',
+          'target_phone': '+39 081 123456',
+          'street_address': 'Via Marina 10',
+          'city': 'Sorrento',
+          'postal_code': '80067',
+          'country_code': 'IT',
+          'personal_note': 'Met GM during holiday',
+          'created_at': '2026-10-15T12:00:00Z',
+        };
 
-      final dto = HotelReferralDto.fromJson(json);
-      expect(dto.id, 'ref-123');
-      expect(dto.hotelName, 'Grand Hotel Riviera');
+        final dto = HotelReferralDto.fromJson(json);
+        expect(dto.id, 'ref-123');
+        expect(dto.hotelName, 'Grand Hotel Riviera');
 
-      final domain = dto.toDomain();
-      expect(domain.id, 'ref-123');
-      expect(domain.hotelName, 'Grand Hotel Riviera');
-      expect(domain.isLive, isTrue);
-      expect(domain.statusLabel, 'Joined');
-      expect(domain.state, FindrRecommendationState.confirmed);
-      expect(domain.location, 'Sorrento, IT');
-      expect(domain.fullAddress, 'Via Marina 10, Sorrento, 80067, IT');
-    });
+        final domain = dto.toDomain();
+        expect(domain.id, 'ref-123');
+        expect(domain.hotelName, 'Grand Hotel Riviera');
+        expect(domain.isLive, isTrue);
+        expect(domain.statusLabel, 'Joined');
+        expect(domain.state, FindrRecommendationState.confirmed);
+        expect(domain.location, 'Sorrento, IT');
+        expect(domain.fullAddress, 'Via Marina 10, Sorrento, 80067, IT');
+      },
+    );
 
     test('HotelReferralDto maps outreach statuses correctly', () {
       final statuses = {
         'introduction_sent': ('Invited', FindrRecommendationState.awaiting),
-        'follow_up_call_due': ('Follow-up due', FindrRecommendationState.awaiting),
-        'second_email_available': ('Follow-up ready', FindrRecommendationState.awaiting),
-        'second_email_sent': ('Follow-up sent', FindrRecommendationState.awaiting),
+        'follow_up_call_due': (
+          'Follow-up due',
+          FindrRecommendationState.awaiting,
+        ),
+        'second_email_available': (
+          'Follow-up ready',
+          FindrRecommendationState.awaiting,
+        ),
+        'second_email_sent': (
+          'Follow-up sent',
+          FindrRecommendationState.awaiting,
+        ),
         'final_call_due': ('Final call due', FindrRecommendationState.awaiting),
-        'outreach_complete': ('Outreach complete', FindrRecommendationState.awaiting),
-        'onboarding_started': ('Onboarding started', FindrRecommendationState.awaiting),
+        'outreach_complete': (
+          'Outreach complete',
+          FindrRecommendationState.awaiting,
+        ),
+        'onboarding_started': (
+          'Onboarding started',
+          FindrRecommendationState.awaiting,
+        ),
         'declined': ('Declined', FindrRecommendationState.declined),
         'expired': ('Expired', FindrRecommendationState.declined),
       };

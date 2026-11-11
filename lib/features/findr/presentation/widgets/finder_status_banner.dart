@@ -31,7 +31,8 @@ class FinderStatusBanner extends StatelessWidget {
     final status = finder?.status;
 
     // 1. Re-verification Required Banner
-    if (summary.reverificationRequired || finder?.verificationLapsedAt != null) {
+    if (summary.reverificationRequired ||
+        finder?.verificationLapsedAt != null) {
       return Container(
         margin: EdgeInsets.only(bottom: space.stackFormField),
         padding: space.insetCard,

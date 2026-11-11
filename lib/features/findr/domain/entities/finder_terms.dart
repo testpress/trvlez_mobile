@@ -3,10 +3,7 @@ class FinderTermsSection {
   final String title;
   final String content;
 
-  const FinderTermsSection({
-    required this.title,
-    required this.content,
-  });
+  const FinderTermsSection({required this.title, required this.content});
 }
 
 /// Domain entity representing versioned Findr Participation Terms & Conditions.

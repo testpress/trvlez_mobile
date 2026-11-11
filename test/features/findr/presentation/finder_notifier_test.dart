@@ -26,7 +26,6 @@ class FakeFinderRepository implements FinderRepository {
     return FinderTerms.defaultTerms;
   }
 
-
   @override
   Future<FinderIdentity> activateFinder(FinderActivationParams params) async {
     if (shouldFail) {
@@ -61,8 +60,7 @@ class FakeFinderRepository implements FinderRepository {
   }
 
   @override
-  Future<FinderIdentity> updateProfile(
-      FinderProfileUpdateParams params) async {
+  Future<FinderIdentity> updateProfile(FinderProfileUpdateParams params) async {
     if (shouldFail) {
       throw Exception('Profile update rejected');
     }
@@ -136,9 +134,7 @@ void main() {
   setUp(() {
     fakeRepository = FakeFinderRepository();
     container = ProviderContainer(
-      overrides: [
-        finderRepositoryProvider.overrideWithValue(fakeRepository),
-      ],
+      overrides: [finderRepositoryProvider.overrideWithValue(fakeRepository)],
     );
   });
 
@@ -179,27 +175,29 @@ void main() {
       expect(updatedState?.finder?.address?.city, 'London');
     });
 
-    test('activate handles errors gracefully and keeps state in error',
-        () async {
-      await container.read(finderNotifierProvider.future);
-      fakeRepository.shouldFail = true;
+    test(
+      'activate handles errors gracefully and keeps state in error',
+      () async {
+        await container.read(finderNotifierProvider.future);
+        fakeRepository.shouldFail = true;
 
-      const params = FinderActivationParams(
-        addressLine1: '10 Downing St',
-        city: 'London',
-        postalCode: 'SW1A 2AA',
-        residentialCountryCode: 'GB',
-        agreementVersion: '1.0',
-        agreementAccepted: true,
-      );
+        const params = FinderActivationParams(
+          addressLine1: '10 Downing St',
+          city: 'London',
+          postalCode: 'SW1A 2AA',
+          residentialCountryCode: 'GB',
+          agreementVersion: '1.0',
+          agreementAccepted: true,
+        );
 
-      final success = await container
-          .read(finderNotifierProvider.notifier)
-          .activate(params);
+        final success = await container
+            .read(finderNotifierProvider.notifier)
+            .activate(params);
 
-      expect(success, isFalse);
-      expect(container.read(finderNotifierProvider).hasError, isTrue);
-    });
+        expect(success, isFalse);
+        expect(container.read(finderNotifierProvider).hasError, isTrue);
+      },
+    );
 
     test('refresh refetches status from repository', () async {
       await container.read(finderNotifierProvider.future);
@@ -217,8 +215,10 @@ void main() {
 
       final updatedState = container.read(finderNotifierProvider).value;
       expect(updatedState?.eligibility.isEligible, isFalse);
-      expect(updatedState?.eligibility.reason,
-          FinderEligibilityReason.verificationIncomplete);
+      expect(
+        updatedState?.eligibility.reason,
+        FinderEligibilityReason.verificationIncomplete,
+      );
     });
   });
 }

@@ -69,8 +69,7 @@ class _PassportProcessingScreenState
 
   int _calculateDone(VerificationPhase phase) {
     return switch (phase) {
-      VerificationPhase.idle ||
-      VerificationPhase.preparingImage => 0,
+      VerificationPhase.idle || VerificationPhase.preparingImage => 0,
       VerificationPhase.uploading ||
       VerificationPhase.checkingImageQuality => 1,
       VerificationPhase.extractingMrz => 2,

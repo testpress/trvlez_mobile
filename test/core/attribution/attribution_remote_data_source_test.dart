@@ -62,7 +62,10 @@ void main() {
 
       expect(response.valid, isTrue);
       expect(response.message, contains('verified'));
-      expect(response.referralId, equals('b96a9870-137b-4b2a-8ffc-11234567890a'));
+      expect(
+        response.referralId,
+        equals('b96a9870-137b-4b2a-8ffc-11234567890a'),
+      );
     });
 
     test('throws ServerException on null or empty response payload', () async {
@@ -108,4 +111,3 @@ void main() {
     });
   });
 }
-

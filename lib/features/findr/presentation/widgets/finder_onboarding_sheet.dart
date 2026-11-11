@@ -4,13 +4,13 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_address_step_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_blocked_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_terms_step_view.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 
 /// Modal bottom sheet guiding eligible travelers through the 2-step Findr onboarding:
 /// Step 1: Versioned Terms & Participation Agreement
@@ -25,16 +25,10 @@ Future<bool?> showFinderOnboardingSheet(BuildContext context) {
   );
 }
 
-enum _OnboardingStep {
-  terms,
-  address,
-}
+enum _OnboardingStep { terms, address }
 
 class FinderOnboardingSheet extends ConsumerStatefulWidget {
-  const FinderOnboardingSheet({
-    super.key,
-    this.isStandalone = false,
-  });
+  const FinderOnboardingSheet({super.key, this.isStandalone = false});
 
   final bool isStandalone;
 
@@ -96,8 +90,9 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
       agreementAccepted: true,
     );
 
-    final isSuccess =
-        await ref.read(finderNotifierProvider.notifier).activate(params);
+    final isSuccess = await ref
+        .read(finderNotifierProvider.notifier)
+        .activate(params);
 
     if (!mounted) return;
 
@@ -112,8 +107,8 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
       final errorMessage = error is AppException
           ? error.message
           : (state.hasError
-              ? state.error.toString()
-              : 'Activation failed. Please check your address and try again.');
+                ? state.error.toString()
+                : 'Activation failed. Please check your address and try again.');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -156,8 +151,9 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
         top: true,
         bottom: false,
         child: Column(
-          mainAxisSize:
-              widget.isStandalone ? MainAxisSize.max : MainAxisSize.min,
+          mainAxisSize: widget.isStandalone
+              ? MainAxisSize.max
+              : MainAxisSize.min,
           children: [
             // ── Drag Handle (Sheet only) ──────────────────────────────────
             if (!widget.isStandalone)
@@ -181,7 +177,8 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
               ),
               child: Row(
                 children: [
-                  if (!isBlocked && _currentStep == _OnboardingStep.address) ...[
+                  if (!isBlocked &&
+                      _currentStep == _OnboardingStep.address) ...[
                     IconButton(
                       onPressed: () {
                         setState(() => _currentStep = _OnboardingStep.terms);
@@ -207,8 +204,8 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                               label: isBlocked
                                   ? 'Status'
                                   : (_currentStep == _OnboardingStep.terms
-                                      ? 'Step 1 of 2'
-                                      : 'Step 2 of 2'),
+                                        ? 'Step 1 of 2'
+                                        : 'Step 2 of 2'),
                               state: StatusPillState.awaiting,
                             ),
                             SizedBox(width: space.inlineItem),
@@ -217,8 +214,8 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                                 isBlocked
                                     ? 'Findr Programme'
                                     : (_currentStep == _OnboardingStep.terms
-                                        ? 'Terms of Participation'
-                                        : 'Residential Address'),
+                                          ? 'Terms of Participation'
+                                          : 'Residential Address'),
                                 style: context.text.labelMedium?.copyWith(
                                   color: colors.textSecondary,
                                 ),
@@ -233,10 +230,13 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                           isBlocked
                               ? 'Programme Eligibility'
                               : (_currentStep == _OnboardingStep.terms
-                                  ? 'Findr Agreement'
-                                  : (resolveCountryCode(profile?.nationality) == 'GB'
-                                      ? 'UK Residential Address'
-                                      : 'Residential Address')),
+                                    ? 'Findr Agreement'
+                                    : (resolveCountryCode(
+                                                profile?.nationality,
+                                              ) ==
+                                              'GB'
+                                          ? 'UK Residential Address'
+                                          : 'Residential Address')),
                           style: context.text.titleLarge?.copyWith(
                             color: colors.textPrimary,
                             fontWeight: TypeScale.bold,
@@ -275,22 +275,24 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                       onActionCompleted: () => Navigator.of(context).pop(),
                     )
                   : (_currentStep == _OnboardingStep.terms
-                      ? FinderTermsStepView(
-                          terms: terms,
-                          hasAcceptedTerms: _termsAgreed,
-                          onAcceptanceChanged: (value) {
-                            setState(() => _termsAgreed = value);
-                          },
-                        )
-                      : FinderAddressStepView(
-                          formKey: _formKey,
-                          addressLine1Controller: _addressLine1Controller,
-                          addressLine2Controller: _addressLine2Controller,
-                          cityController: _cityController,
-                          regionController: _regionController,
-                          postalCodeController: _postalCodeController,
-                          countryLabel: resolveCountryLabel(profile?.nationality),
-                        )),
+                        ? FinderTermsStepView(
+                            terms: terms,
+                            hasAcceptedTerms: _termsAgreed,
+                            onAcceptanceChanged: (value) {
+                              setState(() => _termsAgreed = value);
+                            },
+                          )
+                        : FinderAddressStepView(
+                            formKey: _formKey,
+                            addressLine1Controller: _addressLine1Controller,
+                            addressLine2Controller: _addressLine2Controller,
+                            cityController: _cityController,
+                            regionController: _regionController,
+                            postalCodeController: _postalCodeController,
+                            countryLabel: resolveCountryLabel(
+                              profile?.nationality,
+                            ),
+                          )),
             ),
 
             // ── Sticky Footer ──────────────────────────────────────────────
@@ -315,8 +317,9 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                   top: false,
                   child: Center(
                     child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(maxWidth: sizes.containerForm),
+                      constraints: BoxConstraints(
+                        maxWidth: sizes.containerForm,
+                      ),
                       child: _currentStep == _OnboardingStep.terms
                           ? AppButton(
                               label: 'Continue to Address',
@@ -336,8 +339,9 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                           : AppButton(
                               label: 'Activate Findr',
                               isLoading: _isSubmitting,
-                              onPressed:
-                                  _isSubmitting ? null : _handleActivation,
+                              onPressed: _isSubmitting
+                                  ? null
+                                  : _handleActivation,
                             ),
                     ),
                   ),

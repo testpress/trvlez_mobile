@@ -60,9 +60,7 @@ class PassportInstructionScreen extends StatelessWidget {
         SizedBox(height: space.stackItem),
         Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: sizes.thumbPhotoMd,
-            ),
+            constraints: BoxConstraints(maxHeight: sizes.thumbPhotoMd),
             child: SvgPicture.asset(
               'assets/art/passport_diagram.svg',
               fit: BoxFit.contain,

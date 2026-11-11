@@ -55,7 +55,8 @@ enum FinderEligibilityReason {
       'eligible' => FinderEligibilityReason.eligible,
       'program_disabled' => FinderEligibilityReason.programDisabled,
       'account_inactive' => FinderEligibilityReason.accountInactive,
-      'verification_incomplete' => FinderEligibilityReason.verificationIncomplete,
+      'verification_incomplete' =>
+        FinderEligibilityReason.verificationIncomplete,
       'verification_expired' => FinderEligibilityReason.verificationExpired,
       'date_of_birth_missing' => FinderEligibilityReason.dateOfBirthMissing,
       'underage' => FinderEligibilityReason.underage,
@@ -72,7 +73,8 @@ enum FinderEligibilityReason {
       FinderEligibilityReason.eligible => 'eligible',
       FinderEligibilityReason.programDisabled => 'program_disabled',
       FinderEligibilityReason.accountInactive => 'account_inactive',
-      FinderEligibilityReason.verificationIncomplete => 'verification_incomplete',
+      FinderEligibilityReason.verificationIncomplete =>
+        'verification_incomplete',
       FinderEligibilityReason.verificationExpired => 'verification_expired',
       FinderEligibilityReason.dateOfBirthMissing => 'date_of_birth_missing',
       FinderEligibilityReason.underage => 'underage',
@@ -117,13 +119,13 @@ class FinderAddress {
 
   @override
   int get hashCode => Object.hash(
-        addressLine1,
-        addressLine2,
-        city,
-        region,
-        postalCode,
-        residentialCountryCode,
-      );
+    addressLine1,
+    addressLine2,
+    city,
+    region,
+    postalCode,
+    residentialCountryCode,
+  );
 }
 
 /// Identity and lifecycle record of an active or historical Finder.
@@ -182,18 +184,18 @@ class FinderIdentity {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        userId,
-        status,
-        address,
-        agreementVersion,
-        activatedAt,
-        suspendedAt,
-        suspensionEndsAt,
-        verificationLapsedAt,
-        createdAt,
-        updatedAt,
-      );
+    id,
+    userId,
+    status,
+    address,
+    agreementVersion,
+    activatedAt,
+    suspendedAt,
+    suspensionEndsAt,
+    verificationLapsedAt,
+    createdAt,
+    updatedAt,
+  );
 }
 
 /// Eligibility evaluation returned by the backend.
@@ -251,9 +253,9 @@ class FinderStateSummary {
 
   @override
   int get hashCode => Object.hash(
-        finder,
-        eligibility,
-        reverificationRequired,
-        reverificationUrl,
-      );
+    finder,
+    eligibility,
+    reverificationRequired,
+    reverificationUrl,
+  );
 }

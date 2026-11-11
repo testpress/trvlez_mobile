@@ -39,15 +39,15 @@ class FinderActivationParams {
 
   @override
   int get hashCode => Object.hash(
-        addressLine1,
-        addressLine2,
-        city,
-        region,
-        postalCode,
-        residentialCountryCode,
-        agreementVersion,
-        agreementAccepted,
-      );
+    addressLine1,
+    addressLine2,
+    city,
+    region,
+    postalCode,
+    residentialCountryCode,
+    agreementVersion,
+    agreementAccepted,
+  );
 }
 
 /// Parameters for updating permitted Finder profile fields.
@@ -86,12 +86,12 @@ class FinderProfileUpdateParams {
 
   @override
   int get hashCode => Object.hash(
-        addressLine1,
-        addressLine2,
-        city,
-        region,
-        postalCode,
-        residentialCountryCode,
-        email,
-      );
+    addressLine1,
+    addressLine2,
+    city,
+    region,
+    postalCode,
+    residentialCountryCode,
+    email,
+  );
 }

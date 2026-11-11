@@ -128,8 +128,9 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
             Center(
               child: Container(
                 width: double.infinity,
-                constraints:
-                    BoxConstraints(maxHeight: sizes.previewDocMaxHeight),
+                constraints: BoxConstraints(
+                  maxHeight: sizes.previewDocMaxHeight,
+                ),
                 decoration: BoxDecoration(
                   color: colors.brandCardBackground,
                   borderRadius: shape.radiusSurface,

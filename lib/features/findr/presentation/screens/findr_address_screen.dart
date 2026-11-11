@@ -6,12 +6,12 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
+import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_address_step_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/finder_blocked_view.dart';
-import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 
 /// Screen 4.3 · Step 2 of 2: Findr Residential Address Form.
 /// Country is restricted to United Kingdom (GBR).
@@ -72,8 +72,9 @@ class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
       agreementAccepted: true,
     );
 
-    final isSuccess =
-        await ref.read(finderNotifierProvider.notifier).activate(params);
+    final isSuccess = await ref
+        .read(finderNotifierProvider.notifier)
+        .activate(params);
 
     if (!mounted) return;
 
@@ -83,7 +84,9 @@ class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
       ref.read(findrPortfolioProvider.notifier).joinFindr();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Findr activated successfully! Welcome to the programme.'),
+          content: Text(
+            'Findr activated successfully! Welcome to the programme.',
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -94,8 +97,8 @@ class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
       final errorMessage = error is AppException
           ? error.message
           : (state.hasError
-              ? state.error.toString()
-              : 'Activation failed. Please check your address and try again.');
+                ? state.error.toString()
+                : 'Activation failed. Please check your address and try again.');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -204,4 +207,3 @@ class _FindrAddressScreenState extends ConsumerState<FindrAddressScreen> {
     );
   }
 }
-

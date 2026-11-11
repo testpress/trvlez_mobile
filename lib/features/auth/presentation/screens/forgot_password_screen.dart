@@ -77,9 +77,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            isAlreadyLoggedIn
-                ? 'Change your password'
-                : 'Reset your password',
+            isAlreadyLoggedIn ? 'Change your password' : 'Reset your password',
             style: context.text.headlineLarge?.copyWith(
               color: colors.brandOnSurface,
               height: 1.25,

@@ -94,10 +94,11 @@ class BrandPointerPair extends StatelessWidget {
                     SizedBox(height: effectiveDescGap),
                     Text(
                       items[i].$3,
-                      style: (descriptionStyle ?? context.text.bodySmall)?.copyWith(
-                        color: colors.brandSecondaryBody,
-                        height: 1.3,
-                      ),
+                      style: (descriptionStyle ?? context.text.bodySmall)
+                          ?.copyWith(
+                            color: colors.brandSecondaryBody,
+                            height: 1.3,
+                          ),
                     ),
                   ],
                 ),

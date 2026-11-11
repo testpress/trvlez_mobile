@@ -25,10 +25,8 @@ class InstallReferrerClient {
   final MethodChannel _channel;
   final TargetPlatform? platformOverride;
 
-  const InstallReferrerClient({
-    MethodChannel? channel,
-    this.platformOverride,
-  }) : _channel = channel ?? _defaultChannel;
+  const InstallReferrerClient({MethodChannel? channel, this.platformOverride})
+    : _channel = channel ?? _defaultChannel;
 
   /// Whether the current platform supports Google Play Install Referrer.
   bool get isSupportedPlatform {
@@ -75,7 +73,9 @@ class InstallReferrerClient {
         installBeginTimestampSeconds: installBeginTimestampSeconds,
       );
     } on PlatformException catch (platformException) {
-      debugPrint('[InstallReferrerClient] PlatformException: ${platformException.message}');
+      debugPrint(
+        '[InstallReferrerClient] PlatformException: ${platformException.message}',
+      );
       return null;
     } catch (unexpectedError) {
       debugPrint('[InstallReferrerClient] Unexpected error: $unexpectedError');
@@ -128,7 +128,9 @@ class InstallReferrerClient {
     }
 
     // Direct token without param key
-    if (!decoded.contains('=') && decoded.length >= 16 && decoded.length <= 128) {
+    if (!decoded.contains('=') &&
+        decoded.length >= 16 &&
+        decoded.length <= 128) {
       return decoded;
     }
 

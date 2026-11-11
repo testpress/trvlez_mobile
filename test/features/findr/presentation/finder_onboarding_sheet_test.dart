@@ -38,20 +38,17 @@ void main() {
 
     Widget createTestSheet() {
       return ProviderScope(
-        overrides: [
-          finderNotifierProvider.overrideWith(() => notifier),
-        ],
+        overrides: [finderNotifierProvider.overrideWith(() => notifier)],
         child: MaterialApp(
           theme: AppTheme.lightTheme,
-          home: const Scaffold(
-            body: FinderOnboardingSheet(),
-          ),
+          home: const Scaffold(body: FinderOnboardingSheet()),
         ),
       );
     }
 
-    testWidgets('renders terms on step 1 and requires acceptance to continue',
-        (tester) async {
+    testWidgets('renders terms on step 1 and requires acceptance to continue', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -93,8 +90,9 @@ void main() {
       expect(find.text('Activate Findr'), findsOneWidget);
     });
 
-    testWidgets('validates required address fields in step 2 when empty',
-        (tester) async {
+    testWidgets('validates required address fields in step 2 when empty', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -119,8 +117,9 @@ void main() {
       expect(notifier.lastParams, isNull);
     });
 
-    testWidgets('submits UK address and activates Findr from sheet',
-        (tester) async {
+    testWidgets('submits UK address and activates Findr from sheet', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -156,64 +155,62 @@ void main() {
     });
 
     testWidgets(
-        'renders JoinFindrSheet inside Scaffold and SafeArea without drag handle',
-        (tester) async {
-      tester.view.physicalSize = const Size(800, 1600);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+      'renders JoinFindrSheet inside Scaffold and SafeArea without drag handle',
+      (tester) async {
+        tester.view.physicalSize = const Size(800, 1600);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            finderNotifierProvider.overrideWith(() => notifier),
-          ],
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const JoinFindrSheet(),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [finderNotifierProvider.overrideWith(() => notifier)],
+            child: MaterialApp(
+              theme: AppTheme.lightTheme,
+              home: const JoinFindrSheet(),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(SafeArea), findsWidgets);
-      expect(find.text('Step 1 of 2'), findsOneWidget);
-      expect(find.text('Findr Agreement'), findsOneWidget);
-    });
+        expect(find.byType(Scaffold), findsOneWidget);
+        expect(find.byType(SafeArea), findsWidgets);
+        expect(find.text('Step 1 of 2'), findsOneWidget);
+        expect(find.text('Findr Agreement'), findsOneWidget);
+      },
+    );
 
-    testWidgets('adapts safely to elevated text scale (1.5x) without overflow',
-        (tester) async {
-      tester.view.physicalSize = const Size(400, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets(
+      'adapts safely to elevated text scale (1.5x) without overflow',
+      (tester) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            finderNotifierProvider.overrideWith(() => notifier),
-          ],
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const MediaQuery(
-              data: MediaQueryData(
-                textScaler: TextScaler.linear(1.5),
-                padding: EdgeInsets.only(top: 44.0),
-              ),
-              child: Scaffold(
-                body: FinderOnboardingSheet(isStandalone: true),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [finderNotifierProvider.overrideWith(() => notifier)],
+            child: MaterialApp(
+              theme: AppTheme.lightTheme,
+              home: const MediaQuery(
+                data: MediaQueryData(
+                  textScaler: TextScaler.linear(1.5),
+                  padding: EdgeInsets.only(top: 44.0),
+                ),
+                child: Scaffold(
+                  body: FinderOnboardingSheet(isStandalone: true),
+                ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('Step 1 of 2'), findsOneWidget);
-      expect(find.text('Findr Agreement'), findsOneWidget);
-    });
+        expect(tester.takeException(), isNull);
+        expect(find.text('Step 1 of 2'), findsOneWidget);
+        expect(find.text('Findr Agreement'), findsOneWidget);
+      },
+    );
   });
 }
-

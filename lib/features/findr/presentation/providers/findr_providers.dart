@@ -16,8 +16,8 @@ export 'package:trvlez_mobile/features/findr/presentation/providers/finder_provi
 /// Provider for live, backend-driven Findr portfolio metrics and referral lists.
 final findrPortfolioProvider =
     AsyncNotifierProvider<FindrPortfolioNotifier, FindrPortfolio>(
-  FindrPortfolioNotifier.new,
-);
+      FindrPortfolioNotifier.new,
+    );
 
 /// Convenience provider yielding non-null [FindrPortfolio] synced immediately with local persistence.
 final liveFindrPortfolioProvider = Provider<FindrPortfolio>((ref) {
@@ -25,7 +25,8 @@ final liveFindrPortfolioProvider = Provider<FindrPortfolio>((ref) {
   final portfolio = asyncValue.valueOrNull ?? FindrPortfolio.empty;
   bool isJoined = portfolio.joined;
   try {
-    isJoined = isJoined || ref.read(settingsRepositoryProvider).isFindrActivated();
+    isJoined =
+        isJoined || ref.read(settingsRepositoryProvider).isFindrActivated();
   } catch (_) {}
   return portfolio.copyWith(joined: isJoined);
 });

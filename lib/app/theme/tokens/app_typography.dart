@@ -27,10 +27,8 @@ class AppTypography {
   );
 
   /// Semantic typography token for brand screen main headings.
-  static TextStyle get brandHeading => heading.copyWith(
-    fontSize: TypeScale.s26,
-    fontWeight: TypeScale.bold,
-  );
+  static TextStyle get brandHeading =>
+      heading.copyWith(fontSize: TypeScale.s26, fontWeight: TypeScale.bold);
 
   /// Semantic typography token for brand screen subheadings.
   static TextStyle get brandSubtitle => body.copyWith(

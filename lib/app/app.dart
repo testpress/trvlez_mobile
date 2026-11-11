@@ -37,7 +37,9 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
   /// Triggers background capture of Android Play Install Referrer attribution evidence.
   void _triggerAttributionCapture() {
     try {
-      ref.read(attributionServiceProvider).captureInstallReferrer().catchError((error) {
+      ref.read(attributionServiceProvider).captureInstallReferrer().catchError((
+        error,
+      ) {
         debugPrint('[App] Attribution capture background failure: $error');
         return false;
       });
@@ -88,9 +90,7 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
           );
         }
         return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: effectiveScaler,
-          ),
+          data: mediaQuery.copyWith(textScaler: effectiveScaler),
           child: child ?? const SizedBox.shrink(),
         );
       },

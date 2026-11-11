@@ -453,73 +453,79 @@ void main() {
       expect(notifier.polledJobId, 'job-12345');
     });
 
-    testWidgets('tapping back button navigates to home instead of previous screens', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(1170, 2532);
-      tester.view.devicePixelRatio = 3.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'tapping back button navigates to home instead of previous screens',
+      (tester) async {
+        tester.view.physicalSize = const Size(1170, 2532);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      final notifier = TestVerificationNotifier(
-        const VerificationState(phase: VerificationPhase.verifying),
-      );
-      final container = ProviderContainer(
-        overrides: [verificationNotifierProvider.overrideWith(() => notifier)],
-      );
-      addTearDown(container.dispose);
+        final notifier = TestVerificationNotifier(
+          const VerificationState(phase: VerificationPhase.verifying),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            verificationNotifierProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(createTestWidget(container: container));
-      await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpWidget(createTestWidget(container: container));
+        await tester.pump(const Duration(milliseconds: 100));
 
-      final backButton = find.byTooltip('Back');
-      final backButtonSemantics = find.bySemanticsLabel('Back');
-      final backTarget = backButtonSemantics.evaluate().isNotEmpty
-          ? backButtonSemantics
-          : backButton;
+        final backButton = find.byTooltip('Back');
+        final backButtonSemantics = find.bySemanticsLabel('Back');
+        final backTarget = backButtonSemantics.evaluate().isNotEmpty
+            ? backButtonSemantics
+            : backButton;
 
-      expect(backTarget, findsOneWidget);
-      await tester.tap(backTarget);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+        expect(backTarget, findsOneWidget);
+        await tester.tap(backTarget);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
 
-      expect(find.text('Home Screen'), findsOneWidget);
-    });
+        expect(find.text('Home Screen'), findsOneWidget);
+      },
+    );
 
-    testWidgets('hardware or system back invokes PopScope and navigates to home', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(1170, 2532);
-      tester.view.devicePixelRatio = 3.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'hardware or system back invokes PopScope and navigates to home',
+      (tester) async {
+        tester.view.physicalSize = const Size(1170, 2532);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      final notifier = TestVerificationNotifier(
-        const VerificationState(phase: VerificationPhase.verifying),
-      );
-      final container = ProviderContainer(
-        overrides: [verificationNotifierProvider.overrideWith(() => notifier)],
-      );
-      addTearDown(container.dispose);
+        final notifier = TestVerificationNotifier(
+          const VerificationState(phase: VerificationPhase.verifying),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            verificationNotifierProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(createTestWidget(container: container));
-      await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpWidget(createTestWidget(container: container));
+        await tester.pump(const Duration(milliseconds: 100));
 
-      // Simulate system pop attempt
-      final dynamic popScope = tester.widget(
-        find.byWidgetPredicate((widget) => widget is PopScope),
-      );
-      expect(popScope.canPop, isFalse);
+        // Simulate system pop attempt
+        final dynamic popScope = tester.widget(
+          find.byWidgetPredicate((widget) => widget is PopScope),
+        );
+        expect(popScope.canPop, isFalse);
 
-      popScope.onPopInvokedWithResult(false, null);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+        popScope.onPopInvokedWithResult(false, null);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
 
-      expect(find.text('Home Screen'), findsOneWidget);
-    });
+        expect(find.text('Home Screen'), findsOneWidget);
+      },
+    );
   });
 }

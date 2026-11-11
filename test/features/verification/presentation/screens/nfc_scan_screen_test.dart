@@ -101,57 +101,56 @@ void main() {
       },
     );
 
-    testWidgets(
-      'smoothly updates progress indicator once reading progresses',
-      (tester) async {
-        final mockService = MockNfcPassportService();
-        final container = createInitializedContainer();
+    testWidgets('smoothly updates progress indicator once reading progresses', (
+      tester,
+    ) async {
+      final mockService = MockNfcPassportService();
+      final container = createInitializedContainer();
 
-        await tester.pumpWidget(
-          createTestWidget(nfcService: mockService, container: container),
-        );
-        await tester.pump();
+      await tester.pumpWidget(
+        createTestWidget(nfcService: mockService, container: container),
+      );
+      await tester.pump();
 
-        // 1. Connecting (0.0) -> Still 0.0
-        mockService.progressCallback?.call(
-          const NfcReadProgress(
-            currentStep: NfcReadStep.connecting,
-            percentage: 0.0,
-            description: 'Waiting for passport...',
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 50));
-        expect(find.text('Reading the chip'), findsOneWidget);
+      // 1. Connecting (0.0) -> Still 0.0
+      mockService.progressCallback?.call(
+        const NfcReadProgress(
+          currentStep: NfcReadStep.connecting,
+          percentage: 0.0,
+          description: 'Waiting for passport...',
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.text('Reading the chip'), findsOneWidget);
 
-        // 2. Reading Card Access (10%) -> Reading starts
-        mockService.progressCallback?.call(
-          const NfcReadProgress(
-            currentStep: NfcReadStep.readingCardAccess,
-            percentage: 0.1,
-            description: 'Connecting to chip...',
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 350));
+      // 2. Reading Card Access (10%) -> Reading starts
+      mockService.progressCallback?.call(
+        const NfcReadProgress(
+          currentStep: NfcReadStep.readingCardAccess,
+          percentage: 0.1,
+          description: 'Connecting to chip...',
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 350));
 
-        expect(find.text('Reading the chip'), findsOneWidget);
-        final progressFinder = find.byType(LinearProgressIndicator);
-        expect(progressFinder, findsOneWidget);
+      expect(find.text('Reading the chip'), findsOneWidget);
+      final progressFinder = find.byType(LinearProgressIndicator);
+      expect(progressFinder, findsOneWidget);
 
-        // 3. Reading DG2 Face Image (60%)
-        mockService.progressCallback?.call(
-          const NfcReadProgress(
-            currentStep: NfcReadStep.readingDg2,
-            percentage: 0.6,
-            description: 'Reading face image...',
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 350));
+      // 3. Reading DG2 Face Image (60%)
+      mockService.progressCallback?.call(
+        const NfcReadProgress(
+          currentStep: NfcReadStep.readingDg2,
+          percentage: 0.6,
+          description: 'Reading face image...',
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 350));
 
-        expect(find.text('Reading the chip'), findsOneWidget);
+      expect(find.text('Reading the chip'), findsOneWidget);
 
-        container.dispose();
-      },
-    );
+      container.dispose();
+    });
 
     testWidgets('finishes reading at 100% and routes to chip data screen', (
       tester,

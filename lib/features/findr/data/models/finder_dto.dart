@@ -37,11 +37,14 @@ class FinderDto {
       activatedAt: _parseDateTime(json['activated_at'] as String?),
       suspendedAt: _parseDateTime(json['suspended_at'] as String?),
       suspensionEndsAt: _parseDateTime(json['suspension_ends_at'] as String?),
-      verificationLapsedAt:
-          _parseDateTime(json['verification_lapsed_at'] as String?),
-      createdAt: _parseDateTime(json['created_at'] as String?) ??
+      verificationLapsedAt: _parseDateTime(
+        json['verification_lapsed_at'] as String?,
+      ),
+      createdAt:
+          _parseDateTime(json['created_at'] as String?) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-      updatedAt: _parseDateTime(json['updated_at'] as String?) ??
+      updatedAt:
+          _parseDateTime(json['updated_at'] as String?) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
     );
   }
@@ -161,8 +164,7 @@ class FinderStatusResponseDto {
               isEligible: false,
               reason: 'terminal_status',
             ),
-      reverificationRequired:
-          json['reverification_required'] as bool? ?? false,
+      reverificationRequired: json['reverification_required'] as bool? ?? false,
       reverificationUrl: json['reverification_url'] as String?,
     );
   }
@@ -279,4 +281,3 @@ class FinderProfileUpdateDto {
     return payload;
   }
 }
-

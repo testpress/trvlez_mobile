@@ -172,14 +172,15 @@ class _StepNode extends StatelessWidget {
                 )
               : Text(
                   '${index + 1}',
-                  style: (context.text.labelSmall ?? const TextStyle()).copyWith(
-                    fontSize: size * 0.44,
-                    fontWeight: isOn ? TypeScale.bold : TypeScale.medium,
-                    color: isOn
-                        ? colors.verificationStepActiveText
-                        : colors.verificationStepInactiveText,
-                    height: 1.0,
-                  ),
+                  style: (context.text.labelSmall ?? const TextStyle())
+                      .copyWith(
+                        fontSize: size * 0.44,
+                        fontWeight: isOn ? TypeScale.bold : TypeScale.medium,
+                        color: isOn
+                            ? colors.verificationStepActiveText
+                            : colors.verificationStepInactiveText,
+                        height: 1.0,
+                      ),
                 ),
         ),
         SizedBox(height: space.stackTight),

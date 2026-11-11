@@ -71,7 +71,9 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
     );
 
     try {
-      await ref.read(findrPortfolioProvider.notifier).createHotelReferral(params);
+      await ref
+          .read(findrPortfolioProvider.notifier)
+          .createHotelReferral(params);
 
       if (!mounted) return;
 
@@ -168,7 +170,9 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                             color: colors.feedbackError.withValues(alpha: 0.1),
                             borderRadius: shape.radiusControl,
                             border: Border.all(
-                              color: colors.feedbackError.withValues(alpha: 0.3),
+                              color: colors.feedbackError.withValues(
+                                alpha: 0.3,
+                              ),
                               width: shape.borderDefault,
                             ),
                           ),
@@ -213,7 +217,9 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                         label: 'Street Address',
                         hintText: 'e.g. 10 High Street',
                         textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.postalAddressExtended],
+                        autofillHints: const [
+                          AutofillHints.postalAddressExtended,
+                        ],
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Street address is required';
@@ -288,7 +294,9 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                           if (value == null || value.trim().isEmpty) {
                             return 'Contact email is required';
                           }
-                          final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+                          final emailRegex = RegExp(
+                            r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                          );
                           if (!emailRegex.hasMatch(value.trim())) {
                             return 'Enter a valid email address';
                           }
@@ -310,7 +318,8 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                       AppTextField(
                         controller: _personalNoteController,
                         label: 'Personal Note (Optional)',
-                        hintText: 'e.g. Met the GM during my stay in Interlaken',
+                        hintText:
+                            'e.g. Met the GM during my stay in Interlaken',
                         textInputAction: TextInputAction.done,
                         maxLines: 3,
                       ),

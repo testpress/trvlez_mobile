@@ -165,9 +165,7 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
       isScrollable: false,
       body: [
         const Spacer(flex: 3),
-        Center(
-          child: VerifyNfcPulse(size: sizes.cardWidthCarousel),
-        ),
+        Center(child: VerifyNfcPulse(size: sizes.cardWidthCarousel)),
         const Spacer(flex: 3),
         Text(
           'Reading the chip',
