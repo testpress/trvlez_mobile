@@ -69,14 +69,14 @@ After updating, review the diff in `.agents/skills/`, verify `skills-lock.json` 
 
 ---
 
-## Local (untracked) skills
+## Retired local skills
 
-These skills were authored locally and are not tracked by `skills-lock.json`. They are preserved pending migration decisions.
+These locally authored skills were retired per user approval (Option c) once their useful guidance was integrated into the playbook:
 
-| Skill | Status | Decision | Rationale |
-|---|---|---|---|
-| `flutter-semantic-layout-tokens` | Preserved | **Adapt or retire** | Valuable token workflow, but its "zero raw numbers anywhere" absolutism conflicts with the playbook's nuanced dimension policy (chapter 04). Its useful content is now represented in chapter 04. Retire after confirming no agent host depends on it exclusively. |
-| `flutter-anti-ui-slop` | Preserved | **Reject as authority** | Subjective aesthetic guard with absolute prescriptions. Conflicts with client-design fidelity and conditional engineering choices. Do not expand or treat as enterprise policy. Keep unchanged only if a team owner explicitly wants it; otherwise remove. |
+| Skill | Status | Reason |
+|---|---|---|
+| `flutter-semantic-layout-tokens` | **Retired** | Token workflow integrated into chapter 04. "Zero raw numbers" absolutism replaced with nuanced dimension policy. |
+| `flutter-anti-ui-slop` | **Retired** | Subjective aesthetic guard; not an enterprise standard. Client design references govern visual presentation. |
 
 ---
 

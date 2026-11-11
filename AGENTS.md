@@ -15,4 +15,4 @@ Before work, load the applicable playbook chapter:
 | Accessibility or performance work | `playbook/00-charter-and-precedence.md`, `07-accessibility-and-performance.md` | — |
 | Architecture or non-UI reliability work | `playbook/00-charter-and-precedence.md`, `01-app-architecture-and-boundaries.md`, `08-non-ui-engineering-backlog.md` | — |
 
-Use `docs/engineering/playbook/00-charter-and-precedence.md` to resolve conflicts. Preserve existing `.agents/rules/` and `.agents/skills/` files until `docs/engineering/migration-map.md` and explicit approval allow a change. Do not redesign application UI, upgrade dependencies, or install packages/skills solely because this guidance exists.
+Use `docs/engineering/playbook/00-charter-and-precedence.md` to resolve conflicts. Legacy rules and local skills have been retired per `docs/engineering/migration-map.md`. Do not redesign application UI, upgrade dependencies, or install packages/skills solely because this guidance exists.

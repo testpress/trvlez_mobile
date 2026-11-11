@@ -37,7 +37,6 @@ Use it with the approved client reference, the current code contracts, and curre
 
 - The playbook is established with comprehensive chapters covering architecture, screen construction, layout, design system, validation, device matrix, accessibility, performance, and non-UI engineering.
 - 6 official skills installed from `flutter/agent-plugins` and `dart-lang/skills`, tracked in `skills-lock.json`.
-- 2 local skills preserved pending retirement decisions (see `migration-map.md`).
-- Existing `.agents/rules/` content preserved as compatibility material; the playbook governs new work.
+- Legacy rules and local skills retired per `migration-map.md` (user approval 2026-11-11); the playbook is the single authority.
 - Deterministic test helpers created in `test/helpers/` for viewport matrix and text scale testing.
 - Installation requires FNM Node ≥ 22.20.0 for skill CLI operations (default host Node 20.20.2 is insufficient).
