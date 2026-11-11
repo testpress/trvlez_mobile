@@ -32,7 +32,7 @@ Testing on only one configuration and declaring success is not validation — it
 
 For each viewport, test the following as relevant to the screen under change:
 
-- **Navigation mode:** Gesture navigation (bottom inset ~48dp) vs 3-button navigation (bottom inset ~48dp, different visual) vs 2-button navigation (legacy). The inset values differ.
+- **Navigation mode:** Gesture, 3-button, and legacy 2-button navigation have device- and OS-dependent inset values. Do not assume one fixed value; record the runtime `padding` and `viewPadding`.
 - **Status bar:** Standard vs notch/punch-hole. `SafeArea` top padding varies.
 - **Text scale:** Default (1.0×) and enlarged (1.3× minimum; 2.0× for accessibility compliance).
 - **Keyboard:** Open with a focused low field. Verify the focused field scrolls into view and bottom actions are accessible.
@@ -146,7 +146,7 @@ These scenarios should be tested across multiple viewport categories when the af
 ### 1. Content overflow test
 - Set the viewport to **Compact** (smallest).
 - Navigate to the screen with **maximum-length content** (long names, translated strings, error messages).
-- Enable **enlarged text scale** (1.3× or higher).
+- Enable **enlarged text scale** at 1.3× and 2.0×.
 - **Expected:** No `RenderFlex` overflow. Content scrolls if needed. All text is readable. All buttons are tappable.
 
 ### 2. Keyboard interaction test
@@ -160,7 +160,7 @@ These scenarios should be tested across multiple viewport categories when the af
 - **Expected:** Empty/error views are centered or appropriately positioned. Retry button is tappable. No overflow.
 
 ### 4. Inset variation test
-- Test with **gesture navigation** (larger bottom inset) and **3-button navigation** (smaller bottom inset) on Android.
+- Test with **gesture navigation** and **3-button navigation** on Android; use their recorded runtime insets rather than assuming which is larger.
 - Test with and without **Dynamic Island / notch** on iOS.
 - **Expected:** Content does not overlap system UI. Bottom actions are not obscured. `SafeArea` is applied at the correct level (once, not doubled).
 
@@ -178,11 +178,11 @@ Every material screen or layout change must include evidence for at least:
 | --- | --- |
 | Compact viewport | Widget test at `TestViewports.compactAndroid` (or compact iPhone when iOS-specific) |
 | Regular viewport | Widget test at `TestViewports.regularAndroid` (or regular iPhone) |
-| Text scale | 1.0 and ≥1.3 (`TestTextScales.normal` and `.large` or higher) |
-| Keyboard | When the screen has inputs: `TestInsetProfiles.keyboardOpen` and/or emulator keyboard-open capture |
-| Emulator/simulator capture | Via `scripts/device_matrix.sh` using the chapter 05 naming convention |
+| Text scale | 1.0, 1.3, and 2.0 (`TestTextScales.normal`, `.large`, and `.accessibility`) |
+| Keyboard | When the screen has inputs: platform-appropriate `TestInsetProfiles.*KeyboardOpen` and emulator/simulator keyboard-open capture |
+| Emulator/simulator capture | Via `scripts/device_matrix.sh` using validated runtime-MediaQuery metadata and the chapter 05 naming convention |
 
-Tall/large viewports, alternate nav modes, and physical devices are required when the change touches insets, pinned footers, or a reported device-pair defect.
+Tall/large viewports, alternate nav modes, and physical devices are required when the change touches insets, pinned footers, or a reported device-pair defect. Safe-area, keyboard, pinned-footer, platform-typography, and system-UI changes require both Android emulator and iOS simulator evidence.
 
 ---
 
@@ -234,13 +234,33 @@ flutter test
 ./scripts/device_matrix.sh run-integration emulator-5554
 # equivalent: flutter test integration_test/ -d emulator-5554
 
-# Step 4: Capture screenshots (naming enforced by the script)
-./scripts/device_matrix.sh capture-android login default 393x852 1.0 gesture-nav
-./scripts/device_matrix.sh capture-ios login default 393x852 1.0 safe-area
+# Step 4: Capture screenshots using measured runtime MediaQuery JSON.
+# The script derives the filename and writes a sibling evidence sidecar.
+./scripts/device_matrix.sh capture-android login default /tmp/login-android-media-query.json
+./scripts/device_matrix.sh capture-ios login default /tmp/login-ios-media-query.json
 
 # Step 5: Physical device — install, exercise states, fill evidence template / paired worksheet
 flutter run -d <device_id>
 ```
+
+### Runtime MediaQuery input for captures
+
+Before capture, record the runtime values from DevTools or a temporary local diagnostic (then remove that diagnostic). Save no identifiers or user data.
+
+```json
+{
+  "logicalSize": {"width": 393, "height": 852},
+  "devicePixelRatio": 2.75,
+  "textScale": 1.3,
+  "padding": {"top": 24, "right": 0, "bottom": 24, "left": 0},
+  "viewPadding": {"top": 24, "right": 0, "bottom": 24, "left": 0},
+  "viewInsets": {"top": 0, "right": 0, "bottom": 0, "left": 0},
+  "insetState": "gesture-nav",
+  "keyboardState": "closed"
+}
+```
+
+`scripts/device_matrix.sh` validates this schema, uses it for the filename, and stores it with non-identifying capture metadata. The JSON is evidence input, not a substitute for observing the running app.
 
 ### Evidence template
 

@@ -46,9 +46,10 @@ Run these before committing. They are the lowest-cost, highest-frequency check.
 - `TestApp` / `testAppWithProviders()` — wraps the widget under test with `MaterialApp`, theme, and optional text scale injection via `MaterialApp.builder` (so the framework's own `MediaQuery` is not overwritten).
 - `TestViewports` — named logical viewport sizes matching the device matrix in chapter 06.
 - `TestTextScales` — named text scale values for accessibility testing.
-- `TestInsetProfiles` — named `padding` / `viewPadding` / `viewInsets` profiles (gesture-nav, 3-button, notched, keyboard-open).
+- `TestInsetProfiles` — distinct synthetic Android gesture/three-button/cut-out and iOS compact/home-indicator/keyboard profiles. They reproduce layout behaviours; they do not claim to emulate a named handset.
 - `ViewportTesting` extension — `tester.setViewport()` / `tester.setInsetProfile()` / `tester.resetViewport()`.
 - `testViewportMatrix()` / `testTextScaleMatrix()` / `testInsetMatrix()` — run a test callback across viewports, text scales, or inset profiles.
+- `testMaterialScreenMatrix()` — required baseline for a material screen: compact + regular geometry, 1.0/1.3/2.0 text, Android navigation variation, iOS home-indicator space, and an explicit keyboard scenario when inputs exist.
 
 **Test structure:**
 
@@ -171,7 +172,7 @@ testInsetMatrix(
   profiles: [
     TestInsetProfiles.androidGestureNav,
     TestInsetProfiles.androidThreeButton,
-    TestInsetProfiles.keyboardOpen,
+    TestInsetProfiles.androidKeyboardOpen,
   ],
   builder: (tester, profile) async {
     await tester.pumpWidget(
@@ -337,7 +338,8 @@ When diagnosing a layout issue on a running app:
 | Change type | Minimum evidence |
 |---|---|
 | Shared widget styling | Widget test + golden test (pinned environment; see Layer 3) |
-| Screen layout or inset/keyboard change | Chapter 02 checklist: compact + regular viewports, text 1.0 and ≥1.3, keyboard/inset profile when inputs exist, `scripts/device_matrix.sh` capture |
+| Screen layout or inset/keyboard change | Chapter 02 checklist: compact + regular viewports, text 1.0/1.3/2.0, keyboard/inset profile when inputs exist, validated `scripts/device_matrix.sh` capture |
+| SafeArea, keyboard, pinned-footer, platform-typography, or system-UI change | Material screen matrix + validated Android emulator **and** iOS simulator capture |
 | Navigation/input/device-plugin flow | Integration test where feasible + platform runtime evidence |
 | Token/theme-wide change | Component goldens + affected widget tests + documented baseline review |
 | Accessibility improvement | Widget test with semantic assertions + text scale test + screen reader manual test |
@@ -356,7 +358,9 @@ Examples:
 - `booking__error__ios__393x852__text-1.5__safe-area.png`
 - `profile__keyboard-open__android__412x915__text-1.0__3button-nav.png`
 
-Store only approved, non-sensitive fixtures. Never commit user data, credentials, or device identifiers.
+The capture command derives `<width>x<height>`, `<scale>`, and `<inset-state>` from a required runtime-MediaQuery JSON file, then writes a sibling `.json` sidecar. Do not label a screenshot with manually supplied viewport, text-scale, or navigation values.
+
+Store only approved, non-sensitive fixtures. Never commit user data, credentials, serials, or device identifiers.
 
 ---
 

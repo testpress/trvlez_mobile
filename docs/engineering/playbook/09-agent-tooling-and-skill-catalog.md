@@ -108,6 +108,6 @@ When an agent is activated for a task, it should load the playbook chapter(s) fi
 | Accessibility or performance | 00, 07 | — |
 | Architecture or non-UI reliability | 00, 01, 08 | — |
 
-Phase 5 / material screen work is incomplete without the chapter 02 layout contract and the chapter 05/06 evidence minimum (compact + regular viewports, text scale 1.0 and ≥1.3, keyboard when inputs exist, and paired `MediaQuery` capture for reported device discrepancies).
+Phase 5 / material screen work is incomplete without the chapter 02 layout contract and the chapter 05/06 evidence minimum: compact + regular viewports, text scale 1.0/1.3/2.0, keyboard when inputs exist, and measured `MediaQuery` metadata for captures. Safe-area, keyboard, pinned-footer, platform-typography, or system-UI work requires Android emulator and iOS simulator evidence; paired `MediaQuery` capture is required for reported device discrepancies.
 
 The playbook is always the authority. The skill is a procedural helper. If they conflict, the playbook wins.

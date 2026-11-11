@@ -1,4 +1,4 @@
 tags:
   golden:
-    # Experimental golden tests are gated until Flutter SDK and fonts are
-    # pinned per docs/engineering/playbook/05-visual-validation-standard.md.
+    # Golden tests run only in the pinned, deterministic environment described
+    # in docs/engineering/playbook/05-visual-validation-standard.md.

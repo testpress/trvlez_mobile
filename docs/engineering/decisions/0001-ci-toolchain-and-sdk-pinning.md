@@ -9,7 +9,7 @@
 
 ## Context
 
-The TrvlEz mobile application currently runs on Flutter `3.44.4` (Dart `3.12.2`). In CI (`.github/workflows/ci.yml`), `subosito/flutter-action@v2` is configured with `channel: 'stable'`.
+The TrvlEz mobile application currently runs on Flutter `3.44.4` (Dart `3.12.2`). CI pins `subosito/flutter-action@v2` to Flutter `3.44.4` on the stable channel.
 
 While an unpinned channel ensures the repository tracks ongoing security updates from the Flutter team, floating channels introduce non-deterministic risks:
 1. Flutter stable updates can alter text rasterization, font ascent/descent metrics, or Skia/Impeller anti-aliasing, causing false failures in visual regression or golden tests.
@@ -20,10 +20,10 @@ While an unpinned channel ensures the repository tracks ongoing security updates
 
 ## Decision
 
-The team adopted **Option B: Channel Tracking with PR-Time Pinning Cadence**:
+The team adopted exact CI pinning with intentional upgrade reviews:
 
-1. **CI Quality Gates Workflow (`ci.yml`):** Continues to track Flutter `stable` channel for continuous analysis, linting, unit tests, and integration tests, ensuring immediate visibility into upcoming framework deprecations.
-2. **Visual & Golden Testing Feasibility Gate:** Golden regression baselines remain gated and skipped locally and in CI until a dedicated pinned golden workflow (pinning exact Flutter version, engine commit, and deterministic font assets via `test/flutter_test_config.dart`) is provisioned.
+1. **CI Quality Gates Workflow (`ci.yml`):** Pins Flutter `3.44.4` for analysis, linting, unit/widget tests, and deterministic golden tests.
+2. **Visual & Golden Testing Feasibility Gate:** Golden regression baselines run only with the pinned SDK and deterministic fonts loaded by `test/flutter_test_config.dart`.
 3. **Release & Staging Pipelines:** Production releases and release candidate tags must record the exact `flutter --version` output in their release manifests.
 4. **Upgrade Cadence:** When Flutter stable increments, an intentional upgrade PR will be opened that verifies:
    - `flutter analyze --fatal-infos` passes cleanly
@@ -34,7 +34,7 @@ The team adopted **Option B: Channel Tracking with PR-Time Pinning Cadence**:
 
 ## Alternatives Considered
 
-- **Hard-pinning CI to 3.44.4 immediately (Option A):** Rejected because it risks falling behind critical security and platform patches unless an automated Dependabot/Renovate cadence for Flutter SDK is established first.
+- **Tracking an unpinned Flutter channel (Option A):** Rejected because it creates non-deterministic visual output and false golden failures.
 - **Skipping CI validation for visual changes (Option C):** Rejected because continuous automated testing is required to maintain architectural boundaries and test suites.
 
 ---
@@ -42,7 +42,7 @@ The team adopted **Option B: Channel Tracking with PR-Time Pinning Cadence**:
 ## Consequences
 
 - Continuous integration checks stay active and fast without brittle golden mismatches.
-- Experimental golden tests (`test/core/widgets/app_card_golden_test.dart`) remain skipped in CI (`skip: true`) until the dedicated deterministic font & SDK environment is established.
+- Golden tests (`test/core/widgets/app_card_golden_test.dart`) run in CI against committed baselines and upload failure diffs as artifacts.
 - All non-visual quality gates (analysis, token guard, layer imports, unit/widget/integration tests) run with zero flakiness.
 
 ---

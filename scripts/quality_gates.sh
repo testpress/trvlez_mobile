@@ -71,8 +71,10 @@ echo "PASSED: Feature Encapsulation Guard - Zero cross-feature presentation or d
 
 # 5. Semantic Layout Token Guard
 echo ""
-echo "5/8 Checking Semantic Layout Token Guard (disallow raw layout numbers outside lib/core/design_tokens/)..."
+echo "5/8 Checking cross-device layout policy guard..."
+python3 scripts/test_verify_layout_tokens.py
 python3 scripts/verify_layout_tokens.py
+python3 scripts/test_write_capture_metadata.py
 
 # 6. Formatting Check
 echo ""

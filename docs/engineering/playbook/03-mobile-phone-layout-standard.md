@@ -131,7 +131,7 @@ For every input page, decide who owns:
 3. the scroll owner and focused-field visibility;
 4. bottom padding derived from `MediaQuery.viewInsetsOf(context).bottom` where content can be obscured.
 
-The keyboard is transient. Do not bake its height into design tokens or infer it from an Android/iOS model name. Test both a focused low field and an unfocused form, on Android navigation modes and iOS home-indicator devices where relevant. Use `TestInsetProfiles.keyboardOpen` in widget tests (see chapter 05).
+The keyboard is transient. Do not bake its height into design tokens or infer it from an Android/iOS model name. Test both a focused low field and an unfocused form, on Android navigation modes and iOS home-indicator devices where relevant. Use the platform-appropriate `TestInsetProfiles.androidKeyboardOpen` or `.iOSKeyboardOpen` in widget tests (see chapter 05).
 
 ## Forbidden device-difference fixes
 
@@ -150,4 +150,4 @@ These patterns produce fragmented UI across phones. Do not introduce them to “
 
 Use Flutter DevTools layout inspection and debug paint/overflow diagnostics while resolving a constraint issue. The diagnostic question is: *what constraints and insets reach this widget?*—not *what number looked right on the first phone?*
 
-Before acceptance, complete the chapter 02 material-layout checklist: compact + regular viewports, text scale 1.0 and ≥1.3, keyboard when inputs exist, and paired `MediaQuery` capture for reported device pairs. Record exact logical viewport and evidence per chapters 05 and 06.
+Before acceptance, complete the chapter 02 material-layout checklist: compact + regular viewports, text scale 1.0, 1.3, and 2.0, keyboard when inputs exist, and paired `MediaQuery` capture for reported device pairs. Record exact logical viewport and evidence per chapters 05 and 06.

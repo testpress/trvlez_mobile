@@ -139,7 +139,7 @@ void main() {
       EdgeInsets? observedViewInsets;
 
       tester.setViewport(TestViewports.compactAndroid);
-      tester.setInsetProfile(TestInsetProfiles.keyboardOpen);
+      tester.setInsetProfile(TestInsetProfiles.androidKeyboardOpen);
       addTearDown(tester.resetViewport);
 
       await tester.pumpWidget(
@@ -156,7 +156,7 @@ void main() {
       );
 
       expect(observedPadding, const EdgeInsets.only(top: 24));
-      expect(observedViewPadding, const EdgeInsets.only(top: 24, bottom: 48));
+      expect(observedViewPadding, const EdgeInsets.only(top: 24, bottom: 24));
       expect(observedViewInsets, const EdgeInsets.only(bottom: 300));
     });
 
@@ -183,8 +183,8 @@ void main() {
         ),
       );
 
-      // 640 logical height minus top 24 and bottom 48 gesture inset.
-      expect(safeChildSize, const Size(360, 568));
+      // 640 logical height minus top and bottom 24dp gesture insets.
+      expect(safeChildSize, const Size(360, 592));
     });
 
     final seenInsetNames = <String>[];
@@ -193,7 +193,7 @@ void main() {
       viewport: TestViewports.compactAndroid,
       profiles: const [
         TestInsetProfiles.androidGestureNav,
-        TestInsetProfiles.keyboardOpen,
+        TestInsetProfiles.androidKeyboardOpen,
       ],
       builder: (tester, profile) async {
         EdgeInsets? observedViewInsets;
@@ -207,7 +207,7 @@ void main() {
             ),
           ),
         );
-        if (profile.name == TestInsetProfiles.keyboardOpen.name) {
+        if (profile.name == TestInsetProfiles.androidKeyboardOpen.name) {
           expect(observedViewInsets, const EdgeInsets.only(bottom: 300));
         } else {
           expect(observedViewInsets, EdgeInsets.zero);
@@ -219,8 +219,21 @@ void main() {
     test('testInsetMatrix covered configured profiles', () {
       expect(seenInsetNames, [
         TestInsetProfiles.androidGestureNav.name,
-        TestInsetProfiles.keyboardOpen.name,
+        TestInsetProfiles.androidKeyboardOpen.name,
       ]);
+    });
+
+    test('inset profiles represent distinct Android and iOS states', () {
+      expect(
+        TestInsetProfiles.androidGestureNav.viewPadding.bottom,
+        isNot(TestInsetProfiles.androidThreeButton.viewPadding.bottom),
+      );
+      expect(TestInsetProfiles.iOSCompact.padding.bottom, 0);
+      expect(TestInsetProfiles.iOSHomeIndicator.padding.bottom, 34);
+      expect(
+        TestInsetProfiles.iOSKeyboardOpen.viewInsets.bottom,
+        greaterThan(0),
+      );
     });
   });
 }

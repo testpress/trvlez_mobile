@@ -11,8 +11,10 @@ set -eo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EVIDENCE_DIR="${ROOT_DIR}/docs/engineering/evidence/screenshots"
+METADATA_WRITER="${ROOT_DIR}/scripts/write_capture_metadata.py"
 
 usage() {
+  local exit_code="${1:-1}"
   cat <<EOF
 Usage: $(basename "$0") <command> [arguments]
 
@@ -20,25 +22,24 @@ Commands:
   list-devices
       List available Android devices/emulators and iOS simulators.
 
-  capture-android <feature> <state> <width>x<height> <scale> <inset_state> [device_id]
-      Capture screenshot from connected Android device using the playbook naming standard:
-      <feature>__<state>__android__<width>x<height>__text-<scale>__<inset_state>.png
+  capture-android <feature> <state> <runtime-media-query.json> [device_id]
+      Capture an Android screenshot and validated runtime-MediaQuery sidecar.
 
-  capture-ios <feature> <state> <width>x<height> <scale> <inset_state> [simulator_id]
-      Capture screenshot from booted iOS simulator.
+  capture-ios <feature> <state> <runtime-media-query.json> [simulator_id]
+      Capture an iOS simulator screenshot and validated runtime-MediaQuery sidecar.
 
-  run-integration [device_id]
-      Run integration test suite on the specified connected device or emulator.
+  run-integration [device_id] [test_target]
+      Run an integration test on the specified connected device or emulator.
 
   help
       Show this message.
 
 Examples:
-  $(basename "$0") capture-android login default 393x852 1.0 gesture-nav
-  $(basename "$0") capture-android profile keyboard 412x915 1.3 3button-nav emulator-5554
+  $(basename "$0") capture-android login default /tmp/login-media-query.json
+  $(basename "$0") capture-android profile keyboard /tmp/profile-media-query.json emulator-5554
   $(basename "$0") run-integration emulator-5554
 EOF
-  exit 1
+  exit "${exit_code}"
 }
 
 cmd_list_devices() {
@@ -57,14 +58,21 @@ cmd_list_devices() {
 cmd_capture_android() {
   local feature="${1:?Missing feature name}"
   local state="${2:?Missing state (e.g. default, error, keyboard, loading)}"
-  local dimensions="${3:?Missing dimensions (e.g. 393x852)}"
-  local scale="${4:?Missing text scale (e.g. 1.0, 1.3, 2.0)}"
-  local inset="${5:?Missing inset state (e.g. gesture-nav, 3button-nav)}"
-  local device_id="${6:-}"
+  local runtime_media_query="${3:?Missing runtime MediaQuery JSON path}"
+  local device_id="${4:-}"
+  local dimensions scale inset
+
+  read -r dimensions scale inset < <(
+    python3 "${METADATA_WRITER}" \
+      --runtime-media-query "${runtime_media_query}" \
+      --platform android \
+      --filename-fields
+  )
 
   mkdir -p "${EVIDENCE_DIR}"
   local filename="${feature}__${state}__android__${dimensions}__text-${scale}__${inset}.png"
   local target_path="${EVIDENCE_DIR}/${filename}"
+  local metadata_path="${target_path%.png}.json"
 
   local adb_cmd=(adb)
   if [[ -n "${device_id}" ]]; then
@@ -77,6 +85,14 @@ cmd_capture_android() {
   if [[ -s "${target_path}" ]]; then
     echo "SUCCESS: Screenshot saved to ${target_path}"
     echo "File size: $(wc -c < "${target_path}") bytes"
+    python3 "${METADATA_WRITER}" \
+      --runtime-media-query "${runtime_media_query}" \
+      --platform android \
+      --output "${metadata_path}" \
+      --device-model "$("${adb_cmd[@]}" shell getprop ro.product.model | tr -d '\r')" \
+      --os-version "$("${adb_cmd[@]}" shell getprop ro.build.version.release | tr -d '\r')" \
+      --physical-display "$("${adb_cmd[@]}" shell wm size | tr '\n' ';' | tr -d '\r')"
+    echo "Evidence metadata saved to ${metadata_path}"
   else
     echo "ERROR: Failed to capture screenshot or file is empty." >&2
     rm -f "${target_path}"
@@ -87,20 +103,34 @@ cmd_capture_android() {
 cmd_capture_ios() {
   local feature="${1:?Missing feature name}"
   local state="${2:?Missing state}"
-  local dimensions="${3:?Missing dimensions}"
-  local scale="${4:?Missing text scale}"
-  local inset="${5:?Missing inset state}"
-  local device_id="${6:-booted}"
+  local runtime_media_query="${3:?Missing runtime MediaQuery JSON path}"
+  local device_id="${4:-booted}"
+  local dimensions scale inset
+
+  read -r dimensions scale inset < <(
+    python3 "${METADATA_WRITER}" \
+      --runtime-media-query "${runtime_media_query}" \
+      --platform ios \
+      --filename-fields
+  )
 
   mkdir -p "${EVIDENCE_DIR}"
   local filename="${feature}__${state}__ios__${dimensions}__text-${scale}__${inset}.png"
   local target_path="${EVIDENCE_DIR}/${filename}"
+  local metadata_path="${target_path%.png}.json"
 
   echo "Capturing iOS screenshot to ${target_path}..."
   xcrun simctl io "${device_id}" screenshot "${target_path}"
 
   if [[ -s "${target_path}" ]]; then
     echo "SUCCESS: Screenshot saved to ${target_path}"
+    python3 "${METADATA_WRITER}" \
+      --runtime-media-query "${runtime_media_query}" \
+      --platform ios \
+      --output "${metadata_path}" \
+      --device-model "iOS Simulator" \
+      --os-version "$(xcrun simctl getenv "${device_id}" SIMULATOR_RUNTIME_VERSION 2>/dev/null || echo unknown)"
+    echo "Evidence metadata saved to ${metadata_path}"
   else
     echo "ERROR: Failed to capture iOS screenshot." >&2
     rm -f "${target_path}"
@@ -110,7 +140,7 @@ cmd_capture_ios() {
 
 cmd_run_integration() {
   local device_id="${1:-}"
-  local test_target="integration_test/auth_login_flow_test.dart"
+  local test_target="${2:-integration_test/auth_login_flow_test.dart}"
 
   echo "=== Running Integration Test: ${test_target} ==="
   if [[ -n "${device_id}" ]]; then
@@ -137,7 +167,7 @@ case "${1:-}" in
     cmd_run_integration "$@"
     ;;
   help|--help|-h|"")
-    usage
+    usage 0
     ;;
   *)
     echo "Unknown command: $1" >&2

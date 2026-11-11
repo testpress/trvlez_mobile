@@ -42,7 +42,7 @@
 ## 3. Discontinued Package Remediation Proposal
 
 1. **`golden_toolkit` (0.15.0):** Package author discontinued maintenance in favor of native Flutter golden testing or `alchemist`.
-   - *Proposal:* Keep `test/core/widgets/app_card_golden_test.dart` gated (`skip: true`). When implementing production visual regressions, migrate to standard `matchesGoldenFile` or `alchemist`.
+   - *Resolved:* `test/core/widgets/app_card_golden_test.dart` runs in the pinned Flutter 3.44.4 / deterministic-font environment. Keep `golden_toolkit` unless a measured limitation requires another approach; baseline changes remain reviewed visual changes.
 2. **`flutter_secure_storage_macos`:** Transitive dependency from `flutter_secure_storage 9.2.4`.
    - *Proposal:* Resolved automatically when updating `flutter_secure_storage` to 11.x.
 3. **`dmrtd` sibling path dependency:**

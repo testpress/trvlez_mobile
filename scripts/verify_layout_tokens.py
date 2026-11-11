@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""
-CI Guard: Enforce semantic layout tokens across lib/.
+"""CI guard for layout patterns that fragment phone UI.
 
-Scans all Dart files in lib/ (excluding lib/core/design_tokens/) to ensure:
-1. Zero raw layout numbers in EdgeInsets, BorderRadius, Radius.circular, SizedBox, Icon(size:).
-2. Zero references to deprecated legacy tokens (AppSpacing.*, AppRadius.*).
+This guard deliberately does *not* ban every numeric layout value. Chapter 04
+allows documented component-private constants, framework constraints, and
+aspect ratios. The guard only checks patterns that are unambiguously unsafe in
+presentation code: device/OS layout branching, disabled text scaling, and
+deprecated token names.
 """
 
+import argparse
 import os
 import re
 import sys
 
 # Allowed directories/files where primitives/tokens are defined
 ALLOWED_PATHS = {
-    'lib/core/design_tokens',
+    'core/design_tokens',
 }
 
 EXCLUDED_FILE_SUFFIXES = (
@@ -21,24 +23,12 @@ EXCLUDED_FILE_SUFFIXES = (
     '.freezed.dart',
 )
 
-# Patterns that detect raw layout numbers
-# Regexes avoid matching token expressions like 'space.stackText / 2' or 'space.inlineButtonGroup + 2'
-PATTERNS = {
-    'EdgeInsets raw literal': re.compile(
-        r'EdgeInsets\.(all|symmetric|only|fromLTRB)\([^)]*:\s*[1-9]\d*(\.\d+)?\s*[,)]|EdgeInsets\.(all|fromLTRB)\(\s*[1-9]\d*(\.\d+)?\s*[,)]'
+POLICY_PATTERNS = {
+    'OS-specific layout branch': re.compile(r'\bPlatform\.is(?:Android|IOS)\b'),
+    'Device-model layout branch': re.compile(
+        r'\b(?:realme|pixel|galaxy|samsung|iphone|ipad)\b', re.IGNORECASE
     ),
-    'BorderRadius raw literal': re.compile(
-        r'BorderRadius\.(circular|only|vertical|horizontal)\([^)]*:\s*[1-9]\d*(\.\d+)?\s*[,)]|BorderRadius\.circular\(\s*[1-9]\d*(\.\d+)?\s*\)'
-    ),
-    'Radius.circular raw literal': re.compile(
-        r'Radius\.circular\(\s*[1-9]\d*(\.\d+)?\s*\)'
-    ),
-    'SizedBox raw width/height': re.compile(
-        r'SizedBox\(\s*(width|height):\s*[1-9]\d*(\.\d+)?\s*[,)]'
-    ),
-    'Icon raw size': re.compile(
-        r'Icon\([^)]*size:\s*[1-9]\d*(\.\d+)?'
-    ),
+    'Disabled system text scaling': re.compile(r'\bTextScaler\.noScaling\b'),
     'Deprecated AppSpacing reference': re.compile(
         r'\bAppSpacing\.\w+'
     ),
@@ -55,9 +45,23 @@ def is_allowed(path: str) -> bool:
     return False
 
 
+def is_presentation_path(path: str) -> bool:
+    return '/presentation/' in path or path.startswith('core/widgets/')
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--lib-dir',
+        help='Dart source directory to scan; defaults to the repository lib/.',
+    )
+    return parser.parse_args()
+
+
 def main() -> int:
+    args = parse_args()
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    lib_dir = os.path.join(root_dir, 'lib')
+    lib_dir = os.path.abspath(args.lib_dir or os.path.join(root_dir, 'lib'))
 
     violations = []
     scanned_files = 0
@@ -69,7 +73,7 @@ def main() -> int:
             if any(file_name.endswith(suffix) for suffix in EXCLUDED_FILE_SUFFIXES):
                 continue
 
-            rel_path = os.path.relpath(os.path.join(current_root, file_name), root_dir)
+            rel_path = os.path.relpath(os.path.join(current_root, file_name), lib_dir)
             if is_allowed(rel_path):
                 continue
 
@@ -82,18 +86,33 @@ def main() -> int:
                     if line.startswith('//') or line.startswith('/*') or line.startswith('*'):
                         continue
 
-                    for rule_name, pattern in PATTERNS.items():
+                    patterns = {
+                        'Deprecated AppSpacing reference': POLICY_PATTERNS[
+                            'Deprecated AppSpacing reference'
+                        ],
+                        'Deprecated AppRadius reference': POLICY_PATTERNS[
+                            'Deprecated AppRadius reference'
+                        ],
+                    }
+                    if is_presentation_path(rel_path):
+                        patterns.update({
+                            name: pattern
+                            for name, pattern in POLICY_PATTERNS.items()
+                            if name not in patterns
+                        })
+
+                    for rule_name, pattern in patterns.items():
                         if pattern.search(raw_line):
                             violations.append((rel_path, line_no, rule_name, line))
 
     if violations:
-        print(f"FAILED: Found {len(violations)} raw layout violations in {scanned_files} scanned files:\n")
+        print(f"FAILED: Found {len(violations)} layout-policy violations in {scanned_files} scanned files:\n")
         for path, line_no, rule_name, line in violations:
             print(f"  {path}:{line_no} [{rule_name}] -> {line}")
-        print("\nFix: Use semantic layout tokens via context.space, context.sizes, or context.shape.")
+        print("\nFix: Use constraints, framework insets, and supported text scaling; do not branch presentation layout by OS or device model.")
         return 1
 
-    print(f"PASSED: Semantic Layout Token Guard - 100% compliance across {scanned_files} files in lib/.")
+    print(f"PASSED: Cross-device layout policy guard across {scanned_files} files.")
     return 0
 
 

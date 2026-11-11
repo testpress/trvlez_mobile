@@ -9,7 +9,7 @@ Tokens are organized into three semantic categories implemented as Flutter `Them
 2. **`AppSize` (`context.sizes.*`)**: Heights, widths, icons, touch targets, and component dimensions. Note: Accessed via `context.sizes.*` to avoid shadowing Flutter's `BuildContext.size`.
 3. **`AppShape` (`context.shape.*`)**: Border radii (`BorderRadius`) and border stroke widths (`double`).
 
-Primitives (`Prim.s4`, `Prim.s8`, `Prim.s16`, `Prim.r12`, etc.) remain private inside `lib/core/design_tokens/primitives.dart`. Presentation code and widgets **never** import primitives or use raw layout literals; they access tokens exclusively through `BuildContext`.
+Primitives (`Prim.s4`, `Prim.s8`, `Prim.s16`, `Prim.r12`, etc.) remain private inside `lib/core/design_tokens/primitives.dart`. Presentation code and widgets access recurring spacing, sizing, shape, colour, and typography roles through `BuildContext`; documented component-private constants, framework constraints, and aspect ratios follow the nuanced dimension policy in `docs/engineering/playbook/04-design-system-and-reference-intake.md`.
 
 ---
 

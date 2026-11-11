@@ -25,7 +25,7 @@ Use it with the approved client reference, the current code contracts, and curre
 
 `playbook/00-charter-and-precedence.md` defines precedence. A document in this directory is changed through ordinary review: state the reason, affected platforms/screens, validation evidence, and any migration required. Do not copy its rules into IDE-specific files; the discovery bridge in `AGENTS.md` links here instead.
 
-**Cross-device layout freeze:** Chapters `02`, `03`, `05`, and `06` (plus the related `AGENTS.md` routing) are frozen for opportunistic edits during Phase 5 screen adoption. Further changes to those consistency chapters require a measured device defect and an ADR; do not keep rewriting them while implementing screens.
+**Cross-device layout freeze:** Chapters `02`, `03`, `05`, and `06` (plus the related `AGENTS.md` routing) are frozen after this final readiness correction. Further changes to those consistency chapters require a measured device defect and an ADR; do not keep rewriting them while implementing screens.
 
 ## Supporting documents
 
@@ -41,5 +41,5 @@ Use it with the approved client reference, the current code contracts, and curre
 - The playbook is established with comprehensive chapters covering architecture, screen construction, layout, design system, validation, device matrix, accessibility, performance, and non-UI engineering.
 - 6 official skills installed from `flutter/agent-plugins` and `dart-lang/skills`, tracked in `skills-lock.json`.
 - Legacy rules and local skills retired per `migration-map.md` (user approval 2026-11-11); the playbook is the single authority.
-- Deterministic test helpers in `test/helpers/` cover viewport, text-scale, and system-inset profile matrices.
+- Deterministic test helpers in `test/helpers/` cover the required material-screen viewport, text-scale, and system-inset profile matrix; `LoginScreen` is the representative real-screen adoption.
 - Installation requires FNM Node ≥ 22.20.0 for skill CLI operations (default host Node 20.20.2 is insufficient).

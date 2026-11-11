@@ -307,7 +307,7 @@ Potential tools are evaluated only after this gate. `golden_toolkit` is already 
 ### Phase 4 — validation capability
 
 - [x] Create deterministic widget-test helpers for window size, text scale, theme, locale, and app wrappers without changing production UI. Implemented in `test/helpers/test_app.dart`, `test/helpers/viewport_testing.dart`, and verified via `test/helpers/test_app_test.dart`.
-- [x] Pilot one stable core component golden test using existing `golden_toolkit`; establish baseline-update/review policy before adding more. Scaffold created at `test/core/widgets/app_card_golden_test.dart` and gated with `skip: true` per feasibility gate.
+- [x] Pilot one stable core component golden test using existing `golden_toolkit`; establish baseline-update/review policy before adding more. `test/core/widgets/app_card_golden_test.dart` runs against a committed baseline in the pinned Flutter 3.44.4 / deterministic-font environment.
 - [x] Add `integration_test` only when a named critical flow and Android/iOS execution target are approved; do not add patrol or another package unless native-dialog coverage is a demonstrated gap. Added `integration_test` SDK dependency and implemented `integration_test/auth_login_flow_test.dart` for the approved login flow.
 - [x] Add scripts/docs for Android emulator and iOS simulator capture, test matrix execution, screenshot naming, diff retention, and physical-device evidence. Created `scripts/device_matrix.sh`.
 - [x] Update CI only after local proof and SDK pinning; make screenshots/diffs downloadable artifacts where the CI provider permits. Flutter 3.44.4 pinned in `.github/workflows/ci.yml`, golden feasibility gate passed with `test/flutter_test_config.dart`, artifact upload step added.

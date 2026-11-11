@@ -33,7 +33,12 @@ jobs:
           ! grep -rnE "Color\(0x|Colors\.(red|blue|green|grey)" lib/features/
 
       - name: Verify Semantic Layout Tokens Guard
-        run: python3 scripts/verify_layout_tokens.py
+        run: |
+          python3 scripts/test_verify_layout_tokens.py
+          python3 scripts/verify_layout_tokens.py
+
+      - name: Verify Screenshot Evidence Metadata
+        run: python3 scripts/test_write_capture_metadata.py
 
       - name: Verify Layer Import Guard (Zero Data Imports in UI)
         run: |

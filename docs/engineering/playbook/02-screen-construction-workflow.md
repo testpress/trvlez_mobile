@@ -33,7 +33,7 @@ Copy the template below into the task or PR. Filling it avoids “fixing” a ch
 - **Overflow policy:** (scroll / wrap / ellipsis with detail destination / bounded clip — name which)
 - **Keyboard policy:** (resizeToAvoidBottomInset, bottom action treatment, focused-field scroll)
 - **Named fixed dimensions:** (token or private constant + why)
-- **Adverse states to verify:** (loading, empty, error, long content, text ≥1.3, keyboard open, compact viewport)
+- **Adverse states to verify:** (loading, empty, error, long content, text 1.3 and 2.0, keyboard open, compact viewport)
 - **Device pair (if discrepancy report):** (e.g. realme 8 vs Pixel 10a — MediaQuery captured before edit? yes/no)
 ```
 
@@ -74,8 +74,9 @@ A material screen or layout change is **not complete** until all of the followin
 
 - [ ] Layout contract template above is filled in the task/PR.
 - [ ] Widget tests cover **compact** and **regular** logical viewports (`TestViewports`).
-- [ ] Widget tests cover text scale **1.0** and **≥1.3** (`TestTextScales`).
+- [ ] Widget tests cover text scale **1.0**, **1.3**, and **2.0** (`TestTextScales`).
 - [ ] If the screen has inputs: keyboard-open scenario exercised (helper inset profile and/or emulator).
-- [ ] Emulator or simulator screenshot captured via `scripts/device_matrix.sh` with the chapter 05 naming convention.
+- [ ] Emulator/simulator screenshot captured via `scripts/device_matrix.sh` with validated runtime `MediaQuery` metadata and the chapter 05 naming convention.
+- [ ] If the change affects SafeArea ownership, keyboard avoidance, pinned footers, platform typography, or system UI: Android emulator **and** iOS simulator evidence captured.
 - [ ] For a reported device pair (e.g. realme 8 / Pixel 10a): both devices’ `size`, `padding`, `viewPadding`, `viewInsets`, `devicePixelRatio`, `textScaler`, and navigation mode were recorded **before** the layout edit.
 - [ ] No device-specific padding offsets, platform padding branches, or viewport-percentage spacing/fonts were introduced (see chapter 03 forbidden fixes).
