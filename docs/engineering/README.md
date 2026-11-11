@@ -18,6 +18,7 @@ Use it with the approved client reference, the current code contracts, and curre
 | Widget, golden, integration, emulator, or device validation | `05-visual-validation-standard.md`, `06-testing-device-matrix.md` |
 | Accessibility or performance work | `07-accessibility-and-performance.md` |
 | Architecture or non-UI reliability work | `01-app-architecture-and-boundaries.md`, `08-non-ui-engineering-backlog.md` |
+| Clean code, Dart standards, or PR review | `playbook/10-dart-clean-code-standards.md` |
 | Agent skill selection or instruction discovery | `09-agent-tooling-and-skill-catalog.md` |
 
 ## Authority and change control

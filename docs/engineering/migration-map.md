@@ -13,7 +13,7 @@ All migrations below were approved by user decision (2026-11-11, Option c):
 | `.agents/rules/flutter-responsive-layout.md` | Chapters 02, 03, 05, 06 | **Retired** ✅ | Fully superseded by playbook chapters 02, 03, 05, 06. Discovery verified in `evidence/phase-1-agent-discovery.md`. Removed in commit `chore(migration)`. |
 | `.agents/skills/flutter-semantic-layout-tokens/` | `playbook/04-design-system-and-reference-intake.md` | **Retired** ✅ | Token workflow integrated into chapter 04; "zero raw numbers" absolutism replaced with nuanced dimension policy. Removed in commit `chore(migration)`. |
 | `.agents/skills/flutter-anti-ui-slop/` | None (rejected as authority) | **Retired** ✅ | Rejected as subjective and prescriptive. Removed in commit `chore(migration)`. |
-| `.agents/rules/CODE_STANDARDS.md` | Chapters 00–04, 07 & `CODE_STANDARDS.md` | **Retained as complementary reference** | Layout/dimension rules are superseded by the playbook; general Dart standards (naming, async safety, guard clauses, git conventions) remain useful and active. |
+| `.agents/rules/CODE_STANDARDS.md` | `playbook/10-dart-clean-code-standards.md` | **Retired** ✅ | General Dart clean code, naming conventions, async safety, and PR checklists migrated to playbook chapter 10. Removed in commit `chore(playbook)`. |
 | `.agents/skills/flutter-build-responsive-layout/` | Referenced by `playbook/09-agent-tooling-and-skill-catalog.md` | **Retained** — official skill | Tracked in `skills-lock.json`. Procedural aid for chapters 02 and 03. |
 
 ## Official skills active in repository

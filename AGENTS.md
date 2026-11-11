@@ -11,6 +11,7 @@ Before work, load the applicable playbook chapter:
 | Theme, token, or shared component | `playbook/00-charter-and-precedence.md`, `04-design-system-and-reference-intake.md` | — |
 | Widget test creation | `playbook/00-charter-and-precedence.md`, `05-visual-validation-standard.md` | Official `flutter-add-widget-test` skill |
 | Unit test or static analysis | `playbook/00-charter-and-precedence.md` | Official `dart-add-unit-test`, `dart-run-static-analysis`, or `dart-collect-coverage` skill |
+| Clean code, Dart standards, or PR review | `playbook/00-charter-and-precedence.md`, `10-dart-clean-code-standards.md` | — |
 | Widget, golden, emulator, simulator, or device validation | `playbook/00-charter-and-precedence.md`, `05-visual-validation-standard.md`, `06-testing-device-matrix.md` | — |
 | Accessibility or performance work | `playbook/00-charter-and-precedence.md`, `07-accessibility-and-performance.md` | — |
 | Architecture or non-UI reliability work | `playbook/00-charter-and-precedence.md`, `01-app-architecture-and-boundaries.md`, `08-non-ui-engineering-backlog.md` | — |
