@@ -170,27 +170,76 @@ These scenarios should be tested across multiple viewport categories when the af
 
 ---
 
+## Mandatory minimum for material layout PRs
+
+Every material screen or layout change must include evidence for at least:
+
+| Config | Requirement |
+| --- | --- |
+| Compact viewport | Widget test at `TestViewports.compactAndroid` (or compact iPhone when iOS-specific) |
+| Regular viewport | Widget test at `TestViewports.regularAndroid` (or regular iPhone) |
+| Text scale | 1.0 and ≥1.3 (`TestTextScales.normal` and `.large` or higher) |
+| Keyboard | When the screen has inputs: `TestInsetProfiles.keyboardOpen` and/or emulator keyboard-open capture |
+| Emulator/simulator capture | Via `scripts/device_matrix.sh` using the chapter 05 naming convention |
+
+Tall/large viewports, alternate nav modes, and physical devices are required when the change touches insets, pinned footers, or a reported device-pair defect.
+
+---
+
+## Paired-device MediaQuery worksheet
+
+Use this **before editing** when investigating a discrepancy between two phones (for example realme 8 vs Pixel 10a). Do not change layout until both columns are filled.
+
+```markdown
+## Paired MediaQuery — <ScreenName>
+
+| Field | Device A (e.g. realme 8) | Device B (e.g. Pixel 10a) |
+| --- | --- | --- |
+| Model / OS | | |
+| Navigation mode | gesture / 3-button / … | |
+| `size` (`MediaQuery.sizeOf`) | | |
+| `devicePixelRatio` | | |
+| `textScaler` | | |
+| `padding` | | |
+| `viewPadding` | | |
+| `viewInsets` (keyboard open/closed) | | |
+| Screenshot (ch. 05 name) | | |
+| Observed defect | | |
+
+Hypothesis (constraint / inset ownership / scroll / text scale / other):
+Proposed fix level (parent / scroll / SafeArea owner / token — not device offset):
+```
+
+Capture screenshots with `scripts/device_matrix.sh` after recording the table.
+
+---
+
 ## Test execution and evidence recording
 
 ### Running the matrix
 
+Prefer the repository script as the default path for device listing, screenshots, and integration runs:
+
 ```bash
+# List connected Android devices / emulators and Flutter devices
+./scripts/device_matrix.sh list-devices
+
 # Step 1: Static analysis
 flutter analyze --fatal-infos
 
-# Step 2: Widget tests (includes golden tests if configured)
+# Step 2: Widget tests (includes golden tests when configured)
 flutter test
 
-# Step 3: Integration tests on a specific emulator
-flutter test integration_test/app_test.dart -d emulator-5554
+# Step 3: Integration tests on a specific emulator/device
+./scripts/device_matrix.sh run-integration emulator-5554
+# equivalent: flutter test integration_test/ -d emulator-5554
 
-# Step 4: Capture screenshots on emulator
-# Use the emulator's screenshot tool or:
-adb exec-out screencap -p > screenshot_name.png
+# Step 4: Capture screenshots (naming enforced by the script)
+./scripts/device_matrix.sh capture-android login default 393x852 1.0 gesture-nav
+./scripts/device_matrix.sh capture-ios login default 393x852 1.0 safe-area
 
-# Step 5: Physical device testing (manual)
-# Install: flutter run -d <device_id>
-# Capture: device screenshot tool
+# Step 5: Physical device — install, exercise states, fill evidence template / paired worksheet
+flutter run -d <device_id>
 ```
 
 ### Evidence template

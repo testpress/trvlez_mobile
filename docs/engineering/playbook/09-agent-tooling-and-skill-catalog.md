@@ -99,13 +99,15 @@ When an agent is activated for a task, it should load the playbook chapter(s) fi
 
 | Task | Required playbook chapters | Optional official skill |
 |---|---|---|
-| New screen or layout edit | 00, 02, 03 | `flutter-build-responsive-layout` |
-| Layout defect or overflow | 00, 03, 05, 06 | `flutter-fix-layout-issues` |
+| New screen or material UI edit | 00, 02, 03, 04, 05, 06 | `flutter-build-responsive-layout` |
+| Layout defect or device inconsistency | 00, 03, 05, 06 | `flutter-fix-layout-issues` |
 | Theme, token, or shared component | 00, 04 | — |
 | Widget test creation | 00, 05 | `flutter-add-widget-test` |
 | Unit test or static analysis | 00 | `dart-add-unit-test`, `dart-run-static-analysis`, `dart-collect-coverage` |
 | Visual validation (golden, emulator, device) | 00, 05, 06 | — |
 | Accessibility or performance | 00, 07 | — |
 | Architecture or non-UI reliability | 00, 01, 08 | — |
+
+Phase 5 / material screen work is incomplete without the chapter 02 layout contract and the chapter 05/06 evidence minimum (compact + regular viewports, text scale 1.0 and ≥1.3, keyboard when inputs exist, and paired `MediaQuery` capture for reported device discrepancies).
 
 The playbook is always the authority. The skill is a procedural helper. If they conflict, the playbook wins.

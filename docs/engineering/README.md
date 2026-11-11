@@ -13,7 +13,7 @@ Use it with the approved client reference, the current code contracts, and curre
 | Work | Required reading |
 | --- | --- |
 | Any mobile change | `playbook/00-charter-and-precedence.md` |
-| New screen or substantive screen edit | `playbook/02-screen-construction-workflow.md`, then `03-mobile-phone-layout-standard.md` |
+| New screen or substantive screen edit | `02`, `03`, `04`, `05`, and `06` (layout contract + tokens + evidence minimum) |
 | Token, typography, theme, or shared-component edit | `04-design-system-and-reference-intake.md` |
 | Widget, golden, integration, emulator, or device validation | `05-visual-validation-standard.md`, `06-testing-device-matrix.md` |
 | Accessibility or performance work | `07-accessibility-and-performance.md` |
@@ -24,6 +24,8 @@ Use it with the approved client reference, the current code contracts, and curre
 ## Authority and change control
 
 `playbook/00-charter-and-precedence.md` defines precedence. A document in this directory is changed through ordinary review: state the reason, affected platforms/screens, validation evidence, and any migration required. Do not copy its rules into IDE-specific files; the discovery bridge in `AGENTS.md` links here instead.
+
+**Cross-device layout freeze:** Chapters `02`, `03`, `05`, and `06` (plus the related `AGENTS.md` routing) are frozen for opportunistic edits during Phase 5 screen adoption. Further changes to those consistency chapters require a measured device defect and an ADR; do not keep rewriting them while implementing screens.
 
 ## Supporting documents
 
@@ -39,5 +41,5 @@ Use it with the approved client reference, the current code contracts, and curre
 - The playbook is established with comprehensive chapters covering architecture, screen construction, layout, design system, validation, device matrix, accessibility, performance, and non-UI engineering.
 - 6 official skills installed from `flutter/agent-plugins` and `dart-lang/skills`, tracked in `skills-lock.json`.
 - Legacy rules and local skills retired per `migration-map.md` (user approval 2026-11-11); the playbook is the single authority.
-- Deterministic test helpers created in `test/helpers/` for viewport matrix and text scale testing.
+- Deterministic test helpers in `test/helpers/` cover viewport, text-scale, and system-inset profile matrices.
 - Installation requires FNM Node ≥ 22.20.0 for skill CLI operations (default host Node 20.20.2 is insufficient).

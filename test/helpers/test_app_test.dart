@@ -130,5 +130,97 @@ void main() {
     test('testTextScaleMatrix covered all configured scales', () {
       expect(seenScales, [1.0, 1.3, 2.0]);
     });
+
+    testWidgets('setInsetProfile exposes padding/viewPadding/viewInsets', (
+      tester,
+    ) async {
+      EdgeInsets? observedPadding;
+      EdgeInsets? observedViewPadding;
+      EdgeInsets? observedViewInsets;
+
+      tester.setViewport(TestViewports.compactAndroid);
+      tester.setInsetProfile(TestInsetProfiles.keyboardOpen);
+      addTearDown(tester.resetViewport);
+
+      await tester.pumpWidget(
+        TestApp(
+          child: Builder(
+            builder: (context) {
+              observedPadding = MediaQuery.paddingOf(context);
+              observedViewPadding = MediaQuery.viewPaddingOf(context);
+              observedViewInsets = MediaQuery.viewInsetsOf(context);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(observedPadding, const EdgeInsets.only(top: 24));
+      expect(observedViewPadding, const EdgeInsets.only(top: 24, bottom: 48));
+      expect(observedViewInsets, const EdgeInsets.only(bottom: 300));
+    });
+
+    testWidgets('SafeArea consumes gesture-nav bottom inset', (tester) async {
+      Size? safeChildSize;
+
+      tester.setViewport(const Size(360, 640));
+      tester.setInsetProfile(TestInsetProfiles.androidGestureNav);
+      addTearDown(tester.resetViewport);
+
+      await tester.pumpWidget(
+        TestApp(
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                safeChildSize = Size(
+                  constraints.maxWidth,
+                  constraints.maxHeight,
+                );
+                return const SizedBox.expand();
+              },
+            ),
+          ),
+        ),
+      );
+
+      // 640 logical height minus top 24 and bottom 48 gesture inset.
+      expect(safeChildSize, const Size(360, 568));
+    });
+
+    final seenInsetNames = <String>[];
+    testInsetMatrix(
+      'testInsetMatrix iterates configured inset profiles',
+      viewport: TestViewports.compactAndroid,
+      profiles: const [
+        TestInsetProfiles.androidGestureNav,
+        TestInsetProfiles.keyboardOpen,
+      ],
+      builder: (tester, profile) async {
+        EdgeInsets? observedViewInsets;
+        await tester.pumpWidget(
+          TestApp(
+            child: Builder(
+              builder: (context) {
+                observedViewInsets = MediaQuery.viewInsetsOf(context);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+        if (profile.name == TestInsetProfiles.keyboardOpen.name) {
+          expect(observedViewInsets, const EdgeInsets.only(bottom: 300));
+        } else {
+          expect(observedViewInsets, EdgeInsets.zero);
+        }
+        seenInsetNames.add(profile.name);
+      },
+    );
+
+    test('testInsetMatrix covered configured profiles', () {
+      expect(seenInsetNames, [
+        TestInsetProfiles.androidGestureNav.name,
+        TestInsetProfiles.keyboardOpen.name,
+      ]);
+    });
   });
 }

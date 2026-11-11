@@ -46,8 +46,9 @@ Run these before committing. They are the lowest-cost, highest-frequency check.
 - `TestApp` / `testAppWithProviders()` — wraps the widget under test with `MaterialApp`, theme, and optional text scale injection via `MaterialApp.builder` (so the framework's own `MediaQuery` is not overwritten).
 - `TestViewports` — named logical viewport sizes matching the device matrix in chapter 06.
 - `TestTextScales` — named text scale values for accessibility testing.
-- `ViewportTesting` extension — `tester.setViewport()` / `tester.resetViewport()`.
-- `testViewportMatrix()` / `testTextScaleMatrix()` — run a test callback at every viewport or text scale.
+- `TestInsetProfiles` — named `padding` / `viewPadding` / `viewInsets` profiles (gesture-nav, 3-button, notched, keyboard-open).
+- `ViewportTesting` extension — `tester.setViewport()` / `tester.setInsetProfile()` / `tester.resetViewport()`.
+- `testViewportMatrix()` / `testTextScaleMatrix()` / `testInsetMatrix()` — run a test callback across viewports, text scales, or inset profiles.
 
 **Test structure:**
 
@@ -147,17 +148,51 @@ testTextScaleMatrix(
 );
 ```
 
+**Inset / system-UI testing:**
+
+Width-only matrices miss SafeArea and keyboard defects. Apply a named inset profile after setting the viewport:
+
+```dart
+testWidgets('bottom action clears gesture-nav inset', (tester) async {
+  tester.setViewport(TestViewports.compactAndroid);
+  tester.setInsetProfile(TestInsetProfiles.androidGestureNav);
+  addTearDown(tester.resetViewport);
+
+  await tester.pumpWidget(
+    testAppWithProviders(child: const ProfileScreen()),
+  );
+
+  expect(tester.takeException(), isNull);
+});
+
+testInsetMatrix(
+  'form remains usable with keyboard and nav insets',
+  viewport: TestViewports.compactAndroid,
+  profiles: [
+    TestInsetProfiles.androidGestureNav,
+    TestInsetProfiles.androidThreeButton,
+    TestInsetProfiles.keyboardOpen,
+  ],
+  builder: (tester, profile) async {
+    await tester.pumpWidget(
+      testAppWithProviders(child: const Scaffold(body: LoginForm())),
+    );
+    expect(tester.takeException(), isNull);
+  },
+);
+```
+
 ### Layer 3: Golden tests
 
 **What it proves:** Pixel-level regressions in a deterministic, pinned environment. A golden test baseline is a reviewed reference image.
 
 **What it does not prove:** That the widget looks correct on a real device, that system fonts match, or that platform rendering is identical.
 
-**Current status:** An experimental golden pilot scaffold exists at `test/core/widgets/app_card_golden_test.dart`, skipped (`skip: true`) with no committed baseline PNG until the feasibility gate below passes (CI currently uses an unpinned Flutter `stable` channel and fonts are not yet deterministic via `test/flutter_test_config.dart`). Do not unskip or add more golden tests until the gate passes.
+**Current status:** The golden feasibility gate has passed for the pilot. CI pins Flutter **3.44.4** (ADR 0001), deterministic fonts load via `test/flutter_test_config.dart`, and `test/core/widgets/app_card_golden_test.dart` runs with `tags: ['golden']` against the committed baseline `test/core/widgets/goldens/app_card_scales.png`. Add further goldens only for stable shared components that still satisfy the gate below; treat every baseline update as a reviewed visual change.
 
-**Prerequisites (the feasibility gate):**
+**Prerequisites (the feasibility gate for new goldens):**
 
-Before adding a golden test, all of the following must be true:
+Before adding a **new** golden test, all of the following must remain true:
 
 1. **Flutter SDK is pinned** for the golden job (CI and local developer environment). Golden baselines generated with different Flutter versions will produce false failures.
 2. **Font assets are deterministic.** Either bundle test fonts or use `FontLoader` with known font files. `GoogleFonts` with runtime download will produce inconsistent results.
@@ -301,11 +336,12 @@ When diagnosing a layout issue on a running app:
 
 | Change type | Minimum evidence |
 |---|---|
-| Shared widget styling | Widget test + golden test (if environment is pinned) |
-| Screen layout or inset/keyboard change | Widget tests at compact/regular/tall viewports + emulator verification |
+| Shared widget styling | Widget test + golden test (pinned environment; see Layer 3) |
+| Screen layout or inset/keyboard change | Chapter 02 checklist: compact + regular viewports, text 1.0 and ≥1.3, keyboard/inset profile when inputs exist, `scripts/device_matrix.sh` capture |
 | Navigation/input/device-plugin flow | Integration test where feasible + platform runtime evidence |
 | Token/theme-wide change | Component goldens + affected widget tests + documented baseline review |
 | Accessibility improvement | Widget test with semantic assertions + text scale test + screen reader manual test |
+| Reported device-pair discrepancy | Paired MediaQuery worksheet (chapter 06) **before** edit + compact/regular widget matrix after |
 
 ---
 

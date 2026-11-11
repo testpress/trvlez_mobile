@@ -30,9 +30,12 @@ Android cut-outs, status/navigation modes, gesture navigation, iOS status/home-i
 - `padding` is the safe padding after the current view state is applied.
 - `viewInsets` is obscured space, notably the on-screen keyboard.
 
-Use `SafeArea` once at the appropriate surface boundary. A page whose scaffold body is already protected should not add identical top/bottom padding inside each section. Conversely, an intentionally edge-to-edge background can paint behind system bars while the foreground content receives a `SafeArea`.
+### Ownership policy (locked)
 
-Never write a guessed device offset such as `24`, `34`, or `48` to account for a status bar, home indicator, or gesture area.
+1. **One surface boundary owns system exclusion.** Prefer an existing shared shell (`BrandScreen`, scaffold body `SafeArea`, or sheet `useSafeArea` / wrapping `SafeArea`) rather than inventing a new per-screen inset scheme.
+2. **Decorative backgrounds may paint edge-to-edge** behind status/navigation bars while interactive content remains inside the owned `SafeArea`.
+3. **Nested duplicate safe padding is a defect.** A page whose scaffold body is already protected must not add identical top/bottom system padding inside each section.
+4. **Never write a guessed device offset** such as `24`, `34`, or `48` to account for a status bar, home indicator, or gesture area. Use framework insets.
 
 ```dart
 // A page chooses the content boundary once. The decorative background may
@@ -101,7 +104,23 @@ When a header needs to scroll with content, a `CustomScrollView` with slivers is
 
 Text is not a fixed-height rectangle. Font ascent/descent, locale, fallback fonts, bold weight, and system text scale change its occupied region. Use `Text` wrapping and a container/scroll policy that preserves readable content. Choose ellipsis only where truncation is an approved product behaviour (for example a one-line row label with a full detail destination).
 
-Do not globally use `TextScaler.noScaling`, fixed `TextStyle.height`, `FittedBox`, or tiny font sizes merely to reproduce a baseline screenshot. If a compact component truly has a bounded label contract, document its overflow behaviour and test it at supported text scales.
+Prefer a minimum height with flexible growth over a fixed height that clips when text scale grows:
+
+```dart
+// Incorrect: fixed height clips at large text scale.
+SizedBox(
+  height: 40,
+  child: Text('Welcome back', style: context.text.titleMedium),
+)
+
+// Correct: minimum height; content may grow.
+ConstrainedBox(
+  constraints: const BoxConstraints(minHeight: 40),
+  child: Text('Welcome back', style: context.text.titleMedium),
+)
+```
+
+Do not globally use `TextScaler.noScaling`, fixed `TextStyle.height`, `FittedBox`, or tiny font sizes merely to reproduce a baseline screenshot. If a compact component truly has a bounded label contract, document its overflow behaviour and test it at supported text scales. See also chapter 07.
 
 ## Keyboard and input flows
 
@@ -112,11 +131,23 @@ For every input page, decide who owns:
 3. the scroll owner and focused-field visibility;
 4. bottom padding derived from `MediaQuery.viewInsetsOf(context).bottom` where content can be obscured.
 
-The keyboard is transient. Do not bake its height into design tokens or infer it from an Android/iOS model name. Test both a focused low field and an unfocused form, on Android navigation modes and iOS home-indicator devices where relevant.
+The keyboard is transient. Do not bake its height into design tokens or infer it from an Android/iOS model name. Test both a focused low field and an unfocused form, on Android navigation modes and iOS home-indicator devices where relevant. Use `TestInsetProfiles.keyboardOpen` in widget tests (see chapter 05).
+
+## Forbidden device-difference fixes
+
+These patterns produce fragmented UI across phones. Do not introduce them to “make it look right” on one device:
+
+| Forbidden | Why | Do instead |
+| --- | --- | --- |
+| `Platform.isAndroid` / `Platform.isIOS` branches that change padding, gaps, or font sizes | Couples layout to OS label, not constraints/insets | Use `SafeArea`, `MediaQuery` insets, and shared tokens |
+| Device-name or model checks (`realme`, `Pixel`, etc.) for layout | Untestable; fails on the next OEM | Measure constraints/insets; fix ownership |
+| Guessed notch/home-indicator offsets (`SizedBox(height: 34)`) | Wrong on other inset modes | Framework `padding` / `viewPadding` |
+| `MediaQuery.sizeOf(context).width * factor` for spacing or fonts | Breaks nested parents and density-independent contracts | Semantic tokens; parent `BoxConstraints` |
+| `TextScaler.noScaling` / forced scale 1.0 to match one screenshot | Breaks accessibility and other devices | Flexible containers and scroll |
+| Installing `flutter_screenutil`, `sizer`, `responsive_builder`, or similar for phone consistency | Global scaling fights tokens and insets | Constraint-led composition in this chapter |
 
 ## Diagnostics and acceptance
 
 Use Flutter DevTools layout inspection and debug paint/overflow diagnostics while resolving a constraint issue. The diagnostic question is: *what constraints and insets reach this widget?*—not *what number looked right on the first phone?*
 
-Before acceptance, test the standard device matrix, adverse content states, and the platform/system state that drove the change. Record exact logical viewport and evidence; see the visual-validation chapters.
-
+Before acceptance, complete the chapter 02 material-layout checklist: compact + regular viewports, text scale 1.0 and ≥1.3, keyboard when inputs exist, and paired `MediaQuery` capture for reported device pairs. Record exact logical viewport and evidence per chapters 05 and 06.
