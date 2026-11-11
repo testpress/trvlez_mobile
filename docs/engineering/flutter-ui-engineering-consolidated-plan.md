@@ -1,6 +1,6 @@
 # TrvlEz Flutter UI Engineering Consolidation Plan
 
-**Status:** proposed; research and audit complete, no application UI code changed
+**Status:** implemented (Phases 0–4 and Phase 6 completed; Phase 5 screen adoption on future backlog)
 **Created:** 2026-11-10
 **Owner:** mobile engineering
 **Scope:** the engineering knowledge, agent tooling, validation capability, and repository documentation used to build Android and iOS phone UI. This is deliberately **not** a screen redesign plan or a dependency-upgrade proposal.
@@ -310,7 +310,7 @@ Potential tools are evaluated only after this gate. `golden_toolkit` is already 
 - [x] Pilot one stable core component golden test using existing `golden_toolkit`; establish baseline-update/review policy before adding more. Scaffold created at `test/core/widgets/app_card_golden_test.dart` and gated with `skip: true` per feasibility gate.
 - [x] Add `integration_test` only when a named critical flow and Android/iOS execution target are approved; do not add patrol or another package unless native-dialog coverage is a demonstrated gap. Added `integration_test` SDK dependency and implemented `integration_test/auth_login_flow_test.dart` for the approved login flow.
 - [x] Add scripts/docs for Android emulator and iOS simulator capture, test matrix execution, screenshot naming, diff retention, and physical-device evidence. Created `scripts/device_matrix.sh`.
-- [ ] Update CI only after local proof and SDK pinning; make screenshots/diffs downloadable artifacts where the CI provider permits. Documented in ADR 0001 (`docs/engineering/decisions/0001-ci-toolchain-and-sdk-pinning.md`).
+- [x] Update CI only after local proof and SDK pinning; make screenshots/diffs downloadable artifacts where the CI provider permits. Flutter 3.44.4 pinned in `.github/workflows/ci.yml`, golden feasibility gate passed with `test/flutter_test_config.dart`, artifact upload step added.
 
 **Exit criterion:** one end-to-end example can be reproduced locally and in CI, and its evidence honestly distinguishes widget/golden/emulator/physical-device validation.
 
