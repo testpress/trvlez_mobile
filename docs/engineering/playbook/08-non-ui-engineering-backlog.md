@@ -104,7 +104,7 @@ These observations cover code-health, delivery, and infrastructure concerns outs
 **Enterprise approach:**
 - **Semantic tests:** Add widget test assertions for `Semantics` labels on interactive elements.
 - **Contrast checks:** Validate colour token contrast ratios against WCAG 2.1 AA as part of theme tests.
-- **Text scale tests:** Include text scale 2.0× in widget test matrix for critical screens.
+- **Text scale tests:** Include text scale 2.0× in widget matrices for critical screens and validate the platform maximum at runtime when it exceeds 2.0×.
 - **Screen reader testing:** Document a manual TalkBack/VoiceOver test protocol for release-critical flows.
 - **Focus traversal:** Test keyboard/switch navigation order in widget tests.
 

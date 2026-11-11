@@ -34,11 +34,12 @@ For each viewport, test the following as relevant to the screen under change:
 
 - **Navigation mode:** Gesture, 3-button, and legacy 2-button navigation have device- and OS-dependent inset values. Do not assume one fixed value; record the runtime `padding` and `viewPadding`.
 - **Status bar:** Standard vs notch/punch-hole. `SafeArea` top padding varies.
-- **Text scale:** Default (1.0×) and enlarged (1.3× minimum; 2.0× for accessibility compliance).
+- **Text scale:** Default (1.0×), enlarged (1.3×), and 2.0× automated minimum. Where Android or iOS exposes a larger supported accessibility range, validate the platform maximum at runtime for text-bearing screens and controls.
 - **Keyboard:** Open with a focused low field. Verify the focused field scrolls into view and bottom actions are accessible.
 - **Font:** Standard system font vs user-configured custom font (affects text metrics).
 - **Dark mode:** If supported by the app.
 - **Display size:** Android allows users to change display density in settings, which changes the effective logical viewport. Test at default and one alternative setting.
+- **Locale readiness:** English-LTR is the current release baseline. Use long representative strings; when localization is enabled, include pseudolocale/long-string validation and RTL validation for directional UI.
 
 ### Android emulator setup
 
@@ -89,7 +90,8 @@ Record the **actual** logical viewport reported by `MediaQuery.sizeOf(context)`,
 
 - **Home indicator:** Present on Face ID devices. Consumes bottom safe area.
 - **Dynamic Island / Notch:** Consumes top safe area. Affects status bar height.
-- **Text scale:** Default and iOS "Accessibility Sizes" (which can go much larger than standard slider).
+- **Text scale:** Default, 2.0× automated minimum, and the iOS "Accessibility Sizes" maximum at runtime for text-bearing screens and controls.
+- **Locale readiness:** English-LTR is the current release baseline. When localization is enabled, test long strings and RTL where supported.
 - **Keyboard:** iOS keyboard height varies by language, QuickType suggestions, and dictation availability.
 - **Safe area:** Verify top and bottom safe areas are handled correctly, not doubled.
 
@@ -168,6 +170,12 @@ These scenarios should be tested across multiple viewport categories when the af
 - Rotate to landscape.
 - **Expected:** Content remains usable. No overflow. Navigation remains accessible. If landscape is not supported, verify the app correctly locks to portrait.
 
+### 6. Non-phone and resizable-window safety
+
+- The playbook does not require an alternate tablet, foldable, or landscape design.
+- When the app is shown in a split, freeform, foldable, tablet, or rotated window, the phone composition must still avoid crashes, system-UI overlap, and hidden critical actions.
+- Do not add OS/model branches to meet this condition. An optimized alternate layout is new product work and requires an approved layout contract and matrix extension.
+
 ---
 
 ## Mandatory minimum for material layout PRs
@@ -179,10 +187,13 @@ Every material screen or layout change must include evidence for at least:
 | Compact viewport | Widget test at `TestViewports.compactAndroid` (or compact iPhone when iOS-specific) |
 | Regular viewport | Widget test at `TestViewports.regularAndroid` (or regular iPhone) |
 | Text scale | 1.0, 1.3, and 2.0 (`TestTextScales.normal`, `.large`, and `.accessibility`) |
+| Platform maximum text scale | Runtime validation for text-bearing UI when the supported platform range exceeds 2.0, or a recorded product support ceiling |
 | Keyboard | When the screen has inputs: platform-appropriate `TestInsetProfiles.*KeyboardOpen` and emulator/simulator keyboard-open capture |
 | Emulator/simulator capture | Via `scripts/device_matrix.sh` using validated runtime-MediaQuery metadata and the chapter 05 naming convention |
 
 Tall/large viewports, alternate nav modes, and physical devices are required when the change touches insets, pinned footers, or a reported device-pair defect. Safe-area, keyboard, pinned-footer, platform-typography, and system-UI changes require both Android emulator and iOS simulator evidence.
+
+The current release is English and LTR. Long English strings remain part of every material-layout check. When localization or RTL ships, affected screens require long-string/pseudolocale and RTL evidence; directional padding, alignment, icon placement, and traversal order must be verified.
 
 ---
 

@@ -150,4 +150,4 @@ These patterns produce fragmented UI across phones. Do not introduce them to “
 
 Use Flutter DevTools layout inspection and debug paint/overflow diagnostics while resolving a constraint issue. The diagnostic question is: *what constraints and insets reach this widget?*—not *what number looked right on the first phone?*
 
-Before acceptance, complete the chapter 02 material-layout checklist: compact + regular viewports, text scale 1.0, 1.3, and 2.0, keyboard when inputs exist, and paired `MediaQuery` capture for reported device pairs. Record exact logical viewport and evidence per chapters 05 and 06.
+Before acceptance, complete the chapter 02 material-layout checklist: compact + regular viewports, text scale 1.0, 1.3, and 2.0, plus platform-maximum runtime validation when it exceeds 2.0; keyboard when inputs exist; and paired `MediaQuery` capture for reported device pairs. Record exact logical viewport and evidence per chapters 05 and 06.

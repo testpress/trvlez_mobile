@@ -41,6 +41,17 @@ Run these before committing. They are the lowest-cost, highest-frequency check.
 - Every form with validation logic.
 - Every widget with dynamic content that may overflow.
 
+### Usability assertions, not only overflow assertions
+
+`expect(tester.takeException(), isNull)` is a necessary regression check, but it is not proof that a screen is usable. For each material screen test, assert the outcome that matters for its critical controls:
+
+- the primary action or required field is present and visible in the available viewport;
+- a keyboard-open test keeps the focused field and its required next action reachable;
+- a custom interactive control has the expected semantic role, label, and enabled/disabled state;
+- a control with a minimum touch-target contract has that minimum hit region when it is not provided by a standard Material control.
+
+Use the smallest assertion set that proves the screen contract. Do not replace behavioural assertions with arbitrary pixel coordinates.
+
 **Test helpers:** Use the deterministic wrappers in `test/helpers/` as the standard path for all widget tests. They provide controlled viewport, theme, text scale, locale, and Riverpod overrides.
 
 - `TestApp` / `testAppWithProviders()` — wraps the widget under test with `MaterialApp`, theme, and optional text scale injection via `MaterialApp.builder` (so the framework's own `MediaQuery` is not overwritten).
@@ -339,6 +350,7 @@ When diagnosing a layout issue on a running app:
 |---|---|
 | Shared widget styling | Widget test + golden test (pinned environment; see Layer 3) |
 | Screen layout or inset/keyboard change | Chapter 02 checklist: compact + regular viewports, text 1.0/1.3/2.0, keyboard/inset profile when inputs exist, validated `scripts/device_matrix.sh` capture |
+| Text-bearing screen or control where platform accessibility scale exceeds 2.0 | Standard widget matrix plus target-platform maximum-scale runtime evidence, or an explicit documented product support ceiling |
 | SafeArea, keyboard, pinned-footer, platform-typography, or system-UI change | Material screen matrix + validated Android emulator **and** iOS simulator capture |
 | Navigation/input/device-plugin flow | Integration test where feasible + platform runtime evidence |
 | Token/theme-wide change | Component goldens + affected widget tests + documented baseline review |

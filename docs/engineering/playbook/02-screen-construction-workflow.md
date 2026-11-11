@@ -17,6 +17,7 @@ Read the approved reference and identify:
 - content that can grow because of text scale, localization, server data, or user input;
 - intended artwork/image aspect ratios and crop behaviour;
 - system-bar, home-indicator, gesture-navigation, and keyboard interactions;
+- localization conditions: the current release is English and LTR, but text must remain content-driven and directional layout must use Flutter directionality-aware APIs so a future locale does not require structural rewrites;
 - fixed component contracts such as icon box, minimum hit target, border, avatar, or branded artwork ratio.
 
 Copy the template below into the task or PR. Filling it avoids “fixing” a child when the actual fault is an ancestor with the wrong constraint or scroll model.
@@ -34,6 +35,7 @@ Copy the template below into the task or PR. Filling it avoids “fixing” a ch
 - **Keyboard policy:** (resizeToAvoidBottomInset, bottom action treatment, focused-field scroll)
 - **Named fixed dimensions:** (token or private constant + why)
 - **Adverse states to verify:** (loading, empty, error, long content, text 1.3 and 2.0, keyboard open, compact viewport)
+- **Locale/directionality:** (current English-LTR validation; long-string/pseudolocale and RTL evidence when localization is enabled or the change affects text order, alignment, icons, or directional padding)
 - **Device pair (if discrepancy report):** (e.g. realme 8 vs Pixel 10a — MediaQuery captured before edit? yes/no)
 ```
 
@@ -75,7 +77,10 @@ A material screen or layout change is **not complete** until all of the followin
 - [ ] Layout contract template above is filled in the task/PR.
 - [ ] Widget tests cover **compact** and **regular** logical viewports (`TestViewports`).
 - [ ] Widget tests cover text scale **1.0**, **1.3**, and **2.0** (`TestTextScales`).
+- [ ] For text-bearing controls, the platform maximum accessibility scale was checked on the target platform when it exceeds 2.0; otherwise the limitation or supported ceiling is recorded.
 - [ ] If the screen has inputs: keyboard-open scenario exercised (helper inset profile and/or emulator).
+- [ ] Critical actions are visible, reachable, tappable, and semantically labelled in every adverse state; absence of a framework exception alone is not acceptance.
+- [ ] English-LTR content was checked with long representative strings. If localization or RTL is enabled for the release, long-string/pseudolocale and RTL evidence is included for affected directional UI.
 - [ ] Emulator/simulator screenshot captured via `scripts/device_matrix.sh` with validated runtime `MediaQuery` metadata and the chapter 05 naming convention.
 - [ ] If the change affects SafeArea ownership, keyboard avoidance, pinned footers, platform typography, or system UI: Android emulator **and** iOS simulator evidence captured.
 - [ ] For a reported device pair (e.g. realme 8 / Pixel 10a): both devices’ `size`, `padding`, `viewPadding`, `viewInsets`, `devicePixelRatio`, `textScaler`, and navigation mode were recorded **before** the layout edit.

@@ -65,7 +65,7 @@ When two targets are adjacent, ensure at least 8 logical pixels of separation or
 
 ### Text scaling
 
-The application must remain usable when the system text scale factor is set to the platform's maximum (typically 2.0× on Android, or the "Accessibility Sizes" range on iOS). "Usable" means:
+The application must remain usable when the system text scale factor is set to the platform's maximum. Automated widget tests must cover 2.0× at minimum; where a supported platform exposes a larger accessibility range, validate that maximum on the platform runtime. "Usable" means:
 
 - All text remains readable (not clipped, overlapped, or hidden behind another element).
 - All interactive elements remain tappable.

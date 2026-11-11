@@ -132,15 +132,16 @@ Primitives (`Prim.s4`, `Prim.s8`, `Prim.s16`, `Prim.r12`, etc.) remain private i
    - `0` / `0.0` / `EdgeInsets.zero` / `BorderRadius.zero` / `SizedBox.shrink()`
    - `double.infinity`
    - Fractional layout values (`Expanded(flex:)`, `widthFactor`)
+   - Documented component-private constants, framework-required constraints, and design-derived aspect ratios, as defined by the nuanced dimension policy in `docs/engineering/playbook/04-design-system-and-reference-intake.md`.
 
 ---
 
 ## How to Request or Add a New Token
 
-If no existing token captures your layout intent:
-1. **Never fall back to a raw number or generic size name.**
-2. Propose a semantic token following the naming grammar (e.g. `sizes.cardWidthCompact`).
-3. Add the token to the appropriate class in `lib/core/design_tokens/` (`space_tokens.dart`, `size_tokens.dart`, or `shape_tokens.dart`).
+If no existing token captures your layout intent, apply chapter 04's decision rule before adding one:
+1. **Use a documented component-private constant** when the dimension is unique to one component, framework-required, or a design-derived aspect ratio.
+2. **Propose a semantic token** only when the value represents a repeated design role (for example, `sizes.cardWidthCompact`).
+3. Add an approved token to the appropriate class in `lib/core/design_tokens/` (`space_tokens.dart`, `size_tokens.dart`, or `shape_tokens.dart`).
 4. Wire the value from private primitives in `lib/core/design_tokens/primitives.dart`.
 5. Run the CI token verification script:
    ```bash

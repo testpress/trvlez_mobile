@@ -224,9 +224,9 @@ ref.listen(bookingNotifierProvider, (prev, next) {
 
 ## Widget composition rules
 
-1. **One public widget per file.** Filename matches class name in `snake_case`.
-2. **Widget classes over helper methods.** Use `StatelessWidget`, `ConsumerWidget`, or `HookConsumerWidget` — not private `_buildX()` methods. Classes provide isolated rebuild boundaries and support `const`.
-3. **Keep `build()` under ~80 lines.** If larger, extract child widgets into separate classes.
+1. **Clear public ownership.** A public reusable widget normally has its own `snake_case` file. Closely coupled private widgets may remain with their owner when separation would obscure the screen contract.
+2. **Extract meaningful subtrees.** Prefer `StatelessWidget`, `ConsumerWidget`, or `HookConsumerWidget` for reusable, state-selecting, or independently testable subtrees. A small private helper is acceptable when it improves local readability and has no independent state, lifecycle, or rebuild boundary.
+3. **Use size thresholds as review signals.** A `build()` method approaching ~80 lines or a file approaching ~300 lines should prompt extraction review; it is not an automatic split requirement. Extract when it improves ownership, testing, or rebuild scope.
 4. **No magic numbers in styling.** Use semantic tokens. See chapter 04 for the nuanced policy on when a private named constant is acceptable.
 5. **`StatefulWidget` only for local ephemeral UI state:** text controllers, focus nodes, animation controllers, scroll controllers. Server data and feature state belong in notifiers.
 6. **Async safety:** Guard `BuildContext` across every `await` boundary: `if (!context.mounted) return;`

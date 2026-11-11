@@ -25,7 +25,7 @@ Use it with the approved client reference, the current code contracts, and curre
 
 `playbook/00-charter-and-precedence.md` defines precedence. A document in this directory is changed through ordinary review: state the reason, affected platforms/screens, validation evidence, and any migration required. Do not copy its rules into IDE-specific files; the discovery bridge in `AGENTS.md` links here instead.
 
-**Cross-device layout freeze:** Chapters `02`, `03`, `05`, and `06` (plus the related `AGENTS.md` routing) are frozen after this final readiness correction. Further changes to those consistency chapters require a measured device defect and an ADR; do not keep rewriting them while implementing screens.
+**Cross-device layout change control:** Chapters `02`, `03`, `05`, and `06` are stable policy. Changes to their behavioural requirements, supported-window envelope, or evidence minimum require a measured need and an ADR. Factual corrections, examples, official-link updates, and clarifications that do not change those requirements use ordinary review. Do not rewrite these chapters opportunistically while implementing screens.
 
 ## Supporting documents
 

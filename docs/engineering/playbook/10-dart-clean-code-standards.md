@@ -10,10 +10,12 @@ Base reference: [Effective Dart](https://dart.dev/effective-dart).
 
 1. **Readable over clever:** Code is read 10x more often than it is written. Write obvious code.
 2. **Single responsibility:** One function = one job. If you need "and" to explain what a function does, split it.
-3. **Unit sizing limits:**
-   - Functions ≤ ~30 lines.
-   - Widget `build()` methods ≤ ~80 lines (extract sub-widgets if larger).
-   - Files ≤ ~300 lines (split into separate classes/files if exceeding).
+3. **Unit sizing review signals:**
+   - Functions approaching ~30 lines should be reviewed for a distinct responsibility.
+   - Widget `build()` methods approaching ~80 lines should be reviewed for an extractable semantic subtree.
+   - Files approaching ~300 lines should be reviewed for clearer ownership or testability.
+
+   These are not automatic split limits. Keep a cohesive unit together when splitting would hide the layout contract, duplicate state wiring, or reduce readability.
 4. **Intentional naming:** `isEmailValid` rather than `flag`; `fetchBookings()` rather than `getData()`.
 5. **No dead code:** Never leave commented-out code blocks; version control preserves history.
 6. **Boy Scout rule:** Leave touched files cleaner than you found them.
@@ -103,8 +105,8 @@ final label = switch (status) {
 
 ## 4. Flutter widget standards
 
-### 4.1 Widget classes over helper methods
-Extract sub-widgets into dedicated `StatelessWidget`, `ConsumerWidget`, or `HookConsumerWidget` classes, not private `_buildX()` methods. Classes provide isolated rebuild boundaries, support `const`, and aid Flutter's element tree diffing.
+### 4.1 Meaningful widget extraction
+Extract reusable, state-selecting, independently testable, or performance-sensitive subtrees into dedicated `StatelessWidget`, `ConsumerWidget`, or `HookConsumerWidget` classes. A short private helper is acceptable for a local, stateless fragment when it makes the enclosing layout contract easier to read. Do not extract solely to satisfy a line count.
 
 ### 4.2 Build methods
 Keep `build()` fast, declarative, and pure. Never trigger API calls, timers, or state modifications inside `build()`.
@@ -146,7 +148,7 @@ void dispose() {
 3. **Touch targets:** Minimum interactive tap target of 48×48 dp.
 4. **Image fail-safes:** Network images must supply an `errorBuilder` and placeholder/loading shim. Never leave broken image icons on failure.
 5. **Form and keyboard UX:** Assign logical `TextInputAction` (`next`, `done`) and include appropriate `autofillHints` for credentials and personal data.
-6. **Font-scale resilience:** Verify layouts do not overflow when system font scale increases to 1.3× or 1.5×.
+6. **Font-scale resilience:** Verify layouts at 1.0×, 1.3×, and 2.0× in widget tests, plus the platform maximum at runtime when it exceeds 2.0×. Do not accept a screen merely because it avoids overflow; critical controls must remain visible and usable.
 
 ---
 

@@ -4,6 +4,14 @@
 
 TrvlEz phone UI must preserve the approved hierarchy, spacing relationships, content readability, touchability, and non-overlap behaviour across supported Android and iOS configurations. It is not an objective to make every physical-pixel screenshot identical: system bars, OEM rendering, fonts, GPU composition, and accessibility settings legitimately vary.
 
+### Supported-window envelope
+
+The product target is Android and iOS **phone** UI in portrait, across the phone configurations in chapter 06. There is no separate tablet, foldable, or landscape design system in this playbook.
+
+- On a supported phone window, preserve hierarchy, readability, touchability, and non-overlap at the system's maximum text scale.
+- In split-screen, freeform, landscape, foldable, or tablet windows, an alternate layout is not implied. The existing phone composition must still fail safely: use constraints and scrolling, avoid device/OS branches, and do not overlap system UI or crash. Pixel parity and optimal use of the larger form factor are not promised.
+- A product decision to support an alternate form factor, orientation, or window class requires an approved reference, a layout contract, and an extension of the device matrix before implementation.
+
 ## Precedence
 
 Resolve a conflict in this order:
@@ -22,6 +30,7 @@ Higher authority does not excuse an unexplained trade-off. When the implementati
 - Treat a fixed logical dimension as a legitimate component contract only when it has an owner, semantic reason, and validation coverage. Do not label every number “magic”; do not leave unexplained screen-relative numbers either.
 - Inspect the parent’s constraints, scroll owner, and system-inset ownership before changing a child’s `width`, `height`, `Expanded`, `Flexible`, `Positioned`, or `MediaQuery` calculation.
 - Preserve design intent, but never suppress system text scaling, safe-area handling, overflow, or keyboard behaviour solely to match one screenshot.
+- Support the platform's maximum text scale on supported phone configurations. The automated widget-test floor is 2.0x; where a platform exposes a larger accessibility range, validate that maximum on the platform runtime as described in chapters 05–07.
 - Make one layer own each concern: route/shell, page scroll, system insets, keyboard avoidance, theme/token lookup, and feature state must not be independently reimplemented by descendants.
 - Evidence is part of completion. State what was tested and what was not possible to test; emulator evidence and physical-device evidence are different claims.
 
