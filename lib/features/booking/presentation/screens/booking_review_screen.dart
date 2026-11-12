@@ -5,6 +5,7 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -40,11 +41,13 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
       if (made.isNotEmpty) {
         context.pushReplacement(AppRoutes.bookingDone);
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+      AppLogger.warning('Booking submission failed', error, stackTrace);
       if (!mounted) return;
-      final String message = e is AppException
-          ? e.message
-          : e.toString().replaceAll(RegExp(r'^[A-Za-z]*Exception:\s*'), '');
+      final String message = AppException.userMessage(
+        error,
+        'Unable to complete booking. Please try again.',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );

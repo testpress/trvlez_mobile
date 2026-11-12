@@ -12,7 +12,8 @@ class PriceFormatter {
         name: currencyCode,
       ).currencySymbol;
       return symbol.isNotEmpty ? symbol : currencyCode;
-    } catch (_) {
+    } on ArgumentError catch (_) {
+      // Return raw currency code when currency format is not recognized
       return currencyCode;
     }
   }

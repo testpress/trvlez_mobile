@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
@@ -115,14 +116,13 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
       if (!mounted) return;
       ref.read(verificationNotifierProvider.notifier).setNfcResult(result);
       context.pushReplacement(AppRoutes.chipData);
-    } catch (e) {
+    } catch (error, stackTrace) {
+      AppLogger.warning('NFC chip scan failed', error, stackTrace);
       if (!mounted) return;
-      final reason = e is NfcError
-          ? e.message
+      final reason = error is NfcError
+          ? error.message
           : "We couldn't read the chip inside your passport.";
-      final mitigation = e is NfcError
-          ? (e.userGuidance ?? e.technicalDetails)
-          : null;
+      final mitigation = error is NfcError ? error.userGuidance : null;
       context.pushReplacement(
         AppRoutes.nfcFailed,
         extra: {

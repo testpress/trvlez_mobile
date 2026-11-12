@@ -9,6 +9,7 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -60,7 +61,12 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
           _isCameraInitialized = true;
         });
       }
-    } catch (_) {
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Front camera initialization failed',
+        error,
+        stackTrace,
+      );
       if (mounted) {
         setState(() {
           _isCameraInitialized = false;
@@ -84,7 +90,10 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
 
     try {
       await cam.startVideoRecording();
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Camera failure starting video recording (e.g. permission or storage).
+      AppLogger.warning('Failed to start video recording', error, stackTrace);
+    }
 
     setState(() {
       _isRecording = true;
@@ -122,7 +131,10 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
       try {
         final XFile file = await cam.stopVideoRecording();
         videoFile = File(file.path);
-      } catch (_) {}
+      } catch (error, stackTrace) {
+        // Camera failure stopping video recording.
+        AppLogger.warning('Failed to stop video recording', error, stackTrace);
+      }
     }
 
     if (mounted) {

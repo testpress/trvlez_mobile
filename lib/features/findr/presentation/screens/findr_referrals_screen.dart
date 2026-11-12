@@ -80,8 +80,8 @@ class _FindrReferralsScreenState extends ConsumerState<FindrReferralsScreen> {
             child: portfolioAsync.when(
               loading: () =>
                   const LoadingView(message: 'Loading recommendations...'),
-              error: (error, _) => ErrorView(
-                message: error.toString(),
+              error: (error, _) => ErrorView.fromError(
+                error: error,
                 onRetry: () =>
                     ref.read(findrPortfolioProvider.notifier).refresh(),
               ),

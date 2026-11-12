@@ -93,9 +93,9 @@ class _ReservationDetailContent extends ConsumerWidget {
       body: detailAsync.when(
         data: (loaded) => _buildBody(context, ref, loaded),
         loading: () => const LoadingView(message: 'Loading reservation...'),
-        error: (err, stack) => ErrorView(
+        error: (err, stack) => ErrorView.fromError(
+          error: err,
           title: 'Unable to load reservation',
-          message: err.toString(),
           onRetry: () {
             ref
                 .read(reservationDetailNotifierProvider(reservationId).notifier)

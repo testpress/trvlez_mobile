@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dmrtd/dmrtd.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_error_mapper.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_image_extractor.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
@@ -31,16 +32,19 @@ class NfcPassportServiceImpl implements NfcPassportService {
         } else {
           return NfcDeviceStatus.unsupported;
         }
-      } on PlatformException catch (e) {
-        _log.warning('NfcProvider platform exception (attempt $attempt): $e');
+      } on PlatformException catch (platformException) {
+        _log.warning(
+          'NfcProvider platform exception (attempt $attempt): $platformException',
+        );
         if (attempt == 0 &&
-            (e.code == '500' || e.message?.contains('activity') == true)) {
+            (platformException.code == '500' ||
+                platformException.message?.contains('activity') == true)) {
           await Future.delayed(const Duration(milliseconds: 200));
           continue;
         }
         return NfcDeviceStatus.unsupported;
-      } catch (e) {
-        _log.warning('Error checking NFC status: $e');
+      } catch (error) {
+        _log.warning('Error checking NFC status: $error');
         return NfcDeviceStatus.unsupported;
       }
     }
@@ -93,9 +97,9 @@ class NfcPassportServiceImpl implements NfcPassportService {
         await _nfc.connect(
           iosAlertMessage: 'Hold your iPhone near the biometric passport.',
         );
-      } catch (e) {
+      } catch (error) {
         throw NfcErrorMapper.fromException(
-          e,
+          error,
           readStep: 'connecting to passport',
         );
       }
@@ -141,12 +145,12 @@ class NfcPassportServiceImpl implements NfcPassportService {
       // For simplicity and highest compatibility, we start standard BAC session.
       try {
         await passport.startSession(accessKey);
-      } catch (e) {
+      } catch (error) {
         // BAC/PACE session establishment is the most common failure point.
         // Wrong MRZ data (doc number, DOB, expiry) or a mismatched passport
         // causes authentication to fail.
         throw NfcErrorMapper.fromException(
-          e,
+          error,
           fallbackType: NfcErrorType.authenticationFailed,
           readStep: 'authenticating',
         );
@@ -185,8 +189,8 @@ class NfcPassportServiceImpl implements NfcPassportService {
             final dg = await readFunc();
             rawDgBytesBase64[name.toLowerCase()] = base64Encode(dg.toBytes());
             availableDataGroups.add(name.toLowerCase());
-          } catch (e) {
-            _log.warning('Failed to read $name: $e');
+          } catch (error) {
+            _log.warning('Failed to read $name: $error');
           }
         }
       }
@@ -247,8 +251,8 @@ class NfcPassportServiceImpl implements NfcPassportService {
           } else {
             _log.warning('No face image bytes extracted from DG2');
           }
-        } catch (e) {
-          _log.warning('Failed to read or parse DG2: $e');
+        } catch (error) {
+          _log.warning('Failed to read or parse DG2: $error');
         }
       }
 
@@ -293,8 +297,8 @@ class NfcPassportServiceImpl implements NfcPassportService {
           // to gather the signature to include in the payload.
           final aaSig = await passport.activeAuthenticate(Uint8List(8));
           activeAuthSignatureBase64 = base64Encode(aaSig);
-        } catch (e) {
-          _log.warning('Active Authentication failed: $e');
+        } catch (error) {
+          _log.warning('Active Authentication failed: $error');
         }
       }
 
@@ -337,18 +341,25 @@ class NfcPassportServiceImpl implements NfcPassportService {
         authMethod: authMethod,
         availableDataGroups: availableDataGroups,
       );
-    } catch (e) {
-      _log.severe('Error reading passport at step "$currentReadStep": $e');
+    } catch (error) {
+      _log.severe('Error reading passport at step "$currentReadStep": $error');
 
       // If already an NfcError (from step-specific catch blocks), preserve it
-      final nfcError = e is NfcError
-          ? e
-          : NfcErrorMapper.fromException(e, readStep: currentReadStep);
+      final nfcError = error is NfcError
+          ? error
+          : NfcErrorMapper.fromException(error, readStep: currentReadStep);
 
       // Try to disconnect cleanly on error
       try {
         await _nfc.disconnect(iosErrorMessage: nfcError.message);
-      } catch (_) {}
+      } catch (disconnectError, st) {
+        // Harmless best-effort NFC session disconnection after read error.
+        AppLogger.debug(
+          'Best-effort NFC disconnect failed',
+          disconnectError,
+          st,
+        );
+      }
 
       throw nfcError;
     }

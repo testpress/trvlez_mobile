@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
@@ -48,15 +49,31 @@ class _CheckInVisaCaptureScreenState
       if (cam != null && mounted) {
         try {
           await cam.setFocusMode(FocusMode.auto);
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          // Best-effort auto focus; not supported on all device cameras.
+          AppLogger.debug('Camera auto focus unsupported', error, stackTrace);
+        }
         try {
           await cam.setExposureMode(ExposureMode.auto);
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          // Best-effort auto exposure; not supported on all device cameras.
+          AppLogger.debug(
+            'Camera auto exposure unsupported',
+            error,
+            stackTrace,
+          );
+        }
         setState(() {
           _isCameraReady = true;
         });
       }
-    } catch (_) {
+    } catch (error, stackTrace) {
+      // Graceful fallback when camera device cannot be initialized.
+      AppLogger.warning(
+        'Visa capture camera initialization failed',
+        error,
+        stackTrace,
+      );
       if (mounted) {
         setState(() {
           _isCameraReady = false;
@@ -81,7 +98,14 @@ class _CheckInVisaCaptureScreenState
       try {
         final XFile file = await cam.takePicture();
         photoPath = file.path;
-      } catch (_) {}
+      } catch (error, stackTrace) {
+        // Camera picture capture failure; photoPath remains null.
+        AppLogger.warning(
+          'Failed to take picture during visa capture',
+          error,
+          stackTrace,
+        );
+      }
       if (mounted) setState(() => _isCapturing = false);
     }
 

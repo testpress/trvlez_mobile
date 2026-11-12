@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/storage/passcode_storage.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 
 /// Provider for active passcode enabled status.
 final appPasscodeNotifierProvider =
@@ -51,7 +52,13 @@ class TwoStepVerificationNotifier extends Notifier<bool> {
       return ref
           .watch(settingsRepositoryProvider)
           .isTwoStepVerificationEnabled();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      // Harmless default fallback when settings repository is unavailable (e.g. test isolation).
+      AppLogger.debug(
+        'Settings repository unavailable for 2-step verification',
+        error,
+        stackTrace,
+      );
       return false;
     }
   }
@@ -63,6 +70,13 @@ class TwoStepVerificationNotifier extends Notifier<bool> {
       await ref
           .read(settingsRepositoryProvider)
           .setTwoStepVerificationEnabled(next);
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Best-effort settings persistence; in-memory state is already updated.
+      AppLogger.warning(
+        'Failed to persist two-step verification setting',
+        error,
+        stackTrace,
+      );
+    }
   }
 }

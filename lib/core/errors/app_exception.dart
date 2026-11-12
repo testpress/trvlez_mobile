@@ -6,6 +6,32 @@ sealed class AppException implements Exception {
   const AppException(this.message);
   final String message;
 
+  /// Resolves a user-safe message from any error or exception object.
+  /// Never returns technical types, raw stack strings, or transport details.
+  static String userMessage(
+    Object? error, [
+    String fallback = 'Something went wrong. Please try again.',
+  ]) {
+    if (error == null) return fallback;
+    if (error is AppException) return error.message;
+    if (error is String) {
+      if (error.isEmpty) return fallback;
+      final lower = error.toLowerCase();
+      if (lower.contains('exception') ||
+          lower.contains('stacktrace') ||
+          lower.contains('error:')) {
+        return fallback;
+      }
+      return error;
+    }
+    if (error.runtimeType.toString() == 'ApiException') {
+      final dynamic apiError = error;
+      final Object? apiMessage = apiError.message;
+      if (apiMessage is String && apiMessage.isNotEmpty) return apiMessage;
+    }
+    return fallback;
+  }
+
   @override
   String toString() => '$runtimeType: $message';
 }

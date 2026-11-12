@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -191,12 +192,19 @@ class NfcIntroScreen extends ConsumerWidget {
                     await AppSettings.openAppSettings(
                       type: AppSettingsType.nfc,
                     );
-                  } catch (_) {
+                  } catch (firstError) {
                     try {
                       await AppSettings.openAppSettings(
                         type: AppSettingsType.settings,
                       );
-                    } catch (_) {}
+                    } catch (fallbackError, stackTrace) {
+                      // Harmless platform intent failure opening system settings.
+                      AppLogger.warning(
+                        'Failed to open device settings',
+                        fallbackError,
+                        stackTrace,
+                      );
+                    }
                   }
                 },
               ),

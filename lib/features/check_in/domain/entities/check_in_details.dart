@@ -41,7 +41,8 @@ class CheckInDetails {
       final startDay = DateFormat('d').format(reservation.checkInDate);
       final endDay = DateFormat('d MMM').format(reservation.checkOutDate);
       return '$startDay–$endDay';
-    } catch (_) {
+    } on FormatException catch (_) {
+      // Safe fallback if date parsing/formatting encounters unexpected locale error
       return format.format(reservation.checkInDate);
     }
   }

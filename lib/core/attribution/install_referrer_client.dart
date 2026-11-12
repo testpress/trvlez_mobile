@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 
 /// Structured result returned from the native Google Play Install Referrer API.
 class InstallReferrerResult {
@@ -72,13 +73,19 @@ class InstallReferrerClient {
         clickTimestamp: clickTimestamp,
         installBeginTimestampSeconds: installBeginTimestampSeconds,
       );
-    } on PlatformException catch (platformException) {
-      debugPrint(
-        '[InstallReferrerClient] PlatformException: ${platformException.message}',
+    } on PlatformException catch (platformException, stackTrace) {
+      AppLogger.warning(
+        '[InstallReferrerClient] PlatformException',
+        platformException,
+        stackTrace,
       );
       return null;
-    } catch (unexpectedError) {
-      debugPrint('[InstallReferrerClient] Unexpected error: $unexpectedError');
+    } catch (unexpectedError, stackTrace) {
+      AppLogger.warning(
+        '[InstallReferrerClient] Unexpected error',
+        unexpectedError,
+        stackTrace,
+      );
       return null;
     }
   }
@@ -98,7 +105,7 @@ class InstallReferrerClient {
     String decoded;
     try {
       decoded = Uri.decodeFull(trimmed);
-    } catch (_) {
+    } on ArgumentError catch (_) {
       decoded = trimmed;
     }
 
@@ -112,7 +119,7 @@ class InstallReferrerClient {
         String value;
         try {
           value = Uri.decodeComponent(rawValue);
-        } catch (_) {
+        } on ArgumentError catch (_) {
           value = rawValue;
         }
 

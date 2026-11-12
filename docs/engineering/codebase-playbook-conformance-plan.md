@@ -54,8 +54,8 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 | LAY-02 | P1 | Text-bearing UI uses `FittedBox(BoxFit.scaleDown)`, which can reduce accessibility text rather than wrap, scroll, or use an approved truncation policy. | `brand_alt_line.dart:52`; `brand_verify_screen.dart:262`; `two_step_code_screen.dart:251`; plus welcome/verification capture paths | Chapter 03 forbidden fixes; chapter 07 |
 | LAY-03 | P1 | Shared verification shell has a likely axis-token defect: its default bottom padding reads `space.insetScreen.left`; its pinned foot and `resizeToAvoidBottomInset: false` need a large-text/keyboard contract test. | `lib/core/widgets/brand_verify_screen.dart:92-128` | Chapters 02–03 |
 | ARC-01 | P1 | [Resolved] Presentation providers instantiate or export data-layer implementations. The existing CI guard deliberately excludes `presentation/providers`, so this boundary bypass is unchecked. | Resolved in Phase 3; centralized in `lib/core/providers/repository_providers.dart` with presentation layer guard enforced. | Chapter 01 dependency rule |
-| ERR-01 | P1 | UI/notifier code surfaces raw exception strings and uses broad/empty catches. This can expose transport/internal details and produces inconsistent error states. | `my_trips_screen.dart:126`; `findr_*` screens/widgets; `refer_hotel_*`; `profile_setup_screen.dart:118`; 22 empty catches across `lib/` | Chapters 01, 04, 10 |
-| SEC-01 | P0 | Debug networking logs full request/response bodies; attribution logs click-reference and referral identifiers. Tokens and personal data can therefore reach debug logs. | `core/network/dio_provider.dart:50-54`; `core/attribution/attribution_service.dart:92,106`; test output confirms headers are logged | Chapter 10 §6; chapter 08 privacy policy |
+| ERR-01 | P1 | [Resolved] UI/notifier code surfaces raw exception strings and uses broad/empty catches. | Resolved in Phase 4; centralized in `AppException.userMessage` and `ErrorView.fromError` with all catches made observable or commented. | Chapters 01, 04, 10 |
+| SEC-01 | P0 | [Resolved] Debug networking logs full request/response bodies; attribution logs click-reference and referral identifiers. | Resolved in Phase 4; replaced with `RedactingLogInterceptor` and structured `AppLogger` with recursive sensitive key/header redaction. | Chapter 10 §6; chapter 08 privacy policy |
 | A11Y-01 | P1 | No Flutter accessibility Guideline API assertions exist despite the playbook requiring them for shared interactive components and material interactive-screen changes. | No `meetsGuideline`, tap-target, label, or contrast guideline use under `test/` or `integration_test/` | Chapters 05 and 07 |
 | VAL-01 | P1 | Matrix helpers exist but production adoption is almost absent: 85 test files, 29 direct `MaterialApp` test wrappers, four `TestApp` users, and only `LoginScreen` uses `testMaterialScreenMatrix`. | `test/helpers/*`; `test/features/auth/presentation/screens/login_screen_test.dart` | Chapters 02, 05, 06 |
 | VAL-02 | P2 | One golden test protects `AppCard`; one login integration flow exists; no committed runtime capture sidecars or physical-device evidence exists. | `test/core/widgets/app_card_golden_test.dart`; `integration_test/auth_login_flow_test.dart`; `docs/engineering/evidence/` | Chapters 05–06; ADR 0001 |
@@ -190,12 +190,12 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Remove Dio `LogInterceptor` body/header logging or replace it with a redacting structured logger that never emits authorization headers, credentials, passport/NFC content, referral tokens, or personal data.
-- [ ] Stop logging raw click references and referral identifiers in attribution flows. Log only event category/status and non-sensitive correlation metadata approved by the privacy policy.
-- [ ] Inventory all broad and empty catches. For each, choose one explicit policy: harmless best-effort cleanup with comment, recoverable user error mapped to `AppException`, or defect logged through the approved logger.
-- [ ] Replace every UI-facing `error.toString()`/`e.toString()` with a user-safe error mapper and a stable recovery action where meaningful.
-- [ ] Consolidate repeated error surfaces into the chapter 04 state contract: loading, empty, error, success/data. Do not make a global error widget until at least two consumers share the same visual, semantic, and behavioural contract.
-- [ ] Add tests for redaction, error mapping, retries, and the error/empty/loading states of migrated data-driven screens.
+- [x] Remove Dio `LogInterceptor` body/header logging or replace it with a redacting structured logger that never emits authorization headers, credentials, passport/NFC content, referral tokens, or personal data.
+- [x] Stop logging raw click references and referral identifiers in attribution flows. Log only event category/status and non-sensitive correlation metadata approved by the privacy policy.
+- [x] Inventory all broad and empty catches. For each, choose one explicit policy: harmless best-effort cleanup with comment, recoverable user error mapped to `AppException`, or defect logged through the approved logger.
+- [x] Replace every UI-facing `error.toString()`/`e.toString()` with a user-safe error mapper and a stable recovery action where meaningful.
+- [x] Consolidate repeated error surfaces into the chapter 04 state contract: loading, empty, error, success/data. Do not make a global error widget until at least two consumers share the same visual, semantic, and behavioural contract.
+- [x] Add tests for redaction, error mapping, retries, and the error/empty/loading states of migrated data-driven screens.
 
 ### Acceptance criteria
 

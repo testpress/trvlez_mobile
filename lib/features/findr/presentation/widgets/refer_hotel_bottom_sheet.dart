@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_text_field.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
@@ -94,10 +95,18 @@ class _ReferHotelBottomSheetState extends ConsumerState<ReferHotelBottomSheet> {
       );
 
       Navigator.of(context).pop(true);
-    } catch (e) {
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Failed to submit hotel referral from sheet',
+        error,
+        stackTrace,
+      );
       if (!mounted) return;
 
-      final message = e is AppException ? e.message : e.toString();
+      final message = AppException.userMessage(
+        error,
+        'Failed to submit referral. Please try again.',
+      );
 
       setState(() {
         _isSubmitting = false;

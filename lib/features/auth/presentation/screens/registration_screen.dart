@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_alt_line.dart';
 import 'package:trvlez_mobile/core/widgets/brand_screen.dart';
@@ -119,9 +118,11 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   }
 
   String? _resolveErrorMessage(Object? error) {
-    if (error is AppException) return error.message;
-    if (error is ApiException) return error.message;
-    return error?.toString();
+    if (error == null) return null;
+    return AppException.userMessage(
+      error,
+      'Registration failed. Please check your information and try again.',
+    );
   }
 
   @override

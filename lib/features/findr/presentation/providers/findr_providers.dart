@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/findr_portfolio.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/hotel_referral_create_params.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/hotel_referral_item.dart';
@@ -27,7 +28,14 @@ final liveFindrPortfolioProvider = Provider<FindrPortfolio>((ref) {
   try {
     isJoined =
         isJoined || ref.read(settingsRepositoryProvider).isFindrActivated();
-  } catch (_) {}
+  } catch (error, stackTrace) {
+    // Harmless fallback when settings repository is unconfigured in test environment.
+    AppLogger.debug(
+      'Settings repository unconfigured for live portfolio',
+      error,
+      stackTrace,
+    );
+  }
   return portfolio.copyWith(joined: isJoined);
 });
 
@@ -38,8 +46,13 @@ class FindrPortfolioNotifier extends AsyncNotifier<FindrPortfolio> {
     try {
       final settings = ref.read(settingsRepositoryProvider);
       isJoined = settings.isFindrActivated();
-    } catch (_) {
+    } catch (error, stackTrace) {
       // settingsRepositoryProvider not overridden in isolated unit/widget tests
+      AppLogger.debug(
+        'Settings repository unconfigured in portfolio notifier',
+        error,
+        stackTrace,
+      );
     }
 
     final finderSummary = ref.watch(finderNotifierProvider).valueOrNull;
@@ -61,7 +74,13 @@ class FindrPortfolioNotifier extends AsyncNotifier<FindrPortfolio> {
       final repo = ref.read(finderRepositoryProvider);
       final portfolio = await repo.getFindrPortfolio();
       return portfolio.copyWith(joined: isJoined);
-    } catch (_) {
+    } catch (error, stackTrace) {
+      // Non-critical portfolio fetch failure; return empty joined portfolio fallback.
+      AppLogger.warning(
+        'Failed to fetch Findr portfolio, using empty fallback',
+        error,
+        stackTrace,
+      );
       return FindrPortfolio.empty.copyWith(joined: isJoined);
     }
   }
@@ -69,7 +88,14 @@ class FindrPortfolioNotifier extends AsyncNotifier<FindrPortfolio> {
   void _persistJoined(bool joined) {
     try {
       ref.read(settingsRepositoryProvider).setFindrActivated(joined);
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Harmless persistence failure; state is maintained in-memory.
+      AppLogger.warning(
+        'Failed to persist Findr activated state',
+        error,
+        stackTrace,
+      );
+    }
   }
 
   Future<void> joinFindr() async {
@@ -82,7 +108,12 @@ class FindrPortfolioNotifier extends AsyncNotifier<FindrPortfolio> {
       final repo = ref.read(finderRepositoryProvider);
       final portfolio = await repo.getFindrPortfolio();
       state = AsyncData(portfolio.copyWith(joined: true));
-    } catch (_) {
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Failed to refresh Findr portfolio after joining',
+        error,
+        stackTrace,
+      );
       state = AsyncData(
         state.valueOrNull?.copyWith(joined: true) ??
             FindrPortfolio.empty.copyWith(joined: true),

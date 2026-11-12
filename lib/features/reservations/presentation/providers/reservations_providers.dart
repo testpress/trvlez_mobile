@@ -51,7 +51,7 @@ class ReservationListNotifier extends AsyncNotifier<List<Reservation>> {
         }
       }
       return true;
-    } catch (e) {
+    } catch (error) {
       return false;
     }
   }
@@ -115,8 +115,8 @@ class CreateReservationNotifier extends AutoDisposeAsyncNotifier<void> {
 
       state = const AsyncData(null);
       return reservation;
-    } catch (e, st) {
-      state = AsyncError(e, st);
+    } catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
       return null;
     }
   }

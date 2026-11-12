@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
@@ -48,8 +49,14 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       try {
         final profile = await ref.read(profileRepositoryProvider).getProfile();
         initialState = profile.verificationState;
-      } catch (_) {
-        // Fallback to profilePending if profile cannot be fetched immediately
+      } catch (error, stackTrace) {
+        // Fallback to profilePending if profile cannot be fetched immediately;
+        // user remains authenticated and state is refreshed asynchronously.
+        AppLogger.warning(
+          'Initial profile fetch failed on startup',
+          error,
+          stackTrace,
+        );
       }
     }
 
@@ -70,8 +77,13 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       state = AsyncData(
         currentState.copyWith(verificationState: profile.verificationState),
       );
-    } catch (_) {
-      // Silently fail — existing state remains valid
+    } catch (error, stackTrace) {
+      // Non-blocking background sync: preserve current verification state on failure.
+      AppLogger.warning(
+        'Failed to refresh verification state',
+        error,
+        stackTrace,
+      );
     }
   }
 
@@ -110,7 +122,14 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     // Reset Findr activation state in settings and providers
     try {
       await ref.read(settingsRepositoryProvider).setFindrActivated(false);
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Best-effort local cleanup on logout; auth token and session are already revoked.
+      AppLogger.warning(
+        'Failed to reset Findr activation on logout',
+        error,
+        stackTrace,
+      );
+    }
     ref.invalidate(finderNotifierProvider);
     ref.invalidate(findrPortfolioProvider);
 

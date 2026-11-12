@@ -5,6 +5,7 @@ import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/constants/app_config.dart';
 import 'package:trvlez_mobile/core/network/auth_interceptor.dart';
 import 'package:trvlez_mobile/core/network/error_interceptor.dart';
+import 'package:trvlez_mobile/core/network/redacting_log_interceptor.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 
 /// Provides the app-wide [TokenStorage] instance.
@@ -46,12 +47,7 @@ final dioProvider = Provider<Dio>((ref) {
         ref.read(authNotifierProvider.notifier).logout();
       },
     ),
-    if (kDebugMode)
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        logPrint: (o) => debugPrint(o.toString()),
-      ),
+    if (kDebugMode) const RedactingLogInterceptor(),
   ]);
 
   return dio;

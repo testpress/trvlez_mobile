@@ -177,6 +177,34 @@ void main() {
     );
 
     testWidgets(
+      'ErrorView.fromError resolves user-safe message from raw exception',
+      (tester) async {
+        var retried = false;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            ErrorView.fromError(
+              error: Exception('Internal network socket reset 500'),
+              title: 'Could not load',
+              onRetry: () => retried = true,
+            ),
+          ),
+        );
+
+        expect(find.text('Could not load'), findsOneWidget);
+        expect(
+          find.text('Something went wrong. Please try again.'),
+          findsOneWidget,
+        );
+        expect(find.text('Try Again'), findsOneWidget);
+
+        await tester.tap(find.text('Try Again'));
+        await tester.pump();
+        expect(retried, isTrue);
+      },
+    );
+
+    testWidgets(
       'BrandTextField renders label, placeholder, and uses transparent input decoration in dark theme',
       (tester) async {
         final controller = TextEditingController();

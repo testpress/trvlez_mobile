@@ -4,7 +4,8 @@ class MrzValidator {
     try {
       // Try standard parse first (handles YYYY-MM-DD)
       return DateTime.parse(dateStr);
-    } catch (_) {
+    } on FormatException catch (_) {
+      // Harmless null return on non-standard date format
       return null;
     }
   }

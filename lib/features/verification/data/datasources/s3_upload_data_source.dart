@@ -62,7 +62,7 @@ class S3UploadDataSource {
     } on DioException catch (e) {
       throw ApiException.fromStatusCode(
         e.response?.statusCode ?? 0,
-        'Storage upload failed: ${e.message}',
+        'Storage upload failed (${e.response?.statusCode ?? 'network error'}).',
       );
     } finally {
       client.close();

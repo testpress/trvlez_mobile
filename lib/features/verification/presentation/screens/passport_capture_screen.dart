@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -55,16 +56,35 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       if (cam != null && mounted) {
         try {
           await cam.setFocusMode(FocusMode.auto);
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          // Best-effort auto-focus; not supported on all device cameras.
+          AppLogger.debug(
+            'Auto focus mode unsupported on device',
+            error,
+            stackTrace,
+          );
+        }
         try {
           await cam.setExposureMode(ExposureMode.auto);
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          // Best-effort auto-exposure; not supported on all device cameras.
+          AppLogger.debug(
+            'Auto exposure mode unsupported on device',
+            error,
+            stackTrace,
+          );
+        }
         setState(() {
           _isCameraInitialized = true;
         });
       }
-    } catch (_) {
-      // Graceful fallback to SVG illustration if camera is unavailable in simulator/environment
+    } catch (error, stackTrace) {
+      // Graceful fallback to SVG illustration if camera is unavailable in simulator/environment.
+      AppLogger.warning(
+        'Camera initialization failed, using illustration fallback',
+        error,
+        stackTrace,
+      );
       if (mounted) {
         setState(() {
           _isCameraInitialized = false;
@@ -142,7 +162,8 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
       if (mounted) {
         context.push(AppRoutes.passportReview);
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
+      AppLogger.warning('Passport capture failed', error, stackTrace);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to capture photo. Try again.')),

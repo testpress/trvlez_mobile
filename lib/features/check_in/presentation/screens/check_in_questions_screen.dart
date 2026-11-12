@@ -68,8 +68,8 @@ class _CheckInQuestionsScreenState
       error: (err, _) => Scaffold(
         backgroundColor: colors.brandSurface,
         body: Center(
-          child: ErrorView(
-            message: err.toString(),
+          child: ErrorView.fromError(
+            error: err,
             onRetry: () =>
                 ref.invalidate(checkInNotifierProvider(widget.reservationId)),
           ),

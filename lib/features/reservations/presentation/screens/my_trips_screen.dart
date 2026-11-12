@@ -7,6 +7,8 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/error_view.dart';
+import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/anywhere/domain/entities/anywhere_stay.dart';
@@ -108,11 +110,11 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     List<Reservation> cancelled,
   ) {
     if (state.isLoading && !state.hasValue) {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingView(message: 'Loading trips...');
     }
 
     if (state.hasError) {
-      return _buildErrorState(state.error.toString());
+      return _buildErrorState(state.error);
     }
 
     return TabBarView(
@@ -255,54 +257,13 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     );
   }
 
-  Widget _buildErrorState(String error) {
-    final colors = context.colors;
-    final space = context.space;
-    final shape = context.shape;
-    final sizes = context.sizes;
-
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(space.stackHero),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              AppIcons.circleX,
-              size: sizes.iconFeature,
-              color: colors.brandPrimary,
-            ),
-            SizedBox(height: space.stackFormField),
-            Text(
-              'Failed to load reservations',
-              style: context.text.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colors.textPrimary,
-              ),
-            ),
-            SizedBox(height: space.stackTight),
-            Text(
-              error,
-              textAlign: TextAlign.center,
-              style: context.text.labelMedium?.copyWith(
-                color: colors.textSecondary,
-              ),
-            ),
-            SizedBox(height: space.stackSection),
-            ElevatedButton(
-              onPressed: () => ref
-                  .read(reservationListProvider.notifier)
-                  .fetchReservations(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colors.brandPrimary,
-                foregroundColor: colors.textOnAction,
-                shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),
-              ),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildErrorState(Object? error) {
+    return ErrorView.fromError(
+      error: error,
+      title: 'Failed to load reservations',
+      onRetry: () =>
+          ref.read(reservationListProvider.notifier).fetchReservations(),
+      retryLabel: 'Retry',
     );
   }
 }

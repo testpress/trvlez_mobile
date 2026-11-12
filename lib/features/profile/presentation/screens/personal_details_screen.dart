@@ -5,9 +5,10 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show verificationNotifierProvider;
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/unverified_identity_card.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/user_detail_edit_sheet.dart';
@@ -46,13 +47,18 @@ class PersonalDetailsScreen extends ConsumerWidget {
                 if (context.mounted) {
                   context.push(AppRoutes.passportInstructions);
                 }
-              } catch (e) {
+              } catch (error, stackTrace) {
+                AppLogger.warning(
+                  'Failed to start reverification',
+                  error,
+                  stackTrace,
+                );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        ApiException.extractMessage(
-                          e,
+                        AppException.userMessage(
+                          error,
                           'Failed to start re-verification. Please try again.',
                         ),
                       ),

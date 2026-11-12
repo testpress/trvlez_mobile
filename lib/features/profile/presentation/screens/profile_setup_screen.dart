@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
-import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/personal_details_form.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/profile_avatar_uploader.dart';
@@ -80,7 +80,14 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
         } else {
           context.go(AppRoutes.verificationLanding);
         }
-      } catch (_) {}
+      } catch (error, stackTrace) {
+        // Safe navigation fallback if widget context was unmounted or route deactivated.
+        AppLogger.warning(
+          'Navigation failed after profile setup',
+          error,
+          stackTrace,
+        );
+      }
     }
   }
 
@@ -109,14 +116,12 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
     final sizes = context.sizes;
     final profileState = ref.watch(currentProfileProvider);
     final error = profileState.error;
-    String? errorMessage;
-    if (error is AppException) {
-      errorMessage = error.message;
-    } else if (error is ApiException) {
-      errorMessage = error.message;
-    } else if (error != null) {
-      errorMessage = error.toString();
-    }
+    final errorMessage = error != null
+        ? AppException.userMessage(
+            error,
+            'Failed to update profile. Please try again.',
+          )
+        : null;
 
     return Scaffold(
       appBar: AppBar(

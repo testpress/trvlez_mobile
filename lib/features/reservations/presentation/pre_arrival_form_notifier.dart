@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 
 class PreArrivalFormState {
@@ -67,10 +69,16 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
         formResponse: response,
         currentResponses: initialResponses,
       );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (error, stackTrace) {
+      AppLogger.warning('Failed to load pre-arrival form', error, stackTrace);
+      state = state.copyWith(
+        isLoading: false,
+        error: AppException.userMessage(error),
+      );
     }
   }
+
+  Future<void> retryLoad() => _loadForm();
 
   void updateField(String fieldId, dynamic value) {
     final updated = Map<String, dynamic>.from(state.currentResponses);
@@ -107,8 +115,12 @@ class PreArrivalFormNotifier extends StateNotifier<PreArrivalFormState> {
 
       state = state.copyWith(isLoading: false, formResponse: updatedResponse);
       return true;
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } catch (error, stackTrace) {
+      AppLogger.warning('Failed to submit pre-arrival form', error, stackTrace);
+      state = state.copyWith(
+        isLoading: false,
+        error: AppException.userMessage(error),
+      );
       return false;
     }
   }

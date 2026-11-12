@@ -7,7 +7,9 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
+import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 import 'package:trvlez_mobile/features/properties/presentation/widgets/property_card.dart';
 
@@ -257,44 +259,14 @@ class _PropertiesListingScreenState
             child: RefreshIndicator(
               onRefresh: _onRefresh,
               child: isLoading && properties.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const LoadingView(message: 'Loading properties...')
                   : error != null && properties.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: space.insetDialog,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              AppIcons.circleX,
-                              size: sizes.iconFeature,
-                              color: colors.brandPrimary,
-                            ),
-                            SizedBox(height: space.stackFormField),
-                            Text(
-                              'Unable to load properties',
-                              style: context.text.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colors.textPrimary,
-                              ),
-                            ),
-                            SizedBox(height: space.stackSection),
-                            ElevatedButton(
-                              onPressed: () => ref
-                                  .read(propertiesProvider.notifier)
-                                  .fetchProperties(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colors.brandPrimary,
-                                foregroundColor: colors.textOnAction,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: shape.radiusPill,
-                                ),
-                              ),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      ),
+                  ? ErrorView.fromError(
+                      error: error,
+                      title: 'Unable to load properties',
+                      onRetry: () => ref
+                          .read(propertiesProvider.notifier)
+                          .fetchProperties(),
                     )
                   : properties.isEmpty
                   ? Center(

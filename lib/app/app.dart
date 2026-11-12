@@ -4,6 +4,7 @@ import 'package:trvlez_mobile/app/router/app_router.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/attribution/attribution_providers.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Root application widget for TrvlEz.
@@ -37,13 +38,22 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
   void _triggerAttributionCapture() {
     try {
       ref.read(attributionServiceProvider).captureInstallReferrer().catchError((
-        error,
+        Object error,
+        StackTrace stackTrace,
       ) {
-        debugPrint('[App] Attribution capture background failure: $error');
+        AppLogger.warning(
+          '[App] Attribution capture background failure',
+          error,
+          stackTrace,
+        );
         return false;
       });
-    } catch (exception) {
-      debugPrint('[App] Error dispatching attribution capture: $exception');
+    } catch (exception, stackTrace) {
+      AppLogger.warning(
+        '[App] Error dispatching attribution capture',
+        exception,
+        stackTrace,
+      );
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/verification/domain/repositories/verification_repository.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_job_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
@@ -48,8 +49,13 @@ class VerificationPollingService {
         if (jobResult.isComplete) {
           try {
             status = await repository.getVerificationStatus();
-          } catch (_) {
-            // Ignore status fetch error, use what we have in jobResult
+          } catch (error, stackTrace) {
+            // Harmless status fetch error; fallback to jobResult data.
+            AppLogger.debug(
+              'Optional status fetch failed during verification polling',
+              error,
+              stackTrace,
+            );
           }
         }
 
@@ -62,8 +68,13 @@ class VerificationPollingService {
           _isPolling = false;
           break;
         }
-      } catch (_) {
-        // Non-critical network error — continue polling
+      } catch (error, stackTrace) {
+        // Non-critical network poll error; continue polling until timeout.
+        AppLogger.debug(
+          'Transient verification poll error, will retry',
+          error,
+          stackTrace,
+        );
       }
 
       totalElapsed += currentInterval;

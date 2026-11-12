@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_pointer_pair.dart';
@@ -32,7 +33,14 @@ class CheckInVisaScreen extends ConsumerWidget {
         final picker = ImagePicker();
         final image = await picker.pickImage(source: ImageSource.gallery);
         pickedPath = image?.path;
-      } catch (_) {}
+      } catch (error, stackTrace) {
+        // Harmless cancel/error during gallery image picking; pickedPath remains null.
+        AppLogger.debug(
+          'Gallery image picking cancelled or failed',
+          error,
+          stackTrace,
+        );
+      }
     }
 
     ref

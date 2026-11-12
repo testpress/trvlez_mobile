@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/button_theme.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/card_theme.dart';
 import 'package:trvlez_mobile/app/theme/component_themes/input_theme.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/design_tokens/tokens.dart';
-import 'package:trvlez_mobile/core/storage/settings_repository.dart';
+
+export 'package:trvlez_mobile/app/theme/text_scale_notifier.dart';
+export 'package:trvlez_mobile/app/theme/theme_mode_notifier.dart';
 
 /// TrvlEz centralized theme system.
 ///
@@ -133,57 +134,3 @@ class AppTheme {
     );
   }
 }
-
-/// Notifier to manage the application's [ThemeMode].
-class ThemeModeNotifier extends Notifier<ThemeMode> {
-  @override
-  ThemeMode build() {
-    try {
-      return ref.watch(settingsRepositoryProvider).getThemeMode();
-    } catch (_) {
-      return ThemeMode.light;
-    }
-  }
-
-  Future<void> setThemeMode(ThemeMode mode) async {
-    state = mode;
-    try {
-      await ref.read(settingsRepositoryProvider).setThemeMode(mode);
-    } catch (_) {}
-  }
-
-  Future<void> toggleTheme() async {
-    final newMode = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    await setThemeMode(newMode);
-  }
-}
-
-/// Provider for the application's [ThemeMode].
-final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(() {
-  return ThemeModeNotifier();
-});
-
-/// Notifier managing the active [TextScalePreset].
-class TextScaleNotifier extends Notifier<TextScalePreset> {
-  @override
-  TextScalePreset build() {
-    try {
-      return ref.watch(settingsRepositoryProvider).getTextScalePreset();
-    } catch (_) {
-      return TextScalePreset.followSystem;
-    }
-  }
-
-  Future<void> setTextScalePreset(TextScalePreset preset) async {
-    state = preset;
-    try {
-      await ref.read(settingsRepositoryProvider).setTextScalePreset(preset);
-    } catch (_) {}
-  }
-}
-
-/// Provider for the application's active [TextScalePreset].
-final textScaleNotifierProvider =
-    NotifierProvider<TextScaleNotifier, TextScalePreset>(() {
-      return TextScaleNotifier();
-    });

@@ -102,12 +102,10 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
       Navigator.of(context).pop(true);
     } else {
       final state = ref.read(finderNotifierProvider);
-      final error = state.error;
-      final errorMessage = error is AppException
-          ? error.message
-          : (state.hasError
-                ? state.error.toString()
-                : 'Activation failed. Please check your address and try again.');
+      final errorMessage = AppException.userMessage(
+        state.error,
+        'Activation failed. Please check your address and try again.',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),

@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:trvlez_mobile/core/attribution/attribution_dto.dart';
 import 'package:trvlez_mobile/core/attribution/attribution_remote_data_source.dart';
 import 'package:trvlez_mobile/core/attribution/install_referrer_client.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/core/storage/attribution_storage.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 
 /// Orchestrates Android Google Play Install Referrer capture and backend attribution handoff.
 class AttributionService {
@@ -32,14 +32,14 @@ class AttributionService {
   Future<bool> captureInstallReferrer() async {
     try {
       if (attributionStorage.isInstallEvidenceRecorded()) {
-        debugPrint(
+        AppLogger.debug(
           '[Attribution] Install evidence already recorded; skipping.',
         );
         return true;
       }
 
       if (!installReferrerClient.isSupportedPlatform) {
-        debugPrint(
+        AppLogger.debug(
           '[Attribution] Non-Android platform; skipping install referrer.',
         );
         return false;
@@ -56,9 +56,11 @@ class AttributionService {
       );
     } on DioException catch (dioException) {
       return _handleDioException(dioException);
-    } catch (unexpectedError) {
-      debugPrint(
-        '[Attribution] Unexpected error capturing install referrer: $unexpectedError',
+    } catch (unexpectedError, stackTrace) {
+      AppLogger.warning(
+        '[Attribution] Unexpected error capturing install referrer',
+        unexpectedError,
+        stackTrace,
       );
       return false;
     }
@@ -72,7 +74,7 @@ class AttributionService {
     }
 
     if (attributionStorage.isInstallReferrerChecked()) {
-      debugPrint(
+      AppLogger.debug(
         '[Attribution] Install referrer already checked previously; none found.',
       );
       return null;
@@ -83,13 +85,15 @@ class AttributionService {
 
     final capturedToken = referrerResult?.clickReference;
     if (capturedToken == null || capturedToken.isEmpty) {
-      debugPrint('[Attribution] No click reference found in install referrer.');
+      AppLogger.debug(
+        '[Attribution] No click reference found in install referrer.',
+      );
       return null;
     }
 
     await attributionStorage.saveClickReference(capturedToken);
-    debugPrint(
-      '[Attribution] Captured click reference from Play Referrer: $capturedToken',
+    AppLogger.debug(
+      '[Attribution] Captured click reference from Play Referrer',
     );
     return _PendingReferralCandidate(
       clickReference: capturedToken,
@@ -102,9 +106,7 @@ class AttributionService {
     String clickReference, {
     DateTime? occurredAt,
   }) async {
-    debugPrint(
-      '[Attribution] Submitting install evidence for $clickReference...',
-    );
+    AppLogger.debug('[Attribution] Submitting install evidence...');
     final response = await remoteDataSource.recordInstallEvidence(
       InstallEvidenceRequestDto(
         clickReference: clickReference,
@@ -114,9 +116,7 @@ class AttributionService {
 
     if (response.valid) {
       await attributionStorage.setInstallEvidenceRecorded(true);
-      debugPrint(
-        '[Attribution] Successfully verified install evidence: ${response.referralId}',
-      );
+      AppLogger.debug('[Attribution] Successfully verified install evidence');
       return true;
     }
 
@@ -136,15 +136,15 @@ class AttributionService {
         statusCode == _statusGone;
 
     if (isTerminalError) {
-      debugPrint(
+      AppLogger.debug(
         '[Attribution] Terminal referral status $statusCode; marking recorded.',
       );
       await attributionStorage.setInstallEvidenceRecorded(true);
       return false;
     }
 
-    debugPrint(
-      '[Attribution] Transient network/server error recording install evidence: $dioException',
+    AppLogger.warning(
+      '[Attribution] Transient network/server error recording install evidence: ${dioException.type}',
     );
     return false;
   }

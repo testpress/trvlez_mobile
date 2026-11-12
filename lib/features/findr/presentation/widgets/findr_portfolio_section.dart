@@ -43,8 +43,8 @@ class FindrPortfolioSection extends ConsumerWidget {
     if (portfolioAsync.hasError && !portfolioAsync.hasValue) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: space.stackSection),
-        child: ErrorView(
-          message: portfolioAsync.error.toString(),
+        child: ErrorView.fromError(
+          error: portfolioAsync.error,
           onRetry: () => ref.read(findrPortfolioProvider.notifier).refresh(),
         ),
       );

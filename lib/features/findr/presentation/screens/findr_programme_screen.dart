@@ -66,8 +66,8 @@ class FindrProgrammeScreen extends ConsumerWidget {
             child: finderAsync.when(
               loading: () =>
                   const LoadingView(message: 'Checking Findr status...'),
-              error: (error, _) => ErrorView(
-                message: error.toString(),
+              error: (error, _) => ErrorView.fromError(
+                error: error,
                 onRetry: () =>
                     ref.read(finderNotifierProvider.notifier).refresh(),
               ),

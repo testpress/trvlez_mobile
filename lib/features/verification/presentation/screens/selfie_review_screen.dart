@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -49,7 +50,14 @@ class _SelfieReviewScreenState extends ConsumerState<SelfieReviewScreen> {
       await controller.setLooping(true);
       controller.addListener(_onVideoUpdate);
       if (mounted) setState(() {});
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Best-effort video preview initialization; traveler can still accept or retake.
+      AppLogger.warning(
+        'Failed to initialize video preview controller',
+        error,
+        stackTrace,
+      );
+    }
   }
 
   void _onVideoUpdate() {

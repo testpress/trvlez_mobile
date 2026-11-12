@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 
 /// Standard error state view displaying an error message and a retry action.
@@ -11,6 +12,23 @@ class ErrorView extends StatelessWidget {
     this.retryLabel = 'Try Again',
     super.key,
   });
+
+  /// Factory creating an [ErrorView] extracting a user-safe message from any error.
+  factory ErrorView.fromError({
+    required Object? error,
+    String title = 'Something went wrong',
+    VoidCallback? onRetry,
+    String retryLabel = 'Try Again',
+    Key? key,
+  }) {
+    return ErrorView(
+      key: key,
+      title: title,
+      message: AppException.userMessage(error),
+      onRetry: onRetry,
+      retryLabel: retryLabel,
+    );
+  }
 
   final String message;
   final String title;

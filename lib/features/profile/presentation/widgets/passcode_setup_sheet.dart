@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/security_providers.dart';
 
@@ -53,7 +54,8 @@ class _PasscodeSetupSheetState extends ConsumerState<PasscodeSetupSheet> {
     try {
       await ref.read(appPasscodeNotifierProvider.notifier).setPasscode(code);
       if (mounted) Navigator.pop(context);
-    } catch (_) {
+    } catch (error, stackTrace) {
+      AppLogger.warning('Failed to store passcode', error, stackTrace);
       if (mounted) {
         setState(() {
           _isSubmitting = false;

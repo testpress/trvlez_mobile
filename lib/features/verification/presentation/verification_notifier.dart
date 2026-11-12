@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/core/auth/auth_notifier.dart'
     show authNotifierProvider, currentProfileProvider;
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/verification/domain/mrz_validator.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
@@ -132,9 +133,14 @@ class VerificationNotifier extends Notifier<VerificationState> {
           _startPollingForJob(jobId);
         }
       }
-    } catch (e) {
+    } catch (error, stackTrace) {
       // Reconciliation is best-effort — if network is down, we'll try
       // again on next resume. Don't show errors to the user for this.
+      AppLogger.warning(
+        'Verification reconciliation failed',
+        error,
+        stackTrace,
+      );
     } finally {
       _isReconciling = false;
     }
@@ -145,7 +151,10 @@ class VerificationNotifier extends Notifier<VerificationState> {
       final repository = ref.read(verificationRepositoryProvider);
       final verificationStatus = await repository.getVerificationStatus();
       state = state.copyWith(verificationStatus: verificationStatus);
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Best-effort status query; in-memory state remains intact.
+      AppLogger.warning('fetchVerificationStatus failed', error, stackTrace);
+    }
   }
 
   void setImage(
@@ -171,7 +180,10 @@ class VerificationNotifier extends Notifier<VerificationState> {
       if (mrz != null && mrz.existsSync()) {
         mrz.deleteSync();
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Harmless cleanup failure deleting temporary MRZ file.
+      AppLogger.debug('Failed to delete temp MRZ file', error, stackTrace);
+    }
 
     state = state.copyWith(
       clearImage: true,
@@ -211,7 +223,14 @@ class VerificationNotifier extends Notifier<VerificationState> {
       if (mrz != null && mrz.existsSync()) {
         mrz.deleteSync();
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Harmless cleanup failure on reset; temporary file will be reclaimed by OS.
+      AppLogger.debug(
+        'Failed to delete temp MRZ file on reset',
+        error,
+        stackTrace,
+      );
+    }
     state = const VerificationState();
   }
 
@@ -272,8 +291,13 @@ class VerificationNotifier extends Notifier<VerificationState> {
             clearCropParams: true,
           );
         }
-      } catch (_) {
-        // Fallback to original image if cropping encounters an unexpected error
+      } catch (error, stackTrace) {
+        // Fallback to original image if cropping encounters an unexpected error.
+        AppLogger.warning(
+          'Passport image crop failed, using uncropped image',
+          error,
+          stackTrace,
+        );
       }
     }
 
@@ -283,7 +307,14 @@ class VerificationNotifier extends Notifier<VerificationState> {
       if (mrz != null && mrz.existsSync()) {
         mrz.deleteSync();
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      // Harmless cleanup failure of preview file before upload.
+      AppLogger.debug(
+        'Failed to delete ephemeral MRZ preview file',
+        error,
+        stackTrace,
+      );
+    }
 
     state = state.copyWith(
       phase: VerificationPhase.uploading,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/widgets/error_view.dart';
+import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/form.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_notifier.dart';
 
@@ -65,9 +67,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
             ),
           ),
         ),
-        body: Center(
-          child: CircularProgressIndicator(color: colors.brandPrimary),
-        ),
+        body: const LoadingView(message: 'Loading pre-arrival form...'),
       );
     }
 
@@ -83,13 +83,12 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
             ),
           ),
         ),
-        body: Center(
-          child: Text(
-            'Error: ${state.error}',
-            style: context.text.bodyMedium?.copyWith(
-              color: colors.feedbackError,
-            ),
-          ),
+        body: ErrorView.fromError(
+          error: state.error,
+          title: 'Unable to load form',
+          onRetry: () => ref
+              .read(preArrivalFormProvider(widget.reservationId).notifier)
+              .retryLoad(),
         ),
       );
     }

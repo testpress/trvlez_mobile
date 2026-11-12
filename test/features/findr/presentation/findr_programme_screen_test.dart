@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
+import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_programme_screen.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
@@ -345,6 +346,6 @@ class _AlwaysLoadingFinderNotifier extends FinderNotifier {
 class _FailingFinderNotifier extends FinderNotifier {
   @override
   Future<FinderStateSummary> build() async {
-    throw Exception('Network unavailable');
+    throw const NetworkException('Network unavailable');
   }
 }

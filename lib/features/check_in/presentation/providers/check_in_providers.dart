@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/check_in/domain/entities/check_in_details.dart';
 import 'package:trvlez_mobile/features/check_in/domain/entities/check_in_stage.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
@@ -145,9 +146,14 @@ class CheckInNotifier
     // Trigger token generation in the background
     try {
       await ref.read(checkInTokenProvider(arg).notifier).generateCheckInToken();
-    } catch (_) {
+    } catch (error, stackTrace) {
       // Backend may fail if KYC not verified or offline;
       // state remains offline-capable per design specifications.
+      AppLogger.warning(
+        'Background check-in token generation failed',
+        error,
+        stackTrace,
+      );
     }
   }
 }

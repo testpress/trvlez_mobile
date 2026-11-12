@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/providers/repository_providers.dart';
+import 'package:trvlez_mobile/core/utils/app_logger.dart';
 import 'package:trvlez_mobile/features/verification/domain/verification_status.dart';
 import 'package:trvlez_mobile/features/verification/presentation/state/verification_state.dart';
 import 'package:trvlez_mobile/features/verification/presentation/verification_notifier.dart';
@@ -25,20 +26,26 @@ final verificationNotifierProvider =
     });
 
 /// Future provider fetching current verification status from the server.
-final verificationStatusProvider =
-    FutureProvider.autoDispose<VerificationStatus?>((ref) async {
-      final profileState = ref.watch(currentProfileProvider);
-      final profile = profileState.valueOrNull;
+final verificationStatusProvider = FutureProvider.autoDispose<VerificationStatus?>((
+  ref,
+) async {
+  final profileState = ref.watch(currentProfileProvider);
+  final profile = profileState.valueOrNull;
 
-      if (profile != null &&
-          profile.verificationState !=
-              TravelerVerificationState.profilePending) {
-        try {
-          final repository = ref.read(verificationRepositoryProvider);
-          return await repository.getVerificationStatus();
-        } catch (_) {
-          return null;
-        }
-      }
+  if (profile != null &&
+      profile.verificationState != TravelerVerificationState.profilePending) {
+    try {
+      final repository = ref.read(verificationRepositoryProvider);
+      return await repository.getVerificationStatus();
+    } catch (error, stackTrace) {
+      // Harmless fallback returning null when status query fails; polling reconciles later.
+      AppLogger.debug(
+        'Failed to query verification status in provider',
+        error,
+        stackTrace,
+      );
       return null;
-    });
+    }
+  }
+  return null;
+});

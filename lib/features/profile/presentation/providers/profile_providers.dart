@@ -45,8 +45,8 @@ class ProfileNotifier extends AsyncNotifier<Profile> {
       );
       state = AsyncData(updatedProfile);
       return true;
-    } catch (e, st) {
-      state = AsyncError<Profile>(e, st).copyWithPrevious(state);
+    } catch (error, stackTrace) {
+      state = AsyncError<Profile>(error, stackTrace).copyWithPrevious(state);
       return false;
     }
   }
@@ -62,8 +62,8 @@ class ProfileNotifier extends AsyncNotifier<Profile> {
       );
       state = AsyncData(updatedProfile);
       return true;
-    } catch (e, st) {
-      state = AsyncError<Profile>(e, st).copyWithPrevious(state);
+    } catch (error, stackTrace) {
+      state = AsyncError<Profile>(error, stackTrace).copyWithPrevious(state);
       return false;
     }
   }
