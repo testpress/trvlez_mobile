@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Half-width outlined pill action button on brand red surface.
 class CheckInAltAction extends StatelessWidget {
@@ -49,10 +47,8 @@ class CheckInAltAction extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12,
-                    fontWeight: TypeScale.semiBold,
+                  style: context.text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: colors.brandOnSurface,
                   ),
                 ),

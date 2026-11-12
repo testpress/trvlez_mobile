@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/room_pick.dart';
@@ -67,19 +65,15 @@ class BookingRoomCard extends StatelessWidget {
                   children: [
                     Text(
                       pick.type.name,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 15.0,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.ink,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       'Sleeps ${pick.type.sleeps} · ${PriceFormatter.formatPrice(pick.type.nightly.toDouble(), currencyCode: currencyCode)} a night',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12.0,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.inkSecondary,
                       ),
                     ),
@@ -112,9 +106,7 @@ class BookingRoomCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '${DateFormatter.dayMonth(pick.range.from)} – ${DateFormatter.dayMonth(pick.range.to)} · ${pick.range.nights} ${pick.range.nights == 1 ? 'night' : 'nights'}',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12.0,
+                      style: context.text.labelMedium?.copyWith(
                         color: differs ? colors.waitInk : colors.inkSecondary,
                       ),
                     ),
@@ -129,10 +121,8 @@ class BookingRoomCard extends StatelessWidget {
                         padding: space.insetTag,
                         child: Text(
                           'Change',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 12.0,
-                            fontWeight: TypeScale.bold,
+                          style: context.text.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                             color: colors.brandPrimary,
                           ),
                         ),
@@ -145,10 +135,8 @@ class BookingRoomCard extends StatelessWidget {
             SizedBox(height: space.stackText),
             Text(
               '${PriceFormatter.formatPrice(pick.total.toDouble(), currencyCode: currencyCode)} · ${pick.quantity} ${pick.quantity == 1 ? 'room' : 'rooms'}',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 14.0,
-                fontWeight: TypeScale.bold,
+              style: context.text.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.ink,
               ),
             ),

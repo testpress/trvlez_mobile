@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Centered small promise text at the foot of check-in screens.
 class CheckInNotice extends StatelessWidget {
@@ -19,9 +18,7 @@ class CheckInNotice extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 11,
+        style: context.text.bodySmall?.copyWith(
           color: colors.brandSecondaryNote,
           height: 1.35,
         ),

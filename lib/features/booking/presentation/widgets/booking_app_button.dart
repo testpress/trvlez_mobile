@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 
 /// Primary full-width button on a light surface.
@@ -30,7 +28,7 @@ class BookingAppButton extends StatelessWidget {
       enabled: enabled,
       label: label,
       child: Material(
-        color: Colors.transparent,
+        color: colors.transparent,
         child: InkWell(
           onTap: onPressed,
           borderRadius: shape.radiusPill,
@@ -48,10 +46,8 @@ class BookingAppButton extends StatelessWidget {
             ),
             child: EzText(
               text: label,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 14.0,
-                fontWeight: TypeScale.bold,
+              style: context.text.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: enabled ? colors.brandOnSurface : colors.textDisabled,
               ),
               ezColor: enabled ? colors.brandOnSurface : colors.textDisabled,

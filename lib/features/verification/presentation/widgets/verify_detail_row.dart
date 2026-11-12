@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Key-value detail row with bottom hairline divider (for Confirm Details / Chip Data).
 class VerifyDetailRow extends StatelessWidget {
@@ -53,7 +52,7 @@ class VerifyDetailRow extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: context.text.bodyMedium?.copyWith(
-                fontWeight: TypeScale.bold,
+                fontWeight: FontWeight.bold,
                 color: colors.brandOnSurface,
               ),
             ),

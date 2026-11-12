@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -41,10 +39,8 @@ class BookedScreen extends ConsumerWidget {
             child: Center(
               child: Text(
                 'Booked',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: colors.ink,
                 ),
               ),
@@ -78,10 +74,7 @@ class BookedScreen extends ConsumerWidget {
                       made.length > 1
                           ? "You're booked, twice"
                           : "You're booked",
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 20.0,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.headlineMedium?.copyWith(
                         color: colors.ink,
                       ),
                     ),
@@ -102,10 +95,8 @@ class BookedScreen extends ConsumerWidget {
                               ),
                               child: Text(
                                 'Confirmation code: ${booking.confirmationCode}',
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 12.0,
-                                  fontWeight: TypeScale.bold,
+                                style: context.text.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                   color: colors.ink,
                                 ),
                               ),
@@ -115,10 +106,8 @@ class BookedScreen extends ConsumerWidget {
                           Text(
                             '${booking.propertyName} · ${booking.roomLine}',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 14.0,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                               color: colors.ink,
                             ),
                           ),
@@ -126,9 +115,7 @@ class BookedScreen extends ConsumerWidget {
                           Text(
                             '${DateFormatter.dayMonth(booking.range.from)} – ${DateFormatter.dayMonth(booking.range.to)} · ${booking.guests.summary}',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 13.0,
+                            style: context.text.titleSmall?.copyWith(
                               color: colors.inkSecondary,
                             ),
                           ),
@@ -148,9 +135,7 @@ class BookedScreen extends ConsumerWidget {
                             ? 'Each booking has its own free cancellation date. The first is ${DateFormatter.dayMonth(deadline)}.'
                             : 'Free cancellation until ${DateFormatter.dayMonth(deadline)}. We take ${PriceFormatter.formatPrice(total.toDouble(), currencyCode: currencyCode)} at 23:59 that day.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12.0,
+                        style: context.text.labelMedium?.copyWith(
                           color: colors.inkTertiary,
                         ),
                       ),
@@ -166,9 +151,7 @@ class BookedScreen extends ConsumerWidget {
                       child: Text(
                         'This stay starts too soon for free cancellation, so ${PriceFormatter.formatPrice(total.toDouble(), currencyCode: currencyCode)} is taken now.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12.0,
+                        style: context.text.labelMedium?.copyWith(
                           color: colors.inkTertiary,
                         ),
                       ),
@@ -177,9 +160,7 @@ class BookedScreen extends ConsumerWidget {
                   Text(
                     'Check-in opens on the day you arrive.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12.0,
+                    style: context.text.labelMedium?.copyWith(
                       color: colors.inkSecondary,
                     ),
                   ),
@@ -227,9 +208,7 @@ class BookedScreen extends ConsumerWidget {
                           ? 'Your card has been charged.'
                           : 'Nothing has been charged.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12.0,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.inkTertiary,
                       ),
                     ),

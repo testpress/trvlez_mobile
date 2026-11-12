@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_field.dart';
@@ -74,10 +72,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
         SizedBox(height: space.stackSection),
         Text(
           'Tell us what happened',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -85,9 +80,7 @@ class _DisputeDetailScreenState extends ConsumerState<DisputeDetailScreen> {
         SizedBox(height: space.stackTight),
         Text(
           '${reason.title} · ${draft.hotel}',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.35,
           ),
@@ -179,10 +172,8 @@ class _AttachRow extends StatelessWidget {
                   count > 0
                       ? '$count of 3 photos added'
                       : 'Add photos · optional',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.brandOnSurface,
                   ),
                 ),
@@ -191,9 +182,7 @@ class _AttachRow extends StatelessWidget {
                   count > 0
                       ? 'Tap + to add more, or tap Clear'
                       : 'Photographs of the room or property',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11,
+                  style: context.text.bodySmall?.copyWith(
                     color: colors.brandSecondaryBody,
                   ),
                 ),
@@ -207,10 +196,8 @@ class _AttachRow extends StatelessWidget {
                 padding: EdgeInsets.only(right: space.inlineIconLabel),
                 child: Text(
                   'Clear',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12,
-                    fontWeight: TypeScale.semiBold,
+                  style: context.text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: colors.brandSecondary,
                     decoration: TextDecoration.underline,
                   ),
@@ -228,10 +215,8 @@ class _AttachRow extends StatelessWidget {
                 ),
                 child: Text(
                   '+ Photo',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.brandOnSurface,
                   ),
                 ),

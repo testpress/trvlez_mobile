@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/constants/nationalities.dart';
 
 /// Form selector field for choosing traveler nationality with searchable modal sheet.
@@ -73,12 +72,7 @@ class NationalityPickerField extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final n = filtered[index];
                           return ListTile(
-                            title: Text(
-                              n,
-                              style: const TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                              ),
-                            ),
+                            title: Text(n, style: context.text.bodyMedium),
                             onTap: () {
                               onNationalitySelected(n);
                               Navigator.pop(context);
@@ -127,9 +121,7 @@ class NationalityPickerField extends StatelessWidget {
               children: [
                 Text(
                   selectedNationality ?? 'Select Nationality',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 15,
+                  style: context.text.titleMedium?.copyWith(
                     color: selectedNationality == null
                         ? colors.textSecondary
                         : colors.textPrimary,

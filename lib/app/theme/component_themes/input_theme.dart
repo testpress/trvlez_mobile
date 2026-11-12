@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/design_tokens/tokens.dart';
 
 InputDecorationTheme buildInputTheme(
@@ -9,20 +8,13 @@ InputDecorationTheme buildInputTheme(
   AppSpace space = AppSpace.comfortable,
   AppShape shape = AppShape.standard,
 }) {
+  final textTheme = AppTypography.buildTextTheme(colors);
   return InputDecorationTheme(
     filled: true,
     fillColor: colors.surfaceSubtle,
     contentPadding: space.insetInput,
-    hintStyle: const TextStyle(
-      fontFamily: AppTypography.fontFamily,
-      fontSize: 14,
-      fontWeight: TypeScale.regular,
-    ).copyWith(color: colors.textDisabled),
-    labelStyle: const TextStyle(
-      fontFamily: AppTypography.fontFamily,
-      fontSize: 13,
-      fontWeight: TypeScale.medium,
-    ).copyWith(color: colors.textSecondary),
+    hintStyle: textTheme.bodyLarge?.copyWith(color: colors.textDisabled),
+    labelStyle: textTheme.titleSmall?.copyWith(color: colors.textSecondary),
     border: OutlineInputBorder(
       borderRadius: shape.radiusControl,
       borderSide: BorderSide(
@@ -58,10 +50,6 @@ InputDecorationTheme buildInputTheme(
         width: shape.borderMedium,
       ),
     ),
-    errorStyle: const TextStyle(
-      fontFamily: AppTypography.fontFamily,
-      fontSize: 12,
-      fontWeight: TypeScale.regular,
-    ).copyWith(color: colors.feedbackError),
+    errorStyle: textTheme.labelMedium?.copyWith(color: colors.feedbackError),
   );
 }

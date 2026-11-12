@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
@@ -98,10 +96,8 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
                 SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Review',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 16.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.ink,
                   ),
                 ),
@@ -144,9 +140,7 @@ class _BookingReviewScreenState extends ConsumerState<BookingReviewScreen> {
                     ),
                     child: Text(
                       'Local city taxes may be payable directly at the property.',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11.0,
+                      style: context.text.bodySmall?.copyWith(
                         color: colors.inkTertiary,
                       ),
                     ),

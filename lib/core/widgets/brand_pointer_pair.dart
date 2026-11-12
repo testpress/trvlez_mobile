@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Numbered pointer cards under diagrams (e.g., 1. Whole visa, 2. The dates).
 class BrandPointerPair extends StatelessWidget {
@@ -76,7 +75,7 @@ class BrandPointerPair extends StatelessWidget {
                         items[i].$1,
                         style: context.text.labelSmall?.copyWith(
                           fontSize: effectiveBadgeSize * 0.5,
-                          fontWeight: TypeScale.bold,
+                          fontWeight: FontWeight.bold,
                           color: colors.brandPrimary,
                           height: 1.0,
                         ),
@@ -86,7 +85,7 @@ class BrandPointerPair extends StatelessWidget {
                     Text(
                       items[i].$2,
                       style: (titleStyle ?? context.text.titleSmall)?.copyWith(
-                        fontWeight: TypeScale.bold,
+                        fontWeight: FontWeight.bold,
                         color: colors.brandOnSurface,
                         letterSpacing: -0.1,
                       ),

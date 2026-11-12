@@ -37,6 +37,20 @@ POLICY_PATTERNS = {
     ),
 }
 
+PRESENTATION_PATTERNS = {
+    'Banned primitive token import': re.compile(
+        r"import\s+['\"][^'\"]*tokens/primitives/[^'\"]*['\"]"
+    ),
+    'Banned primitive token reference': re.compile(
+        r'\b(?:Palette|Prim|TypeScale)\b'
+    ),
+    'Banned AppTypography in presentation': re.compile(
+        r'\bAppTypography\b'
+    ),
+    'Banned inline TextStyle': re.compile(r'\bTextStyle\s*\('),
+    'Banned raw Material Color': re.compile(r'\bColors\.\w+'),
+}
+
 
 def is_allowed(path: str) -> bool:
     for allowed in ALLOWED_PATHS:
@@ -95,11 +109,8 @@ def main() -> int:
                         ],
                     }
                     if is_presentation_path(rel_path):
-                        patterns.update({
-                            name: pattern
-                            for name, pattern in POLICY_PATTERNS.items()
-                            if name not in patterns
-                        })
+                        patterns.update(POLICY_PATTERNS)
+                        patterns.update(PRESENTATION_PATTERNS)
 
                     for rule_name, pattern in patterns.items():
                         if pattern.search(raw_line):

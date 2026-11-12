@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/heart_button.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
@@ -95,11 +93,9 @@ class PropertyCard extends StatelessWidget {
                       ),
                       child: Text(
                         badgeLabel,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
+                        style: context.text.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: colors.textOnAction,
-                          fontSize: 9,
-                          fontWeight: TypeScale.bold,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -125,10 +121,8 @@ class PropertyCard extends StatelessWidget {
                   children: [
                     Text(
                       property.name,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.textPrimary,
                       ),
                       maxLines: 1,
@@ -146,9 +140,7 @@ class PropertyCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             property.locationString,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 11,
+                            style: context.text.bodySmall?.copyWith(
                               color: colors.textSecondary,
                             ),
                             maxLines: 1,
@@ -164,19 +156,15 @@ class PropertyCard extends StatelessWidget {
                       children: [
                         Text(
                           '£${property.pricePerNight?.toInt() ?? 120}',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 14,
-                            fontWeight: TypeScale.extraBold,
+                          style: context.text.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
                             color: colors.textPrimary,
                           ),
                         ),
                         SizedBox(width: shape.strokeProgress),
                         Text(
                           '/night',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 10,
+                          style: context.text.labelSmall?.copyWith(
                             color: colors.textSecondary,
                           ),
                         ),
@@ -190,10 +178,8 @@ class PropertyCard extends StatelessWidget {
                           SizedBox(width: shape.strokeProgress),
                           Text(
                             property.rating!.toStringAsFixed(1),
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 11,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
                               color: colors.textPrimary,
                             ),
                           ),
@@ -257,10 +243,8 @@ class PropertyCard extends StatelessWidget {
                   children: [
                     Text(
                       property.name,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 14,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.textPrimary,
                       ),
                       maxLines: 1,
@@ -278,9 +262,7 @@ class PropertyCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             property.locationString,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 11,
+                            style: context.text.bodySmall?.copyWith(
                               color: colors.textSecondary,
                             ),
                             maxLines: 1,
@@ -296,19 +278,15 @@ class PropertyCard extends StatelessWidget {
                       children: [
                         Text(
                           '£${property.pricePerNight?.toInt() ?? 120}',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 14,
-                            fontWeight: TypeScale.extraBold,
+                          style: context.text.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
                             color: colors.textPrimary,
                           ),
                         ),
                         SizedBox(width: shape.strokeProgress),
                         Text(
                           '/night',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 10,
+                          style: context.text.labelSmall?.copyWith(
                             color: colors.textSecondary,
                           ),
                         ),

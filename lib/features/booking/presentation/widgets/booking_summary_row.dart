@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Row inside summary cards displaying a label, optional sub-note, and formatted value.
 class BookingSummaryRow extends StatelessWidget {
@@ -51,10 +49,8 @@ class BookingSummaryRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: total ? 15.0 : 13.0,
-                    fontWeight: total ? TypeScale.bold : TypeScale.regular,
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: total ? FontWeight.bold : FontWeight.normal,
                     color: colors.ink,
                   ),
                 ),
@@ -62,9 +58,7 @@ class BookingSummaryRow extends StatelessWidget {
                   SizedBox(height: space.stackText),
                   Text(
                     note ?? '',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12.0,
+                    style: context.text.labelMedium?.copyWith(
                       color: noteAmber ? colors.waitInk : colors.inkTertiary,
                     ),
                   ),
@@ -80,10 +74,8 @@ class BookingSummaryRow extends StatelessWidget {
               textAlign: TextAlign.right,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: total ? 18.0 : 14.0,
-                fontWeight: TypeScale.bold,
+              style: context.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.ink,
               ),
             ),

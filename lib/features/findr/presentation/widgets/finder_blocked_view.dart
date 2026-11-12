@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/findr_card.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/finder_status.dart';
@@ -83,7 +82,7 @@ class FinderBlockedView extends StatelessWidget {
                       displayTitle,
                       style: context.text.titleLarge?.copyWith(
                         color: colors.textPrimary,
-                        fontWeight: TypeScale.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -102,7 +101,7 @@ class FinderBlockedView extends StatelessWidget {
                         label: actionLabel,
                         onPressed: () async {
                           await context.push(actionRoute);
-                          onActionCompleted?.call();
+                          onActionCompleted;
                         },
                       ),
                     ],

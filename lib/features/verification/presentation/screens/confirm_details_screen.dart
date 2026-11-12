@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -102,7 +101,6 @@ class _ConfirmDetailsScreenState extends ConsumerState<ConfirmDetailsScreen> {
           child: Text(
             'Confirm your details',
             style: context.text.headlineLarge?.copyWith(
-              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
               letterSpacing: -0.2,
             ),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
@@ -57,7 +56,7 @@ class _FindrReferralsScreenState extends ConsumerState<FindrReferralsScreen> {
                     textAlign: TextAlign.center,
                     style: context.text.titleLarge?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -210,7 +209,7 @@ class _ReferralsContent extends StatelessWidget {
                             'No recommendations in this category',
                             style: context.text.titleSmall?.copyWith(
                               color: colors.textPrimary,
-                              fontWeight: TypeScale.bold,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: space.stackTight),

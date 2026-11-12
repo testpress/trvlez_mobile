@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/form.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/pre_arrival_form_notifier.dart';
 
@@ -62,8 +60,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
           backgroundColor: colors.surface,
           title: Text(
             'Pre-Arrival Form',
-            style: AppTypography.heading.copyWith(
-              fontSize: 20,
+            style: context.text.headlineMedium?.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -81,8 +78,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
           backgroundColor: colors.surface,
           title: Text(
             'Pre-Arrival Form',
-            style: AppTypography.heading.copyWith(
-              fontSize: 20,
+            style: context.text.headlineMedium?.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -90,8 +86,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
         body: Center(
           child: Text(
             'Error: ${state.error}',
-            style: AppTypography.body.copyWith(
-              fontSize: 14,
+            style: context.text.bodyMedium?.copyWith(
               color: colors.feedbackError,
             ),
           ),
@@ -119,8 +114,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
         ),
         title: Text(
           template.title,
-          style: AppTypography.heading.copyWith(
-            fontSize: 20,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.textPrimary,
           ),
         ),
@@ -188,8 +182,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
                               )
                             : Text(
                                 'Save Draft',
-                                style: AppTypography.label.copyWith(
-                                  fontSize: 14,
+                                style: context.text.labelLarge?.copyWith(
                                   color: colors.textPrimary,
                                 ),
                               ),
@@ -209,8 +202,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
                         ),
                         child: Text(
                           'Submit',
-                          style: AppTypography.label.copyWith(
-                            fontSize: 14,
+                          style: context.text.labelLarge?.copyWith(
                             color: colors.brandOnSurface,
                           ),
                         ),
@@ -237,8 +229,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
       children: [
         Text(
           section.title,
-          style: AppTypography.heading.copyWith(
-            fontSize: 18,
+          style: context.text.headlineSmall?.copyWith(
             color: colors.brandPrimary,
           ),
         ),
@@ -246,8 +237,7 @@ class _PreArrivalFormScreenState extends ConsumerState<PreArrivalFormScreen> {
           SizedBox(height: space.stackText),
           Text(
             section.description!,
-            style: AppTypography.body.copyWith(
-              fontSize: 14,
+            style: context.text.bodyMedium?.copyWith(
               color: colors.textSecondary,
             ),
           ),

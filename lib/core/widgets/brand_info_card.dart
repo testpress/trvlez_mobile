@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// A single bullet item inside an instruction card.
 class BrandBullet {
@@ -77,7 +76,7 @@ class BrandInfoCard extends StatelessWidget {
               style:
                   headingStyle ??
                   context.text.labelMedium?.copyWith(
-                    fontWeight: TypeScale.semiBold,
+                    fontWeight: FontWeight.w600,
                     color: colors.brandOnSurface,
                   ),
             ),
@@ -102,8 +101,8 @@ class BrandInfoCard extends StatelessWidget {
                     bullets[i].text,
                     style: (textStyle ?? context.text.bodyMedium)?.copyWith(
                       fontWeight: bullets[i].emphasis
-                          ? TypeScale.medium
-                          : TypeScale.regular,
+                          ? FontWeight.w500
+                          : FontWeight.normal,
                       color: bullets[i].emphasis
                           ? colors.brandOnSurface
                           : colors.brandSecondaryBody,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Indicator row showing red dot and recording seconds (e.g. 0:04).
 class VerifyRecordingTime extends StatelessWidget {
@@ -28,7 +27,6 @@ class VerifyRecordingTime extends StatelessWidget {
         Text(
           '0:${seconds.toString().padLeft(2, '0')}',
           style: context.text.labelMedium?.copyWith(
-            fontWeight: TypeScale.medium,
             color: colors.brandOnSurface,
           ),
         ),

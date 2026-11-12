@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -176,7 +175,7 @@ class _PassportCaptureScreenState extends ConsumerState<PassportCaptureScreen> {
           'Fit the page in the frame',
           textAlign: TextAlign.center,
           style: context.text.headlineSmall?.copyWith(
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),

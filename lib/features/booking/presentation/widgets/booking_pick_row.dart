@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Single selectable row in the booking detail card (e.g. Dates, Guests).
 class BookingPickRow extends StatelessWidget {
@@ -50,11 +48,7 @@ class BookingPickRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 14.0,
-                  color: colors.ink,
-                ),
+                style: context.text.labelLarge?.copyWith(color: colors.ink),
               ),
               SizedBox(width: space.inlineIconLabel),
               Expanded(
@@ -63,12 +57,10 @@ class BookingPickRow extends StatelessWidget {
                   textAlign: TextAlign.right,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 14.0,
+                  style: context.text.labelLarge?.copyWith(
                     fontWeight: isPlaceholder
-                        ? TypeScale.regular
-                        : TypeScale.bold,
+                        ? FontWeight.normal
+                        : FontWeight.bold,
                     color: isPlaceholder ? colors.textDisabled : colors.ink,
                   ),
                 ),

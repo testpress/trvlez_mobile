@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_consent_tick.dart';
@@ -78,12 +76,9 @@ class CheckInDisclosureScreen extends ConsumerWidget {
                   child: Text(
                     "Not now — I'll check in at the desk",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
+                    style: context.text.labelMedium?.copyWith(
                       color: colors.brandSecondary,
                       decoration: TextDecoration.underline,
-                      decorationColor: colors.brandUnderline,
                     ),
                   ),
                 ),
@@ -97,10 +92,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
             SizedBox(height: space.stackSection),
             Text(
               'Approve what we send',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 22,
-                fontWeight: TypeScale.bold,
+              style: context.text.headlineMedium?.copyWith(
                 color: colors.brandOnSurface,
                 letterSpacing: -0.3,
               ),
@@ -108,9 +100,7 @@ class CheckInDisclosureScreen extends ConsumerWidget {
             SizedBox(height: space.stackTight),
             Text(
               'Spanish law names these fields. We send exactly them and nothing else.',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondaryBody,
                 height: 1.35,
               ),

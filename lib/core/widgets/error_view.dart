@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 
 /// Standard error state view displaying an error message and a retry action.
@@ -39,8 +38,7 @@ class ErrorView extends StatelessWidget {
             SizedBox(height: space.stackFormField),
             Text(
               title,
-              style: AppTypography.heading.copyWith(
-                fontSize: 18,
+              style: context.text.headlineSmall?.copyWith(
                 color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
@@ -48,8 +46,7 @@ class ErrorView extends StatelessWidget {
             SizedBox(height: space.stackItem),
             Text(
               message,
-              style: AppTypography.body.copyWith(
-                fontSize: 14,
+              style: context.text.bodyMedium?.copyWith(
                 color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,

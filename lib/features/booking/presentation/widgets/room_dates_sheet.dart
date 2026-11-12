@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/features/booking/presentation/providers/booking_providers.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_button.dart';
@@ -13,7 +11,7 @@ import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_rang
 Future<void> showRoomDatesSheet(BuildContext context, RoomPick pick) =>
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.colors.transparent,
       isScrollControlled: true,
       builder: (_) => RoomDatesSheet(pick: pick),
     );
@@ -75,10 +73,8 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
               SizedBox(height: space.stackFormField),
               Text(
                 widget.pick.type.name,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: colors.ink,
                 ),
               ),
@@ -87,9 +83,7 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
                 bookingRange == null
                     ? 'These dates apply to this room only.'
                     : 'These dates apply to this room only. The rest of the booking keeps ${DateFormatter.dayMonth(bookingRange.from)} – ${DateFormatter.dayMonth(bookingRange.to)}.',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12.0,
+                style: context.text.labelMedium?.copyWith(
                   color: colors.inkSecondary,
                 ),
               ),

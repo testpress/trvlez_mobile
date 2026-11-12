@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_segmented_control.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
@@ -75,12 +73,9 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               children: [
                 Text(
                   'Saved',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 20,
-                    fontWeight: TypeScale.bold,
-                    letterSpacing: -0.3,
+                  style: context.text.headlineMedium?.copyWith(
                     color: colors.textPrimary,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 SizedBox(height: space.stackFormField),
@@ -91,10 +86,8 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       setState(() => _selectedServiceIndex = index),
                   label: (context, index, active) => EzWord(
                     rest: _services[index],
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      fontWeight: active ? TypeScale.bold : TypeScale.medium,
+                    style: context.text.labelMedium?.copyWith(
+                      fontWeight: active ? FontWeight.bold : FontWeight.w500,
                       color: active ? colors.textPrimary : colors.inkTertiary,
                     ),
                   ),
@@ -129,10 +122,8 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                           SizedBox(height: space.stackFormField),
                           Text(
                             'Nothing saved yet',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 16,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                               color: colors.textPrimary,
                             ),
                           ),
@@ -142,9 +133,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                 ? 'Tap the heart icon on any property to save it here.'
                                 : 'ez${_services[_selectedServiceIndex]} saved items will appear here.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 12,
+                            style: context.text.labelMedium?.copyWith(
                               color: colors.textSecondary,
                             ),
                           ),
@@ -196,10 +185,8 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                   children: [
                                     Text(
                                       property.name,
-                                      style: TextStyle(
-                                        fontFamily: AppTypography.fontFamily,
-                                        fontSize: 14,
-                                        fontWeight: TypeScale.bold,
+                                      style: context.text.labelLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
                                         color: colors.textPrimary,
                                       ),
                                       maxLines: 1,
@@ -219,12 +206,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                             property.city.isNotEmpty
                                                 ? property.city
                                                 : property.locationString,
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  AppTypography.fontFamily,
-                                              fontSize: 11,
-                                              color: colors.textSecondary,
-                                            ),
+                                            style: context.text.bodySmall
+                                                ?.copyWith(
+                                                  color: colors.textSecondary,
+                                                ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -237,23 +222,19 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                                         if (property.pricePerNight != null) ...[
                                           Text(
                                             '£${property.pricePerNight!.toInt()}',
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  AppTypography.fontFamily,
-                                              fontSize: 13,
-                                              fontWeight: TypeScale.bold,
-                                              color: colors.textPrimary,
-                                            ),
+                                            style: context.text.titleSmall
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: colors.textPrimary,
+                                                ),
                                           ),
                                           SizedBox(width: space.inlineMicro),
                                           Text(
                                             '/night',
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  AppTypography.fontFamily,
-                                              fontSize: 11,
-                                              color: colors.textSecondary,
-                                            ),
+                                            style: context.text.bodySmall
+                                                ?.copyWith(
+                                                  color: colors.textSecondary,
+                                                ),
                                           ),
                                         ],
                                         const Spacer(),

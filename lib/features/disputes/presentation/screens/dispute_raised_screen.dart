@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_big_ring.dart';
@@ -53,10 +51,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
         Text(
           "We've got it",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -65,9 +60,7 @@ class DisputeRaisedScreen extends ConsumerWidget {
         Text(
           'Your payment for $hotel is on hold while we look into this.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.35,
           ),
@@ -120,18 +113,14 @@ class _DisputeDetailRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandSecondarySmall,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.brandOnSurface,
             ),
           ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Supported status states for booking and workflow status pills.
 enum StatusPillState { confirmed, awaiting, completed, cancelled }
@@ -30,8 +29,8 @@ class StatusPill extends StatelessWidget {
       decoration: BoxDecoration(color: fill, borderRadius: shape.radiusPill),
       child: Text(
         label,
-        style: (context.text.labelSmall ?? const TextStyle()).copyWith(
-          fontWeight: TypeScale.semiBold,
+        style: context.text.labelSmall?.copyWith(
+          fontWeight: FontWeight.w600,
           color: ink,
           letterSpacing: 0.2,
         ),

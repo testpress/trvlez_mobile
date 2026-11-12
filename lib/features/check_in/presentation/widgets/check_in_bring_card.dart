@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Single item in "Take with you" list.
 class CheckInBringLine {
@@ -49,10 +47,8 @@ class CheckInBringCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.brandOnSurface,
             ),
           ),
@@ -73,18 +69,14 @@ class CheckInBringCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: lines[i].lead,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 12,
+                          style: context.text.labelMedium?.copyWith(
                             color: colors.brandSecondaryBody,
                           ),
                         ),
                         TextSpan(
                           text: lines[i].strong,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 12,
-                            fontWeight: TypeScale.bold,
+                          style: context.text.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                             color: colors.brandOnSurface,
                           ),
                         ),

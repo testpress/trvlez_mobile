@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -20,7 +19,7 @@ Future<bool?> showFinderOnboardingSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: context.colors.transparent,
     builder: (modalContext) => const FinderOnboardingSheet(),
   );
 }
@@ -239,7 +238,7 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                                           : 'Residential Address')),
                           style: context.text.titleLarge?.copyWith(
                             color: colors.textPrimary,
-                            fontWeight: TypeScale.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

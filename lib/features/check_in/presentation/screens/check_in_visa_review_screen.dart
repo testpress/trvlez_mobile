@@ -7,8 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
@@ -104,10 +102,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
             Text(
               'Check it before we send it',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 22,
-                fontWeight: TypeScale.bold,
+              style: context.text.headlineMedium?.copyWith(
                 color: colors.brandOnSurface,
                 letterSpacing: -0.3,
               ),
@@ -116,9 +111,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondaryBody,
               ),
             ),
@@ -161,9 +154,7 @@ class CheckInVisaReviewScreen extends ConsumerWidget {
                 Flexible(
                   child: Text(
                     sourceLabel,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
+                    style: context.text.labelMedium?.copyWith(
                       color: colors.brandSecondaryBody,
                     ),
                   ),

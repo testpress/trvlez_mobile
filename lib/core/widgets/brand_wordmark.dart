@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The TrvlEz brand wordmark.
 ///
@@ -43,9 +42,8 @@ class BrandWordmark extends StatelessWidget {
     final effectiveFontSize =
         fontSize ?? context.text.displaySmall?.fontSize ?? sizes.iconDefault;
 
-    final baseStyle = (context.text.displaySmall ?? const TextStyle()).copyWith(
+    final baseStyle = context.text.displaySmall?.copyWith(
       fontSize: effectiveFontSize,
-      fontWeight: TypeScale.bold,
       height: 1.0,
       letterSpacing: 0.4,
     );
@@ -54,7 +52,7 @@ class BrandWordmark extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('TRVL', style: baseStyle.copyWith(color: trvlCol)),
+        Text('TRVL', style: baseStyle?.copyWith(color: trvlCol)),
         SizedBox(width: effectiveGap),
         SizedBox(
           width: effectivePlaneWidth,
@@ -62,7 +60,7 @@ class BrandWordmark extends StatelessWidget {
           child: CustomPaint(painter: _PlanePainter(ezCol)),
         ),
         SizedBox(width: effectiveGap),
-        Text('ez', style: baseStyle.copyWith(color: ezCol)),
+        Text('ez', style: baseStyle?.copyWith(color: ezCol)),
       ],
     );
   }

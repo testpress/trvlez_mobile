@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Standard form input field adhering to design system tokens.
 class AppTextField extends StatelessWidget {
@@ -64,15 +62,11 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       maxLines: maxLines,
       onFieldSubmitted: onFieldSubmitted,
-      style: (context.text.bodyMedium ?? const TextStyle()).copyWith(
-        color: colors.textPrimary,
-        fontWeight: TypeScale.regular,
-      ),
+      style: context.text.bodyMedium?.copyWith(color: colors.textPrimary),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: (context.text.bodyMedium ?? const TextStyle()).copyWith(
+        hintStyle: context.text.bodyMedium?.copyWith(
           color: colors.textDisabled,
-          fontWeight: TypeScale.regular,
         ),
         filled: true,
         fillColor: colors.surfaceSubtle,
@@ -114,11 +108,9 @@ class AppTextField extends StatelessWidget {
             width: shape.borderMedium,
           ),
         ),
-        errorStyle: const TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 12,
-          fontWeight: TypeScale.regular,
-        ).copyWith(color: colors.feedbackError),
+        errorStyle: context.text.labelMedium?.copyWith(
+          color: colors.feedbackError,
+        ),
       ),
     );
 
@@ -132,11 +124,7 @@ class AppTextField extends StatelessWidget {
       children: [
         Text(
           label!,
-          style: const TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 13,
-            fontWeight: TypeScale.semiBold,
-          ).copyWith(color: colors.textPrimary),
+          style: context.text.titleSmall?.copyWith(color: colors.textPrimary),
         ),
         SizedBox(height: space.stackText),
         field,

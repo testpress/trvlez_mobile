@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_field.dart';
@@ -117,10 +115,7 @@ class _CheckInQuestionsScreenState
             SizedBox(height: space.stackSection),
             Text(
               'A few questions',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 22,
-                fontWeight: TypeScale.bold,
+              style: context.text.headlineMedium?.copyWith(
                 color: colors.brandOnSurface,
                 letterSpacing: -0.3,
               ),
@@ -128,9 +123,7 @@ class _CheckInQuestionsScreenState
             SizedBox(height: space.stackTight),
             Text(
               'So the hotel has your room ready when you arrive.',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondaryBody,
                 height: 1.35,
               ),

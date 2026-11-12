@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Standard brand logo icon and title used in top app bars and auth headers.
 class AppBrandLogo extends StatelessWidget {
@@ -52,7 +51,7 @@ class AppBrandLogo extends StatelessWidget {
         Text.rich(
           TextSpan(
             text: 'Trvl',
-            style: AppTypography.heading.copyWith(
+            style: context.text.headlineSmall?.copyWith(
               fontSize: fontSize,
               fontWeight: FontWeight.w800,
               color: textColor ?? colorScheme.onSurface,

@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_button.dart';
@@ -41,10 +39,8 @@ class BookingNoSelectionView extends StatelessWidget {
                 SizedBox(width: space.inlineIconLabel),
                 EzWord(
                   rest: 'Stays',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 16.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.ink,
                   ),
                 ),
@@ -61,9 +57,7 @@ class BookingNoSelectionView extends StatelessWidget {
                     Text(
                       'Open a property from ezStays or Saved to start a booking.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 14.0,
+                      style: context.text.labelLarge?.copyWith(
                         color: colors.inkSecondary,
                       ),
                     ),

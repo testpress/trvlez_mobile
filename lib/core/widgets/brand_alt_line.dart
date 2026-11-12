@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The alternative action line at the foot of brand screens
 /// (e.g., "Already have an account? Log in").
@@ -36,15 +35,14 @@ class BrandAltLine extends StatelessWidget {
 
     final effectiveFontSize = fontSize ?? context.text.labelLarge?.fontSize;
 
-    final prefixStyle = (context.text.labelLarge ?? const TextStyle()).copyWith(
+    final prefixStyle = context.text.labelLarge?.copyWith(
       fontSize: effectiveFontSize,
-      fontWeight: TypeScale.regular,
+      fontWeight: FontWeight.normal,
       color: context.colors.brandSecondaryBody,
     );
 
-    final linkStyle = (context.text.labelLarge ?? const TextStyle()).copyWith(
+    final linkStyle = context.text.labelLarge?.copyWith(
       fontSize: effectiveFontSize,
-      fontWeight: TypeScale.semiBold,
       color: context.colors.brandOnSurface,
     );
 

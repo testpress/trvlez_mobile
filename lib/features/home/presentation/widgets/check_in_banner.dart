@@ -26,7 +26,7 @@ class CheckInBanner extends StatelessWidget {
       button: true,
       label: '$title. $subtitle. Tap to start check in.',
       child: Material(
-        color: Colors.transparent,
+        color: colors.transparent,
         child: InkWell(
           borderRadius: shape.radiusSurface,
           onTap: onTap,

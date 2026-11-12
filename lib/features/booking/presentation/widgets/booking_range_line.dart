@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/booking_date_range.dart';
 
@@ -20,11 +18,7 @@ class BookingRangeLine extends StatelessWidget {
       return Text(
         'Pick the day you arrive, then the day you leave.',
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 13.0,
-          color: colors.inkSecondary,
-        ),
+        style: context.text.titleSmall?.copyWith(color: colors.inkSecondary),
       );
     }
 
@@ -34,18 +28,12 @@ class BookingRangeLine extends StatelessWidget {
           TextSpan(
             text:
                 '${DateFormatter.dayMonth(r.from)} – ${DateFormatter.dayMonth(r.to)} · ',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14.0,
-              color: colors.ink,
-            ),
+            style: context.text.labelLarge?.copyWith(color: colors.ink),
           ),
           TextSpan(
             text: '${r.nights} ${r.nights == 1 ? 'night' : 'nights'}',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.ink,
             ),
           ),

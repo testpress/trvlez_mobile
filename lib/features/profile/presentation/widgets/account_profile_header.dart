@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 
 /// Pinned header for the Account screen showing title, avatar, traveler name, and status.
@@ -34,11 +32,7 @@ class AccountProfileHeader extends StatelessWidget {
         children: [
           Text(
             'Account',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 20,
-              fontWeight: TypeScale.bold,
-              letterSpacing: -0.3,
+            style: context.text.headlineMedium?.copyWith(
               color: colors.textPrimary,
             ),
           ),
@@ -58,10 +52,8 @@ class AccountProfileHeader extends StatelessWidget {
                   ),
                   child: Text(
                     initials.isNotEmpty ? initials : 'T',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 14,
-                      fontWeight: TypeScale.bold,
+                    style: context.text.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: colors.brandPrimary,
                     ),
                   ),
@@ -74,19 +66,15 @@ class AccountProfileHeader extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 14,
-                          fontWeight: TypeScale.bold,
+                        style: context.text.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: space.stackText),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
+                        style: context.text.labelMedium?.copyWith(
                           color: colors.textSecondary,
                         ),
                       ),

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_pointer_pair.dart';
@@ -43,7 +42,7 @@ class PassportInstructionScreen extends StatelessWidget {
           'Passport photo',
           textAlign: TextAlign.center,
           style: context.text.headlineSmall?.copyWith(
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -74,7 +73,7 @@ class PassportInstructionScreen extends StatelessWidget {
           gapBadgeToTitle: space.stackTight,
           gapTitleToDescription: space.stackText,
           titleStyle: context.text.labelLarge?.copyWith(
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
             color: colors.brandOnSurface,
           ),
           descriptionStyle: context.text.labelSmall?.copyWith(

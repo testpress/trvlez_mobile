@@ -63,7 +63,7 @@ class ProfileAvatarUploader extends StatelessWidget {
               ),
             ),
             Material(
-              color: Colors.transparent,
+              color: colors.transparent,
               shape: const CircleBorder(),
               child: InkWell(
                 customBorder: const CircleBorder(),

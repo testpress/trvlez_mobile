@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 
 /// Grid displaying days of one month with selected date range highlights.
@@ -59,10 +57,8 @@ class BookingMonthGrid extends StatelessWidget {
           ),
           child: Text(
             DateFormatter.monthNameYear(month),
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 15.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.ink,
             ),
           ),
@@ -74,10 +70,8 @@ class BookingMonthGrid extends StatelessWidget {
                 child: Center(
                   child: Text(
                     w,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 11.0,
-                      fontWeight: TypeScale.semiBold,
+                    style: context.text.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: colors.inkTertiary,
                     ),
                   ),
@@ -174,10 +168,8 @@ class _DayCell extends StatelessWidget {
             ),
             child: Text(
               '${date.day}',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13.0,
-                fontWeight: end ? TypeScale.bold : TypeScale.regular,
+              style: context.text.titleSmall?.copyWith(
+                fontWeight: end ? FontWeight.bold : FontWeight.normal,
                 color: end
                     ? colors.brandOnSurface
                     : past

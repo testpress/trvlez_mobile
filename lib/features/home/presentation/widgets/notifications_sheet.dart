@@ -38,7 +38,7 @@ class NotificationsSheet extends StatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.colors.transparent,
       builder: (context) =>
           NotificationsSheet(items: items, onClearAll: onClearAll),
     );

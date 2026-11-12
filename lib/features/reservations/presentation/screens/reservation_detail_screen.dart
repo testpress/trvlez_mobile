@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
@@ -87,10 +85,7 @@ class _ReservationDetailContent extends ConsumerWidget {
         ),
         title: Text(
           'Reservation Details',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.textPrimary,
           ),
         ),
@@ -128,10 +123,7 @@ class _ReservationDetailContent extends ConsumerWidget {
         ),
         title: Text(
           'Reservation Details',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 20,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.textPrimary,
           ),
         ),
@@ -238,9 +230,7 @@ class _ReservationDetailContent extends ConsumerWidget {
                 children: [
                   Text(
                     activeReservation.specialRequests!,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 14,
+                    style: context.text.labelLarge?.copyWith(
                       color: context.colors.textSecondary,
                       height: 1.5,
                     ),
@@ -297,21 +287,17 @@ class _ReservationDetailContent extends ConsumerWidget {
             children: [
               Text(
                 'CONFIRMATION CODE',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11,
-                  fontWeight: TypeScale.semiBold,
-                  letterSpacing: 0.8,
+                style: context.text.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
                   color: colors.textSecondary,
+                  letterSpacing: 0.8,
                 ),
               ),
               SizedBox(height: space.stackText),
               Text(
                 activeReservation.confirmationCode,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: colors.actionPrimary,
                 ),
               ),
@@ -336,16 +322,15 @@ class _ReservationDetailContent extends ConsumerWidget {
       builder: (dialogCtx) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: shape.radiusSurface),
-          title: const Text(
+          title: Text(
             'Cancel Reservation?',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontWeight: TypeScale.bold,
+            style: context.text.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
             ),
           ),
           content: Text(
             'Are you sure you want to cancel this reservation at ${activeReservation.propertySummary.name}?',
-            style: const TextStyle(fontFamily: AppTypography.fontFamily),
+            style: context.text.bodyMedium,
           ),
           actions: [
             TextButton(

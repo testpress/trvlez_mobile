@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 enum FindrState { locked, processing, notJoined, active }
 
@@ -93,9 +90,7 @@ class FindrCard extends StatelessWidget {
                     child: Text(
                       'Know a hotel worth staying in? Recommend it. When they '
                       'join TRVLez, you earn a share of what they book.',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.paperInk2,
                         height: 1.4,
                       ),
@@ -115,10 +110,8 @@ class FindrCard extends StatelessWidget {
                   ),
                   child: Text(
                     effectiveCtaLabel,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 13,
-                      fontWeight: TypeScale.semiBold,
+                    style: context.text.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: colors.textOnAction,
                     ),
                   ),
@@ -175,19 +168,15 @@ class FindrHeading extends StatelessWidget {
             children: [
               TextSpan(
                 text: prefix,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: colors.paperInk,
                 ),
               ),
               TextSpan(
                 text: 'r',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: colors.brandPrimary,
                 ),
               ),
@@ -217,21 +206,15 @@ class _FindrEarnedRow extends StatelessWidget {
         children: [
           Text(
             earned,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 22,
-              fontWeight: TypeScale.extraBold,
+            style: context.text.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w800,
               color: colors.paperInk,
             ),
           ),
           SizedBox(width: space.stackTight),
           Text(
             'earned so far',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              color: colors.paperInk2,
-            ),
+            style: context.text.labelMedium?.copyWith(color: colors.paperInk2),
           ),
         ],
       ),
@@ -296,21 +279,15 @@ class _FindrStatItem extends StatelessWidget {
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 13,
-            fontWeight: TypeScale.bold,
+          style: context.text.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
             color: colors.paperInk,
           ),
         ),
         SizedBox(height: shape.borderDefault),
         Text(
           label,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 10,
-            color: colors.paperInk2,
-          ),
+          style: context.text.labelSmall?.copyWith(color: colors.paperInk2),
         ),
       ],
     );

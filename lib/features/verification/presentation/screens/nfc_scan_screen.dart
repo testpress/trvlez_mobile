@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_error.dart';
@@ -171,7 +170,6 @@ class _NfcScanScreenState extends ConsumerState<NfcScanScreen> {
           'Reading the chip',
           textAlign: TextAlign.center,
           style: context.text.headlineLarge?.copyWith(
-            fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
           ),
         ),

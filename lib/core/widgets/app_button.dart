@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_motion.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Style variants for [AppButton].
 enum AppButtonVariant {
@@ -99,9 +98,9 @@ class AppButton extends StatelessWidget {
         effectiveRadius = borderRadius ?? shape.radiusPill;
         break;
       case AppButtonVariant.brandOutline:
-        backgroundColor = Colors.transparent;
+        backgroundColor = colors.transparent;
         foregroundColor = colors.brandOnSurface;
-        disabledBackgroundColor = Colors.transparent;
+        disabledBackgroundColor = colors.transparent;
         disabledForegroundColor = colors.brandButtonDisabledForeground;
         borderSide = BorderSide(
           color: colors.verificationOutlineButton,
@@ -138,7 +137,7 @@ class AppButton extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
-              style: AppTypography.buttonLabel,
+              style: context.text.buttonLabel,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -149,7 +148,7 @@ class AppButton extends StatelessWidget {
       child = Text(
         label,
         textAlign: TextAlign.center,
-        style: AppTypography.buttonLabel,
+        style: context.text.buttonLabel,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/finder_terms.dart';
 
@@ -64,7 +63,7 @@ class FinderTermsStepView extends StatelessWidget {
               terms.title,
               style: context.text.titleLarge?.copyWith(
                 color: colors.textPrimary,
-                fontWeight: TypeScale.bold,
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: space.stackText),
@@ -97,7 +96,7 @@ class FinderTermsStepView extends StatelessWidget {
                       section.title,
                       style: context.text.titleSmall?.copyWith(
                         color: colors.textPrimary,
-                        fontWeight: TypeScale.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: space.stackTight),
@@ -116,7 +115,7 @@ class FinderTermsStepView extends StatelessWidget {
 
             // Checkbox Tile
             Material(
-              color: Colors.transparent,
+              color: colors.transparent,
               child: InkWell(
                 onTap: () => onAcceptanceChanged(!hasAcceptedTerms),
                 borderRadius: shape.radiusSurface,
@@ -155,7 +154,7 @@ class FinderTermsStepView extends StatelessWidget {
                           'I have read, understood, and accept the Findr Programme Participation Terms and Conditions (${terms.version}).',
                           style: context.text.bodySmall?.copyWith(
                             color: colors.textPrimary,
-                            fontWeight: TypeScale.medium,
+                            fontWeight: FontWeight.w500,
                             height: 1.4,
                           ),
                         ),

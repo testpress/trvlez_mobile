@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -202,7 +201,7 @@ class NfcFailedScreen extends ConsumerWidget {
             'One step needs redoing',
             textAlign: TextAlign.center,
             style: context.text.headlineSmall?.copyWith(
-              fontWeight: TypeScale.bold,
+              fontWeight: FontWeight.bold,
               color: colors.brandOnSurface,
               letterSpacing: -0.2,
             ),
@@ -235,7 +234,7 @@ class NfcFailedScreen extends ConsumerWidget {
                 Text(
                   'What usually fixes it',
                   style: context.text.labelMedium?.copyWith(
-                    fontWeight: TypeScale.semiBold,
+                    fontWeight: FontWeight.w600,
                     color: colors.brandOnSurface,
                   ),
                 ),
@@ -304,7 +303,7 @@ class NfcFailedScreen extends ConsumerWidget {
                           style: context.text.bodySmall?.copyWith(
                             color: colors.brandSecondary,
                             decoration: TextDecoration.underline,
-                            fontWeight: TypeScale.medium,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],

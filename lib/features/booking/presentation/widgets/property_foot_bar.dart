@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/booking_draft.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_button.dart';
@@ -54,9 +52,7 @@ class PropertyFootBar extends StatelessWidget {
                   children: [
                     Text(
                       'Total',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 14.0,
+                      style: context.text.labelLarge?.copyWith(
                         color: colors.ink,
                       ),
                     ),
@@ -66,10 +62,8 @@ class PropertyFootBar extends StatelessWidget {
                         draft.total.toDouble(),
                         currencyCode: draft.currencyCode,
                       ),
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 18.0,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.ink,
                       ),
                     ),

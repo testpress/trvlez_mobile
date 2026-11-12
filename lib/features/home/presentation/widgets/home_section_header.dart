@@ -46,7 +46,6 @@ class HomeSectionHeader extends StatelessWidget {
                 child: Text(
                   action!,
                   style: context.text.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
                     color: colors.brandPrimary,
                   ),
                 ),

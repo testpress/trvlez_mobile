@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Interactive result or action row on red surface.
 class AnywhereRow extends StatelessWidget {
@@ -66,19 +64,15 @@ class AnywhereRow extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.brandOnSurface,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                      style: context.text.bodySmall?.copyWith(
                         color: colors.brandSecondaryBody,
                       ),
                     ),
@@ -95,10 +89,8 @@ class AnywhereRow extends StatelessWidget {
                   ),
                   child: Text(
                     tag!,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 10,
-                      fontWeight: TypeScale.bold,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: colors.brandOnSurface,
                     ),
                   ),
@@ -141,19 +133,15 @@ class AnywhereLabel extends StatelessWidget {
           children: [
             TextSpan(
               text: text,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
-                fontWeight: TypeScale.bold,
+              style: context.text.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.brandOnSurface,
               ),
             ),
             if (hint != null)
               TextSpan(
                 text: ' · $hint',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11,
+                style: context.text.bodySmall?.copyWith(
                   color: colors.brandSecondarySmall,
                 ),
               ),
@@ -200,10 +188,8 @@ class AnywhereField extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
-        style: TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 14.5,
-          fontWeight: TypeScale.medium,
+        style: context.text.labelLarge?.copyWith(
+          fontWeight: FontWeight.w500,
           color: colors.brandOnSurface,
           height: 1.25,
         ),
@@ -211,11 +197,9 @@ class AnywhereField extends StatelessWidget {
         cursorHeight: sizes.iconMd,
         decoration: InputDecoration(
           filled: false,
-          fillColor: Colors.transparent,
+          fillColor: colors.transparent,
           hintText: hint,
-          hintStyle: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 14.5,
+          hintStyle: context.text.labelLarge?.copyWith(
             color: colors.brandSecondaryPlaceholder,
             height: 1.25,
           ),

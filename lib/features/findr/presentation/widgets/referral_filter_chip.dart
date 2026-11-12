@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Semantic, accessible filter chip with active ink feedback.
 class ReferralFilterChip extends StatelessWidget {
@@ -37,7 +36,7 @@ class ReferralFilterChip extends StatelessWidget {
         child: Text(
           label,
           style: context.text.labelSmall?.copyWith(
-            fontWeight: isSelected ? TypeScale.bold : TypeScale.medium,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             color: isSelected ? colors.textOnAction : colors.textSecondary,
           ),
         ),

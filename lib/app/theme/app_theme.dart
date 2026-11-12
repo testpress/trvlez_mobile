@@ -74,6 +74,7 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: AppTypography.fontFamily,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colors.background,
       extensions: [colors, space, size, shape],
@@ -85,8 +86,7 @@ class AppTheme {
         foregroundColor: colors.textPrimary,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTypography.heading.copyWith(
-          fontSize: 18,
+        titleTextStyle: textTheme.headlineSmall?.copyWith(
           fontWeight: FontWeight.w700,
           color: colors.textPrimary,
         ),

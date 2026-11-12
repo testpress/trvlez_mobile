@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/finder_providers.dart';
@@ -57,7 +56,7 @@ class _FindrTermsScreenState extends ConsumerState<FindrTermsScreen> {
                     textAlign: TextAlign.center,
                     style: context.text.titleLarge?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

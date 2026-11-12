@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 
 /// Screen allowing travelers to either deactivate or permanently erase their account.
@@ -54,10 +52,8 @@ class CloseAccountScreen extends StatelessWidget {
                 SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Close my account',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 18,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.textPrimary,
                   ),
                 ),
@@ -75,9 +71,7 @@ class CloseAccountScreen extends StatelessWidget {
                   Text(
                     'Choose what happens to your account. You can change your mind '
                     'about the first option; the second is permanent.',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 13,
+                    style: context.text.bodyMedium?.copyWith(
                       color: colors.textSecondary,
                       height: 1.4,
                     ),
@@ -140,9 +134,7 @@ class CloseAccountScreen extends StatelessWidget {
                             'We are required by financial and travel regulations to keep '
                             'certain transaction records for up to 7 years. All other data '
                             'is erased immediately.',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 12,
+                            style: context.text.labelMedium?.copyWith(
                               color: colors.waitInk,
                               height: 1.4,
                             ),
@@ -226,10 +218,8 @@ class _CloseAccountOptionCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 14,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: isDanger ? colors.brandPrimary : colors.textPrimary,
                   ),
                 ),
@@ -239,9 +229,7 @@ class _CloseAccountOptionCard extends StatelessWidget {
           SizedBox(height: space.stackItem),
           Text(
             body,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
+            style: context.text.labelMedium?.copyWith(
               color: colors.textSecondary,
               height: 1.4,
             ),
@@ -266,10 +254,8 @@ class _CloseAccountOptionCard extends StatelessWidget {
                     ),
                     child: Text(
                       actionLabel,
-                      style: const TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   )
@@ -291,10 +277,8 @@ class _CloseAccountOptionCard extends StatelessWidget {
                     ),
                     child: Text(
                       actionLabel,
-                      style: const TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

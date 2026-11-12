@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -109,7 +108,6 @@ class VerificationSuccessScreen extends ConsumerWidget {
             "You're verified",
             textAlign: TextAlign.center,
             style: context.text.headlineLarge?.copyWith(
-              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
             ),
           ),
@@ -137,7 +135,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
                 Text(
                   'What this unlocks',
                   style: context.text.titleMedium?.copyWith(
-                    fontWeight: TypeScale.bold,
+                    fontWeight: FontWeight.bold,
                     color: colors.brandOnSurface,
                   ),
                 ),
@@ -169,7 +167,7 @@ class VerificationSuccessScreen extends ConsumerWidget {
                             Text(
                               _unlocks[i].title,
                               style: context.text.bodyLarge?.copyWith(
-                                fontWeight: TypeScale.bold,
+                                fontWeight: FontWeight.bold,
                                 color: colors.brandOnSurface,
                               ),
                             ),

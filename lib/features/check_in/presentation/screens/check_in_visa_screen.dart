@@ -6,8 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_info_card.dart';
 import 'package:trvlez_mobile/core/widgets/brand_pointer_pair.dart';
@@ -93,10 +91,7 @@ class CheckInVisaScreen extends ConsumerWidget {
         Text(
           'Your visa',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -105,9 +100,7 @@ class CheckInVisaScreen extends ConsumerWidget {
         Text(
           "Photograph the visa page in your passport, or the sticker if it's separate.",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.35,
           ),

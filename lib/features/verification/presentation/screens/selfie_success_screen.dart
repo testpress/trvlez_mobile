@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/verification_stepper.dart';
@@ -80,7 +79,7 @@ class _SelfieSuccessScreenState extends State<SelfieSuccessScreen> {
           'Selfie verified',
           textAlign: TextAlign.center,
           style: context.text.headlineSmall?.copyWith(
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),

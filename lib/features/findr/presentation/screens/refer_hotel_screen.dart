@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -127,7 +126,7 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                     textAlign: TextAlign.center,
                     style: context.text.titleLarge?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -150,7 +149,7 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                         'Lock Your Claim',
                         style: context.text.titleMedium?.copyWith(
                           color: colors.textPrimary,
-                          fontWeight: TypeScale.bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(height: space.stackTight),
@@ -189,7 +188,7 @@ class _ReferHotelScreenState extends ConsumerState<ReferHotelScreen> {
                                   errorMessage,
                                   style: context.text.bodySmall?.copyWith(
                                     color: colors.feedbackError,
-                                    fontWeight: TypeScale.medium,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),

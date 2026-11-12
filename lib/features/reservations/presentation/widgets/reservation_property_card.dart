@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 
 /// Hero image and property details header card for reservation details.
@@ -70,8 +69,7 @@ class ReservationPropertyCard extends StatelessWidget {
                     children: [
                       Text(
                         property.name,
-                        style: AppTypography.heading.copyWith(
-                          fontSize: 18,
+                        style: context.text.headlineSmall?.copyWith(
                           color: colors.textPrimary,
                         ),
                       ),
@@ -87,8 +85,7 @@ class ReservationPropertyCard extends StatelessWidget {
                             SizedBox(width: space.inlineMicro),
                             Text(
                               property.locationString,
-                              style: AppTypography.body.copyWith(
-                                fontSize: 13,
+                              style: context.text.bodyMedium?.copyWith(
                                 color: colors.textSecondary,
                               ),
                             ),

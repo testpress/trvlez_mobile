@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Enlarged MRZ zoom card displaying the traveler's actual code lines
@@ -60,7 +59,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                 child: Text(
                   '2',
                   style: context.text.labelSmall?.copyWith(
-                    fontWeight: TypeScale.bold,
+                    fontWeight: FontWeight.bold,
                     color: colors.brandActionLabel,
                     height: 1.0,
                   ),
@@ -70,7 +69,7 @@ class VerifyZoomPanel extends ConsumerWidget {
               Text(
                 'Code lines, enlarged',
                 style: context.text.bodySmall?.copyWith(
-                  fontWeight: TypeScale.semiBold,
+                  fontWeight: FontWeight.w600,
                   color: colors.brandOnSurface,
                 ),
               ),
@@ -132,7 +131,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                           line,
                           style: context.text.labelSmall?.copyWith(
                             fontFamily: 'monospace',
-                            fontWeight: TypeScale.bold,
+                            fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
                             color: colors.brandOnSurface,
                           ),
@@ -167,7 +166,7 @@ class VerifyZoomPanel extends ConsumerWidget {
                           line,
                           style: context.text.bodySmall?.copyWith(
                             fontFamily: 'monospace',
-                            fontWeight: TypeScale.bold,
+                            fontWeight: FontWeight.bold,
                             letterSpacing: 1.1,
                             color: colors.brandOnSurface,
                           ),

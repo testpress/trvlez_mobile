@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 
 /// The standard scaffold shell for all Section 02 verification screens.
@@ -206,7 +205,7 @@ class _VerifyHeader extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: context.text.titleMedium?.copyWith(
-                fontWeight: TypeScale.bold,
+                fontWeight: FontWeight.bold,
                 color: colors.brandOnSurface,
                 height: 1.2,
               ),
@@ -267,12 +266,11 @@ class _VerifyHelpLine extends StatelessWidget {
             Text(
               prefix,
               style: context.text.bodySmall?.copyWith(
-                fontWeight: TypeScale.regular,
                 color: colors.brandSecondaryBody,
               ),
             ),
             Material(
-              color: Colors.transparent,
+              color: colors.transparent,
               child: InkWell(
                 onTap: onTap,
                 child: Container(
@@ -288,7 +286,7 @@ class _VerifyHelpLine extends StatelessWidget {
                   child: Text(
                     linkText,
                     style: context.text.bodySmall?.copyWith(
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                       color: colors.brandOnSurface,
                     ),
                   ),

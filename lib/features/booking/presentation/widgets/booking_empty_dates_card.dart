@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Card displayed in the rooms section when dates have not yet been selected.
 class BookingEmptyDatesCard extends StatelessWidget {
@@ -27,19 +25,15 @@ class BookingEmptyDatesCard extends StatelessWidget {
         children: [
           Text(
             "Add dates to see what's available",
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.inkTertiary,
             ),
           ),
           SizedBox(height: space.stackText),
           Text(
             'Rooms and prices depend on the nights chosen, so there is nothing truthful to show here yet.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
+            style: context.text.labelMedium?.copyWith(
               color: colors.inkSecondary,
             ),
           ),

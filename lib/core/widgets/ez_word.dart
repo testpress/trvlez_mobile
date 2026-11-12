@@ -4,18 +4,13 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 /// Renders a word prefixed with "ez", where the "ez" appears in brand red
 /// and the remainder appears in the standard text style.
 class EzWord extends StatelessWidget {
-  const EzWord({
-    super.key,
-    required this.rest,
-    required this.style,
-    this.ezColor,
-  });
+  const EzWord({super.key, required this.rest, this.style, this.ezColor});
 
   /// The text following the "ez" prefix (e.g., 'Stays', 'Money', 'Shop', 'Chat').
   final String rest;
 
   /// The base text style.
-  final TextStyle style;
+  final TextStyle? style;
 
   /// Custom override color for the "ez" prefix (defaults to brand red).
   final Color? ezColor;
@@ -23,15 +18,16 @@ class EzWord extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brandRed = ezColor ?? context.colors.brandPrimary;
+    final baseStyle = style ?? context.text.bodyMedium;
 
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
             text: 'ez',
-            style: style.copyWith(color: brandRed),
+            style: baseStyle?.copyWith(color: brandRed),
           ),
-          TextSpan(text: rest, style: style),
+          TextSpan(text: rest, style: baseStyle),
         ],
       ),
       maxLines: 1,
@@ -46,13 +42,13 @@ class EzText extends StatelessWidget {
   const EzText({
     super.key,
     required this.text,
-    required this.style,
+    this.style,
     this.ezColor,
     this.textAlign,
   });
 
   final String text;
-  final TextStyle style;
+  final TextStyle? style;
   final Color? ezColor;
   final TextAlign? textAlign;
 
@@ -61,6 +57,7 @@ class EzText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brandRed = ezColor ?? context.colors.brandPrimary;
+    final baseStyle = style ?? context.text.bodyMedium;
     final spans = <TextSpan>[];
     var at = 0;
 
@@ -71,7 +68,7 @@ class EzText extends StatelessWidget {
       spans.add(
         TextSpan(
           text: 'ez',
-          style: TextStyle(color: brandRed),
+          style: baseStyle?.copyWith(color: brandRed),
         ),
       );
       at = m.end;
@@ -79,7 +76,7 @@ class EzText extends StatelessWidget {
     if (at < text.length) spans.add(TextSpan(text: text.substring(at)));
 
     return Text.rich(
-      TextSpan(style: style, children: spans),
+      TextSpan(style: baseStyle, children: spans),
       textAlign: textAlign,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

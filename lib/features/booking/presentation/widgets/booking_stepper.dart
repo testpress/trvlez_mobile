@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Numeric stepper (`− [count] +`) with accessible touch targets.
 class BookingStepper extends StatelessWidget {
@@ -41,10 +39,8 @@ class BookingStepper extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: space.inlineMicro),
           child: Text(
             '$value',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 15.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.ink,
             ),
           ),
@@ -103,10 +99,7 @@ class _StepperButton extends StatelessWidget {
             ),
             child: Text(
               glyph,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 15.0,
-                fontWeight: TypeScale.semiBold,
+              style: context.text.titleMedium?.copyWith(
                 color: enabled ? colors.ink : colors.inkTertiary,
               ),
             ),

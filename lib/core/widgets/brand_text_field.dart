@@ -99,7 +99,7 @@ class _BrandTextFieldState extends State<BrandTextField> {
           textInputAction: widget.textInputAction,
           autofillHints: widget.autofillHints,
           onChanged: widget.onChanged,
-          onFieldSubmitted: (_) => widget.onSubmitted?.call(),
+          onFieldSubmitted: (_) => widget.onSubmitted,
           validator: widget.validator,
           cursorColor: colors.brandOnSurface,
           cursorWidth: shape.borderMedium,

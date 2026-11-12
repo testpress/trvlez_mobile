@@ -6,8 +6,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_notice.dart';
@@ -68,10 +66,7 @@ class CheckInPassScreen extends ConsumerWidget {
             Text(
               'Show this at the desk',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 22,
-                fontWeight: TypeScale.bold,
+              style: context.text.headlineMedium?.copyWith(
                 color: colors.brandOnSurface,
                 letterSpacing: -0.3,
               ),
@@ -80,9 +75,7 @@ class CheckInPassScreen extends ConsumerWidget {
             Text(
               'Collect your keys and go straight up.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondaryBody,
               ),
             ),
@@ -120,19 +113,15 @@ class CheckInPassScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 guestName,
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 15,
-                                  fontWeight: TypeScale.bold,
+                                style: context.text.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                   color: colors.textPrimary,
                                 ),
                               ),
                               SizedBox(height: space.stackText),
                               Text(
                                 details.dateAndGuests,
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 12,
+                                style: context.text.labelMedium?.copyWith(
                                   color: colors.textSecondary,
                                 ),
                               ),
@@ -155,10 +144,8 @@ class CheckInPassScreen extends ConsumerWidget {
                                     SizedBox(width: space.inlineMicro),
                                     Text(
                                       'ID verified',
-                                      style: TextStyle(
-                                        fontFamily: AppTypography.fontFamily,
-                                        fontSize: 11,
-                                        fontWeight: TypeScale.bold,
+                                      style: context.text.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.bold,
                                         color: colors.brandActionLabel,
                                       ),
                                     ),
@@ -217,19 +204,15 @@ class CheckInPassScreen extends ConsumerWidget {
                               Expanded(
                                 child: Text(
                                   'Booking',
-                                  style: TextStyle(
-                                    fontFamily: AppTypography.fontFamily,
-                                    fontSize: 12,
+                                  style: context.text.labelMedium?.copyWith(
                                     color: colors.textSecondary,
                                   ),
                                 ),
                               ),
                               Text(
                                 bookingRef,
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 12,
-                                  fontWeight: TypeScale.bold,
+                                style: context.text.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                   color: colors.textPrimary,
                                 ),
                               ),
@@ -260,13 +243,10 @@ class CheckInPassScreen extends ConsumerWidget {
                     SizedBox(width: space.inlineIconLabel),
                     Text(
                       'See what the hotel gets',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.semiBold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
                         color: colors.brandSecondary,
                         decoration: TextDecoration.underline,
-                        decorationColor: colors.brandUnderline,
                       ),
                     ),
                   ],

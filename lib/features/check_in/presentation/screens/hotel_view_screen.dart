@@ -4,8 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/check_in/presentation/providers/check_in_providers.dart';
@@ -84,10 +82,8 @@ class HotelViewScreen extends ConsumerWidget {
                       SizedBox(width: space.inlineItem),
                       Text(
                         'What the hotel gets',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 16,
-                          fontWeight: TypeScale.bold,
+                        style: context.text.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: colors.textPrimary,
                         ),
                       ),
@@ -105,9 +101,7 @@ class HotelViewScreen extends ConsumerWidget {
                       children: [
                         Text(
                           'When ${details.hotel} scans your code, this is everything that appears on their screen.',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
+                          style: context.text.titleSmall?.copyWith(
                             color: colors.textSecondary,
                             height: 1.4,
                           ),
@@ -139,9 +133,7 @@ class HotelViewScreen extends ConsumerWidget {
                         Text(
                           "Some countries require hotels to record passport details. If yours does, we'll ask you first.",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 11,
+                          style: context.text.bodySmall?.copyWith(
                             color: colors.textSecondary,
                             height: 1.35,
                           ),
@@ -207,19 +199,15 @@ class _DarkHotelScreen extends StatelessWidget {
                   children: [
                     Text(
                       guestName,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 15,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.brandOnSurface,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       bookingRef,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.hotelMeta,
                       ),
                     ),
@@ -241,10 +229,8 @@ class _DarkHotelScreen extends StatelessWidget {
                           SizedBox(width: space.inlineMicro),
                           Text(
                             'ID VERIFIED',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 10,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.labelSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
                               color: colors.hotelOkInk,
                             ),
                           ),
@@ -286,20 +272,13 @@ class _TerminalRow extends StatelessWidget {
           width: sizes.controlXl + space.inlineMicro,
           child: Text(
             label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              color: colors.hotelLabel,
-            ),
+            style: context.text.labelMedium?.copyWith(color: colors.hotelLabel),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: TypeScale.medium,
+            style: context.text.labelMedium?.copyWith(
               color: colors.brandOnSurface,
             ),
           ),
@@ -337,10 +316,8 @@ class _NotSharedSection extends StatelessWidget {
         children: [
           Text(
             'Not shared with the hotel',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              fontWeight: TypeScale.bold,
+            style: context.text.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.textPrimary,
             ),
           ),
@@ -359,9 +336,7 @@ class _NotSharedSection extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -409,10 +384,8 @@ class _RegistrationFormSection extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Paper Registration Form',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.textPrimary,
                   ),
                 ),
@@ -422,9 +395,7 @@ class _RegistrationFormSection extends StatelessWidget {
           SizedBox(height: space.stackText),
           Text(
             'If $hotelName asks you to complete a paper card at reception, only share the required identity fields.',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
+            style: context.text.labelMedium?.copyWith(
               color: colors.textSecondary,
               height: 1.35,
             ),

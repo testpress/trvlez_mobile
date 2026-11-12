@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show reservationListProvider;
@@ -229,10 +227,8 @@ class AccountScreen extends ConsumerWidget {
                         child: Text(
                           'Sign out',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
-                            fontWeight: TypeScale.bold,
+                          style: context.text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
                             color: colors.brandPrimary,
                           ),
                         ),
@@ -243,9 +239,7 @@ class AccountScreen extends ConsumerWidget {
                   Text(
                     'TRVLez 1.0.0',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 11,
+                    style: context.text.bodySmall?.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),

@@ -31,7 +31,7 @@ class LocationPickerSheet extends StatelessWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.colors.transparent,
       builder: (context) => LocationPickerSheet(
         currentLocation: currentLocation,
         onLocationSelected: onLocationSelected,

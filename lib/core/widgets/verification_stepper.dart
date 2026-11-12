@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The 4 standard verification step labels per the design system.
 const List<String> kVerificationStepLabels = [
@@ -158,7 +157,7 @@ class _StepNode extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isOn ? colors.brandOnSurface : Colors.transparent,
+            color: isOn ? colors.brandOnSurface : colors.transparent,
             border: Border.all(
               color: isOn ? colors.brandOnSurface : colors.verificationStepRing,
               width: shape.borderMedium,
@@ -172,15 +171,14 @@ class _StepNode extends StatelessWidget {
                 )
               : Text(
                   '${index + 1}',
-                  style: (context.text.labelSmall ?? const TextStyle())
-                      .copyWith(
-                        fontSize: size * 0.44,
-                        fontWeight: isOn ? TypeScale.bold : TypeScale.medium,
-                        color: isOn
-                            ? colors.verificationStepActiveText
-                            : colors.verificationStepInactiveText,
-                        height: 1.0,
-                      ),
+                  style: context.text.labelSmall?.copyWith(
+                    fontSize: size * 0.44,
+                    fontWeight: isOn ? FontWeight.bold : FontWeight.w500,
+                    color: isOn
+                        ? colors.verificationStepActiveText
+                        : colors.verificationStepInactiveText,
+                    height: 1.0,
+                  ),
                 ),
         ),
         SizedBox(height: space.stackTight),
@@ -189,7 +187,7 @@ class _StepNode extends StatelessWidget {
           textAlign: TextAlign.center,
           maxLines: 2,
           style: context.text.labelSmall?.copyWith(
-            fontWeight: isOn ? TypeScale.bold : TypeScale.regular,
+            fontWeight: isOn ? FontWeight.bold : FontWeight.normal,
             color: isOn
                 ? colors.brandOnSurface
                 : colors.verificationStepInactiveText,

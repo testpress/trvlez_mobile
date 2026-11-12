@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show liveFindrPortfolioProvider;
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -54,10 +52,7 @@ class AnywhereSentScreen extends ConsumerWidget {
         Text(
           'Sent',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -66,9 +61,7 @@ class AnywhereSentScreen extends ConsumerWidget {
         Text(
           'Your pass proves TRVLez has verified who you are.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
           ),
         ),

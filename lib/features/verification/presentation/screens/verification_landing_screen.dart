@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -139,7 +138,6 @@ class _VerificationLandingScreenState
           Text(
             'Identity verified',
             style: context.text.headlineMedium?.copyWith(
-              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
               height: 1.2,
             ),
@@ -156,7 +154,6 @@ class _VerificationLandingScreenState
           Text(
             'Verification in review',
             style: context.text.headlineMedium?.copyWith(
-              fontWeight: TypeScale.bold,
               color: colors.brandOnSurface,
               height: 1.2,
             ),
@@ -177,7 +174,6 @@ class _VerificationLandingScreenState
               Text(
                 'Welcome to',
                 style: context.text.headlineMedium?.copyWith(
-                  fontWeight: TypeScale.bold,
                   color: colors.brandOnSurface,
                   height: 1.2,
                 ),
@@ -207,14 +203,14 @@ class _VerificationLandingScreenState
             Text(
               '$doneCount of 4 steps completed',
               style: context.text.bodySmall?.copyWith(
-                fontWeight: TypeScale.semiBold,
+                fontWeight: FontWeight.w600,
                 color: colors.brandOnSurface,
               ),
             ),
             Text(
               '${(doneCount / 4 * 100).round()}%',
               style: context.text.bodySmall?.copyWith(
-                fontWeight: TypeScale.semiBold,
+                fontWeight: FontWeight.w600,
                 color: colors.brandOnSurface,
               ),
             ),
@@ -315,7 +311,7 @@ class _StepCard extends StatelessWidget {
       enabled: onTap != null,
       label: '${stepData.title}. ${stepData.subtitle}',
       child: Material(
-        color: Colors.transparent,
+        color: colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: shape.radiusSurface,
@@ -363,7 +359,7 @@ class _StepCard extends StatelessWidget {
                       Text(
                         stepData.title,
                         style: context.text.titleMedium?.copyWith(
-                          fontWeight: TypeScale.bold,
+                          fontWeight: FontWeight.bold,
                           color: isLocked
                               ? colors.verificationCardLockedTitle
                               : colors.brandOnSurface,

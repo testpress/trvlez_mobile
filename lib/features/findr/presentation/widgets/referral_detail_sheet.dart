@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/findr_portfolio.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/hotel_referral_item.dart';
@@ -23,7 +22,7 @@ Future<void> showReferralDetailSheet(
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: colors.transparent,
     builder: (sheetContext) {
       return Center(
         child: ConstrainedBox(
@@ -59,7 +58,7 @@ Future<void> showReferralDetailSheet(
                           item.hotelName,
                           style: context.text.titleMedium?.copyWith(
                             color: colors.textPrimary,
-                            fontWeight: TypeScale.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -169,7 +168,7 @@ class _ReferralDetailRow extends StatelessWidget {
                 value,
                 style: context.text.bodyMedium?.copyWith(
                   color: colors.textPrimary,
-                  fontWeight: TypeScale.medium,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

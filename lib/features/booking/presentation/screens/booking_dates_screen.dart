@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/features/booking/presentation/providers/booking_providers.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_button.dart';
@@ -62,10 +60,8 @@ class _BookingDatesScreenState extends ConsumerState<BookingDatesScreen> {
                 SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Your dates',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 16.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.ink,
                   ),
                 ),

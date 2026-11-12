@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Prompt card encouraging unverified travelers to complete KYC identity verification.
 class VerifyPromptCard extends StatelessWidget {
@@ -58,10 +56,8 @@ class VerifyPromptCard extends StatelessWidget {
           Text(
             'Verify your identity',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.textPrimary,
             ),
           ),
@@ -70,9 +66,7 @@ class VerifyPromptCard extends StatelessWidget {
             'One check unlocks booking, ezMoney and faster hotel check-in. '
             'Takes about two minutes, and you never repeat it.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
+            style: context.text.labelMedium?.copyWith(
               color: colors.textSecondary,
               height: 1.4,
             ),
@@ -87,12 +81,10 @@ class VerifyPromptCard extends StatelessWidget {
               minimumSize: Size.fromHeight(sizes.controlMd),
               shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),
             ),
-            child: const Text(
+            child: Text(
               'Start verification',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13,
-                fontWeight: TypeScale.semiBold,
+              style: context.text.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

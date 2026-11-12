@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
@@ -96,7 +95,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
         Text(
           'Tell us what went wrong',
           style: context.text.headlineSmall?.copyWith(
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),
@@ -171,7 +170,7 @@ class _ReportAProblemScreenState extends State<ReportAProblemScreen> {
                 child: Text(
                   'Never send photos of your passport by message. We will never ask you to.',
                   style: context.text.bodySmall?.copyWith(
-                    fontWeight: TypeScale.medium,
+                    fontWeight: FontWeight.w500,
                     color: colors.brandSecondary,
                     height: 1.35,
                   ),
@@ -212,7 +211,7 @@ class _ProblemChip extends StatelessWidget {
     final shape = context.shape;
 
     return Material(
-      color: Colors.transparent,
+      color: colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: shape.radiusPill,
@@ -237,7 +236,7 @@ class _ProblemChip extends StatelessWidget {
           child: Text(
             label,
             style: context.text.labelMedium?.copyWith(
-              fontWeight: isSelected ? TypeScale.semiBold : TypeScale.regular,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               color: isSelected ? colors.brandPrimary : colors.brandOnSurface,
             ),
           ),

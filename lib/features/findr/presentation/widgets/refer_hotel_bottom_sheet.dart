@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_text_field.dart';
@@ -13,7 +12,7 @@ Future<bool?> showReferHotelSheet(BuildContext context) {
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: context.colors.transparent,
     builder: (modalContext) => const ReferHotelBottomSheet(),
   );
 }
@@ -159,7 +158,7 @@ class _ReferHotelBottomSheetState extends ConsumerState<ReferHotelBottomSheet> {
                               'Refer a Hotel',
                               style: context.text.titleLarge?.copyWith(
                                 color: colors.textPrimary,
-                                fontWeight: TypeScale.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: space.stackTight),
@@ -223,7 +222,7 @@ class _ReferHotelBottomSheetState extends ConsumerState<ReferHotelBottomSheet> {
                                     errorMessage,
                                     style: context.text.bodySmall?.copyWith(
                                       color: colors.feedbackError,
-                                      fontWeight: TypeScale.medium,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),

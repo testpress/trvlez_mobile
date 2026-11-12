@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/booking_draft.dart';
 
@@ -48,10 +46,8 @@ class BookingReviewPropertyCard extends StatelessWidget {
                   draft.propertyName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 15.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.ink,
                   ),
                 ),
@@ -60,9 +56,7 @@ class BookingReviewPropertyCard extends StatelessWidget {
                   draft.propertyPlace,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12.0,
+                  style: context.text.labelMedium?.copyWith(
                     color: colors.inkSecondary,
                   ),
                 ),

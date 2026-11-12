@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/findr_portfolio.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/hotel_referral_item.dart';
@@ -75,7 +74,7 @@ class ReferralCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: context.text.titleSmall?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   if (showLocation) ...[

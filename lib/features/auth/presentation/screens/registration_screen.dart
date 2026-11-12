@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -61,12 +59,9 @@ class RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   void showSuccessAndNavigate() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text(
+        content: Text(
           'Account created successfully!',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontWeight: TypeScale.medium,
-          ),
+          style: context.text.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
         backgroundColor: context.colors.feedbackSuccess,
         behavior: SnackBarBehavior.floating,

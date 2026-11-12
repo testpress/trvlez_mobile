@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Card displayed on the Account screen when identity verification is active, in review, or needs attention.
 class VerifiedCard extends StatelessWidget {
@@ -68,19 +66,15 @@ class VerifiedCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: primary,
                       ),
                     ),
                     SizedBox(height: shape.borderDefault),
                     Text(
                       detail,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                      style: context.text.bodySmall?.copyWith(
                         color: primary.withAlpha(200),
                       ),
                     ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Callout banner indicating whether currently chosen rooms sleep all guests.
 class BookingOccupancyNote extends StatelessWidget {
@@ -57,10 +55,7 @@ class BookingOccupancyNote extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12.0,
-                fontWeight: TypeScale.medium,
+              style: context.text.labelMedium?.copyWith(
                 color: ok ? colors.okInk : colors.waitInk,
               ),
             ),

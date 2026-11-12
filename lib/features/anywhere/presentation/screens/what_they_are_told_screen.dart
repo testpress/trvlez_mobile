@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_consent_tick.dart';
@@ -57,10 +55,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
         SizedBox(height: space.stackSection),
         Text(
           'What they are told',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -68,9 +63,7 @@ class _WhatTheyAreToldScreenState extends ConsumerState<WhatTheyAreToldScreen> {
         SizedBox(height: space.stackTight),
         Text(
           byEmail ? 'By email, to ${draft.email}' : 'In the $hotel dashboard',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.35,
           ),

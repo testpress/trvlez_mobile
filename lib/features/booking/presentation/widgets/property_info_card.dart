@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
 import 'package:trvlez_mobile/features/booking/domain/entities/booking_draft.dart';
 
@@ -38,10 +36,8 @@ class PropertyInfoCard extends StatelessWidget {
         children: [
           Text(
             draft.propertyName,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 18.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.ink,
             ),
           ),
@@ -59,9 +55,7 @@ class PropertyInfoCard extends StatelessWidget {
                   draft.propertyPlace,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13.0,
+                  style: context.text.titleSmall?.copyWith(
                     color: colors.inkSecondary,
                   ),
                 ),
@@ -86,10 +80,8 @@ class PropertyInfoCard extends StatelessWidget {
                 SizedBox(width: space.inlineMicro),
                 Text(
                   'Verified partner',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11.0,
-                    fontWeight: TypeScale.semiBold,
+                  style: context.text.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: colors.brandPrimary,
                   ),
                 ),
@@ -110,9 +102,7 @@ class PropertyInfoCard extends StatelessWidget {
               children: [
                 Text(
                   'from ',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13.0,
+                  style: context.text.titleSmall?.copyWith(
                     color: colors.inkSecondary,
                   ),
                 ),
@@ -121,18 +111,14 @@ class PropertyInfoCard extends StatelessWidget {
                     draft.propertyNightly.toDouble(),
                     currencyCode: draft.currencyCode,
                   ),
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 18.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.brandPrimary,
                   ),
                 ),
                 Text(
                   ' / night',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13.0,
+                  style: context.text.titleSmall?.copyWith(
                     color: colors.inkSecondary,
                   ),
                 ),

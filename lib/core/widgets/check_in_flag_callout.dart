@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Translucent callout highlighting destination-specific requirements.
 class CheckInFlagCallout extends StatelessWidget {
@@ -50,20 +48,15 @@ class CheckInFlagCallout extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: lead,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      fontWeight: TypeScale.bold,
+                    style: context.text.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: colors.brandSecondary,
                       height: 1.35,
                     ),
                   ),
                   TextSpan(
                     text: body,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      fontWeight: TypeScale.regular,
+                    style: context.text.labelMedium?.copyWith(
                       color: colors.brandSecondaryBody,
                       height: 1.35,
                     ),

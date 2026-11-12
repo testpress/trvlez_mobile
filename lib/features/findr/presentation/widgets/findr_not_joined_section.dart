@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/findr_card.dart';
 
 /// Pre-onboarding marketing and call-to-action section explaining the Findr programme.
@@ -28,7 +27,7 @@ class FindrNotJoinedSection extends StatelessWidget {
           'How it works',
           style: context.text.titleMedium?.copyWith(
             color: colors.textPrimary,
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(height: space.stackItem),
@@ -107,7 +106,7 @@ class _BenefitTile extends StatelessWidget {
                     title,
                     style: context.text.titleSmall?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: space.stackTight),

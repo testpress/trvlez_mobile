@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/findr_card.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
@@ -93,7 +92,7 @@ class FindrPortfolioSection extends ConsumerWidget {
               'Recent',
               style: context.text.titleMedium?.copyWith(
                 color: colors.textPrimary,
-                fontWeight: TypeScale.bold,
+                fontWeight: FontWeight.bold,
               ),
             ),
             InkWell(
@@ -105,7 +104,7 @@ class FindrPortfolioSection extends ConsumerWidget {
                   'All',
                   style: context.text.labelMedium?.copyWith(
                     color: colors.brandPrimary,
-                    fontWeight: TypeScale.semiBold,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -137,7 +136,7 @@ class FindrPortfolioSection extends ConsumerWidget {
                   'No recommendations yet',
                   style: context.text.titleSmall?.copyWith(
                     color: colors.textPrimary,
-                    fontWeight: TypeScale.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: space.stackTight),
@@ -166,7 +165,7 @@ class FindrPortfolioSection extends ConsumerWidget {
           'Payouts',
           style: context.text.titleMedium?.copyWith(
             color: colors.textPrimary,
-            fontWeight: TypeScale.bold,
+            fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(height: space.stackItem),
@@ -194,7 +193,7 @@ class FindrPortfolioSection extends ConsumerWidget {
                   'No payout history yet',
                   style: context.text.titleSmall?.copyWith(
                     color: colors.textPrimary,
-                    fontWeight: TypeScale.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: space.stackTight),
@@ -277,7 +276,7 @@ class _PayoutRow extends StatelessWidget {
             payout.amount,
             style: context.text.titleSmall?.copyWith(
               color: colors.textPrimary,
-              fontWeight: TypeScale.bold,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

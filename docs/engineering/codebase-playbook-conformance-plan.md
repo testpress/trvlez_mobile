@@ -112,12 +112,12 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Define the missing semantic text roles in `TextTheme` or a documented component-theme contract before migrating callers. Do not create one token per existing literal.
-- [ ] Migrate feature presentation and core visual widgets away from `AppTypography`, `TypeScale`, and primitive imports. Use `context.text.<role>` and semantic colour tokens, with `copyWith` only for a documented component variant.
-- [ ] Prioritize shared/high-fan-out components first: `AppButton`, text fields, brand shells, cards, status pills, sheet headers, and reusable error/empty states.
-- [ ] Replace local `TextStyle(...)` definitions with semantic roles or named component variants. Preserve a component-private constant only when chapter 04 permits it and the reason is documented.
-- [ ] Replace direct `Colors.*` use in presentation with token-backed values. Treat framework transparency as a named component-level exception only where the framework requires it.
-- [ ] Add a focused static guard that fails feature presentation imports of token primitives and bans inline `TextStyle`/raw colour use except for reviewed allowlisted component-theme files.
+- [x] Define the missing semantic text roles in `TextTheme` or a documented component-theme contract before migrating callers. Do not create one token per existing literal.
+- [x] Migrate feature presentation and core visual widgets away from `AppTypography`, `TypeScale`, and primitive imports. Use `context.text.<role>` and semantic colour tokens, with `copyWith` only for a documented component variant.
+- [x] Prioritize shared/high-fan-out components first: `AppButton`, text fields, brand shells, cards, status pills, sheet headers, and reusable error/empty states.
+- [x] Replace local `TextStyle(...)` definitions with semantic roles or named component variants. Preserve a component-private constant only when chapter 04 permits it and the reason is documented.
+- [x] Replace direct `Colors.*` use in presentation with token-backed values. Treat framework transparency as a named component-level exception only where the framework requires it.
+- [x] Add a focused static guard that fails feature presentation imports of token primitives and bans inline `TextStyle`/raw colour use except for reviewed allowlisted component-theme files.
 
 ### Migration sequence
 

@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
@@ -77,8 +75,7 @@ class PropertyScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'Failed to load property details.',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
+                        style: context.text.bodyMedium?.copyWith(
                           color: context.colors.inkSecondary,
                         ),
                       ),
@@ -154,10 +151,8 @@ class _PropertyHeader extends StatelessWidget {
           SizedBox(width: space.inlineIconLabel),
           EzWord(
             rest: 'Stays',
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 16.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.ink,
             ),
           ),
@@ -252,10 +247,8 @@ class _PropertyContent extends ConsumerWidget {
                     ),
                     child: Text(
                       'Rooms',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 16.0,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.ink,
                       ),
                     ),
@@ -278,9 +271,7 @@ class _PropertyContent extends ConsumerWidget {
                           child: Text(
                             'No bookable rooms are currently available for this property.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 14.0,
+                            style: context.text.labelLarge?.copyWith(
                               color: colors.inkSecondary,
                             ),
                           ),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 
 /// Secondary full-width outline button on a light surface.
@@ -32,7 +30,7 @@ class BookingAppOutline extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(top: marginTop ?? space.inlineButtonGroup),
         child: Material(
-          color: Colors.transparent,
+          color: colors.transparent,
           child: InkWell(
             onTap: onPressed,
             borderRadius: shape.radiusPill,
@@ -51,10 +49,8 @@ class BookingAppOutline extends StatelessWidget {
               ),
               child: EzText(
                 text: label,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 14.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.labelLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: enabled ? colors.ink : colors.textDisabled,
                 ),
                 ezColor: enabled ? colors.brandPrimary : colors.textDisabled,

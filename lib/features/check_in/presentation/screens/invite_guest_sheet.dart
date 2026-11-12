@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 
 /// Modal bottom sheet for inviting additional adult guests to verify for a booking.
@@ -64,7 +62,7 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
   void _copyLink() {
     Clipboard.setData(ClipboardData(text: _inviteUrl));
     setState(() => _copied = true);
-    widget.onInvited?.call();
+    widget.onInvited;
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) setState(() => _copied = false);
     });
@@ -116,19 +114,15 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                         : (widget.adultIndex > 1
                               ? 'Invite adult ${widget.adultIndex + 1}'
                               : 'Invite second guest'),
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 18,
-                      fontWeight: TypeScale.bold,
+                    style: context.text.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: colors.textPrimary,
                     ),
                   ),
                   SizedBox(height: space.stackText),
                   Text(
                     'Each person verifies themselves on their own phone. You will not see their documents.',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
+                    style: context.text.labelMedium?.copyWith(
                       color: colors.textSecondary,
                       height: 1.35,
                     ),
@@ -161,10 +155,8 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                         onTap: () => setState(() => _showingQrCode = false),
                         child: Text(
                           'Switch to sending a link',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
-                            fontWeight: TypeScale.semiBold,
+                          style: context.text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: colors.brandPrimary,
                             decoration: TextDecoration.underline,
                           ),
@@ -194,9 +186,7 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                           Expanded(
                             child: Text(
                               _inviteUrl,
-                              style: TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                                fontSize: 12,
+                              style: context.text.labelMedium?.copyWith(
                                 color: colors.textPrimary,
                               ),
                               maxLines: 1,
@@ -216,10 +206,8 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                               ),
                               child: Text(
                                 _copied ? 'Copied' : 'Copy',
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 11,
-                                  fontWeight: TypeScale.bold,
+                                style: context.text.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                   color: _copied
                                       ? colors.statusSuccessForeground
                                       : colors.textOnAction,
@@ -236,10 +224,8 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                         onTap: () => setState(() => _showingQrCode = true),
                         child: Text(
                           'Or show a QR code for them to scan',
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
-                            fontWeight: TypeScale.semiBold,
+                          style: context.text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: colors.brandPrimary,
                             decoration: TextDecoration.underline,
                           ),
@@ -253,7 +239,7 @@ class _InviteGuestSheetState extends State<InviteGuestSheet> {
                     label: 'Done',
                     variant: AppButtonVariant.primary,
                     onPressed: () {
-                      widget.onInvited?.call();
+                      widget.onInvited;
                       Navigator.pop(context);
                     },
                   ),

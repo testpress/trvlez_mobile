@@ -7,8 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_alt_line.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
@@ -178,14 +176,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                     offset: Offset(-15 * (1 - _trvl.value), 0),
                                     child: Text(
                                       'TRVL',
-                                      style: TextStyle(
-                                        fontFamily: AppTypography.fontFamily,
-                                        fontSize: wordmarkFontSize,
-                                        fontWeight: TypeScale.bold,
-                                        letterSpacing: 0.5,
-                                        height: 1.0,
-                                        color: colors.brandOnSurface,
-                                      ),
+                                      style: context.text.displaySmall
+                                          ?.copyWith(
+                                            fontSize: wordmarkFontSize,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.5,
+                                            height: 1.0,
+                                            color: colors.brandOnSurface,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -216,14 +214,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                     offset: Offset(15 * (1 - _ez.value), 0),
                                     child: Text(
                                       'ez',
-                                      style: TextStyle(
-                                        fontFamily: AppTypography.fontFamily,
-                                        fontSize: wordmarkFontSize,
-                                        fontWeight: TypeScale.bold,
-                                        letterSpacing: 0.5,
-                                        height: 1.0,
-                                        color: colors.brandSecondary,
-                                      ),
+                                      style: context.text.displaySmall
+                                          ?.copyWith(
+                                            fontSize: wordmarkFontSize,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.5,
+                                            height: 1.0,
+                                            color: colors.brandSecondary,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -396,11 +394,10 @@ class _MotifLayerState extends State<_MotifLayer> {
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
+                    style: context.text.labelSmall?.copyWith(
                       fontSize: (text.length > 1 ? 6.3 : 8.5) * s,
                       height: 1.0,
-                      fontWeight: TypeScale.semiBold,
+                      fontWeight: FontWeight.w600,
                       color: colors.brandOnSurface.withValues(alpha: 0.34),
                     ),
                   ),

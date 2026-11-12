@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Card displaying important policy words such as cancellation terms or split notes.
 class BookingNoteCard extends StatelessWidget {
@@ -58,21 +56,17 @@ class BookingNoteCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14.0,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
               color: amber ? colors.waitInk : colors.ink,
             ),
           ),
           SizedBox(height: space.stackText),
           Text(
             body,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              height: 1.35,
+            style: context.text.labelMedium?.copyWith(
               color: amber ? colors.waitInk : colors.inkSecondary,
+              height: 1.35,
             ),
           ),
         ],

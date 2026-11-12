@@ -33,7 +33,7 @@ class ServiceCard extends StatelessWidget {
       button: !soon,
       label: 'ez$title service: $subtitle${soon ? ", coming soon" : ""}',
       child: Material(
-        color: Colors.transparent,
+        color: colors.transparent,
         child: InkWell(
           borderRadius: shape.radiusCard,
           onTap: soon ? null : onTap,
@@ -100,11 +100,10 @@ class ServiceCard extends StatelessWidget {
                 EzWord(
                   rest: title,
                   ezColor: soon ? colors.inkTertiary : colors.brandPrimary,
-                  style: (context.text.headlineSmall ?? const TextStyle())
-                      .copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: soon ? colors.inkTertiary : colors.textPrimary,
-                      ),
+                  style: context.text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: soon ? colors.inkTertiary : colors.textPrimary,
+                  ),
                 ),
                 SizedBox(height: space.stackTight),
                 Text(

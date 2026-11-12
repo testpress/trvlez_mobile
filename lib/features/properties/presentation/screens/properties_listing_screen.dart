@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/ez_word.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
@@ -145,12 +143,9 @@ class _PropertiesListingScreenState
                     SizedBox(width: space.inlineIconLabel),
                     EzWord(
                       rest: 'Stays',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 20,
-                        fontWeight: TypeScale.bold,
-                        letterSpacing: -0.3,
+                      style: context.text.headlineMedium?.copyWith(
                         color: colors.textPrimary,
+                        letterSpacing: -0.3,
                       ),
                     ),
                   ],
@@ -180,9 +175,7 @@ class _PropertiesListingScreenState
                           onChanged: _onSearchChanged,
                           textInputAction: TextInputAction.search,
                           cursorColor: colors.brandPrimary,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 13,
+                          style: context.text.titleSmall?.copyWith(
                             color: colors.textPrimary,
                           ),
                           decoration: InputDecoration(
@@ -191,9 +184,7 @@ class _PropertiesListingScreenState
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
                             hintText: 'Search properties or cities',
-                            hintStyle: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 13,
+                            hintStyle: context.text.titleSmall?.copyWith(
                               color: colors.textSecondary,
                             ),
                           ),
@@ -235,12 +226,10 @@ class _PropertiesListingScreenState
                         onSelected: (_) => _onCategorySelected(index),
                         selectedColor: colors.brandPrimary,
                         backgroundColor: colors.surface,
-                        labelStyle: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
+                        labelStyle: context.text.labelMedium?.copyWith(
                           fontWeight: isSelected
-                              ? TypeScale.bold
-                              : TypeScale.medium,
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                           color: isSelected
                               ? colors.textOnAction
                               : colors.textPrimary,
@@ -284,10 +273,8 @@ class _PropertiesListingScreenState
                             SizedBox(height: space.stackFormField),
                             Text(
                               'Unable to load properties',
-                              style: TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                                fontSize: 16,
-                                fontWeight: TypeScale.bold,
+                              style: context.text.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
                                 color: colors.textPrimary,
                               ),
                             ),
@@ -324,19 +311,15 @@ class _PropertiesListingScreenState
                             SizedBox(height: space.stackFormField),
                             Text(
                               'Nothing matches that',
-                              style: TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                                fontSize: 15,
-                                fontWeight: TypeScale.bold,
+                              style: context.text.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
                                 color: colors.textPrimary,
                               ),
                             ),
                             SizedBox(height: space.stackText),
                             Text(
                               'Try adjusting your search terms or filters.',
-                              style: TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                                fontSize: 12,
+                              style: context.text.labelMedium?.copyWith(
                                 color: colors.textSecondary,
                               ),
                             ),
@@ -345,10 +328,8 @@ class _PropertiesListingScreenState
                               onPressed: _resetAllFilters,
                               child: Text(
                                 'Reset filters',
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 13,
-                                  fontWeight: TypeScale.bold,
+                                style: context.text.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                   color: colors.brandPrimary,
                                 ),
                               ),
@@ -365,10 +346,8 @@ class _PropertiesListingScreenState
                           // Featured Stays Horizontal Rail
                           Text(
                             'Popular now',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 14,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                               color: colors.textPrimary,
                             ),
                           ),
@@ -410,10 +389,8 @@ class _PropertiesListingScreenState
                           // All properties vertical list
                           Text(
                             'All Stays',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 14,
-                              fontWeight: TypeScale.bold,
+                            style: context.text.labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                               color: colors.textPrimary,
                             ),
                           ),

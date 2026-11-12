@@ -76,7 +76,7 @@ class VerificationPollingService {
         _isPolling && totalElapsed >= maxDurationSeconds && !completed;
     _isPolling = false;
     if (timedOut) {
-      onTimeout?.call();
+      onTimeout;
     }
   }
 

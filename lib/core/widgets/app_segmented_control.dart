@@ -45,7 +45,7 @@ class AppSegmentedControl extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: i == selected
                           ? colors.surface
-                          : Colors.transparent,
+                          : colors.transparent,
                       borderRadius: shape.radiusPill,
                       boxShadow: i == selected
                           ? [

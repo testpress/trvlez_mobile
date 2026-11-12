@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/finder_status.dart';
 
@@ -60,7 +59,7 @@ class FinderStatusBanner extends StatelessWidget {
                     'Passport Re-Verification Required',
                     style: context.text.labelLarge?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -80,7 +79,7 @@ class FinderStatusBanner extends StatelessWidget {
               label: 'Re-verify Passport',
               onPressed: () async {
                 await context.push(AppRoutes.verificationLanding);
-                onReverificationReturned?.call();
+                onReverificationReturned;
               },
             ),
           ],
@@ -122,7 +121,7 @@ class FinderStatusBanner extends StatelessWidget {
                     'Membership Temporarily Suspended',
                     style: context.text.labelLarge?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -176,7 +175,7 @@ class FinderStatusBanner extends StatelessWidget {
                     title,
                     style: context.text.labelLarge?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),

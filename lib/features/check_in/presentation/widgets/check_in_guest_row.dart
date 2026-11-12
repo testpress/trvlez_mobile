@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// One guest on the "Who's staying" check-in screen.
 class CheckInGuestRow extends StatelessWidget {
@@ -65,10 +63,8 @@ class CheckInGuestRow extends StatelessWidget {
                       )
                     : Text(
                         initials!,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
-                          fontWeight: TypeScale.bold,
+                        style: context.text.labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: ready
                               ? colors.brandActionLabel
                               : colors.brandOnSurface,
@@ -83,19 +79,15 @@ class CheckInGuestRow extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.semiBold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
                         color: colors.brandOnSurface,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       detail,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                      style: context.text.bodySmall?.copyWith(
                         color: colors.brandSecondaryBody,
                       ),
                     ),
@@ -113,10 +105,8 @@ class CheckInGuestRow extends StatelessWidget {
                 ),
                 child: Text(
                   chip,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: ready
                         ? colors.brandActionLabel
                         : colors.brandOnSurface,

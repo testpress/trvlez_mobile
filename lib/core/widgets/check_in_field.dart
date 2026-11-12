@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Label above a pill-shaped picker field or multiline note input.
 class CheckInField extends StatelessWidget {
@@ -43,10 +41,8 @@ class CheckInField extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: TypeScale.semiBold,
+            style: context.text.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
               color: colors.brandSecondary,
             ),
           ),
@@ -77,22 +73,18 @@ class CheckInField extends StatelessWidget {
                           maxLines: 3,
                           minLines: 3,
                           cursorColor: colors.brandOnSurface,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 14.5,
+                          style: context.text.bodyMedium?.copyWith(
                             color: colors.brandOnSurface,
                             height: 1.25,
                           ),
                           decoration: InputDecoration(
                             isDense: true,
                             filled: false,
-                            fillColor: Colors.transparent,
+                            fillColor: colors.transparent,
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
                             hintText: hint,
-                            hintStyle: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 14.5,
+                            hintStyle: context.text.bodyMedium?.copyWith(
                               color: colors.brandSecondaryPlaceholder,
                               height: 1.25,
                             ),
@@ -100,9 +92,7 @@ class CheckInField extends StatelessWidget {
                         )
                       : Text(
                           value,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 14.5,
+                          style: context.text.bodyMedium?.copyWith(
                             color: filled
                                 ? colors.brandOnSurface
                                 : colors.brandSecondaryPlaceholder,

@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -170,7 +169,6 @@ class _SelfieCaptureScreenState extends ConsumerState<SelfieCaptureScreen> {
           'Centre your face',
           textAlign: TextAlign.center,
           style: context.text.headlineLarge?.copyWith(
-            fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
             letterSpacing: -0.2,
           ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Red-surface consent checkbox.
 class CheckInConsentTick extends StatelessWidget {
@@ -64,10 +62,7 @@ class CheckInConsentTick extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12,
-                    fontWeight: TypeScale.regular,
+                  style: context.text.labelMedium?.copyWith(
                     color: colors.brandSecondary,
                     height: 1.35,
                   ),

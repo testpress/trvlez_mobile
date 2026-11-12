@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Single item in the disclosure card detailing what is sent or withheld.
 class CheckInDisclosureLine {
@@ -45,10 +43,8 @@ class CheckInDisclosureCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 13,
-              fontWeight: TypeScale.bold,
+            style: context.text.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.brandOnSurface,
             ),
           ),
@@ -72,10 +68,7 @@ class CheckInDisclosureCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     lines[i].text,
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 12,
-                      fontWeight: TypeScale.regular,
+                    style: context.text.labelMedium?.copyWith(
                       color: lines[i].shared
                           ? colors.brandOnSurface
                           : colors.checkInDisclosureDimText,

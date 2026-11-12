@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 enum VerifyRowStatus { done, running, redo }
 
@@ -123,7 +122,6 @@ class _StatusRowTile extends StatelessWidget {
             child: Text(
               item.label,
               style: context.text.labelMedium?.copyWith(
-                fontWeight: TypeScale.medium,
                 color: isDimmed
                     ? colors.verificationStepInactiveText
                     : colors.brandOnSurface,
@@ -134,7 +132,7 @@ class _StatusRowTile extends StatelessWidget {
           Container(
             padding: space.insetTagSm,
             decoration: BoxDecoration(
-              color: isWaiting ? Colors.transparent : colors.brandOnSurface,
+              color: isWaiting ? colors.transparent : colors.brandOnSurface,
               border: isWaiting
                   ? Border.all(
                       color: colors.verificationStepRing,
@@ -150,7 +148,7 @@ class _StatusRowTile extends StatelessWidget {
                 VerifyRowStatus.redo => 'Redo',
               },
               style: context.text.labelSmall?.copyWith(
-                fontWeight: TypeScale.semiBold,
+                fontWeight: FontWeight.w600,
                 color: isWaiting
                     ? colors.brandOnSurface
                     : colors.brandActionLabel,

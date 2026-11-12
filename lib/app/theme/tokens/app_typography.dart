@@ -66,9 +66,10 @@ class AppTypography {
         color: foregroundColor,
       ),
       headlineMedium: heading.copyWith(
-        fontSize: TypeScale.s20,
-        fontWeight: TypeScale.semiBold,
+        fontSize: TypeScale.s22,
+        fontWeight: TypeScale.bold,
         color: foregroundColor,
+        letterSpacing: -0.3,
       ),
       headlineSmall: heading.copyWith(
         fontSize: TypeScale.s18,

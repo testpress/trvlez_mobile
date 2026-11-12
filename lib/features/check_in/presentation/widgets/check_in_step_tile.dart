@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Where a step in the check-in list has progressed to.
 enum CheckInStepState {
@@ -80,10 +78,8 @@ class CheckInStepTile extends StatelessWidget {
                       )
                     : Text(
                         '$number',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 13,
-                          fontWeight: TypeScale.bold,
+                        style: context.text.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: isNow
                               ? colors.brandActionLabel
                               : colors.brandOnSurface,
@@ -98,19 +94,14 @@ class CheckInStepTile extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 14,
-                        fontWeight: TypeScale.semiBold,
+                      style: context.text.labelLarge?.copyWith(
                         color: colors.brandOnSurface,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.brandSecondaryBody,
                       ),
                     ),

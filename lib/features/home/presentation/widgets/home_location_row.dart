@@ -41,7 +41,6 @@ class HomeLocationRow extends StatelessWidget {
                 Text(
                   location,
                   style: context.text.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
                     color: colors.textPrimary,
                   ),
                 ),

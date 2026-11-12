@@ -181,7 +181,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   _greetingText(travelerName),
                   style: context.text.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
                     color: colors.textPrimary,
                     letterSpacing: -0.3,
                     height: 1.25,

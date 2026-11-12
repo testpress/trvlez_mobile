@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/utils/date_formatter.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
@@ -104,10 +102,8 @@ class _BookingCardScreenState extends ConsumerState<BookingCardScreen> {
                 SizedBox(width: space.inlineIconLabel),
                 Text(
                   'Payment',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 16.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.ink,
                   ),
                 ),
@@ -233,9 +229,7 @@ class _BookingCardScreenState extends ConsumerState<BookingCardScreen> {
                           ? 'Nothing is taken until you confirm.'
                           : 'Nothing is taken today.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 12.0,
+                      style: context.text.labelMedium?.copyWith(
                         color: colors.inkTertiary,
                       ),
                     ),
@@ -280,11 +274,7 @@ class _CardAssuranceNotice extends StatelessWidget {
           Expanded(
             child: Text(
               'We never see or store your card. It is held by our payment provider.',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12.0,
-                color: colors.okInk,
-              ),
+              style: context.text.labelMedium?.copyWith(color: colors.okInk),
             ),
           ),
         ],

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Opens a bottom sheet for choosing an option (e.g. arrival time or guest count).
 Future<String?> showCheckInOptionPicker(
@@ -19,7 +17,7 @@ Future<String?> showCheckInOptionPicker(
   return showModalBottomSheet<String>(
     context: context,
     backgroundColor: colors.surface,
-    barrierColor: Colors.black54,
+    barrierColor: colors.scrim,
     isScrollControlled: true,
     constraints: BoxConstraints(
       maxHeight: MediaQuery.sizeOf(context).height * 0.85,
@@ -53,10 +51,8 @@ Future<String?> showCheckInOptionPicker(
             ),
             child: Text(
               title,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 16,
-                fontWeight: TypeScale.bold,
+              style: context.text.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.textPrimary,
               ),
             ),
@@ -84,12 +80,10 @@ Future<String?> showCheckInOptionPicker(
                               Expanded(
                                 child: Text(
                                   option,
-                                  style: TextStyle(
-                                    fontFamily: AppTypography.fontFamily,
-                                    fontSize: 14,
+                                  style: context.text.labelLarge?.copyWith(
                                     fontWeight: option == current
-                                        ? TypeScale.semiBold
-                                        : TypeScale.regular,
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
                                     color: option == current
                                         ? colors.textPrimary
                                         : colors.textSecondary,

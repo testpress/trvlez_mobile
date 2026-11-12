@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_security_note.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -102,7 +101,6 @@ class ChipDataScreen extends ConsumerWidget {
           'Chip data received',
           textAlign: TextAlign.center,
           style: context.text.headlineLarge?.copyWith(
-            fontWeight: TypeScale.bold,
             color: colors.brandOnSurface,
           ),
         ),
@@ -154,7 +152,7 @@ class ChipDataScreen extends ConsumerWidget {
                           Text(
                             displayName,
                             style: context.text.titleLarge?.copyWith(
-                              fontWeight: TypeScale.bold,
+                              fontWeight: FontWeight.bold,
                               color: colors.brandOnSurface,
                             ),
                             maxLines: 1,
@@ -193,7 +191,7 @@ class ChipDataScreen extends ConsumerWidget {
                                 Text(
                                   'From the chip',
                                   style: context.text.labelSmall?.copyWith(
-                                    fontWeight: TypeScale.medium,
+                                    fontWeight: FontWeight.w500,
                                     color: colors.brandOnSurface,
                                   ),
                                 ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_text_field.dart';
 import 'package:trvlez_mobile/core/widgets/status_pill.dart';
 
@@ -70,7 +69,7 @@ class FinderAddressStepView extends StatelessWidget {
                     'Where are you based?',
                     style: context.text.headlineSmall?.copyWith(
                       color: colors.textPrimary,
-                      fontWeight: TypeScale.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: space.stackText),
@@ -118,7 +117,7 @@ class FinderAddressStepView extends StatelessWidget {
                               countryLabel,
                               style: context.text.titleSmall?.copyWith(
                                 color: colors.textPrimary,
-                                fontWeight: TypeScale.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],

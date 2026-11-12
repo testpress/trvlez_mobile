@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Card container for grouping reservation details under a header title.
 class ReservationInfoCard extends StatelessWidget {
@@ -34,10 +33,7 @@ class ReservationInfoCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: AppTypography.heading.copyWith(
-              fontSize: 16,
-              color: colors.textPrimary,
-            ),
+            style: context.text.titleLarge?.copyWith(color: colors.textPrimary),
           ),
           SizedBox(height: space.stackItem),
           ...children,
@@ -76,8 +72,7 @@ class ReservationInfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: AppTypography.body.copyWith(
-                fontSize: 14,
+              style: context.text.bodyMedium?.copyWith(
                 color: colors.textSecondary,
               ),
             ),
@@ -85,10 +80,7 @@ class ReservationInfoRow extends StatelessWidget {
           SizedBox(width: space.inlineIconLabel),
           Text(
             value,
-            style: AppTypography.label.copyWith(
-              fontSize: 14,
-              color: colors.textPrimary,
-            ),
+            style: context.text.labelLarge?.copyWith(color: colors.textPrimary),
           ),
         ],
       ),

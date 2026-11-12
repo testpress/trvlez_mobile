@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 enum TrioState { waiting, done, failed }
 
@@ -73,7 +72,7 @@ class VerifyProgressTrio extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: states[i] == TrioState.waiting
-                        ? Colors.transparent
+                        ? colors.transparent
                         : colors.brandOnSurface,
                     border: Border.all(
                       color: states[i] == TrioState.waiting
@@ -102,8 +101,8 @@ class VerifyProgressTrio extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: context.text.labelSmall?.copyWith(
                     fontWeight: states[i] != TrioState.waiting
-                        ? TypeScale.semiBold
-                        : TypeScale.regular,
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: states[i] != TrioState.waiting
                         ? colors.brandOnSurface
                         : colors.verificationStepInactiveText,

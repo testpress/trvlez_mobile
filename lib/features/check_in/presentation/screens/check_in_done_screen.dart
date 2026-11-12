@@ -6,8 +6,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -68,7 +66,9 @@ class CheckInDoneScreen extends ConsumerWidget {
                     backgroundColor: colors.surface,
                     content: Text(
                       'Wallet passes are not wired up in this build.',
-                      style: TextStyle(color: colors.textPrimary),
+                      style: context.text.bodyMedium?.copyWith(
+                        color: colors.textPrimary,
+                      ),
                     ),
                   ),
                 );
@@ -101,10 +101,7 @@ class CheckInDoneScreen extends ConsumerWidget {
             Text(
               'Show this at the desk',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 22,
-                fontWeight: TypeScale.bold,
+              style: context.text.headlineMedium?.copyWith(
                 color: colors.brandOnSurface,
                 letterSpacing: -0.3,
               ),
@@ -113,9 +110,7 @@ class CheckInDoneScreen extends ConsumerWidget {
             Text(
               'Collect your keys and go straight up. Nothing else needed.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondaryBody,
               ),
             ),
@@ -190,19 +185,15 @@ class _ReferenceRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondarySmall,
               ),
             ),
           ),
           Text(
             value,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: TypeScale.bold,
+            style: context.text.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
               color: colors.brandOnSurface,
             ),
           ),

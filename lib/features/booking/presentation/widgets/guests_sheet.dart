@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/features/booking/presentation/providers/booking_providers.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_app_button.dart';
 import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_stepper.dart';
@@ -11,7 +9,7 @@ import 'package:trvlez_mobile/features/booking/presentation/widgets/booking_step
 Future<void> showGuestsSheet(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.colors.transparent,
       isScrollControlled: true,
       builder: (_) => const GuestsSheet(),
     );
@@ -61,19 +59,15 @@ class GuestsSheet extends ConsumerWidget {
               SizedBox(height: space.stackFormField),
               Text(
                 'Guests',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 16.0,
-                  fontWeight: TypeScale.bold,
+                style: context.text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: colors.ink,
                 ),
               ),
               SizedBox(height: space.stackText),
               Text(
                 'Everyone 18 and over verifies with us. Under-18s are checked in at reception.',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12.0,
+                style: context.text.labelMedium?.copyWith(
                   color: colors.inkSecondary,
                 ),
               ),
@@ -91,9 +85,7 @@ class GuestsSheet extends ConsumerWidget {
               SizedBox(height: space.stackItem),
               Text(
                 'We pass the hotel a count of children and infants and nothing else — no names, no dates of birth.',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12.0,
+                style: context.text.labelMedium?.copyWith(
                   color: colors.inkTertiary,
                 ),
               ),
@@ -152,19 +144,15 @@ class _GuestCountRow extends StatelessWidget {
               children: [
                 Text(
                   kind.label,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 14.0,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colors.ink,
                   ),
                 ),
                 SizedBox(height: space.stackText),
                 Text(
                   kind.hint,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12.0,
+                  style: context.text.labelMedium?.copyWith(
                     color: colors.inkSecondary,
                   ),
                 ),

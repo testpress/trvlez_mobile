@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Small muted group heading in settings/account lists.
 class SettingsGroupHeading extends StatelessWidget {
@@ -24,10 +22,8 @@ class SettingsGroupHeading extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontFamily: AppTypography.fontFamily,
-          fontSize: 12,
-          fontWeight: TypeScale.semiBold,
+        style: context.text.labelMedium?.copyWith(
+          fontWeight: FontWeight.w600,
           color: colors.textSecondary,
         ),
       ),
@@ -93,20 +89,13 @@ class SettingsRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.medium,
-                    color: labelColor,
-                  ),
+                  style: context.text.titleSmall?.copyWith(color: labelColor),
                 ),
               ),
               if (value != null) ...[
                 Text(
                   value!,
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 12,
+                  style: context.text.labelMedium?.copyWith(
                     color: colors.textSecondary,
                   ),
                 ),
@@ -124,10 +113,8 @@ class SettingsRow extends StatelessWidget {
                     ),
                     child: Text(
                       '$count',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 10,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.labelSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.textOnAction,
                       ),
                     ),

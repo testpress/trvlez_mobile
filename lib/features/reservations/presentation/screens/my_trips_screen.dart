@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
@@ -63,12 +61,9 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
               children: [
                 Text(
                   'My Trips',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 20,
-                    fontWeight: TypeScale.bold,
-                    letterSpacing: -0.3,
+                  style: context.text.headlineMedium?.copyWith(
                     color: colors.textPrimary,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 SizedBox(height: space.stackItem),
@@ -78,16 +73,10 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                   indicatorWeight: shape.borderMedium,
                   labelColor: colors.brandPrimary,
                   unselectedLabelColor: colors.inkTertiary,
-                  labelStyle: const TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.bold,
+                  labelStyle: context.text.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.medium,
-                  ),
+                  unselectedLabelStyle: context.text.titleSmall,
                   tabs: [
                     Tab(text: 'Upcoming (${upcoming.length})'),
                     Tab(text: 'Completed (${completed.length})'),
@@ -228,10 +217,8 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
             SizedBox(height: space.stackFormField),
             Text(
               title,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 18,
-                fontWeight: TypeScale.bold,
+              style: context.text.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.textPrimary,
               ),
             ),
@@ -239,9 +226,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 13,
+              style: context.text.titleSmall?.copyWith(
                 color: colors.textSecondary,
               ),
             ),
@@ -256,12 +241,10 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                   padding: space.insetControlLg,
                 ),
                 icon: Icon(AppIcons.search, size: sizes.iconSm),
-                label: const Text(
+                label: Text(
                   'Explore Properties',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 13,
-                    fontWeight: TypeScale.bold,
+                  style: context.text.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -292,10 +275,8 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
             SizedBox(height: space.stackFormField),
             Text(
               'Failed to load reservations',
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 16,
-                fontWeight: TypeScale.bold,
+              style: context.text.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.textPrimary,
               ),
             ),
@@ -303,9 +284,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
             Text(
               error,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.textSecondary,
               ),
             ),
@@ -396,10 +375,8 @@ class _ReservationCard extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           reservation.propertySummary.name,
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 15,
-                            fontWeight: TypeScale.bold,
+                          style: context.text.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                             color: colors.textPrimary,
                           ),
                           maxLines: 1,
@@ -426,9 +403,7 @@ class _ReservationCard extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             reservation.propertySummary.locationString,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 12,
+                            style: context.text.labelMedium?.copyWith(
                               color: colors.textSecondary,
                             ),
                             maxLines: 1,
@@ -448,19 +423,15 @@ class _ReservationCard extends ConsumerWidget {
                       SizedBox(width: space.inlineIconLabel),
                       Text(
                         '${dateFormat.format(reservation.checkInDate)} – ${dateFormat.format(reservation.checkOutDate)}',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 12,
-                          fontWeight: TypeScale.semiBold,
+                        style: context.text.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
                           color: colors.textPrimary,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         '${reservation.nights} night(s)',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 11,
+                        style: context.text.bodySmall?.copyWith(
                           color: colors.textSecondary,
                         ),
                       ),
@@ -477,10 +448,8 @@ class _ReservationCard extends ConsumerWidget {
                       SizedBox(width: space.inlineIconLabel),
                       Text(
                         reservation.confirmationCode,
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
-                          fontSize: 11,
-                          fontWeight: TypeScale.medium,
+                        style: context.text.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
                           color: colors.textSecondary,
                         ),
                       ),
@@ -527,10 +496,8 @@ class _ReservationCard extends ConsumerWidget {
                                         ReservationStatus.checkedIn
                                     ? 'Digital pass ready · Show pass'
                                     : 'Check in online · Open now · Start',
-                                style: TextStyle(
-                                  fontFamily: AppTypography.fontFamily,
-                                  fontSize: 11,
-                                  fontWeight: TypeScale.semiBold,
+                                style: context.text.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
                                   color: colors.brandPrimary,
                                 ),
                               ),
@@ -583,18 +550,14 @@ class _ReservationCard extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'Payment on hold',
-                                    style: TextStyle(
-                                      fontFamily: AppTypography.fontFamily,
-                                      fontSize: 12,
-                                      fontWeight: TypeScale.bold,
+                                    style: context.text.labelMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
                                       color: colors.statusWarningForeground,
                                     ),
                                   ),
                                   Text(
                                     'Dispute active · Raised ${dispute.raisedAt}',
-                                    style: TextStyle(
-                                      fontFamily: AppTypography.fontFamily,
-                                      fontSize: 10,
+                                    style: context.text.labelSmall?.copyWith(
                                       color: colors.statusWarningForeground,
                                     ),
                                   ),
@@ -633,9 +596,7 @@ class _ReservationCard extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               'Dispute withdrawn · Payment released to hotel',
-                              style: TextStyle(
-                                fontFamily: AppTypography.fontFamily,
-                                fontSize: 11,
+                              style: context.text.bodySmall?.copyWith(
                                 color: colors.inkTertiary,
                               ),
                             ),
@@ -672,10 +633,8 @@ class _ReservationCard extends ConsumerWidget {
                           SizedBox(width: space.inlineMicro),
                           Text(
                             'Something wrong with this stay? Report issue',
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 11,
-                              fontWeight: TypeScale.medium,
+                            style: context.text.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w500,
                               color: colors.inkTertiary,
                               decoration: TextDecoration.underline,
                             ),
@@ -760,10 +719,8 @@ class _AnywhereCard extends StatelessWidget {
                   children: [
                     Text(
                       stay.hotel,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 15,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.textPrimary,
                       ),
                       maxLines: 1,
@@ -781,9 +738,7 @@ class _AnywhereCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             stay.place,
-                            style: TextStyle(
-                              fontFamily: AppTypography.fontFamily,
-                              fontSize: 12,
+                            style: context.text.labelMedium?.copyWith(
                               color: colors.textSecondary,
                             ),
                             maxLines: 1,
@@ -810,19 +765,15 @@ class _AnywhereCard extends StatelessWidget {
               SizedBox(width: space.inlineIconLabel),
               Text(
                 stay.dates,
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 12,
-                  fontWeight: TypeScale.semiBold,
+                style: context.text.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
                   color: colors.textPrimary,
                 ),
               ),
               const Spacer(),
               Text(
                 '${stay.guests} guest${stay.guests > 1 ? 's' : ''}',
-                style: TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 11,
+                style: context.text.bodySmall?.copyWith(
                   color: colors.textSecondary,
                 ),
               ),
@@ -844,9 +795,7 @@ class _AnywhereCard extends StatelessWidget {
                   stay.route == AnywhereRoute.byEmail
                       ? 'Delivered to ${stay.hotelEmail}'
                       : 'TRVLez connected direct check-in',
-                  style: TextStyle(
-                    fontFamily: AppTypography.fontFamily,
-                    fontSize: 11,
+                  style: context.text.bodySmall?.copyWith(
                     color: colors.textSecondary,
                   ),
                   maxLines: 1,
@@ -876,10 +825,8 @@ class _AnywhereCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Check-in Anywhere pass · Show passport upon arrival',
-                    style: TextStyle(
-                      fontFamily: AppTypography.fontFamily,
-                      fontSize: 10,
-                      fontWeight: TypeScale.medium,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w500,
                       color: colors.inkSecondary,
                     ),
                   ),
@@ -908,7 +855,7 @@ class _AddStayRow extends StatelessWidget {
     final sizes = context.sizes;
 
     return Material(
-      color: Colors.transparent,
+      color: colors.transparent,
       child: InkWell(
         borderRadius: shape.radiusSurface,
         onTap: onTap,
@@ -946,19 +893,15 @@ class _AddStayRow extends StatelessWidget {
                   children: [
                     Text(
                       'Check-in Anywhere',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.textPrimary,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       'Staying at a hotel not on TRVLez? Check in online here.',
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                      style: context.text.bodySmall?.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),

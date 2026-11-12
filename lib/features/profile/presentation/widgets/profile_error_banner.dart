@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 
 /// Error banner widget displaying validation or network failure messages in profile flows.
 class ProfileErrorBanner extends StatelessWidget {
@@ -43,8 +42,7 @@ class ProfileErrorBanner extends StatelessWidget {
             Expanded(
               child: Text(
                 errorMessage!,
-                style: AppTypography.body.copyWith(
-                  fontSize: 14,
+                style: context.text.bodyMedium?.copyWith(
                   color: colors.feedbackError,
                 ),
               ),

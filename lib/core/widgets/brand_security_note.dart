@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// The security commitment note at the bottom of brand authentication & verification screens.
 class BrandSecurityNote extends StatelessWidget {
@@ -57,9 +56,8 @@ class BrandSecurityNote extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: (context.text.bodySmall ?? const TextStyle()).copyWith(
+            style: context.text.bodySmall?.copyWith(
               fontSize: effectiveFontSize,
-              fontWeight: TypeScale.regular,
               color: noteColor,
               height: 1.45,
             ),

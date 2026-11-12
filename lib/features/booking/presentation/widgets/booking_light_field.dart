@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 
 /// Form text field with label and pill styling on a light surface.
 class BookingLightField extends StatelessWidget {
@@ -40,10 +38,7 @@ class BookingLightField extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 12.0,
-              fontWeight: TypeScale.medium,
+            style: context.text.labelMedium?.copyWith(
               color: colors.inkSecondary,
             ),
           ),
@@ -66,22 +61,18 @@ class BookingLightField extends StatelessWidget {
             textInputAction: textInputAction,
             autofillHints: autofillHints,
             cursorColor: colors.brandPrimary,
-            style: TextStyle(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 14.5,
-              fontWeight: TypeScale.medium,
+            style: context.text.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
               color: colors.ink,
             ),
             decoration: InputDecoration(
               isDense: true,
               filled: false,
-              fillColor: Colors.transparent,
+              fillColor: colors.transparent,
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
               hintText: hint,
-              hintStyle: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 14.5,
+              hintStyle: context.text.bodyMedium?.copyWith(
                 color: colors.textDisabled,
               ),
             ),

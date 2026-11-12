@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show reservationListProvider;
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
@@ -62,10 +60,7 @@ class DisputeReasonScreen extends ConsumerWidget {
         SizedBox(height: space.stackSection),
         Text(
           'What went wrong?',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -73,9 +68,7 @@ class DisputeReasonScreen extends ConsumerWidget {
         SizedBox(height: space.stackTight),
         Text(
           'Pick the closest one. You can explain in your own words next.',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.35,
           ),
@@ -152,19 +145,15 @@ class _ReasonRow extends StatelessWidget {
                   children: [
                     Text(
                       reason.title,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 13,
-                        fontWeight: TypeScale.bold,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: colors.brandOnSurface,
                       ),
                     ),
                     SizedBox(height: space.stackText),
                     Text(
                       reason.subtitle,
-                      style: TextStyle(
-                        fontFamily: AppTypography.fontFamily,
-                        fontSize: 11,
+                      style: context.text.bodySmall?.copyWith(
                         color: colors.brandSecondaryBody,
                       ),
                     ),

@@ -121,7 +121,7 @@ class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile Setup'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(

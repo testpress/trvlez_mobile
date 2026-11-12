@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/nationality_picker_field.dart';
 
@@ -97,10 +96,7 @@ class PersonalDetailsForm extends StatelessWidget {
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.telephoneNumber],
-                style: const TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 15,
-                ),
+                style: context.text.titleMedium,
                 decoration: const InputDecoration(
                   hintText: 'Enter your phone number',
                 ),
@@ -171,9 +167,7 @@ class PersonalDetailsForm extends StatelessWidget {
                               : '${selectedDateOfBirth!.toLocal()}'.split(
                                   ' ',
                                 )[0],
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 15,
+                          style: context.text.titleMedium?.copyWith(
                             color: selectedDateOfBirth == null
                                 ? colors.textSecondary
                                 : colors.textPrimary,
@@ -204,10 +198,7 @@ class PersonalDetailsForm extends StatelessWidget {
                 controller: passportNumberController,
                 enabled: !isLoading,
                 textInputAction: TextInputAction.next,
-                style: const TextStyle(
-                  fontFamily: AppTypography.fontFamily,
-                  fontSize: 15,
-                ),
+                style: context.text.titleMedium,
                 decoration: const InputDecoration(
                   hintText: 'Enter your passport number (optional)',
                 ),
@@ -244,9 +235,7 @@ class PersonalDetailsForm extends StatelessWidget {
                               : '${selectedPassportExpiry!.toLocal()}'.split(
                                   ' ',
                                 )[0],
-                          style: TextStyle(
-                            fontFamily: AppTypography.fontFamily,
-                            fontSize: 15,
+                          style: context.text.titleMedium?.copyWith(
                             color: selectedPassportExpiry == null
                                 ? colors.textSecondary
                                 : colors.textPrimary,

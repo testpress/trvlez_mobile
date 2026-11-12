@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_colors.dart';
 import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/design_tokens/tokens.dart';
 
 FilledButtonThemeData buildFilledButtonTheme(
@@ -17,11 +16,7 @@ FilledButtonThemeData buildFilledButtonTheme(
       backgroundColor: colors.actionPrimary,
       foregroundColor: colors.textOnAction,
       shape: RoundedRectangleBorder(borderRadius: shape.radiusControl),
-      textStyle: const TextStyle(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 15,
-        fontWeight: TypeScale.semiBold,
-      ),
+      textStyle: AppTypography.buttonLabel,
       elevation: 0,
     ),
   );
@@ -40,11 +35,7 @@ ElevatedButtonThemeData buildElevatedButtonTheme(
       backgroundColor: colors.actionPrimary,
       foregroundColor: colors.textOnAction,
       shape: RoundedRectangleBorder(borderRadius: shape.radiusControl),
-      textStyle: const TextStyle(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 15,
-        fontWeight: TypeScale.semiBold,
-      ),
+      textStyle: AppTypography.buttonLabel,
       elevation: 0,
     ),
   );
@@ -56,6 +47,7 @@ OutlinedButtonThemeData buildOutlinedButtonTheme(
   AppSize size = AppSize.regular,
   AppShape shape = AppShape.standard,
 }) {
+  final textTheme = AppTypography.buildTextTheme(colors);
   return OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       minimumSize: Size(double.infinity, size.touchTargetMin),
@@ -63,11 +55,7 @@ OutlinedButtonThemeData buildOutlinedButtonTheme(
       foregroundColor: colors.textPrimary,
       side: BorderSide(color: colors.borderSubtle, width: shape.borderDefault),
       shape: RoundedRectangleBorder(borderRadius: shape.radiusControl),
-      textStyle: const TextStyle(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 14,
-        fontWeight: TypeScale.semiBold,
-      ),
+      textStyle: textTheme.labelLarge,
     ),
   );
 }
@@ -78,15 +66,12 @@ TextButtonThemeData buildTextButtonTheme(
   AppSize size = AppSize.regular,
   AppShape shape = AppShape.standard,
 }) {
+  final textTheme = AppTypography.buildTextTheme(colors);
   return TextButtonThemeData(
     style: TextButton.styleFrom(
       padding: space.insetControlSm,
       foregroundColor: colors.actionPrimary,
-      textStyle: const TextStyle(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 14,
-        fontWeight: TypeScale.semiBold,
-      ),
+      textStyle: textTheme.labelLarge,
     ),
   );
 }

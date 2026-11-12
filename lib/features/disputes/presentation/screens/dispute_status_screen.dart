@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/app/theme/tokens/app_typography.dart';
-import 'package:trvlez_mobile/app/theme/tokens/primitives/type_scale.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/brand_verify_screen.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_flag_callout.dart';
@@ -59,10 +57,7 @@ class DisputeStatusScreen extends ConsumerWidget {
         SizedBox(height: space.stackSection),
         Text(
           'Payment on hold',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: TypeScale.bold,
+          style: context.text.headlineMedium?.copyWith(
             color: colors.brandOnSurface,
             letterSpacing: -0.3,
           ),
@@ -70,9 +65,7 @@ class DisputeStatusScreen extends ConsumerWidget {
         SizedBox(height: space.stackTight),
         Text(
           '$hotel · raised $raisedText',
-          style: TextStyle(
-            fontFamily: AppTypography.fontFamily,
-            fontSize: 12,
+          style: context.text.labelMedium?.copyWith(
             color: colors.brandSecondaryBody,
             height: 1.35,
           ),
@@ -145,9 +138,7 @@ class _StatusDetailRow extends StatelessWidget {
             width: sizes.thumbPhotoSm,
             child: Text(
               label,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+              style: context.text.labelMedium?.copyWith(
                 color: colors.brandSecondarySmall,
               ),
             ),
@@ -156,10 +147,8 @@ class _StatusDetailRow extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: TextStyle(
-                fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
-                fontWeight: TypeScale.bold,
+              style: context.text.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
                 color: colors.brandOnSurface,
               ),
             ),
