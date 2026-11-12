@@ -123,7 +123,6 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
     final space = context.space;
     final shape = context.shape;
     final sizes = context.sizes;
-    final mediaQuery = MediaQuery.of(context);
     final terms = ref.watch(finderTermsProvider);
     final finderAsync = ref.watch(finderNotifierProvider);
     final summary = finderAsync.valueOrNull;
@@ -133,11 +132,6 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
     final isBlocked = summary != null && !summary.eligibility.isEligible;
 
     final sheetContent = Container(
-      constraints: BoxConstraints(
-        maxHeight: widget.isStandalone
-            ? double.infinity
-            : mediaQuery.size.height * 0.90,
-      ),
       decoration: BoxDecoration(
         color: colors.page,
         borderRadius: widget.isStandalone
@@ -147,7 +141,7 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
               ),
       ),
       child: SafeArea(
-        top: true,
+        top: widget.isStandalone,
         bottom: false,
         child: Column(
           mainAxisSize: widget.isStandalone
@@ -301,7 +295,7 @@ class _FinderOnboardingSheetState extends ConsumerState<FinderOnboardingSheet> {
                   space.insetCard.left,
                   space.stackItem,
                   space.insetCard.right,
-                  space.stackItem + mediaQuery.viewInsets.bottom,
+                  space.stackItem + MediaQuery.viewInsetsOf(context).bottom,
                 ),
                 decoration: BoxDecoration(
                   color: colors.surface,

@@ -31,6 +31,7 @@ class BrandVerifyScreen extends StatelessWidget {
     this.padTop,
     this.padBottom,
     this.isScrollable = false,
+    this.resizeToAvoidBottomInset = true,
   }) : children = children ?? body;
 
   /// The header title (e.g. 'Verification', 'Report a problem').
@@ -79,6 +80,9 @@ class BrandVerifyScreen extends StatelessWidget {
   /// Whether the screen should scroll internally if content exceeds the viewport.
   final bool isScrollable;
 
+  /// Whether the scaffold resizes to avoid the on-screen keyboard.
+  final bool resizeToAvoidBottomInset;
+
   void _defaultOnHelpTap(BuildContext context) {
     final customHelp = onHelpTap;
     if (customHelp != null) {
@@ -100,32 +104,30 @@ class BrandVerifyScreen extends StatelessWidget {
     final space = context.space;
     final bgAsset = backgroundAsset;
 
-    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     final hPad = padHorizontal ?? space.insetScreen.left;
     final tPad = padTop ?? space.stackItem;
-    final bPad = (padBottom ?? space.insetScreen.left) + bottomInset;
+    final bPad = padBottom ?? space.insetScreen.bottom;
 
     return Scaffold(
       backgroundColor: colors.brandSurface,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            // ── Background motif ──────────────────────────────────────────
-            if (bgAsset != null)
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: SvgPicture.asset(
-                    bgAsset,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                  ),
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      body: Stack(
+        children: [
+          // ── Background motif ──────────────────────────────────────────
+          if (bgAsset != null)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: SvgPicture.asset(
+                  bgAsset,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
                 ),
               ),
+            ),
 
-            // ── Screen structure ──────────────────────────────────────────
-            Padding(
+          // ── Screen structure ──────────────────────────────────────────
+          SafeArea(
+            child: Padding(
               padding: EdgeInsets.fromLTRB(hPad, tPad, hPad, bPad),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,8 +172,8 @@ class BrandVerifyScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -255,46 +257,47 @@ class _VerifyHelpLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final space = context.space;
     final shape = context.shape;
 
     return Center(
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              prefix,
-              style: context.text.bodySmall?.copyWith(
-                color: colors.brandSecondaryBody,
-              ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: space.inlineMicro,
+        runSpacing: space.stackTight,
+        children: [
+          Text(
+            prefix,
+            style: context.text.bodySmall?.copyWith(
+              color: colors.brandSecondaryBody,
             ),
-            Material(
-              color: colors.transparent,
-              child: InkWell(
-                onTap: onTap,
-                child: Container(
-                  padding: EdgeInsets.only(bottom: shape.borderDefault),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: colors.brandUnderline,
-                        width: shape.borderDefault,
-                      ),
+          ),
+          Material(
+            color: colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              child: Container(
+                padding: EdgeInsets.only(bottom: shape.borderDefault),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: colors.brandUnderline,
+                      width: shape.borderDefault,
                     ),
                   ),
-                  child: Text(
-                    linkText,
-                    style: context.text.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colors.brandOnSurface,
-                    ),
+                ),
+                child: Text(
+                  linkText,
+                  style: context.text.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.brandOnSurface,
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

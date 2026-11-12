@@ -80,5 +80,59 @@ void main() {
       expect(find.text('Verify'), findsOneWidget);
       expect(find.textContaining('Resend in 0:'), findsOneWidget);
     });
+
+    testWidgets(
+      'TwoStepCodeScreen resend row wraps cleanly at 2.0x text scale',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: MaterialApp(
+              home: MediaQuery(
+                data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
+                child: TwoStepCodeScreen(email: 'user@example.com'),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.textContaining('Resend in 0:'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'TwoStepCodeScreen resend row wraps cleanly at 2.0x text scale',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: MaterialApp(
+              home: MediaQuery(
+                data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
+                child: TwoStepCodeScreen(email: 'user@example.com'),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.textContaining('Resend in 0:'), findsOneWidget);
+      },
+    );
   });
 }

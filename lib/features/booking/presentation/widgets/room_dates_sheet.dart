@@ -13,6 +13,7 @@ Future<void> showRoomDatesSheet(BuildContext context, RoomPick pick) =>
       context: context,
       backgroundColor: context.colors.transparent,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => RoomDatesSheet(pick: pick),
     );
 
@@ -41,9 +42,6 @@ class _RoomDatesSheetState extends ConsumerState<RoomDatesSheet> {
     return Material(
       type: MaterialType.transparency,
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-        ),
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),

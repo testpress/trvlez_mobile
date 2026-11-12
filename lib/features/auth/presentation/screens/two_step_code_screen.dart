@@ -248,51 +248,51 @@ class _ResendCountdownRow extends StatelessWidget {
         : 'Resend in 0:${remaining.toString().padLeft(2, '0')}';
 
     return Center(
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Didn't get it? ",
-              style: context.text.labelMedium?.copyWith(
-                color: colors.brandSecondaryBody,
-                fontWeight: FontWeight.w400,
-              ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: space.inlineMicro,
+        runSpacing: space.stackTight,
+        children: [
+          Text(
+            "Didn't get it? ",
+            style: context.text.labelMedium?.copyWith(
+              color: colors.brandSecondaryBody,
+              fontWeight: FontWeight.w400,
             ),
-            Semantics(
-              button: true,
-              label: label,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: sizes.touchTargetMin,
-                  minWidth: sizes.touchTargetMin,
-                ),
-                child: InkWell(
-                  onTap: isExpired ? onResend : null,
-                  borderRadius: shape.radiusSubtle,
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: space.inlineMicro,
-                        vertical: space.stackTight,
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.only(bottom: shape.borderDefault),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: colors.brandUnderline,
-                              width: shape.borderDefault,
-                            ),
+          ),
+          Semantics(
+            button: true,
+            label: label,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: sizes.touchTargetMin,
+                minWidth: sizes.touchTargetMin,
+              ),
+              child: InkWell(
+                onTap: isExpired ? onResend : null,
+                borderRadius: shape.radiusSubtle,
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: space.inlineMicro,
+                      vertical: space.stackTight,
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: shape.borderDefault),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: colors.brandUnderline,
+                            width: shape.borderDefault,
                           ),
                         ),
-                        child: Text(
-                          label,
-                          style: context.text.labelMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colors.brandOnSurface,
-                          ),
+                      ),
+                      child: Text(
+                        label,
+                        style: context.text.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colors.brandOnSurface,
                         ),
                       ),
                     ),
@@ -300,8 +300,8 @@ class _ResendCountdownRow extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

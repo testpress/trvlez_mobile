@@ -47,18 +47,19 @@ class BrandAltLine extends StatelessWidget {
     );
 
     return Center(
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (prefix case final prefixText?) ...[
-              Text(prefixText, style: prefixStyle),
-              SizedBox(width: space.inlineMicro),
-            ],
-            Semantics(
-              button: true,
-              label: linkText,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: space.inlineMicro,
+        runSpacing: space.stackTight,
+        children: [
+          if (prefix case final prefixText?)
+            Text(prefixText, style: prefixStyle),
+          Semantics(
+            button: true,
+            label: linkText,
+            child: Material(
+              color: context.colors.transparent,
               child: InkWell(
                 onTap: onTap,
                 borderRadius: shape.radiusSubtle,
@@ -80,8 +81,8 @@ class BrandAltLine extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

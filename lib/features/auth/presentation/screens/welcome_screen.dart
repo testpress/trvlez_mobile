@@ -163,6 +163,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                         child: Transform.scale(
                           scale: 1.0 - (0.1 * _lift.value),
+                          // Approved bounded-mark contract: the brand wordmark is an indivisible
+                          // identity graphic that must not wrap. FittedBox preserves presentation
+                          // without overflowing on extreme accessibility scales (>2.0x).
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Row(

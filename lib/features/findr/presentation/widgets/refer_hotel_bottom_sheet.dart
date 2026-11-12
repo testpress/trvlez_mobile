@@ -12,6 +12,7 @@ Future<bool?> showReferHotelSheet(BuildContext context) {
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     backgroundColor: context.colors.transparent,
     builder: (modalContext) => const ReferHotelBottomSheet(),
   );
@@ -116,10 +117,7 @@ class _ReferHotelBottomSheetState extends ConsumerState<ReferHotelBottomSheet> {
 
     return Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: sizes.containerForm,
-          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
-        ),
+        constraints: BoxConstraints(maxWidth: sizes.containerForm),
         child: Container(
           padding: EdgeInsets.only(bottom: bottomInset),
           decoration: BoxDecoration(

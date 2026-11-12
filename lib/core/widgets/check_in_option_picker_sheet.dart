@@ -19,9 +19,7 @@ Future<String?> showCheckInOptionPicker(
     backgroundColor: colors.surface,
     barrierColor: colors.scrim,
     isScrollControlled: true,
-    constraints: BoxConstraints(
-      maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-    ),
+    useSafeArea: true,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: shape.radiusOverlay.topLeft),
     ),

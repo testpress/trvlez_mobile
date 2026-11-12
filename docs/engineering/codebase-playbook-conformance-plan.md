@@ -143,12 +143,12 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Replace all global-height sheet caps with a documented sheet contract: parent constraints, a single scroll owner, `isScrollControlled` behaviour, keyboard insets, and maximum height only when it represents an approved component constraint.
-- [ ] Refactor `room_dates_sheet`, `check_in_option_picker_sheet`, `notifications_sheet`, and `refer_hotel_bottom_sheet` first; then scan for equivalent formulas outside the original four files.
-- [ ] Remove `FittedBox(BoxFit.scaleDown)` from text-bearing controls/links unless an approved bounded-label contract explicitly requires it. Prefer wrapping, a scrollable content region, or deliberate ellipsis with a detail destination.
-- [ ] Correct `BrandVerifyScreen` bottom-padding ownership and verify its footer remains reachable with keyboard and maximum text scale. Decide whether `resizeToAvoidBottomInset: false` is truly required per screen contract; do not use it as a blanket default.
-- [ ] Audit shared shells (`BrandScreen`, `BrandVerifyScreen`, pinned headers, modal sheets) for one SafeArea owner and no duplicate system padding.
-- [ ] Add matrix tests for every repaired shared shell before applying screen-family migrations.
+- [x] Replace all global-height sheet caps with a documented sheet contract: parent constraints, a single scroll owner, `isScrollControlled` behaviour, keyboard insets, and maximum height only when it represents an approved component constraint.
+- [x] Refactor `room_dates_sheet`, `check_in_option_picker_sheet`, `notifications_sheet`, and `refer_hotel_bottom_sheet` first; then scan for equivalent formulas outside the original four files.
+- [x] Remove `FittedBox(BoxFit.scaleDown)` from text-bearing controls/links unless an approved bounded-label contract explicitly requires it. Prefer wrapping, a scrollable content region, or deliberate ellipsis with a detail destination.
+- [x] Correct `BrandVerifyScreen` bottom-padding ownership and verify its footer remains reachable with keyboard and maximum text scale. Decide whether `resizeToAvoidBottomInset: false` is truly required per screen contract; do not use it as a blanket default.
+- [x] Audit shared shells (`BrandScreen`, `BrandVerifyScreen`, pinned headers, modal sheets) for one SafeArea owner and no duplicate system padding.
+- [x] Add matrix tests for every repaired shared shell before applying screen-family migrations.
 
 ### Acceptance criteria
 

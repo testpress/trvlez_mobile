@@ -175,5 +175,57 @@ void main() {
       expect(fakeRepo.submittedParams!.city, 'Nice');
       expect(fakeRepo.submittedParams!.targetEmail, 'director@royalseaside.fr');
     });
+
+    testWidgets(
+      'renders and scrolls cleanly under compact viewport and keyboard open',
+      (tester) async {
+        tester.view.physicalSize = const Size(360, 640);
+        tester.view.devicePixelRatio = 1.0;
+        tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+          tester.view.resetViewInsets();
+        });
+
+        await tester.pumpWidget(createWidget());
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('Refer a Hotel'), findsOneWidget);
+
+        await tester.drag(find.byType(ListView), const Offset(0, -400));
+        await tester.pumpAndSettle();
+
+        final submitFinder = find.text('Submit Recommendation');
+        expect(submitFinder, findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'renders and scrolls cleanly under compact viewport and keyboard open',
+      (tester) async {
+        tester.view.physicalSize = const Size(360, 640);
+        tester.view.devicePixelRatio = 1.0;
+        tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+          tester.view.resetViewInsets();
+        });
+
+        await tester.pumpWidget(createWidget());
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('Refer a Hotel'), findsOneWidget);
+
+        await tester.drag(find.byType(ListView), const Offset(0, -400));
+        await tester.pumpAndSettle();
+
+        final submitFinder = find.text('Submit Recommendation');
+        expect(submitFinder, findsOneWidget);
+      },
+    );
   });
 }
