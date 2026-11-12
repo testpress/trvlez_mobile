@@ -62,8 +62,14 @@ void main() {
       repo = SettingsRepository(prefs);
     });
 
-    test('Defaults to normal text scale preset', () {
-      expect(repo.getTextScalePreset(), TextScalePreset.normal);
+    test('Defaults to followSystem text scale preset', () {
+      expect(repo.getTextScalePreset(), TextScalePreset.followSystem);
+    });
+
+    test('Migrates legacy "normal" setting to followSystem', () async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('text_scale_preset', 'normal');
+      expect(repo.getTextScalePreset(), TextScalePreset.followSystem);
     });
 
     test('Persists and retrieves text scale presets', () async {
@@ -73,6 +79,9 @@ void main() {
 
       await repo.setTextScalePreset(TextScalePreset.smaller);
       expect(repo.getTextScalePreset(), TextScalePreset.smaller);
+
+      await repo.setTextScalePreset(TextScalePreset.followSystem);
+      expect(repo.getTextScalePreset(), TextScalePreset.followSystem);
     });
 
     test('Persists and retrieves two-step verification status', () async {

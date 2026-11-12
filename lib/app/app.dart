@@ -4,7 +4,6 @@ import 'package:trvlez_mobile/app/router/app_router.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/attribution/attribution_providers.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/core/design_tokens/text_scale_preset.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 
 /// Root application widget for TrvlEz.
@@ -77,18 +76,9 @@ class _TrvlEzAppState extends ConsumerState<TrvlEzApp> {
       routerConfig: ref.watch(routerProvider),
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
-        final TextScaler effectiveScaler;
-        if (textScalePreset == TextScalePreset.normal) {
-          effectiveScaler = mediaQuery.textScaler.clamp(
-            minScaleFactor: 0.85,
-            maxScaleFactor: 2.0,
-          );
-        } else {
-          final systemBase = mediaQuery.textScaler.scale(1.0);
-          effectiveScaler = TextScaler.linear(
-            (systemBase * textScalePreset.scaleFactor).clamp(0.85, 2.0),
-          );
-        }
+        final effectiveScaler = textScalePreset.scalerFor(
+          mediaQuery.textScaler,
+        );
         return MediaQuery(
           data: mediaQuery.copyWith(textScaler: effectiveScaler),
           child: child ?? const SizedBox.shrink(),

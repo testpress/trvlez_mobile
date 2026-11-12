@@ -43,7 +43,7 @@ void main() {
         expect(find.text('Largest'), findsOneWidget);
 
         // Live preview box
-        expect(find.text('PREVIEW'), findsOneWidget);
+        expect(find.text('PREVIEW (ILLUSTRATIVE)'), findsOneWidget);
         expect(find.text('Grand Ocean Hotel'), findsOneWidget);
         expect(
           find.text('Lisbon · 2–6 Nov · check-in from 3pm'),
@@ -65,6 +65,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(settingsRepo.getTextScalePreset(), TextScalePreset.larger);
+    });
+
+    testWidgets('Tapping Normal preset updates selection', (tester) async {
+      await settingsRepo.setTextScalePreset(TextScalePreset.larger);
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      final normalBtn = find.text('Normal');
+      await tester.tap(normalBtn);
+      await tester.pumpAndSettle();
+
+      expect(settingsRepo.getTextScalePreset(), TextScalePreset.followSystem);
     });
   });
 }

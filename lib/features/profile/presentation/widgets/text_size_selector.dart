@@ -38,7 +38,7 @@ class TextSizeSelector extends ConsumerWidget {
           ),
           SizedBox(height: space.stackText),
           Text(
-            'Changes every screen in TRVLez.',
+            'Adjusts reading size relative to your device settings.',
             style: text.bodyMedium?.copyWith(color: colors.textSecondary),
           ),
           SizedBox(height: space.stackItem),
@@ -60,7 +60,7 @@ class TextSizeSelector extends ConsumerWidget {
             ],
           ),
           SizedBox(height: space.stackItem),
-          _LivePreviewCard(scaleFactor: activePreset.scaleFactor),
+          const _LivePreviewCard(),
         ],
       ),
     );
@@ -119,6 +119,9 @@ class _TextSizeSampleTile extends StatelessWidget {
               SizedBox(height: space.stackText),
               Text(
                 preset.label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: text.labelSmall?.copyWith(
                   color: isSelected
                       ? colors.actionPrimary
@@ -134,9 +137,7 @@ class _TextSizeSampleTile extends StatelessWidget {
 }
 
 class _LivePreviewCard extends StatelessWidget {
-  const _LivePreviewCard({required this.scaleFactor});
-
-  final double scaleFactor;
+  const _LivePreviewCard();
 
   @override
   Widget build(BuildContext context) {
@@ -145,43 +146,38 @@ class _LivePreviewCard extends StatelessWidget {
     final shape = context.shape;
     final text = context.text;
 
-    return MediaQuery(
-      data: MediaQuery.of(
-        context,
-      ).copyWith(textScaler: TextScaler.linear(scaleFactor)),
-      child: Container(
-        width: double.infinity,
-        padding: space.insetCard,
-        decoration: BoxDecoration(
-          color: colors.page,
-          borderRadius: shape.radiusSurface,
-          border: Border.all(
-            color: colors.borderSubtle,
-            width: shape.borderDefault,
+    return Container(
+      width: double.infinity,
+      padding: space.insetCard,
+      decoration: BoxDecoration(
+        color: colors.page,
+        borderRadius: shape.radiusSurface,
+        border: Border.all(
+          color: colors.borderSubtle,
+          width: shape.borderDefault,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'PREVIEW (ILLUSTRATIVE)',
+            style: text.labelSmall?.copyWith(
+              letterSpacing: 0.8,
+              color: colors.textSecondary,
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'PREVIEW',
-              style: text.labelSmall?.copyWith(
-                letterSpacing: 0.8,
-                color: colors.textSecondary,
-              ),
-            ),
-            SizedBox(height: space.stackText),
-            Text(
-              'Grand Ocean Hotel',
-              style: text.titleMedium?.copyWith(color: colors.textPrimary),
-            ),
-            SizedBox(height: space.stackText),
-            Text(
-              'Lisbon · 2–6 Nov · check-in from 3pm',
-              style: text.bodyMedium?.copyWith(color: colors.textSecondary),
-            ),
-          ],
-        ),
+          SizedBox(height: space.stackText),
+          Text(
+            'Grand Ocean Hotel',
+            style: text.titleMedium?.copyWith(color: colors.textPrimary),
+          ),
+          SizedBox(height: space.stackText),
+          Text(
+            'Lisbon · 2–6 Nov · check-in from 3pm',
+            style: text.bodyMedium?.copyWith(color: colors.textSecondary),
+          ),
+        ],
       ),
     );
   }

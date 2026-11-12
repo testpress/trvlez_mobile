@@ -170,7 +170,7 @@ class TextScaleNotifier extends Notifier<TextScalePreset> {
     try {
       return ref.watch(settingsRepositoryProvider).getTextScalePreset();
     } catch (_) {
-      return TextScalePreset.normal;
+      return TextScalePreset.followSystem;
     }
   }
 

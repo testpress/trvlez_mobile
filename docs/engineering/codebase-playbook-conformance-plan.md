@@ -82,12 +82,12 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Add regression tests for `TrvlEzApp` proving that the default setting preserves the inherited platform `TextScaler` strategy and does not cap a supported system maximum at 2.0.
-- [ ] Replace `TextScalePreset.normal` with an explicit `followSystem` semantic value. Migrate stored settings compatibly so existing users do not lose their selection.
-- [ ] Remove the `scale(1.0)` → `TextScaler.linear(...)` derivation. If optional relative reading adjustments remain a product requirement, implement a documented strategy that delegates to the platform scaler at each input size; otherwise retain only Follow system until an ADR-approved composition mechanism exists.
-- [ ] Remove the global 2.0 cap. The app must preserve the platform strategy by default; validation supports 2.0 as a widget-test floor, not as a runtime accessibility ceiling.
-- [ ] Update the text-size selector labels and preview so it cannot imply that “Normal” is a cross-device baseline. The preview must use the same strategy semantics as production or explicitly say it is illustrative only.
-- [ ] Add an ADR 0002 evidence fixture/test utility that records 12/16/20/24 `TextScaler` probes without modifying production layout.
+- [x] Add regression tests for `TrvlEzApp` proving that the default setting preserves the inherited platform `TextScaler` strategy and does not cap a supported system maximum at 2.0.
+- [x] Replace `TextScalePreset.normal` with an explicit `followSystem` semantic value. Migrate stored settings compatibly so existing users do not lose their selection.
+- [x] Remove the `scale(1.0)` → `TextScaler.linear(...)` derivation. If optional relative reading adjustments remain a product requirement, implement a documented strategy that delegates to the platform scaler at each input size; otherwise retain only Follow system until an ADR-approved composition mechanism exists.
+- [x] Remove the global 2.0 cap. The app must preserve the platform strategy by default; validation supports 2.0 as a widget-test floor, not as a runtime accessibility ceiling.
+- [x] Update the text-size selector labels and preview so it cannot imply that “Normal” is a cross-device baseline. The preview must use the same strategy semantics as production or explicitly say it is illustrative only.
+- [x] Add an ADR 0002 evidence fixture/test utility that records 12/16/20/24 `TextScaler` probes without modifying production layout.
 
 ### Acceptance criteria
 
