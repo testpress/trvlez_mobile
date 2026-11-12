@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/device/camera_service.dart';
+import 'package:trvlez_mobile/core/providers/repository_providers.dart';
 import 'package:trvlez_mobile/core/widgets/join_findr_sheet.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/screens/anywhere_sent_screen.dart';
 import 'package:trvlez_mobile/features/anywhere/presentation/screens/find_hotel_screen.dart';
@@ -55,7 +56,6 @@ import 'package:trvlez_mobile/features/reservations/presentation/screens/my_trip
 import 'package:trvlez_mobile/features/reservations/presentation/screens/pre_arrival_form_screen.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/saved/presentation/screens/saved_screen.dart';
-import 'package:trvlez_mobile/features/verification/data/services/nfc_passport_service_impl.dart';
 import 'package:trvlez_mobile/features/verification/domain/entities/problem_report_context.dart';
 import 'package:trvlez_mobile/features/verification/domain/passport_crop_params.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/chip_data_screen.dart';

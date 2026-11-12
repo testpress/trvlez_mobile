@@ -2,6 +2,9 @@
 // Architecture Rule: Features never import another feature's data or presentation.
 // Shared cross-feature state is accessed through core.
 
+export 'package:trvlez_mobile/core/providers/repository_providers.dart'
+    show reservationRepositoryProvider;
+
 export 'package:trvlez_mobile/features/anywhere/presentation/providers/anywhere_providers.dart'
     show anywhereDraftProvider, anywhereStaysProvider;
 
@@ -27,8 +30,7 @@ export 'package:trvlez_mobile/features/reservations/presentation/providers/reser
     show
         checkInTokenProvider,
         reservationDetailNotifierProvider,
-        reservationListProvider,
-        reservationRepositoryProvider;
+        reservationListProvider;
 
 export 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart'
     show verificationNotifierProvider;

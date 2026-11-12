@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 
 class MockPropertiesRepository extends Fake implements PropertiesRepository {

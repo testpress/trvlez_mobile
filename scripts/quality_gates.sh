@@ -19,12 +19,16 @@ echo "PASSED: Style Guard - Zero raw colors in lib/features/."
 
 # 2. Automated Layer Import Guard
 echo ""
-echo "2/8 Checking Layer Import Guard (disallow data imports in presentation UI)..."
-if grep -rnE "import .*/data/" lib/features/*/presentation/ --exclude-dir=providers; then
-  echo "FAILED: UI screens and widgets in presentation/ must not import data layer directly." >&2
+echo "2/8 Checking Layer Import Guard (disallow data imports/exports in presentation layer)..."
+if grep -rnE "(import|export) .*/data/" lib/features/*/presentation/; then
+  echo "FAILED: Presentation layer (screens, widgets, providers) must not import or export data layer directly." >&2
   exit 1
 fi
-echo "PASSED: Layer Import Guard - Zero data imports in presentation UI screens and widgets."
+if grep -rnE "(import|export) .*/data/" lib/ | grep -v "lib/features/[^/]*/data/" | grep -v "lib/core/providers/repository_providers.dart"; then
+  echo "FAILED: Unauthorized data import outside data layer and approved composition boundary (lib/core/providers/repository_providers.dart)." >&2
+  exit 1
+fi
+echo "PASSED: Layer Import Guard - Zero data imports or exports in presentation layer; approved composition boundary verified."
 
 # 3. Automated Domain Purity Guard
 echo ""

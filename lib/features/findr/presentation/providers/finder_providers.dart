@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/findr/data/repositories/finder_repository_impl.dart';
+import 'package:trvlez_mobile/core/providers/repository_providers.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/finder_activation_params.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/finder_status.dart';
 import 'package:trvlez_mobile/features/findr/domain/entities/finder_terms.dart';
 
-export 'package:trvlez_mobile/features/findr/data/repositories/finder_repository_impl.dart'
+export 'package:trvlez_mobile/core/providers/repository_providers.dart'
     show finderRepositoryProvider;
 export 'package:trvlez_mobile/features/findr/domain/entities/finder_activation_params.dart';
 export 'package:trvlez_mobile/features/findr/domain/entities/finder_status.dart';

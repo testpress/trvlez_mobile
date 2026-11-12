@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
-import 'package:trvlez_mobile/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:trvlez_mobile/core/providers/repository_providers.dart';
 
-export 'package:trvlez_mobile/features/auth/data/repositories/auth_repository_impl.dart'
+export 'package:trvlez_mobile/core/providers/repository_providers.dart'
     show authRepositoryProvider;
 export 'package:trvlez_mobile/features/auth/domain/entities/signup_result.dart';
 export 'package:trvlez_mobile/features/auth/domain/repositories/auth_repository.dart';

@@ -40,9 +40,10 @@ jobs:
       - name: Verify Screenshot Evidence Metadata
         run: python3 scripts/test_write_capture_metadata.py
 
-      - name: Verify Layer Import Guard (Zero Data Imports in UI)
+      - name: Verify Layer Import Guard (Zero Data Imports in Presentation)
         run: |
-          ! grep -rnE "import .*/data/" lib/features/*/presentation/ --exclude-dir=providers
+          ! grep -rnE "(import|export) .*/data/" lib/features/*/presentation/
+          ! grep -rnE "(import|export) .*/data/" lib/ | grep -v "lib/features/[^/]*/data/" | grep -v "lib/core/providers/repository_providers.dart"
 
       - name: Run Static Analysis
         run: flutter analyze --fatal-infos

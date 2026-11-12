@@ -9,7 +9,6 @@ import 'package:trvlez_mobile/features/booking/presentation/screens/booking_date
 import 'package:trvlez_mobile/features/booking/presentation/screens/booking_review_screen.dart';
 import 'package:trvlez_mobile/features/booking/presentation/screens/property_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
 
 class _MockPropertiesRepository extends Fake implements PropertiesRepository {

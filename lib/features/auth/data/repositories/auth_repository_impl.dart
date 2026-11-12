@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
-import 'package:trvlez_mobile/core/network/dio_provider.dart';
 import 'package:trvlez_mobile/core/storage/attribution_storage.dart';
 import 'package:trvlez_mobile/core/storage/token_storage.dart';
 import 'package:trvlez_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -57,12 +55,3 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 }
-
-/// Provider for the domain [AuthRepository] interface.
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepositoryImpl(
-    remoteDataSource: ref.watch(authRemoteDataSourceProvider),
-    tokenStorage: ref.watch(tokenStorageProvider),
-    attributionStorage: ref.watch(attributionStorageProvider),
-  );
-});

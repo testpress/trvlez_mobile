@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
 import 'package:trvlez_mobile/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:trvlez_mobile/features/profile/domain/entities/profile.dart';
@@ -68,10 +67,3 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 }
-
-/// Provider for the domain [ProfileRepository] interface.
-final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  return ProfileRepositoryImpl(
-    remoteDataSource: ref.watch(profileRemoteDataSourceProvider),
-  );
-});

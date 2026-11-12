@@ -1,20 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trvlez_mobile/features/properties/data/datasources/properties_remote_data_source.dart';
-import 'package:trvlez_mobile/features/properties/data/repositories/properties_repository_impl.dart';
+import 'package:trvlez_mobile/core/providers/repository_providers.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
-import 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
 import 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
 
+export 'package:trvlez_mobile/core/providers/repository_providers.dart'
+    show propertiesRepositoryProvider;
+export 'package:trvlez_mobile/features/properties/domain/repositories/properties_repository.dart';
 export 'package:trvlez_mobile/features/properties/presentation/properties_notifier.dart';
-
-/// Provider for the domain [PropertiesRepository] interface.
-final propertiesRepositoryProvider = Provider<PropertiesRepository>((ref) {
-  return PropertiesRepositoryImpl(
-    remoteDataSource: ref.watch(propertiesRemoteDataSourceProvider),
-  );
-});
 
 /// Standard naming alias for [propertiesProvider].
 final propertiesNotifierProvider = propertiesProvider;

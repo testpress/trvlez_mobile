@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/network/dio_error_mapper.dart';
 import 'package:trvlez_mobile/features/findr/data/datasources/finder_remote_data_source.dart';
 import 'package:trvlez_mobile/features/findr/data/models/finder_dto.dart';
@@ -170,10 +169,3 @@ class FinderRepositoryImpl implements FinderRepository {
     }
   }
 }
-
-/// Provider for [FinderRepository].
-final finderRepositoryProvider = Provider<FinderRepository>((ref) {
-  return FinderRepositoryImpl(
-    remoteDataSource: ref.watch(finderRemoteDataSourceProvider),
-  );
-});

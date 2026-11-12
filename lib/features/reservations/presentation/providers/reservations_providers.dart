@@ -3,34 +3,15 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/network/api_exception.dart';
-import 'package:trvlez_mobile/features/reservations/data/datasources/form_remote_data_source.dart';
-import 'package:trvlez_mobile/features/reservations/data/datasources/reservation_remote_data_source.dart';
-import 'package:trvlez_mobile/features/reservations/data/repositories/form_repository_impl.dart';
-import 'package:trvlez_mobile/features/reservations/data/repositories/reservation_repository_impl.dart';
+import 'package:trvlez_mobile/core/providers/repository_providers.dart';
 import 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
-import 'package:trvlez_mobile/features/reservations/domain/repositories/form_repository.dart';
-import 'package:trvlez_mobile/features/reservations/domain/repositories/reservation_repository.dart';
 
+export 'package:trvlez_mobile/core/providers/repository_providers.dart'
+    show formRepositoryProvider, reservationRepositoryProvider;
 export 'package:trvlez_mobile/features/reservations/domain/entities/form.dart';
 export 'package:trvlez_mobile/features/reservations/domain/entities/reservation.dart';
 export 'package:trvlez_mobile/features/reservations/domain/repositories/form_repository.dart';
 export 'package:trvlez_mobile/features/reservations/domain/repositories/reservation_repository.dart';
-
-// ─── Repositories ────────────────────────────────────────────────
-
-/// Provider for the domain [ReservationRepository] interface.
-final reservationRepositoryProvider = Provider<ReservationRepository>((ref) {
-  return ReservationRepositoryImpl(
-    remoteDataSource: ref.watch(reservationRemoteDataSourceProvider),
-  );
-});
-
-/// Provider for the domain [FormRepository] interface.
-final formRepositoryProvider = Provider<FormRepository>((ref) {
-  return FormRepositoryImpl(
-    remoteDataSource: ref.watch(formRemoteDataSourceProvider),
-  );
-});
 
 // ─── List State ──────────────────────────────────────────────────
 

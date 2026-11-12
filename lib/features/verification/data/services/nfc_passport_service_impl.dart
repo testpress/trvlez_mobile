@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dmrtd/dmrtd.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_error_mapper.dart';
 import 'package:trvlez_mobile/features/verification/data/services/nfc_image_extractor.dart';
@@ -355,8 +354,3 @@ class NfcPassportServiceImpl implements NfcPassportService {
     }
   }
 }
-
-/// Provider for the [NfcPassportService].
-final nfcPassportServiceProvider = Provider<NfcPassportService>((ref) {
-  return NfcPassportServiceImpl();
-});

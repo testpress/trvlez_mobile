@@ -53,7 +53,7 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 | LAY-01 | P1 | Four sheets derive maximum height from global window height, rather than their allocated constraints and keyboard/inset contract. | `room_dates_sheet.dart:47`; `check_in_option_picker_sheet.dart:25`; `notifications_sheet.dart:70`; `refer_hotel_bottom_sheet.dart:122` | Chapters 02–03 |
 | LAY-02 | P1 | Text-bearing UI uses `FittedBox(BoxFit.scaleDown)`, which can reduce accessibility text rather than wrap, scroll, or use an approved truncation policy. | `brand_alt_line.dart:52`; `brand_verify_screen.dart:262`; `two_step_code_screen.dart:251`; plus welcome/verification capture paths | Chapter 03 forbidden fixes; chapter 07 |
 | LAY-03 | P1 | Shared verification shell has a likely axis-token defect: its default bottom padding reads `space.insetScreen.left`; its pinned foot and `resizeToAvoidBottomInset: false` need a large-text/keyboard contract test. | `lib/core/widgets/brand_verify_screen.dart:92-128` | Chapters 02–03 |
-| ARC-01 | P1 | Presentation providers instantiate or export data-layer implementations. The existing CI guard deliberately excludes `presentation/providers`, so this boundary bypass is unchecked. | `auth_providers.dart:5`; `properties_providers.dart:4-5`; `reservations_providers.dart:6-9`; `verification_providers.dart:3`; `finder_providers.dart:4`; `profile_providers.dart:4` | Chapter 01 dependency rule |
+| ARC-01 | P1 | [Resolved] Presentation providers instantiate or export data-layer implementations. The existing CI guard deliberately excludes `presentation/providers`, so this boundary bypass is unchecked. | Resolved in Phase 3; centralized in `lib/core/providers/repository_providers.dart` with presentation layer guard enforced. | Chapter 01 dependency rule |
 | ERR-01 | P1 | UI/notifier code surfaces raw exception strings and uses broad/empty catches. This can expose transport/internal details and produces inconsistent error states. | `my_trips_screen.dart:126`; `findr_*` screens/widgets; `refer_hotel_*`; `profile_setup_screen.dart:118`; 22 empty catches across `lib/` | Chapters 01, 04, 10 |
 | SEC-01 | P0 | Debug networking logs full request/response bodies; attribution logs click-reference and referral identifiers. Tokens and personal data can therefore reach debug logs. | `core/network/dio_provider.dart:50-54`; `core/attribution/attribution_service.dart:92,106`; test output confirms headers are logged | Chapter 10 §6; chapter 08 privacy policy |
 | A11Y-01 | P1 | No Flutter accessibility Guideline API assertions exist despite the playbook requiring them for shared interactive components and material interactive-screen changes. | No `meetsGuideline`, tap-target, label, or contrast guideline use under `test/` or `integration_test/` | Chapters 05 and 07 |
@@ -167,11 +167,11 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Define one dependency-composition location per feature or at app/core composition level. That location may import data implementations; presentation providers/screens may only depend on domain interfaces and approved provider contracts.
-- [ ] Move data implementation construction/export out of the affected presentation provider files: auth, properties, reservations, verification, findr, and profile.
-- [ ] Preserve test override ergonomics by exposing interface-typed providers from the approved composition boundary.
-- [ ] Extend the layer-import guard to include `presentation/providers` after the migration. Add explicit allowlisting only for the approved composition location, not a broad directory exemption.
-- [ ] Add provider/repository contract tests proving each notifier still receives the domain interface and preserves loading/error/data transitions.
+- [x] Define one dependency-composition location per feature or at app/core composition level. That location may import data implementations; presentation providers/screens may only depend on domain interfaces and approved provider contracts.
+- [x] Move data implementation construction/export out of the affected presentation provider files: auth, properties, reservations, verification, findr, and profile.
+- [x] Preserve test override ergonomics by exposing interface-typed providers from the approved composition boundary.
+- [x] Extend the layer-import guard to include `presentation/providers` after the migration. Add explicit allowlisting only for the approved composition location, not a broad directory exemption.
+- [x] Add provider/repository contract tests proving each notifier still receives the domain interface and preserves loading/error/data transitions.
 
 ### Acceptance criteria
 
