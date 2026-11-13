@@ -204,9 +204,11 @@ packages:
   dmrtd:
     dependency: "direct main"
     description:
-      path: "../dmrtd"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: f8d7a7bf8de229c26992208468ba582ed96b52df
+      url: "https://github.com/trvlez-testpress/dmrtd.git"
+    source: git
     version: "2.0.0"
   expandable:
     dependency: transitive
