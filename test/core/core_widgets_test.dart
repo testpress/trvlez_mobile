@@ -59,6 +59,22 @@ void main() {
       },
     );
 
+    testWidgets('AppButton satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Center(
+            child: AppButton(label: 'Submit Booking', onPressed: () {}),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
     testWidgets(
       'AppButton brandWhite variant renders pill shape, tokens, and disabled state',
       (tester) async {

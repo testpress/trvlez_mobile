@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/widgets/refer_hotel_bottom_sheet.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class _FakeFinderRepository implements FinderRepository {
   HotelReferralCreateParams? submittedParams;
@@ -78,13 +79,11 @@ void main() {
       fakeRepo = _FakeFinderRepository();
     });
 
-    Widget createWidget() {
-      return ProviderScope(
+    Widget createWidget({TextScaler? textScaler}) {
+      return testAppWithProviders(
         overrides: [finderRepositoryProvider.overrideWithValue(fakeRepo)],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const Scaffold(body: ReferHotelBottomSheet()),
-        ),
+        textScaler: textScaler,
+        child: const Scaffold(body: ReferHotelBottomSheet()),
       );
     }
 
@@ -110,6 +109,68 @@ void main() {
       expect(find.text('Personal Note (Optional)'), findsOneWidget);
       expect(find.text('Submit Recommendation'), findsOneWidget);
     });
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(createWidget());
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'maintains referral form and actions across phone matrix',
+      builder: (tester, scenario) async {
+        await tester.pumpWidget(createWidget(textScaler: scenario.textScaler));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Refer a Hotel'), findsOneWidget);
+        expect(find.text('Hotel Name'), findsOneWidget);
+
+        if (scenario.keyboardIsOpen) {
+          final hotelNameField = find.widgetWithText(
+            TextFormField,
+            'e.g. Grand Palace Hotel',
+          );
+          await tester.ensureVisible(hotelNameField);
+          final context = tester.element(hotelNameField);
+          final visibleHeight =
+              MediaQuery.sizeOf(context).height -
+              MediaQuery.viewInsetsOf(context).bottom;
+          expect(
+            tester.getRect(hotelNameField).bottom,
+            lessThanOrEqualTo(visibleHeight),
+          );
+        }
+
+        final submitBtn = find.text('Submit Recommendation');
+        await tester.scrollUntilVisible(
+          submitBtn,
+          500.0,
+          scrollable: find.byType(Scrollable).first,
+        );
+        expect(submitBtn, findsOneWidget);
+      },
+      scenarios: [
+        ...MaterialScreenTestScenarios.required,
+        const MaterialScreenTestScenario(
+          name: 'compact-android-keyboard-open-text-1.0',
+          viewport: TestViewports.compactAndroid,
+          textScaler: TestTextScales.normal,
+          insetProfile: TestInsetProfiles.androidKeyboardOpen,
+        ),
+      ],
+    );
 
     testWidgets('shows validation errors when fields are empty', (
       tester,
@@ -175,32 +236,6 @@ void main() {
       expect(fakeRepo.submittedParams!.city, 'Nice');
       expect(fakeRepo.submittedParams!.targetEmail, 'director@royalseaside.fr');
     });
-
-    testWidgets(
-      'renders and scrolls cleanly under compact viewport and keyboard open',
-      (tester) async {
-        tester.view.physicalSize = const Size(360, 640);
-        tester.view.devicePixelRatio = 1.0;
-        tester.view.viewInsets = const FakeViewPadding(bottom: 280);
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          tester.view.resetViewInsets();
-        });
-
-        await tester.pumpWidget(createWidget());
-        await tester.pumpAndSettle();
-
-        expect(tester.takeException(), isNull);
-        expect(find.text('Refer a Hotel'), findsOneWidget);
-
-        await tester.drag(find.byType(ListView), const Offset(0, -400));
-        await tester.pumpAndSettle();
-
-        final submitFinder = find.text('Submit Recommendation');
-        expect(submitFinder, findsOneWidget);
-      },
-    );
 
     testWidgets(
       'renders and scrolls cleanly under compact viewport and keyboard open',

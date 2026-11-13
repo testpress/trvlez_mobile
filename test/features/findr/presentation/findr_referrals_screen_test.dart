@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
 import 'package:trvlez_mobile/features/findr/presentation/screens/findr_referrals_screen.dart';
+
+import '../../../helpers/test_app.dart';
+import '../../../helpers/viewport_testing.dart';
 
 class _FakePortfolioNotifier extends FindrPortfolioNotifier {
   _FakePortfolioNotifier(this._portfolio);
@@ -62,17 +63,15 @@ void main() {
       ];
     });
 
-    Widget createScreen(FindrPortfolio portfolio) {
-      return ProviderScope(
+    Widget createScreen(FindrPortfolio portfolio, {TextScaler? textScaler}) {
+      return testAppWithProviders(
         overrides: [
           findrPortfolioProvider.overrideWith(
             () => _FakePortfolioNotifier(portfolio),
           ),
         ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const FindrReferralsScreen(),
-        ),
+        textScaler: textScaler,
+        child: const FindrReferralsScreen(),
       );
     }
 
@@ -102,6 +101,58 @@ void main() {
       expect(find.text('Villa dEste'), findsOneWidget);
       expect(find.text('Eden Roc'), findsOneWidget);
     });
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final portfolio = FindrPortfolio(
+        joined: true,
+        earned: '£0.00',
+        joinedCount: 1,
+        inReviewCount: 2,
+        dueAmount: '£0.00',
+        dueDate: '—',
+        recommendations: const [],
+        payouts: const [],
+        hotelReferrals: sampleReferrals,
+      );
+
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(createScreen(portfolio));
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'maintains referrals list and filter tabs across phone matrix',
+      builder: (tester, scenario) async {
+        final portfolio = FindrPortfolio(
+          joined: true,
+          earned: '£0.00',
+          joinedCount: 1,
+          inReviewCount: 2,
+          dueAmount: '£0.00',
+          dueDate: '—',
+          recommendations: const [],
+          payouts: const [],
+          hotelReferrals: sampleReferrals,
+        );
+
+        await tester.pumpWidget(
+          createScreen(portfolio, textScaler: scenario.textScaler),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('All Recommendations'), findsOneWidget);
+        expect(find.text('All (3)'), findsOneWidget);
+
+        final card = find.text('Hotel Splendido');
+        await tester.ensureVisible(card);
+        expect(card, findsOneWidget);
+      },
+    );
 
     testWidgets('filtering by Live shows only converted hotels', (
       tester,

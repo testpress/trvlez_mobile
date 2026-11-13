@@ -3,21 +3,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/app_error_banner.dart';
 
-void main() {
-  Widget wrap(Widget child, {bool dark = false}) {
-    return MaterialApp(
-      theme: dark ? AppTheme.darkTheme : AppTheme.lightTheme,
-      home: Scaffold(body: child),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('AppErrorBanner Widget Tests', () {
     testWidgets('returns shrink when message is null or empty', (tester) async {
-      await tester.pumpWidget(wrap(const AppErrorBanner(message: null)));
+      await tester.pumpWidget(
+        const TestApp(child: Scaffold(body: AppErrorBanner(message: null))),
+      );
       expect(find.byType(AppErrorBanner), findsOneWidget);
       expect(find.byType(Container), findsNothing);
 
-      await tester.pumpWidget(wrap(const AppErrorBanner(message: '   ')));
+      await tester.pumpWidget(
+        const TestApp(
+          child: Scaffold(body: AppErrorBanner(message: '   ')),
+        ),
+      );
       expect(find.byType(Container), findsNothing);
     });
 
@@ -27,11 +28,13 @@ void main() {
       var dismissed = false;
 
       await tester.pumpWidget(
-        wrap(
-          AppErrorBanner(
-            message: 'Unable to connect to server',
-            variant: AppErrorBannerVariant.standard,
-            onDismiss: () => dismissed = true,
+        TestApp(
+          child: Scaffold(
+            body: AppErrorBanner(
+              message: 'Unable to connect to server',
+              variant: AppErrorBannerVariant.standard,
+              onDismiss: () => dismissed = true,
+            ),
           ),
         ),
       );
@@ -52,16 +55,37 @@ void main() {
       expect(dismissed, isTrue);
     });
 
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: AppErrorBanner(
+              message: 'Connection failed',
+              onDismiss: () {},
+            ),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
     testWidgets('renders brand variant with brand styling and icon', (
       tester,
     ) async {
       await tester.pumpWidget(
-        wrap(
-          const AppErrorBanner(
-            message: 'Invalid credentials entered',
-            variant: AppErrorBannerVariant.brand,
+        TestApp(
+          theme: AppTheme.darkTheme,
+          child: const Scaffold(
+            body: AppErrorBanner(
+              message: 'Invalid credentials entered',
+              variant: AppErrorBannerVariant.brand,
+            ),
           ),
-          dark: true,
         ),
       );
 
@@ -72,21 +96,13 @@ void main() {
     testWidgets('preserves layout under 2.0x text scale without overflow', (
       tester,
     ) async {
-      tester.view.physicalSize = const Size(360, 640);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const Scaffold(
-            body: MediaQuery(
-              data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
-              child: AppErrorBanner(
-                message:
-                    'A very long detailed error message describing that something failed in network communication.',
-              ),
+        const TestApp(
+          textScaler: TextScaler.linear(2.0),
+          child: Scaffold(
+            body: AppErrorBanner(
+              message:
+                  'A very long detailed error message describing that something failed in network communication.',
             ),
           ),
         ),

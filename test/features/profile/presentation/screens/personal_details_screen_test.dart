@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/personal_details_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import '../../../../fixtures/fake_verification_repository.dart';
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class MockProfileRepository extends Fake implements ProfileRepository {
   Profile profileToReturn = const Profile(
@@ -46,8 +46,11 @@ void main() {
       fakeVerificationRepo = FakeVerificationRepository();
     });
 
-    Widget createTestWidget({required bool isVerified}) {
-      return ProviderScope(
+    Widget createTestWidget({
+      required bool isVerified,
+      TextScaler? textScaler,
+    }) {
+      return testAppWithProviders(
         overrides: [
           profileRepositoryProvider.overrideWithValue(mockRepo),
           verificationRepositoryProvider.overrideWithValue(
@@ -62,12 +65,38 @@ void main() {
             () => _TestProfileNotifier(mockRepo.profileToReturn),
           ),
         ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const PersonalDetailsScreen(),
-        ),
+        textScaler: textScaler,
+        child: const PersonalDetailsScreen(),
       );
     }
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(createTestWidget(isVerified: true));
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'maintains details and verification action across phone matrix',
+      builder: (tester, scenario) async {
+        await tester.pumpWidget(
+          createTestWidget(isVerified: true, textScaler: scenario.textScaler),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Personal details'), findsOneWidget);
+        expect(find.text('Amara Chidinma Okafor'), findsOneWidget);
+
+        final reverifyBtn = find.text('Re-verify');
+        await tester.ensureVisible(reverifyBtn);
+        expect(reverifyBtn, findsOneWidget);
+      },
+    );
 
     testWidgets('Verified account displays legal name ONLY and re-verify CTA', (
       tester,

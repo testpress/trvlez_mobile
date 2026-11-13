@@ -30,7 +30,7 @@ class PassportReviewScreen extends ConsumerWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_passport_howto.svg',
       title: 'Verification',
-      isScrollable: false,
+      isScrollable: true,
       onBack: () => context.pop(),
       body: [
         const VerificationStepper(current: 0),
@@ -53,9 +53,9 @@ class PassportReviewScreen extends ConsumerWidget {
           ),
         ),
         SizedBox(height: space.stackItem),
-        Expanded(
+        AspectRatio(
+          aspectRatio: PassportFramingGuide.passportAspectRatio,
           child: Container(
-            width: double.infinity,
             padding: space.insetCard,
             decoration: BoxDecoration(
               color: colors.brandCardBackground,

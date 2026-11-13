@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/auth/presentation/providers/auth_providers.dart';
@@ -48,9 +47,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: LoginScreen()),
+          child: const LoginScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -59,6 +58,22 @@ void main() {
       expect(find.byType(TextFormField), findsNWidgets(2));
       expect(find.text('Log in'), findsNWidgets(1));
       expect(find.text('New to TRVLez? '), findsOneWidget);
+    });
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        testAppWithProviders(
+          overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const LoginScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
     });
 
     testMaterialScreenMatrix(
@@ -115,9 +130,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: LoginScreen()),
+          child: const LoginScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -134,9 +149,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: LoginScreen()),
+          child: const LoginScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -160,9 +175,9 @@ void main() {
       mockRepo.shouldThrow = true;
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: LoginScreen()),
+          child: const LoginScreen(),
         ),
       );
       await tester.pumpAndSettle();

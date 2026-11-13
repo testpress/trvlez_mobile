@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/pre_arrival_form_screen.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class _FakeFormRepository extends Fake implements FormRepository {
   bool shouldThrow = false;
@@ -34,16 +34,51 @@ class _FakeFormRepository extends Fake implements FormRepository {
 
 void main() {
   group('PreArrivalFormScreen State Surfaces', () {
+    testWidgets('satisfies accessibility guidelines in error state', (
+      tester,
+    ) async {
+      final fakeRepo = _FakeFormRepository()..shouldThrow = true;
+
+      await tester.pumpWidget(
+        testAppWithProviders(
+          overrides: [formRepositoryProvider.overrideWithValue(fakeRepo)],
+          child: const PreArrivalFormScreen(reservationId: 'res-123'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final handle = tester.ensureSemantics();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'renders loaded state across phone matrix',
+      builder: (tester, scenario) async {
+        final fakeRepo = _FakeFormRepository();
+
+        await tester.pumpWidget(
+          testAppWithProviders(
+            textScaler: scenario.textScaler,
+            overrides: [formRepositoryProvider.overrideWithValue(fakeRepo)],
+            child: const PreArrivalFormScreen(reservationId: 'res-123'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Arrival Details'), findsOneWidget);
+      },
+    );
+
     testWidgets('renders LoadingView during initial load', (tester) async {
       final fakeRepo = _FakeFormRepository();
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [formRepositoryProvider.overrideWithValue(fakeRepo)],
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const PreArrivalFormScreen(reservationId: 'res-123'),
-          ),
+          child: const PreArrivalFormScreen(reservationId: 'res-123'),
         ),
       );
 
@@ -59,12 +94,9 @@ void main() {
       final fakeRepo = _FakeFormRepository()..shouldThrow = true;
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [formRepositoryProvider.overrideWithValue(fakeRepo)],
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const PreArrivalFormScreen(reservationId: 'res-123'),
-          ),
+          child: const PreArrivalFormScreen(reservationId: 'res-123'),
         ),
       );
       await tester.pumpAndSettle();

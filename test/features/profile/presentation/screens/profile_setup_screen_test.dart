@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
@@ -8,6 +7,9 @@ import 'package:trvlez_mobile/features/profile/presentation/screens/profile_setu
 import 'package:trvlez_mobile/features/profile/presentation/widgets/nationality_picker_field.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/personal_details_form.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/profile_avatar_uploader.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class MockProfileRepository extends Fake implements ProfileRepository {
   bool shouldThrow = false;
@@ -67,9 +69,9 @@ void main() {
       'renders avatar uploader, personal details form, and submit button',
       (tester) async {
         await tester.pumpWidget(
-          ProviderScope(
+          testAppWithProviders(
             overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
-            child: const MaterialApp(home: ProfileSetupScreen()),
+            child: const ProfileSetupScreen(),
           ),
         );
         await tester.pumpAndSettle();
@@ -83,13 +85,54 @@ void main() {
       },
     );
 
+    testMaterialScreenMatrix(
+      'maintains setup form and submit action across phone matrix',
+      builder: (tester, scenario) async {
+        await tester.pumpWidget(
+          testAppWithProviders(
+            overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
+            textScaler: scenario.textScaler,
+            child: const ProfileSetupScreen(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Profile Setup'), findsOneWidget);
+        final submitBtn = find.text('Complete Profile');
+        await tester.ensureVisible(submitBtn);
+        expect(submitBtn, findsOneWidget);
+
+        if (scenario.keyboardIsOpen) {
+          final phoneFinder = find.byType(TextFormField).first;
+          await tester.ensureVisible(phoneFinder);
+          final context = tester.element(phoneFinder);
+          final visibleHeight =
+              MediaQuery.sizeOf(context).height -
+              MediaQuery.viewInsetsOf(context).bottom;
+          expect(
+            tester.getRect(phoneFinder).bottom,
+            lessThanOrEqualTo(visibleHeight),
+          );
+        }
+      },
+      scenarios: [
+        ...MaterialScreenTestScenarios.required,
+        const MaterialScreenTestScenario(
+          name: 'compact-android-keyboard-open-text-1.0',
+          viewport: TestViewports.compactAndroid,
+          textScaler: TestTextScales.normal,
+          insetProfile: TestInsetProfiles.androidKeyboardOpen,
+        ),
+      ],
+    );
+
     testWidgets('pre-populates form fields from loaded profile state', (
       tester,
     ) async {
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: ProfileSetupScreen()),
+          child: const ProfileSetupScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -107,9 +150,9 @@ void main() {
       );
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: ProfileSetupScreen()),
+          child: const ProfileSetupScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -123,9 +166,9 @@ void main() {
 
     testWidgets('submits modified profile to repository', (tester) async {
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: ProfileSetupScreen()),
+          child: const ProfileSetupScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -145,9 +188,9 @@ void main() {
       mockRepo.shouldThrow = true;
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [profileRepositoryProvider.overrideWithValue(mockRepo)],
-          child: const MaterialApp(home: ProfileSetupScreen()),
+          child: const ProfileSetupScreen(),
         ),
       );
       await tester.pumpAndSettle();

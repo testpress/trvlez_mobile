@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/storage/passcode_storage.dart';
 import 'package:trvlez_mobile/core/storage/settings_repository.dart';
 import 'package:trvlez_mobile/features/profile/presentation/screens/security_screen.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class FakePasscodeStorage extends Fake implements PasscodeStorage {
   bool enabled = false;
@@ -31,16 +32,14 @@ void main() {
       passcodeStorage = FakePasscodeStorage();
     });
 
-    Widget createTestWidget() {
-      return ProviderScope(
+    Widget createTestWidget({TextScaler? textScaler}) {
+      return testAppWithProviders(
         overrides: [
           settingsRepositoryProvider.overrideWithValue(settingsRepo),
           passcodeStorageProvider.overrideWithValue(passcodeStorage),
         ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const SecurityScreen(),
-        ),
+        textScaler: textScaler,
+        child: const SecurityScreen(),
       );
     }
 
@@ -70,6 +69,35 @@ void main() {
           find.textContaining('lives in the Keychain — never on a server'),
           findsOneWidget,
         );
+      },
+    );
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'maintains security controls across phone matrix',
+      builder: (tester, scenario) async {
+        await tester.pumpWidget(
+          createTestWidget(textScaler: scenario.textScaler),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Security'), findsOneWidget);
+        expect(find.text('Password'), findsOneWidget);
+        expect(find.text('Two-step verification'), findsOneWidget);
+
+        final switchFinder = find.byType(Switch);
+        await tester.ensureVisible(switchFinder);
+        expect(switchFinder, findsOneWidget);
       },
     );
 

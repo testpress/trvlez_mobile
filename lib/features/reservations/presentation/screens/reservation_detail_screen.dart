@@ -82,6 +82,7 @@ class _ReservationDetailContent extends ConsumerWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(AppIcons.arrowLeft, size: sizes.iconMd),
+          tooltip: 'Back',
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -120,6 +121,7 @@ class _ReservationDetailContent extends ConsumerWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(AppIcons.arrowLeft, size: sizes.iconMd),
+          tooltip: 'Back',
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -280,11 +282,15 @@ class _ReservationDetailContent extends ConsumerWidget {
           width: shape.borderDefault,
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: space.inlineItem,
+        runSpacing: space.stackItem,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'CONFIRMATION CODE',

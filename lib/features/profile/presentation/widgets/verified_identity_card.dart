@@ -48,8 +48,11 @@ class VerifiedIdentityCard extends StatelessWidget {
                     top: Radius.circular(shape.radiusSurface.topLeft.x),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: space.inlineItem,
+                  runSpacing: space.stackItem,
                   children: [
                     Text(
                       'FROM YOUR PASSPORT',

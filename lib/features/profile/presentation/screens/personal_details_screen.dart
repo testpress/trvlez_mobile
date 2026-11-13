@@ -88,6 +88,7 @@ class PersonalDetailsScreen extends ConsumerWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(AppIcons.arrowLeft, color: colors.textPrimary),
+          tooltip: 'Back',
           onPressed: () => context.pop(),
         ),
         title: Text(

@@ -119,12 +119,14 @@ class NationalityPickerField extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  selectedNationality ?? 'Select Nationality',
-                  style: context.text.titleMedium?.copyWith(
-                    color: selectedNationality == null
-                        ? colors.textSecondary
-                        : colors.textPrimary,
+                Expanded(
+                  child: Text(
+                    selectedNationality ?? 'Select Nationality',
+                    style: context.text.titleMedium?.copyWith(
+                      color: selectedNationality == null
+                          ? colors.textSecondary
+                          : colors.textPrimary,
+                    ),
                   ),
                 ),
                 Icon(

@@ -32,6 +32,7 @@ class SecurityScreen extends ConsumerWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(AppIcons.arrowLeft, color: colors.textPrimary),
+          tooltip: 'Back',
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -88,14 +89,19 @@ class SecurityScreen extends ConsumerWidget {
                   SettingsRow(
                     icon: AppIcons.shield,
                     label: 'Two-step verification',
-                    trailing: Switch.adaptive(
-                      value: isTwoStepEnabled,
-                      activeTrackColor: colors.brandPrimary,
-                      onChanged: (_) {
-                        ref
-                            .read(twoStepVerificationNotifierProvider.notifier)
-                            .toggle();
-                      },
+                    trailing: Semantics(
+                      label: 'Two-step verification',
+                      child: Switch.adaptive(
+                        value: isTwoStepEnabled,
+                        activeTrackColor: colors.brandPrimary,
+                        onChanged: (_) {
+                          ref
+                              .read(
+                                twoStepVerificationNotifierProvider.notifier,
+                              )
+                              .toggle();
+                        },
+                      ),
                     ),
                     onTap: () {
                       ref

@@ -68,66 +68,69 @@ class SettingsRow extends StatelessWidget {
       label: '$label${value != null ? ", $value" : ""}',
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: space.insetCard.left,
-            vertical: space.stackItem,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: sizes.avatarSm,
-                height: sizes.avatarSm,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: tileColor,
-                  borderRadius: shape.radiusControlSm,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: sizes.touchTargetMin),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: space.insetCard.left,
+              vertical: space.stackItem,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: sizes.avatarSm,
+                  height: sizes.avatarSm,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: tileColor,
+                    borderRadius: shape.radiusControlSm,
+                  ),
+                  child: Icon(icon, size: sizes.iconXs, color: iconColor),
                 ),
-                child: Icon(icon, size: sizes.iconXs, color: iconColor),
-              ),
-              SizedBox(width: space.inlineIconLabel),
-              Expanded(
-                child: Text(
-                  label,
-                  style: context.text.titleSmall?.copyWith(color: labelColor),
-                ),
-              ),
-              if (value != null) ...[
-                Text(
-                  value!,
-                  style: context.text.labelMedium?.copyWith(
-                    color: colors.textSecondary,
+                SizedBox(width: space.inlineIconLabel),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: context.text.titleSmall?.copyWith(color: labelColor),
                   ),
                 ),
-                SizedBox(width: space.inlineMicro),
-              ],
-              if (trailing != null) ...[
-                trailing!,
-              ] else ...[
-                if (count != null) ...[
-                  Container(
-                    padding: space.insetTagSm,
-                    decoration: BoxDecoration(
-                      color: colors.brandPrimary,
-                      borderRadius: shape.radiusPill,
-                    ),
-                    child: Text(
-                      '$count',
-                      style: context.text.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colors.textOnAction,
-                      ),
+                if (value != null) ...[
+                  Text(
+                    value!,
+                    style: context.text.labelMedium?.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                   SizedBox(width: space.inlineMicro),
                 ],
-                Icon(
-                  AppIcons.chevronRight,
-                  size: sizes.iconXs,
-                  color: colors.inkTertiary,
-                ),
+                if (trailing != null) ...[
+                  trailing!,
+                ] else ...[
+                  if (count != null) ...[
+                    Container(
+                      padding: space.insetTagSm,
+                      decoration: BoxDecoration(
+                        color: colors.brandPrimary,
+                        borderRadius: shape.radiusPill,
+                      ),
+                      child: Text(
+                        '$count',
+                        style: context.text.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colors.textOnAction,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: space.inlineMicro),
+                  ],
+                  Icon(
+                    AppIcons.chevronRight,
+                    size: sizes.iconXs,
+                    color: colors.inkTertiary,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

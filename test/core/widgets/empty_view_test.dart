@@ -1,21 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/empty_view.dart';
 
-void main() {
-  Widget wrap(Widget child, {TextScaler? textScaler}) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: Scaffold(
-        body: MediaQuery(
-          data: MediaQueryData(textScaler: textScaler ?? TextScaler.noScaling),
-          child: child,
-        ),
-      ),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('EmptyView Widget Tests', () {
     testWidgets('renders title, subtitle, icon, and handles CTA tap', (
       tester,
@@ -23,13 +12,15 @@ void main() {
       var tapped = false;
 
       await tester.pumpWidget(
-        wrap(
-          EmptyView(
-            icon: Icons.inbox_outlined,
-            title: 'No items yet',
-            subtitle: 'Start browsing to see items here.',
-            actionLabel: 'Browse items',
-            onAction: () => tapped = true,
+        TestApp(
+          child: Scaffold(
+            body: EmptyView(
+              icon: Icons.inbox_outlined,
+              title: 'No items yet',
+              subtitle: 'Start browsing to see items here.',
+              actionLabel: 'Browse items',
+              onAction: () => tapped = true,
+            ),
           ),
         ),
       );
@@ -44,12 +35,36 @@ void main() {
       expect(tapped, isTrue);
     });
 
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: EmptyView(
+              icon: Icons.inbox_outlined,
+              title: 'No items yet',
+              subtitle: 'Start browsing to see items here.',
+              actionLabel: 'Browse items',
+              onAction: () {},
+            ),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
     testWidgets('renders without icon or CTA button cleanly', (tester) async {
       await tester.pumpWidget(
-        wrap(
-          const EmptyView(
-            title: 'Empty list',
-            subtitle: 'Nothing to display right now.',
+        const TestApp(
+          child: Scaffold(
+            body: EmptyView(
+              title: 'Empty list',
+              subtitle: 'Nothing to display right now.',
+            ),
           ),
         ),
       );
@@ -62,21 +77,18 @@ void main() {
     testWidgets('preserves layout under 2.0x text scaling without overflow', (
       tester,
     ) async {
-      tester.view.physicalSize = const Size(360, 640);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
       await tester.pumpWidget(
-        wrap(
-          EmptyView(
-            icon: Icons.calendar_today,
-            title: 'No upcoming trips',
-            subtitle: 'Browse properties and book your next adventure!',
-            actionLabel: 'Explore Properties',
-            onAction: () {},
-          ),
+        TestApp(
           textScaler: const TextScaler.linear(2.0),
+          child: Scaffold(
+            body: EmptyView(
+              icon: Icons.calendar_today,
+              title: 'No upcoming trips',
+              subtitle: 'Browse properties and book your next adventure!',
+              actionLabel: 'Explore Properties',
+              onAction: () {},
+            ),
+          ),
         ),
       );
 

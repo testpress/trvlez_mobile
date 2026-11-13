@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_passport_result.dart';
 import 'package:trvlez_mobile/features/verification/domain/nfc_read_progress.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/nfc_intro_screen.dart';
+
+import '../../../../helpers/viewport_testing.dart';
 
 class StubNfcPassportService implements NfcPassportService {
   StubNfcPassportService({this.status = NfcDeviceStatus.available});
@@ -31,6 +34,7 @@ void main() {
   Widget createTestWidget({
     required NfcPassportService nfcService,
     required ProviderContainer container,
+    TextScaler? textScaler,
   }) {
     final testRouter = GoRouter(
       initialLocation: AppRoutes.nfcIntro,
@@ -54,11 +58,60 @@ void main() {
 
     return UncontrolledProviderScope(
       container: container,
-      child: MaterialApp.router(routerConfig: testRouter),
+      child: MaterialApp.router(
+        theme: AppTheme.lightTheme,
+        routerConfig: testRouter,
+        builder: textScaler != null
+            ? (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+                child: child!,
+              )
+            : null,
+      ),
     );
   }
 
   group('NfcIntroScreen - Skip Button & Hardware Availability Tests', () {
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final mockService = StubNfcPassportService(
+        status: NfcDeviceStatus.available,
+      );
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(
+        createTestWidget(nfcService: mockService, container: container),
+      );
+      await tester.pumpAndSettle();
+
+      final handle = tester.ensureSemantics();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'renders NFC intro across phone matrix',
+      builder: (tester, scenario) async {
+        final mockService = StubNfcPassportService(
+          status: NfcDeviceStatus.available,
+        );
+        final container = ProviderContainer();
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(
+          createTestWidget(
+            nfcService: mockService,
+            container: container,
+            textScaler: scenario.textScaler,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Scan the chip'), findsOneWidget);
+      },
+    );
     testWidgets('does not render any skip chip scan button in the default UI', (
       tester,
     ) async {

@@ -121,6 +121,7 @@ class PersonalDetailsForm extends StatelessWidget {
               SizedBox(height: space.stackItem),
               DropdownButtonFormField<String>(
                 initialValue: selectedGender,
+                isExpanded: true,
                 decoration: const InputDecoration(
                   hintText: 'Select your gender',
                 ),

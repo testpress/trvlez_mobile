@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trvlez_mobile/core/domain/traveler_verification_state.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
@@ -8,6 +7,9 @@ import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/reservation_detail_screen.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {
   Reservation? reservationToReturn;
@@ -88,7 +90,7 @@ void main() {
         mockRepo.reservationToReturn = testReservation;
 
         await tester.pumpWidget(
-          ProviderScope(
+          testAppWithProviders(
             overrides: [
               isKycVerifiedProvider.overrideWithValue(true),
               travelerVerificationStateProvider.overrideWithValue(
@@ -96,9 +98,7 @@ void main() {
               ),
               reservationRepositoryProvider.overrideWithValue(mockRepo),
             ],
-            child: MaterialApp(
-              home: ReservationDetailScreen(reservation: testReservation),
-            ),
+            child: ReservationDetailScreen(reservation: testReservation),
           ),
         );
         await tester.pumpAndSettle();
@@ -112,6 +112,66 @@ void main() {
         expect(find.text('Total Amount'), findsOneWidget);
         expect(find.text(r'$450 USD'), findsOneWidget);
         expect(find.text('Check-in Pass (QR Code)'), findsOneWidget);
+      },
+    );
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.reservationToReturn = testReservation;
+
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        testAppWithProviders(
+          overrides: [
+            isKycVerifiedProvider.overrideWithValue(true),
+            travelerVerificationStateProvider.overrideWithValue(
+              TravelerVerificationState.verified,
+            ),
+            reservationRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+          child: ReservationDetailScreen(reservation: testReservation),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'maintains reservation detail and actions across phone matrix',
+      builder: (tester, scenario) async {
+        final mockRepo = MockReservationRepository();
+        mockRepo.reservationToReturn = testReservation;
+
+        await tester.pumpWidget(
+          testAppWithProviders(
+            overrides: [
+              isKycVerifiedProvider.overrideWithValue(true),
+              travelerVerificationStateProvider.overrideWithValue(
+                TravelerVerificationState.verified,
+              ),
+              reservationRepositoryProvider.overrideWithValue(mockRepo),
+            ],
+            textScaler: scenario.textScaler,
+            child: ReservationDetailScreen(reservation: testReservation),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Reservation Details'), findsOneWidget);
+        expect(find.text('Azure Coastal Resort'), findsOneWidget);
+        expect(find.text('TRV-12345678'), findsOneWidget);
+
+        final cancelBtn = find.widgetWithText(AppButton, 'Cancel Reservation');
+        await tester.scrollUntilVisible(
+          cancelBtn,
+          500.0,
+          scrollable: find.byType(Scrollable).first,
+        );
+        expect(cancelBtn, findsOneWidget);
       },
     );
 
@@ -132,7 +192,7 @@ void main() {
         mockRepo.reservationToReturn = prearrivalRes;
 
         await tester.pumpWidget(
-          ProviderScope(
+          testAppWithProviders(
             overrides: [
               isKycVerifiedProvider.overrideWithValue(true),
               travelerVerificationStateProvider.overrideWithValue(
@@ -140,9 +200,7 @@ void main() {
               ),
               reservationRepositoryProvider.overrideWithValue(mockRepo),
             ],
-            child: MaterialApp(
-              home: ReservationDetailScreen(reservation: prearrivalRes),
-            ),
+            child: ReservationDetailScreen(reservation: prearrivalRes),
           ),
         );
         await tester.pumpAndSettle();
@@ -158,7 +216,7 @@ void main() {
       mockRepo.reservationToReturn = testReservation;
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [
             isKycVerifiedProvider.overrideWithValue(true),
             travelerVerificationStateProvider.overrideWithValue(
@@ -166,11 +224,9 @@ void main() {
             ),
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: MaterialApp(
-            home: ReservationDetailScreen(
-              reservationId: 'res-101',
-              repository: mockRepo,
-            ),
+          child: ReservationDetailScreen(
+            reservationId: 'res-101',
+            repository: mockRepo,
           ),
         ),
       );
@@ -189,16 +245,14 @@ void main() {
         mockRepo.shouldThrow = true;
 
         await tester.pumpWidget(
-          ProviderScope(
+          testAppWithProviders(
             overrides: [
               isKycVerifiedProvider.overrideWithValue(true),
               reservationRepositoryProvider.overrideWithValue(mockRepo),
             ],
-            child: MaterialApp(
-              home: ReservationDetailScreen(
-                reservationId: 'res-fail',
-                repository: mockRepo,
-              ),
+            child: ReservationDetailScreen(
+              reservationId: 'res-fail',
+              repository: mockRepo,
             ),
           ),
         );
@@ -230,7 +284,7 @@ void main() {
       mockRepo.reservationToReturn = testReservation;
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
           overrides: [
             isKycVerifiedProvider.overrideWithValue(true),
             travelerVerificationStateProvider.overrideWithValue(
@@ -238,11 +292,9 @@ void main() {
             ),
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: MaterialApp(
-            home: ReservationDetailScreen(
-              reservation: testReservation,
-              repository: mockRepo,
-            ),
+          child: ReservationDetailScreen(
+            reservation: testReservation,
+            repository: mockRepo,
           ),
         ),
       );

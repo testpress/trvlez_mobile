@@ -78,9 +78,14 @@ class ReservationInfoRow extends StatelessWidget {
             ),
           ),
           SizedBox(width: space.inlineIconLabel),
-          Text(
-            value,
-            style: context.text.labelLarge?.copyWith(color: colors.textPrimary),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: context.text.labelLarge?.copyWith(
+                color: colors.textPrimary,
+              ),
+            ),
           ),
         ],
       ),

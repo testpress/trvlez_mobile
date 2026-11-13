@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/app_segmented_control.dart';
 
-void main() {
-  Widget wrap(Widget child) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: Scaffold(body: Center(child: child)),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('AppSegmentedControl Widget Tests', () {
     testWidgets(
       'renders all segment tabs, indicates selection, and handles taps',
@@ -18,13 +12,17 @@ void main() {
         int selectedIndex = 0;
 
         await tester.pumpWidget(
-          wrap(
-            StatefulBuilder(
-              builder: (context, setState) => AppSegmentedControl(
-                count: 3,
-                selected: selectedIndex,
-                onSelect: (index) => setState(() => selectedIndex = index),
-                label: (context, index, active) => Text('Tab $index'),
+          TestApp(
+            child: Scaffold(
+              body: Center(
+                child: StatefulBuilder(
+                  builder: (context, setState) => AppSegmentedControl(
+                    count: 3,
+                    selected: selectedIndex,
+                    onSelect: (index) => setState(() => selectedIndex = index),
+                    label: (context, index, active) => Text('Tab $index'),
+                  ),
+                ),
               ),
             ),
           ),
@@ -44,5 +42,28 @@ void main() {
         expect(selectedIndex, 1);
       },
     );
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: Center(
+              child: AppSegmentedControl(
+                count: 3,
+                selected: 0,
+                onSelect: (_) {},
+                label: (context, index, active) => Text('Segment $index'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
   });
 }

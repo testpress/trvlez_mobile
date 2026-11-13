@@ -44,6 +44,7 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final sizes = context.sizes;
     final reservationsState = ref.watch(reservationListProvider);
     final reservations = reservationsState.valueOrNull ?? [];
 
@@ -81,9 +82,18 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
                   ),
                   unselectedLabelStyle: context.text.titleSmall,
                   tabs: [
-                    Tab(text: 'Upcoming (${upcoming.length})'),
-                    Tab(text: 'Completed (${completed.length})'),
-                    Tab(text: 'Cancelled (${cancelled.length})'),
+                    Tab(
+                      height: sizes.touchTargetMin,
+                      text: 'Upcoming (${upcoming.length})',
+                    ),
+                    Tab(
+                      height: sizes.touchTargetMin,
+                      text: 'Completed (${completed.length})',
+                    ),
+                    Tab(
+                      height: sizes.touchTargetMin,
+                      text: 'Cancelled (${cancelled.length})',
+                    ),
                   ],
                 ),
               ],
@@ -323,22 +333,30 @@ class _ReservationCard extends ConsumerWidget {
                       ],
                     ),
                   Divider(height: space.stackFormField),
-                  Row(
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: space.inlineIconLabel,
+                    runSpacing: space.stackText,
                     children: [
-                      Icon(
-                        AppIcons.calendar,
-                        size: sizes.iconXs,
-                        color: colors.brandPrimary,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            AppIcons.calendar,
+                            size: sizes.iconXs,
+                            color: colors.brandPrimary,
+                          ),
+                          SizedBox(width: space.inlineIconLabel),
+                          Text(
+                            '${dateFormat.format(reservation.checkInDate)} – ${dateFormat.format(reservation.checkOutDate)}',
+                            style: context.text.labelMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: space.inlineIconLabel),
-                      Text(
-                        '${dateFormat.format(reservation.checkInDate)} – ${dateFormat.format(reservation.checkOutDate)}',
-                        style: context.text.labelMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      const Spacer(),
                       Text(
                         '${reservation.nights} night(s)',
                         style: context.text.bodySmall?.copyWith(
@@ -381,43 +399,50 @@ class _ReservationCard extends ConsumerWidget {
                           );
                         }
                       },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: space.inlineItem,
-                          vertical: space.stackItem,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: sizes.touchTargetMin,
                         ),
-                        decoration: BoxDecoration(
-                          color: colors.redTint,
-                          borderRadius: shape.radiusSurface,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              reservation.status == ReservationStatus.checkedIn
-                                  ? AppIcons.qrcode
-                                  : AppIcons.doorEnter,
-                              size: sizes.iconXs,
-                              color: colors.brandPrimary,
-                            ),
-                            SizedBox(width: space.inlineIconLabel),
-                            Expanded(
-                              child: Text(
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: space.inlineItem,
+                            vertical: space.stackItem,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.redTint,
+                            borderRadius: shape.radiusSurface,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
                                 reservation.status ==
                                         ReservationStatus.checkedIn
-                                    ? 'Digital pass ready · Show pass'
-                                    : 'Check in online · Open now · Start',
-                                style: context.text.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: colors.brandPrimary,
+                                    ? AppIcons.qrcode
+                                    : AppIcons.doorEnter,
+                                size: sizes.iconXs,
+                                color: colors.brandPrimary,
+                              ),
+                              SizedBox(width: space.inlineIconLabel),
+                              Expanded(
+                                child: Text(
+                                  reservation.status ==
+                                          ReservationStatus.checkedIn
+                                      ? 'Digital pass ready · Show pass'
+                                      : 'Check in online · Open now · Start',
+                                  style: context.text.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.brandPrimary,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Icon(
-                              AppIcons.chevronRight,
-                              size: sizes.iconXs,
-                              color: colors.brandPrimary,
-                            ),
-                          ],
+                              Icon(
+                                AppIcons.chevronRight,
+                                size: sizes.iconXs,
+                                color: colors.brandPrimary,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/heart_button.dart';
 
-void main() {
-  Widget wrap(Widget child) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: Scaffold(body: Center(child: child)),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('HeartButton Widget Tests', () {
     testWidgets(
       'renders unsaved state with correct semantics and handles tap',
@@ -18,7 +12,13 @@ void main() {
         var tapped = false;
 
         await tester.pumpWidget(
-          wrap(HeartButton(saved: false, onTap: () => tapped = true)),
+          TestApp(
+            child: Scaffold(
+              body: Center(
+                child: HeartButton(saved: false, onTap: () => tapped = true),
+              ),
+            ),
+          ),
         );
 
         expect(find.bySemanticsLabel('Save property'), findsOneWidget);
@@ -34,17 +34,41 @@ void main() {
       },
     );
 
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: Center(child: HeartButton(saved: false, onTap: () {})),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
     testWidgets('renders saved state with remove semantics label', (
       tester,
     ) async {
-      await tester.pumpWidget(wrap(const HeartButton(saved: true)));
+      await tester.pumpWidget(
+        const TestApp(
+          child: Scaffold(body: Center(child: HeartButton(saved: true))),
+        ),
+      );
 
       expect(find.bySemanticsLabel('Remove from saved'), findsOneWidget);
     });
 
     testWidgets('renders onPhoto variant cleanly', (tester) async {
       await tester.pumpWidget(
-        wrap(const HeartButton(saved: false, onPhoto: true)),
+        const TestApp(
+          child: Scaffold(
+            body: Center(child: HeartButton(saved: false, onPhoto: true)),
+          ),
+        ),
       );
 
       expect(find.byType(HeartButton), findsOneWidget);

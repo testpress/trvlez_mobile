@@ -158,10 +158,10 @@ class BrandVerifyScreen extends StatelessWidget {
 
                   // Pinned Foot
                   if (foot != null || helpLine) ...[
-                    SizedBox(height: space.stackFormField),
+                    SizedBox(height: space.stackItem),
                     ...?foot,
                     if (helpLine) ...[
-                      SizedBox(height: space.stackFormField),
+                      SizedBox(height: space.stackTight),
                       _VerifyHelpLine(
                         prefix: helpPrefix,
                         linkText: helpLinkText,
@@ -218,22 +218,19 @@ class _VerifyHeader extends StatelessWidget {
           if (onBack != null)
             Align(
               alignment: Alignment.centerLeft,
-              child: Semantics(
-                button: true,
-                label: closeIcon ? 'Close' : 'Back',
-                child: IconButton(
-                  onPressed: onBack,
-                  constraints: BoxConstraints(
-                    minWidth: sizes.touchTargetMin,
-                    minHeight: sizes.touchTargetMin,
-                  ),
-                  splashRadius: sizes.iconDefault,
-                  padding: EdgeInsets.zero,
-                  icon: Icon(
-                    closeIcon ? AppIcons.close : AppIcons.arrowLeft,
-                    size: sizes.iconSm,
-                    color: colors.brandOnSurface,
-                  ),
+              child: IconButton(
+                tooltip: closeIcon ? 'Close' : 'Back',
+                onPressed: onBack,
+                constraints: BoxConstraints(
+                  minWidth: sizes.touchTargetMin,
+                  minHeight: sizes.touchTargetMin,
+                ),
+                splashRadius: sizes.iconDefault,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  closeIcon ? AppIcons.close : AppIcons.arrowLeft,
+                  size: sizes.iconSm,
+                  color: colors.brandOnSurface,
                 ),
               ),
             ),
@@ -259,6 +256,7 @@ class _VerifyHelpLine extends StatelessWidget {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final sizes = context.sizes;
 
     return Center(
       child: Wrap(
@@ -277,21 +275,28 @@ class _VerifyHelpLine extends StatelessWidget {
             color: colors.transparent,
             child: InkWell(
               onTap: onTap,
-              child: Container(
-                padding: EdgeInsets.only(bottom: shape.borderDefault),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: colors.brandUnderline,
-                      width: shape.borderDefault,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: sizes.touchTargetMin,
+                  minWidth: sizes.touchTargetMin,
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(bottom: shape.borderDefault),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: colors.brandUnderline,
+                        width: shape.borderDefault,
+                      ),
                     ),
                   ),
-                ),
-                child: Text(
-                  linkText,
-                  style: context.text.bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colors.brandOnSurface,
+                  child: Text(
+                    linkText,
+                    style: context.text.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.brandOnSurface,
+                    ),
                   ),
                 ),
               ),

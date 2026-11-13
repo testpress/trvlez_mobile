@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/app_confirmation_dialog.dart';
+
+import '../../helpers/test_app.dart';
 
 void main() {
   group('AppConfirmationDialog Widget Tests', () {
@@ -11,9 +12,8 @@ void main() {
       bool? result;
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: Scaffold(
+        TestApp(
+          child: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () async {
@@ -48,15 +48,43 @@ void main() {
       expect(result, isFalse);
     });
 
+    testWidgets('satisfies accessibility guidelines when open', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showConfirmationDialog(
+                  context,
+                  title: 'Confirm',
+                  message: 'Are you sure?',
+                  confirmLabel: 'Confirm',
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
     testWidgets('returns true when confirmed and renders destructive styling', (
       tester,
     ) async {
       bool? result;
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: Scaffold(
+        TestApp(
+          child: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () async {

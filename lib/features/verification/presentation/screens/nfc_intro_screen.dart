@@ -231,11 +231,11 @@ class NfcIntroScreen extends ConsumerWidget {
     return BrandVerifyScreen(
       backgroundAsset: 'assets/art/bg_nfc.svg',
       title: 'Verification',
-      isScrollable: false,
+      isScrollable: true,
       onBack: () => context.pop(),
       body: [
         const VerificationStepper(current: 3),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
         Center(
           child: Container(
             width: sizes.pulseIndicator,
@@ -252,7 +252,7 @@ class NfcIntroScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
         Text(
           'Scan the chip',
           textAlign: TextAlign.center,
@@ -270,7 +270,7 @@ class NfcIntroScreen extends ConsumerWidget {
             height: 1.4,
           ),
         ),
-        const Spacer(flex: 1),
+        SizedBox(height: space.stackItem),
         const BrandInfoCard(
           heading: "You'll need",
           bullets: [

@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 
-void main() {
-  Widget wrap(Widget child, {TextScaler? textScaler}) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: Scaffold(
-        body: MediaQuery(
-          data: MediaQueryData(textScaler: textScaler ?? TextScaler.noScaling),
-          child: child,
-        ),
-      ),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('LoadingView Widget Tests', () {
     testWidgets('renders progress indicator and optional message', (
       tester,
     ) async {
       await tester.pumpWidget(
-        wrap(const LoadingView(message: 'Loading properties...')),
+        const TestApp(
+          child: Scaffold(body: LoadingView(message: 'Loading properties...')),
+        ),
       );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -31,7 +22,9 @@ void main() {
     testWidgets('renders progress indicator without message cleanly', (
       tester,
     ) async {
-      await tester.pumpWidget(wrap(const LoadingView()));
+      await tester.pumpWidget(
+        const TestApp(child: Scaffold(body: LoadingView())),
+      );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byType(Text), findsNothing);
@@ -39,9 +32,11 @@ void main() {
 
     testWidgets('supports large text scale without overflow', (tester) async {
       await tester.pumpWidget(
-        wrap(
-          const LoadingView(message: 'Syncing your reservation details...'),
-          textScaler: const TextScaler.linear(2.0),
+        const TestApp(
+          textScaler: TextScaler.linear(2.0),
+          child: Scaffold(
+            body: LoadingView(message: 'Syncing your reservation details...'),
+          ),
         ),
       );
 

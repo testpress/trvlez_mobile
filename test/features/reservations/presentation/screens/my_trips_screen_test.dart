@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/screens/my_trips_screen.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class MockReservationRepository extends Fake implements ReservationRepository {
   List<Reservation> reservationsToReturn = [];
@@ -72,6 +76,50 @@ void main() {
   );
 
   group('MyTripsScreen Widget Tests', () {
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final mockRepo = MockReservationRepository();
+      mockRepo.reservationsToReturn = [testUpcomingReservation];
+
+      await tester.pumpWidget(
+        testAppWithProviders(
+          child: const MyTripsScreen(),
+          overrides: [
+            reservationRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final handle = tester.ensureSemantics();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'renders upcoming reservation card across phone matrix',
+      builder: (tester, scenario) async {
+        final mockRepo = MockReservationRepository();
+        mockRepo.reservationsToReturn = [testUpcomingReservation];
+
+        await tester.pumpWidget(
+          testAppWithProviders(
+            textScaler: scenario.textScaler,
+            overrides: [
+              reservationRepositoryProvider.overrideWithValue(mockRepo),
+            ],
+            child: const MyTripsScreen(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Trips'), findsOneWidget);
+        expect(find.text('Azure Coastal Resort'), findsOneWidget);
+        expect(find.text('TRV-UPCOMING'), findsOneWidget);
+      },
+    );
+
     testWidgets(
       'renders empty state with Explore Properties CTA when no trips exist',
       (tester) async {
@@ -79,11 +127,11 @@ void main() {
         mockRepo.reservationsToReturn = [];
 
         await tester.pumpWidget(
-          ProviderScope(
+          testAppWithProviders(
+            child: const MyTripsScreen(),
             overrides: [
               reservationRepositoryProvider.overrideWithValue(mockRepo),
             ],
-            child: const MaterialApp(home: MyTripsScreen()),
           ),
         );
         await tester.pumpAndSettle();
@@ -124,7 +172,10 @@ void main() {
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            theme: AppTheme.lightTheme,
+            routerConfig: router,
+          ),
         ),
       );
       await tester.pumpAndSettle();
@@ -144,11 +195,11 @@ void main() {
       mockRepo.reservationsToReturn = [testUpcomingReservation];
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
+          child: const MyTripsScreen(),
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: const MaterialApp(home: MyTripsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -167,11 +218,11 @@ void main() {
       ];
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
+          child: const MyTripsScreen(),
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: const MaterialApp(home: MyTripsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -193,11 +244,11 @@ void main() {
       mockRepo.shouldThrow = true;
 
       await tester.pumpWidget(
-        ProviderScope(
+        testAppWithProviders(
+          child: const MyTripsScreen(),
           overrides: [
             reservationRepositoryProvider.overrideWithValue(mockRepo),
           ],
-          child: const MaterialApp(home: MyTripsScreen()),
         ),
       );
       await tester.pumpAndSettle();

@@ -8,6 +8,9 @@ import 'package:image/image.dart' as img;
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/passport_review_screen.dart';
 
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
+
 void main() {
   late Directory tempDir;
 
@@ -20,11 +23,41 @@ void main() {
   });
 
   group('PassportReviewScreen', () {
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(child: TestApp(child: PassportReviewScreen())),
+      );
+      await tester.pumpAndSettle();
+
+      final handle = tester.ensureSemantics();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'renders passport review across phone matrix',
+      builder: (tester, scenario) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            child: TestApp(
+              textScaler: scenario.textScaler,
+              child: const PassportReviewScreen(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Check your photo'), findsOneWidget);
+      },
+    );
+
     testWidgets(
       'renders fallback SVG illustration when capturedImage is null',
       (tester) async {
         await tester.pumpWidget(
-          const ProviderScope(child: MaterialApp(home: PassportReviewScreen())),
+          const ProviderScope(child: TestApp(child: PassportReviewScreen())),
         );
         await tester.pumpAndSettle();
 
@@ -52,7 +85,7 @@ void main() {
         await tester.pumpWidget(
           UncontrolledProviderScope(
             container: container,
-            child: const MaterialApp(home: PassportReviewScreen()),
+            child: const TestApp(child: PassportReviewScreen()),
           ),
         );
         await tester.pumpAndSettle();
@@ -90,7 +123,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(home: PassportReviewScreen()),
+          child: const TestApp(child: PassportReviewScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -122,7 +155,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(home: PassportReviewScreen()),
+          child: const TestApp(child: PassportReviewScreen()),
         ),
       );
       await tester.pumpAndSettle();

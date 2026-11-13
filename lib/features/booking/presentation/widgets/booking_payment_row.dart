@@ -31,11 +31,14 @@ class BookingPaymentRow extends StatelessWidget {
                 style: context.text.labelLarge?.copyWith(color: colors.ink),
               ),
               const Spacer(),
-              Text(
-                cardAdded ? 'Card saved' : 'Add a card',
-                style: context.text.labelLarge?.copyWith(
-                  fontWeight: cardAdded ? FontWeight.bold : FontWeight.normal,
-                  color: cardAdded ? colors.ink : colors.textDisabled,
+              Flexible(
+                child: Text(
+                  cardAdded ? 'Card saved' : 'Add a card',
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.labelLarge?.copyWith(
+                    fontWeight: cardAdded ? FontWeight.bold : FontWeight.normal,
+                    color: cardAdded ? colors.ink : colors.textDisabled,
+                  ),
                 ),
               ),
               SizedBox(width: space.inlineMicro),

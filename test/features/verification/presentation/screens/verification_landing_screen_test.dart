@@ -5,12 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/router/routes.dart';
+import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/features/profile/presentation/providers/profile_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/providers/verification_providers.dart';
 import 'package:trvlez_mobile/features/verification/presentation/screens/verification_landing_screen.dart';
 
 import '../../../../fixtures/fake_verification_repository.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class _FakeProfileNotifier extends ProfileNotifier {
   final Profile _profile;
@@ -32,6 +34,7 @@ void main() {
   Widget createTestWidget({
     required ProviderContainer container,
     List<RouteBase> additionalRoutes = const [],
+    TextScaler? textScaler,
   }) {
     final router = GoRouter(
       initialLocation: AppRoutes.verificationLanding,
@@ -70,11 +73,80 @@ void main() {
     );
     return UncontrolledProviderScope(
       container: container,
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(
+        theme: AppTheme.lightTheme,
+        routerConfig: router,
+        builder: textScaler != null
+            ? (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+                child: child!,
+              )
+            : null,
+      ),
     );
   }
 
   group('VerificationLandingScreen State Handling', () {
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      fakeRepo.verificationStatus = const VerificationStatus(
+        sessionId: 'session-v1',
+        status: 'verified',
+      );
+
+      final container = ProviderContainer(
+        overrides: [
+          verificationRepositoryProvider.overrideWithValue(fakeRepo),
+          currentProfileProvider.overrideWith(
+            () => _FakeProfileNotifier(
+              const Profile(id: 'prof-v1', onboardingStep: 'verified'),
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(createTestWidget(container: container));
+      await tester.pumpAndSettle();
+
+      final handle = tester.ensureSemantics();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testMaterialScreenMatrix(
+      'renders verified state across phone matrix',
+      builder: (tester, scenario) async {
+        fakeRepo.verificationStatus = const VerificationStatus(
+          sessionId: 'session-v1',
+          status: 'verified',
+        );
+
+        final container = ProviderContainer(
+          overrides: [
+            verificationRepositoryProvider.overrideWithValue(fakeRepo),
+            currentProfileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const Profile(id: 'prof-v1', onboardingStep: 'verified'),
+              ),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(
+          createTestWidget(
+            container: container,
+            textScaler: scenario.textScaler,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Identity verified'), findsOneWidget);
+        expect(find.text('4 of 4 steps completed'), findsOneWidget);
+      },
+    );
     testWidgets(
       'when traveler is verified, displays 4 of 4 completed and cards are NOT clickable',
       (tester) async {

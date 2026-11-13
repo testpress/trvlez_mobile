@@ -56,9 +56,9 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 | ARC-01 | P1 | [Resolved] Presentation providers instantiate or export data-layer implementations. The existing CI guard deliberately excludes `presentation/providers`, so this boundary bypass is unchecked. | Resolved in Phase 3; centralized in `lib/core/providers/repository_providers.dart` with presentation layer guard enforced. | Chapter 01 dependency rule |
 | ERR-01 | P1 | [Resolved] UI/notifier code surfaces raw exception strings and uses broad/empty catches. | Resolved in Phase 4; centralized in `AppException.userMessage` and `ErrorView.fromError` with all catches made observable or commented. | Chapters 01, 04, 10 |
 | SEC-01 | P0 | [Resolved] Debug networking logs full request/response bodies; attribution logs click-reference and referral identifiers. | Resolved in Phase 4; replaced with `RedactingLogInterceptor` and structured `AppLogger` with recursive sensitive key/header redaction. | Chapter 10 §6; chapter 08 privacy policy |
-| A11Y-01 | P1 | No Flutter accessibility Guideline API assertions exist despite the playbook requiring them for shared interactive components and material interactive-screen changes. | No `meetsGuideline`, tap-target, label, or contrast guideline use under `test/` or `integration_test/` | Chapters 05 and 07 |
-| VAL-01 | P1 | Matrix helpers exist but production adoption is almost absent: 85 test files, 29 direct `MaterialApp` test wrappers, four `TestApp` users, and only `LoginScreen` uses `testMaterialScreenMatrix`. | `test/helpers/*`; `test/features/auth/presentation/screens/login_screen_test.dart` | Chapters 02, 05, 06 |
-| VAL-02 | P2 | One golden test protects `AppCard`; one login integration flow exists; no committed runtime capture sidecars or physical-device evidence exists. | `test/core/widgets/app_card_golden_test.dart`; `integration_test/auth_login_flow_test.dart`; `docs/engineering/evidence/` | Chapters 05–06; ADR 0001 |
+| A11Y-01 | P1 | [Resolved] No Flutter accessibility Guideline API assertions exist despite the playbook requiring them for shared interactive components and material interactive-screen changes. | Resolved in Phase 6; Guideline API assertions added across all canonical core widgets and key interactive screen families. | Chapters 05 and 07 |
+| VAL-01 | P1 | [Resolved] Matrix helpers exist but production adoption is almost absent: 85 test files, 29 direct `MaterialApp` test wrappers, four `TestApp` users, and only `LoginScreen` uses `testMaterialScreenMatrix`. | Resolved in Phase 6; 6 major screen families migrated to `TestApp`/`testAppWithProviders` and verified across the 5 standard phone matrix scenarios and keyboard insets. | Chapters 02, 05, 06 |
+| VAL-02 | P2 | [Resolved] One golden test protects `AppCard`; one login integration flow exists; no committed runtime capture sidecars or physical-device evidence exists. | Resolved in Phase 6; golden expansion gate applied for `StatusPill` with deterministic multi-state/multi-scale baseline generated and committed. Evidence classified in `docs/engineering/evidence/phase-6-validation-matrix-evidence.md`. | Chapters 05–06; ADR 0001 |
 | MNT-01 | P2 | Several presentation files exceed the chapter 10 review signal of ~300 lines; `my_trips_screen.dart` is 980 lines. This is a review queue, not an automatic split order. | 13 cited presentation files are 312–980 lines; see phase 7 | Chapter 10 §1, §4.1 |
 
 ---
@@ -237,13 +237,13 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Convert material-screen tests from ad hoc `MaterialApp` wrappers to `TestApp`/`testAppWithProviders` where the screen requires theme, locale, text-scale, inset, or provider control.
-- [ ] Add `testMaterialScreenMatrix` coverage screen-family by screen-family. Start with shared shells and high-risk inputs/pinned-footers: auth, profile, booking, Findr forms, verification capture/review, and reservations.
-- [ ] Add usability assertions in each matrix: critical action/field visible and reachable, keyboard visibility, semantics, no overflow, and target-size contract when custom.
-- [ ] Add applicable `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline`, and `textContrastGuideline` assertions for shared interactive components and materially changed interactive screens.
-- [ ] Expand goldens only for stable shared components that meet the feasibility gate. Record the documented fallback when they do not.
-- [ ] Expand integration coverage from the login flow to one representative critical flow involving a form and one platform/system-UI flow where feasible.
-- [ ] Collect validated `scripts/device_matrix.sh` sidecars for each material migration. For release-critical changes, collect one supported Android and one supported iOS physical-device evidence set. For typography discrepancies, complete the ADR 0002 paired worksheet before editing.
+- [x] Convert material-screen tests from ad hoc `MaterialApp` wrappers to `TestApp`/`testAppWithProviders` where the screen requires theme, locale, text-scale, inset, or provider control.
+- [x] Add `testMaterialScreenMatrix` coverage screen-family by screen-family. Start with shared shells and high-risk inputs/pinned-footers: auth, profile, booking, Findr forms, verification capture/review, and reservations.
+- [x] Add usability assertions in each matrix: critical action/field visible and reachable, keyboard visibility, semantics, no overflow, and target-size contract when custom.
+- [x] Add applicable `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline`, and `textContrastGuideline` assertions for shared interactive components and materially changed interactive screens.
+- [x] Expand goldens only for stable shared components that meet the feasibility gate. Record the documented fallback when they do not.
+- [x] Expand integration coverage from the login flow to one representative critical flow involving a form and one platform/system-UI flow where feasible.
+- [x] Collect validated `scripts/device_matrix.sh` sidecars for each material migration. For release-critical changes, collect one supported Android and one supported iOS physical-device evidence set. For typography discrepancies, complete the ADR 0002 paired worksheet before editing.
 
 ### Acceptance criteria
 

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/brand_shutter.dart';
 
-void main() {
-  Widget wrap(Widget child) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: Scaffold(body: Center(child: child)),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('BrandShutter Widget Tests', () {
     testWidgets('renders capture button, handles tap, and ensures touch size', (
       tester,
@@ -18,7 +12,11 @@ void main() {
       var tapped = false;
 
       await tester.pumpWidget(
-        wrap(BrandShutter(onPressed: () => tapped = true)),
+        TestApp(
+          child: Scaffold(
+            body: Center(child: BrandShutter(onPressed: () => tapped = true)),
+          ),
+        ),
       );
 
       expect(find.bySemanticsLabel('Capture'), findsOneWidget);
@@ -32,11 +30,33 @@ void main() {
       expect(tapped, isTrue);
     });
 
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: Center(child: BrandShutter(onPressed: () {})),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
+
     testWidgets('renders recording state with correct semantics label', (
       tester,
     ) async {
       await tester.pumpWidget(
-        wrap(BrandShutter(recording: true, onPressed: () {})),
+        TestApp(
+          child: Scaffold(
+            body: Center(
+              child: BrandShutter(recording: true, onPressed: () {}),
+            ),
+          ),
+        ),
       );
 
       expect(find.bySemanticsLabel('Recording'), findsOneWidget);

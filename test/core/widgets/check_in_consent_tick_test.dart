@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/core/widgets/check_in_consent_tick.dart';
 
-void main() {
-  Widget wrap(Widget child) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      home: Scaffold(body: Center(child: child)),
-    );
-  }
+import '../../helpers/test_app.dart';
 
+void main() {
   group('CheckInConsentTick Widget Tests', () {
     testWidgets(
       'renders label, checked status, handles tap, and ensures target size',
@@ -18,12 +12,16 @@ void main() {
         var agreed = false;
 
         await tester.pumpWidget(
-          wrap(
-            StatefulBuilder(
-              builder: (context, setState) => CheckInConsentTick(
-                agreed: agreed,
-                label: 'I confirm the guest details are accurate',
-                onTap: () => setState(() => agreed = !agreed),
+          TestApp(
+            child: Scaffold(
+              body: Center(
+                child: StatefulBuilder(
+                  builder: (context, setState) => CheckInConsentTick(
+                    agreed: agreed,
+                    label: 'I confirm the guest details are accurate',
+                    onTap: () => setState(() => agreed = !agreed),
+                  ),
+                ),
               ),
             ),
           ),
@@ -44,5 +42,27 @@ void main() {
         expect(agreed, isTrue);
       },
     );
+
+    testWidgets('satisfies accessibility guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: Scaffold(
+            body: Center(
+              child: CheckInConsentTick(
+                agreed: false,
+                label: 'I agree to the terms',
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      handle.dispose();
+    });
   });
 }

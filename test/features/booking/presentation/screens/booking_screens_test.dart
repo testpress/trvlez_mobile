@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trvlez_mobile/app/theme/app_theme.dart';
 import 'package:trvlez_mobile/features/booking/presentation/providers/booking_providers.dart';
 import 'package:trvlez_mobile/features/booking/presentation/screens/booked_screen.dart';
 import 'package:trvlez_mobile/features/booking/presentation/screens/booking_card_screen.dart';
@@ -10,6 +9,9 @@ import 'package:trvlez_mobile/features/booking/presentation/screens/booking_revi
 import 'package:trvlez_mobile/features/booking/presentation/screens/property_screen.dart';
 import 'package:trvlez_mobile/features/properties/domain/entities/property.dart';
 import 'package:trvlez_mobile/features/properties/presentation/providers/properties_providers.dart';
+
+import '../../../../helpers/test_app.dart';
+import '../../../../helpers/viewport_testing.dart';
 
 class _MockPropertiesRepository extends Fake implements PropertiesRepository {
   List<Property> propertiesToReturn = [];
@@ -32,10 +34,12 @@ class _MockPropertiesRepository extends Fake implements PropertiesRepository {
 Widget _buildTestApp({
   required Widget child,
   List<Override> overrides = const [],
+  TextScaler? textScaler,
 }) {
-  return ProviderScope(
+  return testAppWithProviders(
     overrides: overrides,
-    child: MaterialApp(theme: AppTheme.lightTheme, home: child),
+    textScaler: textScaler,
+    child: child,
   );
 }
 
@@ -88,10 +92,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const PropertyScreen(),
-          ),
+          child: const TestApp(child: PropertyScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -162,10 +163,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const BookingDatesScreen(),
-          ),
+          child: const TestApp(child: BookingDatesScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -189,10 +187,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const BookingReviewScreen(),
-          ),
+          child: const TestApp(child: BookingReviewScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -202,7 +197,45 @@ void main() {
       expect(find.text('Deluxe Sea View'), findsOneWidget);
       expect(find.text('Confirm booking'), findsOneWidget);
       expect(find.text('Payment'), findsOneWidget);
+      container.dispose();
     });
+
+    testMaterialScreenMatrix(
+      'maintains booking review summary and confirmation action across phone matrix',
+      builder: (tester, scenario) async {
+        final container = ProviderContainer();
+        container
+            .read(bookingDraftProvider.notifier)
+            .beginBooking(testProperty);
+        final range = BookingDateRange(
+          DateTime(2026, 11, 1),
+          DateTime(2026, 11, 5),
+        );
+        container.read(bookingDraftProvider.notifier).setBookingRange(range);
+        container
+            .read(bookingDraftProvider.notifier)
+            .setRoomQuantity('rt-1', 1);
+
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: TestApp(
+              textScaler: scenario.textScaler,
+              child: const BookingReviewScreen(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Review'), findsWidgets);
+        expect(find.text('Seaside Grand Resort'), findsOneWidget);
+
+        final confirmBtn = find.text('Confirm booking');
+        await tester.ensureVisible(confirmBtn);
+        expect(confirmBtn, findsOneWidget);
+        container.dispose();
+      },
+    );
   });
 
   group('BookingCardScreen', () {
@@ -257,10 +290,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            home: const BookedScreen(),
-          ),
+          child: const TestApp(child: BookedScreen()),
         ),
       );
       await tester.pumpAndSettle();
