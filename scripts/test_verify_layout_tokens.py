@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for the cross-device layout policy guard."""
+"""Regression tests for the cross-device layout and architecture policy guard."""
 
 import pathlib
 import subprocess
@@ -51,6 +51,49 @@ class VerifyLayoutTokensTest(unittest.TestCase):
         })
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('Disabled system text scaling', result.stdout)
+
+    def test_rejects_linear_text_scaling_in_presentation(self) -> None:
+        result = self.run_guard({
+            'features/example/presentation/widget.dart': (
+                'final scaler = TextScaler.linear(1.5);\n'
+            ),
+        })
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Replaced linear text scaling', result.stdout)
+
+    def test_rejects_unsafe_viewport_height_formula(self) -> None:
+        result = self.run_guard({
+            'features/example/presentation/widget.dart': (
+                'final h = MediaQuery.sizeOf(context).height * 0.75;\n'
+            ),
+        })
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Unsafe viewport-height formula', result.stdout)
+
+    def test_rejects_presentation_data_import(self) -> None:
+        result = self.run_guard({
+            'features/example/presentation/screens/sample_screen.dart': (
+                "import 'package:trvlez_mobile/features/example/data/datasources/remote.dart';\n"
+            ),
+        })
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Banned data import in presentation', result.stdout)
+
+    def test_allows_approved_composition_boundary_data_import(self) -> None:
+        result = self.run_guard({
+            'core/providers/repository_providers.dart': (
+                "import 'package:trvlez_mobile/features/auth/data/repositories/auth_repository_impl.dart';\n"
+            ),
+        })
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_allows_documented_guard_exception(self) -> None:
+        result = self.run_guard({
+            'features/example/presentation/widget.dart': (
+                'final style = TextStyle(fontSize: 12); // allow-guard-exception\n'
+            ),
+        })
+        self.assertEqual(result.returncode, 0, result.stdout)
 
 
 if __name__ == '__main__':

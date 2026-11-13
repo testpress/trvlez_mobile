@@ -1,6 +1,6 @@
 # Codebase Playbook Conformance Remediation Plan
 
-**Status:** proposed
+**Status:** completed
 **Created:** 2026-11-11
 **Owner:** Mobile Engineering
 **Scope:** bring the existing Flutter application into conformance with the accepted engineering playbook and ADRs.
@@ -59,7 +59,7 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 | A11Y-01 | P1 | [Resolved] No Flutter accessibility Guideline API assertions exist despite the playbook requiring them for shared interactive components and material interactive-screen changes. | Resolved in Phase 6; Guideline API assertions added across all canonical core widgets and key interactive screen families. | Chapters 05 and 07 |
 | VAL-01 | P1 | [Resolved] Matrix helpers exist but production adoption is almost absent: 85 test files, 29 direct `MaterialApp` test wrappers, four `TestApp` users, and only `LoginScreen` uses `testMaterialScreenMatrix`. | Resolved in Phase 6; 6 major screen families migrated to `TestApp`/`testAppWithProviders` and verified across the 5 standard phone matrix scenarios and keyboard insets. | Chapters 02, 05, 06 |
 | VAL-02 | P2 | [Resolved] One golden test protects `AppCard`; one login integration flow exists; no committed runtime capture sidecars or physical-device evidence exists. | Resolved in Phase 6; golden expansion gate applied for `StatusPill` with deterministic multi-state/multi-scale baseline generated and committed. Evidence classified in `docs/engineering/evidence/phase-6-validation-matrix-evidence.md`. | Chapters 05–06; ADR 0001 |
-| MNT-01 | P2 | Several presentation files exceed the chapter 10 review signal of ~300 lines; `my_trips_screen.dart` is 980 lines. This is a review queue, not an automatic split order. | 13 cited presentation files are 312–980 lines; see phase 7 | Chapter 10 §1, §4.1 |
+| MNT-01 | P2 | [Resolved] High-size presentation files audited and decomposed per Chapter 10 §1, §4.1; review queue retired. | 4 major files decomposed into reusable subtrees; queue documented in `docs/engineering/evidence/phase-7-audit-queue-disposition.md`. | Chapter 10 §1, §4.1 |
 
 ---
 
@@ -262,11 +262,11 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Extend `scripts/verify_layout_tokens.py` or add focused sibling guards for: presentation primitive imports, inline visual values, unsafe viewport-height formulas, disabled/replaced text scaling, and presentation-to-data imports. Guards must allow documented component-theme exceptions rather than reintroducing “zero raw numbers.”
-- [ ] Add targeted tests for every guard and make CI run them.
-- [ ] Add a PR checklist/template reference to the layout contract and evidence minimum; do not duplicate the playbook rules.
-- [ ] Review high-size files as a queue, beginning with `my_trips_screen.dart` (980 lines), then properties listing, welcome, hotel view, referral/onboarding, verification landing/final check, reservation detail, property card, and property screen (312–451 lines). Extract only semantic, reusable, or independently testable subtrees.
-- [ ] Remove completed rows from this plan only when the stated acceptance evidence is linked in a dated evidence note or PR.
+- [x] Extend `scripts/verify_layout_tokens.py` or add focused sibling guards for: presentation primitive imports, inline visual values, unsafe viewport-height formulas, disabled/replaced text scaling, and presentation-to-data imports. Guards must allow documented component-theme exceptions rather than reintroducing “zero raw numbers.”
+- [x] Add targeted tests for every guard and make CI run them.
+- [x] Add a PR checklist/template reference to the layout contract and evidence minimum; do not duplicate the playbook rules.
+- [x] Review high-size files as a queue, beginning with `my_trips_screen.dart` (980 lines), then properties listing, welcome, hotel view, referral/onboarding, verification landing/final check, reservation detail, property card, and property screen (312–451 lines). Extract only semantic, reusable, or independently testable subtrees.
+- [x] Remove completed rows from this plan only when the stated acceptance evidence is linked in a dated evidence note or PR.
 
 ### Acceptance criteria
 

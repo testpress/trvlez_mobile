@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""CI guard for layout patterns that fragment phone UI.
+"""CI guard for layout, token, scaling, and architectural boundaries.
 
-This guard deliberately does *not* ban every numeric layout value. Chapter 04
-allows documented component-private constants, framework constraints, and
-aspect ratios. The guard only checks patterns that are unambiguously unsafe in
-presentation code: device/OS layout branching, disabled text scaling, and
-deprecated token names.
+This guard enforces playbook rules across Dart code in lib/:
+- Device and OS layout branching (chapter 00, 03)
+- Disabled or linearly replaced text scaling (chapter 00, 03, ADR 0002)
+- Deprecated token references (chapter 04)
+- Presentation primitive imports and inline styling (chapter 04, 10 §4.5)
+- Unsafe viewport-height formulas (chapter 03 LAY-01)
+- Presentation-to-data imports (chapter 01 ARC-01)
+
+Documented component-private constants and component-theme definitions are
+intentionally permitted.
 """
 
 import argparse
@@ -13,9 +18,9 @@ import os
 import re
 import sys
 
-# Allowed directories/files where primitives/tokens are defined
 ALLOWED_PATHS = {
     'core/design_tokens',
+    'app/theme/component_themes',
 }
 
 EXCLUDED_FILE_SUFFIXES = (
@@ -23,18 +28,18 @@ EXCLUDED_FILE_SUFFIXES = (
     '.freezed.dart',
 )
 
+APPROVED_COMPOSITION_BOUNDARIES = {
+    'core/providers/repository_providers.dart',
+}
+
 POLICY_PATTERNS = {
     'OS-specific layout branch': re.compile(r'\bPlatform\.is(?:Android|IOS)\b'),
     'Device-model layout branch': re.compile(
         r'\b(?:realme|pixel|galaxy|samsung|iphone|ipad)\b', re.IGNORECASE
     ),
     'Disabled system text scaling': re.compile(r'\bTextScaler\.noScaling\b'),
-    'Deprecated AppSpacing reference': re.compile(
-        r'\bAppSpacing\.\w+'
-    ),
-    'Deprecated AppRadius reference': re.compile(
-        r'\bAppRadius\.\w+'
-    ),
+    'Deprecated AppSpacing reference': re.compile(r'\bAppSpacing\.\w+'),
+    'Deprecated AppRadius reference': re.compile(r'\bAppRadius\.\w+'),
 }
 
 PRESENTATION_PATTERNS = {
@@ -49,7 +54,16 @@ PRESENTATION_PATTERNS = {
     ),
     'Banned inline TextStyle': re.compile(r'\bTextStyle\s*\('),
     'Banned raw Material Color': re.compile(r'\bColors\.\w+'),
+    'Unsafe viewport-height formula': re.compile(
+        r'\bMediaQuery\.(?:sizeOf\([^)]*\)|of\([^)]*\)\.size)\.height\s*\*'
+    ),
+    'Replaced linear text scaling': re.compile(r'\bTextScaler\.linear\s*\('),
+    'Banned data import in presentation': re.compile(
+        r"(?:import|export)\s+['\"][^'\"]*/data/[^'\"]*['\"]"
+    ),
 }
+
+DATA_IMPORT_PATTERN = re.compile(r"(?:import|export)\s+['\"][^'\"]*/data/[^'\"]*['\"]")
 
 
 def is_allowed(path: str) -> bool:
@@ -61,6 +75,10 @@ def is_allowed(path: str) -> bool:
 
 def is_presentation_path(path: str) -> bool:
     return '/presentation/' in path or path.startswith('core/widgets/')
+
+
+def is_data_path(path: str) -> bool:
+    return '/data/' in path
 
 
 def parse_args() -> argparse.Namespace:
@@ -99,31 +117,45 @@ def main() -> int:
                     line = raw_line.strip()
                     if line.startswith('//') or line.startswith('/*') or line.startswith('*'):
                         continue
+                    if '// allow-guard-exception' in line or '// allow-token-override' in line:
+                        continue
 
-                    patterns = {
-                        'Deprecated AppSpacing reference': POLICY_PATTERNS[
-                            'Deprecated AppSpacing reference'
-                        ],
-                        'Deprecated AppRadius reference': POLICY_PATTERNS[
-                            'Deprecated AppRadius reference'
-                        ],
-                    }
-                    if is_presentation_path(rel_path):
-                        patterns.update(POLICY_PATTERNS)
-                        patterns.update(PRESENTATION_PATTERNS)
-
-                    for rule_name, pattern in patterns.items():
-                        if pattern.search(raw_line):
+                    # Check global architecture and token policies
+                    for rule_name in (
+                        'Deprecated AppSpacing reference',
+                        'Deprecated AppRadius reference',
+                    ):
+                        if POLICY_PATTERNS[rule_name].search(raw_line):
                             violations.append((rel_path, line_no, rule_name, line))
 
+                    # Check layer boundary: only data layer and approved composition boundaries may import data
+                    if not is_data_path(rel_path) and rel_path not in APPROVED_COMPOSITION_BOUNDARIES:
+                        if DATA_IMPORT_PATTERN.search(raw_line):
+                            violations.append((
+                                rel_path,
+                                line_no,
+                                'Unauthorized data layer import outside data layer or composition boundary',
+                                line,
+                            ))
+
+                    # Check presentation policies
+                    if is_presentation_path(rel_path):
+                        for rule_name, pattern in POLICY_PATTERNS.items():
+                            if pattern.search(raw_line):
+                                violations.append((rel_path, line_no, rule_name, line))
+
+                        for rule_name, pattern in PRESENTATION_PATTERNS.items():
+                            if pattern.search(raw_line):
+                                violations.append((rel_path, line_no, rule_name, line))
+
     if violations:
-        print(f"FAILED: Found {len(violations)} layout-policy violations in {scanned_files} scanned files:\n")
+        print(f"FAILED: Found {len(violations)} conformance-policy violations in {scanned_files} scanned files:\n")
         for path, line_no, rule_name, line in violations:
             print(f"  {path}:{line_no} [{rule_name}] -> {line}")
-        print("\nFix: Use constraints, framework insets, and supported text scaling; do not branch presentation layout by OS or device model.")
+        print("\nFix: Use constraints, semantic tokens, and supported text scaling; do not import data in presentation or branch layout.")
         return 1
 
-    print(f"PASSED: Cross-device layout policy guard across {scanned_files} files.")
+    print(f"PASSED: Conformance and layout policy guard across {scanned_files} files.")
     return 0
 
 
