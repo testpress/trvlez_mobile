@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Pinned white header cap with curved bottom corners that extends into the status bar.
+///
+/// **Contract:**
+/// - **Owner:** Core screen navigation header shell (`lib/core/widgets/app_pinned_header.dart`).
+/// - **Variants:** Pinned surface header with drop shadow and rounded bottom corners.
+/// - **States:** Responsive to system status bar insets (safe area).
+/// - **Accessibility:** Ensures minimum height [sizes.controlLg] (48dp); supports flexible title/action content.
+/// - **Validation Owner:** `test/core/widgets/app_pinned_header_test.dart`.
 class AppPinnedHeader extends StatelessWidget {
   const AppPinnedHeader({
     super.key,

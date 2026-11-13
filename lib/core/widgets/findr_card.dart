@@ -6,6 +6,13 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 enum FindrState { locked, processing, notJoined, active }
 
 /// The Findr loyalty and referral card supporting locked, processing, not joined, and active states.
+///
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Findr loyalty status summary and primary conversion card.
+/// - Variants: FindrState (locked, processing, notJoined, active).
+/// - Applicable States: Default, locked, in-review, joined/active with earnings breakdown.
+/// - Accessibility: Semantic stats summary, 48dp CTA touch target, scalable typography.
+/// - Validation Owner: Screen test matrices consuming FindrCard.
 class FindrCard extends StatelessWidget {
   const FindrCard({
     super.key,

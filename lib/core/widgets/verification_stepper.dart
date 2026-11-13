@@ -16,6 +16,13 @@ const List<String> kVerificationStepLabels = [
 /// Step [current] displays the active step number with a white circle.
 /// Subsequent steps display a translucent ring with the step number.
 /// Connector tracks animate a fill line when steps are completed.
+///
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Core UI verification progress indicator across the 4-step workflow.
+/// - Variants: Default horizontal animated stepper.
+/// - Applicable States: Step 0 (Passport), 1 (Profile Review), 2 (Selfie), 3 (NFC).
+/// - Accessibility: Progress semantics, distinct contrast states, scalable typography.
+/// - Validation Owner: Screen test matrices consuming VerificationStepper.
 class VerificationStepper extends StatelessWidget {
   const VerificationStepper({
     super.key,

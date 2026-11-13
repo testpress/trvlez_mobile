@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/empty_view.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/core/widgets/photo_box.dart';
@@ -181,10 +182,6 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
   }
 
   Widget _buildEmptyState(String type) {
-    final colors = context.colors;
-    final space = context.space;
-    final shape = context.shape;
-    final sizes = context.sizes;
     final messages = {
       'upcoming': (
         'No upcoming trips',
@@ -198,62 +195,14 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
     };
     final (title, subtitle) = messages[type] ?? ('No trips', '');
 
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(space.stackHero),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: space.insetDialog,
-              decoration: BoxDecoration(
-                color: colors.redTint,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                AppIcons.calendar,
-                size: sizes.avatarMd,
-                color: colors.brandPrimary,
-              ),
-            ),
-            SizedBox(height: space.stackFormField),
-            Text(
-              title,
-              style: context.text.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colors.textPrimary,
-              ),
-            ),
-            SizedBox(height: space.stackTight),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: context.text.titleSmall?.copyWith(
-                color: colors.textSecondary,
-              ),
-            ),
-            if (type == 'upcoming') ...[
-              SizedBox(height: space.stackSection),
-              ElevatedButton.icon(
-                onPressed: () => context.push(AppRoutes.ezStays),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.brandPrimary,
-                  foregroundColor: colors.textOnAction,
-                  shape: RoundedRectangleBorder(borderRadius: shape.radiusPill),
-                  padding: space.insetControlLg,
-                ),
-                icon: Icon(AppIcons.search, size: sizes.iconSm),
-                label: Text(
-                  'Explore Properties',
-                  style: context.text.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
+    return EmptyView(
+      icon: AppIcons.calendar,
+      title: title,
+      subtitle: subtitle,
+      actionLabel: type == 'upcoming' ? 'Explore Properties' : null,
+      onAction: type == 'upcoming'
+          ? () => context.push(AppRoutes.ezStays)
+          : null,
     );
   }
 

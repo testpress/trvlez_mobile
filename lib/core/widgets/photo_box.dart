@@ -3,6 +3,13 @@ import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Standard property photo box supporting images with graceful fallback.
+///
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Core UI property and media thumbnail display with placeholder fallback.
+/// - Variants: Default rectangular rounded thumbnail container.
+/// - Applicable States: Image loaded, placeholder/missing image, network error.
+/// - Accessibility: Semantic placeholder icon, anti-aliased surface bounds.
+/// - Validation Owner: Screen test matrices consuming PhotoBox.
 class PhotoBox extends StatelessWidget {
   const PhotoBox({
     super.key,

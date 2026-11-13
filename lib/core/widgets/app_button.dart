@@ -17,8 +17,14 @@ enum AppButtonVariant {
 
 /// Standard reusable button adhering to design system tokens.
 ///
-/// Supports [primary], [secondary], [destructive], [brandWhite], and [brandOutline] variants,
-/// an [isLoading] spinner state, custom icons, and full-width sizing.
+/// **Contract:**
+/// - **Owner:** Core design system button component (`lib/core/widgets/app_button.dart`).
+/// - **Variants:** [AppButtonVariant.primary], [AppButtonVariant.secondary],
+///   [AppButtonVariant.destructive], [AppButtonVariant.brandWhite], and [AppButtonVariant.brandOutline].
+/// - **States:** Idle, loading ([isLoading]), disabled ([enabled] = false), pressed (Ink ripple), active ([active]).
+/// - **Accessibility:** Uses native [ElevatedButton] with semantics, min 48dp height ([sizes.controlLg] or [sizes.controlHero]),
+///   and accessible contrast on all variants. Supports icon prefix and full-width layout.
+/// - **Validation Owner:** `test/core/core_widgets_test.dart` and `test/core/widgets/app_button_test.dart`.
 class AppButton extends StatelessWidget {
   const AppButton({
     required this.label,

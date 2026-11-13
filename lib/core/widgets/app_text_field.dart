@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Standard form input field adhering to design system tokens.
+///
+/// **Contract:**
+/// - **Owner:** Core design system input component (`lib/core/widgets/app_text_field.dart`).
+/// - **Variants:** Standard rounded rectangle and custom pill shape (via [borderRadius]),
+///   single-line and multi-line ([maxLines]), text, password ([obscureText]), and numbers.
+/// - **States:** Idle, focused, error (validation message), disabled ([enabled] = false), read-only ([readOnly]).
+/// - **Accessibility:** Uses native [TextFormField] with semantic labels, clear error styles, and min 48dp height.
+/// - **Validation Owner:** `test/core/core_widgets_test.dart` and `test/core/widgets/app_text_field_test.dart`.
 class AppTextField extends StatelessWidget {
   const AppTextField({
     this.label,
@@ -21,6 +29,7 @@ class AppTextField extends StatelessWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.onFieldSubmitted,
+    this.borderRadius,
     super.key,
   });
 
@@ -41,12 +50,14 @@ class AppTextField extends StatelessWidget {
   final bool readOnly;
   final int maxLines;
   final ValueChanged<String>? onFieldSubmitted;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final space = context.space;
     final shape = context.shape;
+    final effectiveRadius = borderRadius ?? shape.radiusControl;
 
     final field = TextFormField(
       controller: controller,
@@ -74,35 +85,35 @@ class AppTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
-          borderRadius: shape.radiusControl,
+          borderRadius: effectiveRadius,
           borderSide: BorderSide(
             color: colors.borderSubtle,
             width: shape.borderDefault,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: shape.radiusControl,
+          borderRadius: effectiveRadius,
           borderSide: BorderSide(
             color: colors.borderSubtle,
             width: shape.borderDefault,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: shape.radiusControl,
+          borderRadius: effectiveRadius,
           borderSide: BorderSide(
             color: colors.borderFocused,
             width: shape.borderMedium,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: shape.radiusControl,
+          borderRadius: effectiveRadius,
           borderSide: BorderSide(
             color: colors.feedbackError,
             width: shape.borderDefault,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: shape.radiusControl,
+          borderRadius: effectiveRadius,
           borderSide: BorderSide(
             color: colors.feedbackError,
             width: shape.borderMedium,

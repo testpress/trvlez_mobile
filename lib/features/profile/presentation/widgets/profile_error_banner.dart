@@ -1,55 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/widgets/app_error_banner.dart';
 
 /// Error banner widget displaying validation or network failure messages in profile flows.
+///
+/// **Contract:**
+/// - **Owner:** Feature adapter delegating to canonical [AppErrorBanner] (`lib/features/profile/presentation/widgets/profile_error_banner.dart`).
+/// - **Role:** Surface error banner for profile forms and settings.
+/// - **Validation Owner:** `test/core/widgets/app_error_banner_test.dart`.
 class ProfileErrorBanner extends StatelessWidget {
-  const ProfileErrorBanner({required this.errorMessage, super.key});
+  const ProfileErrorBanner({super.key, required this.errorMessage});
 
   final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
-    if (errorMessage == null || errorMessage!.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final colors = context.colors;
-    final space = context.space;
-    final shape = context.shape;
-    final sizes = context.sizes;
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: space.stackFormField),
-      child: Container(
-        width: double.infinity,
-        padding: space.insetControlMd,
-        decoration: BoxDecoration(
-          color: colors.feedbackError.withAlpha(20),
-          borderRadius: shape.radiusControl,
-          border: Border.all(
-            color: colors.feedbackError.withAlpha(60),
-            width: shape.borderDefault,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.error_outline_rounded,
-              color: colors.feedbackError,
-              size: sizes.iconMd,
-            ),
-            SizedBox(width: space.inlineIconLabel),
-            Expanded(
-              child: Text(
-                errorMessage!,
-                style: context.text.bodyMedium?.copyWith(
-                  color: colors.feedbackError,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return AppErrorBanner(
+      message: errorMessage,
+      variant: AppErrorBannerVariant.standard,
     );
   }
 }

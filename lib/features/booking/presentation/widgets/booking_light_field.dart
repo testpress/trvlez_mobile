@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
+import 'package:trvlez_mobile/core/widgets/app_text_field.dart';
 
 /// Form text field with label and pill styling on a light surface.
+///
+/// **Contract:**
+/// - **Owner:** Feature adapter delegating to canonical [AppTextField] (`lib/features/booking/presentation/widgets/booking_light_field.dart`).
+/// - **Role:** Pill-shaped text input for booking payment cards and forms.
+/// - **Validation Owner:** `test/core/core_widgets_test.dart`.
 class BookingLightField extends StatelessWidget {
   const BookingLightField({
     super.key,
@@ -22,63 +28,14 @@ class BookingLightField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    final space = context.space;
-    final shape = context.shape;
-    final sizes = context.sizes;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-            top: space.stackFormField,
-            bottom: space.stackTight,
-          ),
-          child: Text(
-            label,
-            style: context.text.labelMedium?.copyWith(
-              color: colors.inkSecondary,
-            ),
-          ),
-        ),
-        Container(
-          constraints: BoxConstraints(minHeight: sizes.controlXl),
-          padding: EdgeInsets.symmetric(
-            horizontal: space.insetCard.left,
-            vertical: space.stackItem,
-          ),
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: colors.surface,
-            border: Border.all(color: colors.line, width: shape.borderDefault),
-            borderRadius: shape.radiusPill,
-          ),
-          child: TextField(
-            controller: controller,
-            keyboardType: keyboard,
-            textInputAction: textInputAction,
-            autofillHints: autofillHints,
-            cursorColor: colors.brandPrimary,
-            style: context.text.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: colors.ink,
-            ),
-            decoration: InputDecoration(
-              isDense: true,
-              filled: false,
-              fillColor: colors.transparent,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-              hintText: hint,
-              hintStyle: context.text.bodyMedium?.copyWith(
-                color: colors.textDisabled,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return AppTextField(
+      label: label,
+      hintText: hint,
+      controller: controller,
+      keyboardType: keyboard,
+      textInputAction: textInputAction,
+      autofillHints: autofillHints,
+      borderRadius: context.shape.radiusPill,
     );
   }
 }

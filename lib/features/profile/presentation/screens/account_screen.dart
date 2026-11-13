@@ -7,6 +7,7 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/auth/auth_notifier.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show reservationListProvider;
+import 'package:trvlez_mobile/core/widgets/app_confirmation_dialog.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/account_profile_header.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/verified_card.dart';
@@ -26,29 +27,16 @@ class AccountScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmSignOut(BuildContext context, WidgetRef ref) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Sign out?'),
-        content: const Text(
-          "You'll need your email and password to sign back in.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              ref.read(authNotifierProvider.notifier).logout();
-            },
-            child: const Text('Sign out'),
-          ),
-        ],
-      ),
+  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: 'Sign out?',
+      message: "You'll need your email and password to sign back in.",
+      confirmLabel: 'Sign out',
     );
+    if (confirmed) {
+      ref.read(authNotifierProvider.notifier).logout();
+    }
   }
 
   @override

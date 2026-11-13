@@ -5,6 +5,14 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 enum StatusPillState { confirmed, awaiting, completed, cancelled }
 
 /// Status badge pill with curated semantic tokens conforming to the design system.
+///
+/// **Contract:**
+/// - **Owner:** Core workflow and reservation status badge (`lib/core/widgets/status_pill.dart`).
+/// - **Variants:** [StatusPillState.confirmed], [StatusPillState.awaiting],
+///   [StatusPillState.completed], and [StatusPillState.cancelled].
+/// - **States:** Static display surface with semantic token pairings.
+/// - **Accessibility:** Uses high-contrast semantic color pairings for readability; text scaling supported.
+/// - **Validation Owner:** `test/core/widgets/status_pill_test.dart`.
 class StatusPill extends StatelessWidget {
   const StatusPill({super.key, required this.label, required this.state});
 

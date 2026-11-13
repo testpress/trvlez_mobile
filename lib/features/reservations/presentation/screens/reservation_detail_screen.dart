@@ -6,6 +6,7 @@ import 'package:trvlez_mobile/app/router/routes.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 import 'package:trvlez_mobile/core/utils/price_formatter.dart';
+import 'package:trvlez_mobile/core/widgets/app_confirmation_dialog.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/reservations/presentation/providers/reservations_providers.dart';
@@ -315,38 +316,14 @@ class _ReservationDetailContent extends ConsumerWidget {
     Reservation activeReservation,
   ) async {
     final colors = context.colors;
-    final shape = context.shape;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogCtx) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: shape.radiusSurface),
-          title: Text(
-            'Cancel Reservation?',
-            style: context.text.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            'Are you sure you want to cancel this reservation at ${activeReservation.propertySummary.name}?',
-            style: context.text.bodyMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: const Text('Keep it'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(true),
-              style: FilledButton.styleFrom(
-                backgroundColor: colors.feedbackError,
-              ),
-              child: const Text('Cancel Reservation'),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: 'Cancel Reservation?',
+      message:
+          'Are you sure you want to cancel this reservation at ${activeReservation.propertySummary.name}?',
+      confirmLabel: 'Cancel Reservation',
+      cancelLabel: 'Keep it',
+      isDestructive: true,
     );
 
     if (confirmed == true && context.mounted) {

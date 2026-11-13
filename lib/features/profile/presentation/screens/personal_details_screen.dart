@@ -9,6 +9,7 @@ import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/providers/shared_providers.dart'
     show verificationNotifierProvider;
 import 'package:trvlez_mobile/core/utils/app_logger.dart';
+import 'package:trvlez_mobile/core/widgets/app_confirmation_dialog.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/settings_group.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/unverified_identity_card.dart';
 import 'package:trvlez_mobile/features/profile/presentation/widgets/user_detail_edit_sheet.dart';
@@ -24,54 +25,37 @@ import 'package:trvlez_mobile/features/profile/presentation/widgets/your_details
 class PersonalDetailsScreen extends ConsumerWidget {
   const PersonalDetailsScreen({super.key});
 
-  void _confirmReverify(BuildContext context, WidgetRef ref) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Re-verify your identity?'),
-        content: const Text(
+  Future<void> _confirmReverify(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: 'Re-verify your identity?',
+      message:
           'This will re-scan your passport and confirm your updated legal name with a selfie and NFC check.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(dialogContext);
-              try {
-                await ref
-                    .read(verificationNotifierProvider.notifier)
-                    .startReverification();
-                if (context.mounted) {
-                  context.push(AppRoutes.passportInstructions);
-                }
-              } catch (error, stackTrace) {
-                AppLogger.warning(
-                  'Failed to start reverification',
-                  error,
-                  stackTrace,
-                );
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        AppException.userMessage(
-                          error,
-                          'Failed to start re-verification. Please try again.',
-                        ),
-                      ),
-                    ),
-                  );
-                }
-              }
-            },
-            child: const Text('Start re-scan'),
-          ),
-        ],
-      ),
+      confirmLabel: 'Start re-scan',
     );
+    if (!confirmed) return;
+    try {
+      await ref
+          .read(verificationNotifierProvider.notifier)
+          .startReverification();
+      if (context.mounted) {
+        context.push(AppRoutes.passportInstructions);
+      }
+    } catch (error, stackTrace) {
+      AppLogger.warning('Failed to start reverification', error, stackTrace);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppException.userMessage(
+                error,
+                'Failed to start re-verification. Please try again.',
+              ),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override

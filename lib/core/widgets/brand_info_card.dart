@@ -15,6 +15,13 @@ class BrandBullet {
 }
 
 /// Translucent guidance card with an optional heading and bulleted list.
+///
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Core UI brand instructional container for verification and onboarding steps.
+/// - Variants: Default guidance card with customizable bullets, heading, and spacing.
+/// - Applicable States: Static content surface.
+/// - Accessibility: Semantic bullet icons and text, scalable typography (1.0-2.0).
+/// - Validation Owner: Screen test matrices consuming BrandInfoCard.
 class BrandInfoCard extends StatelessWidget {
   const BrandInfoCard({
     super.key,

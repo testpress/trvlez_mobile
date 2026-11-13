@@ -4,6 +4,13 @@ import 'package:trvlez_mobile/core/errors/app_exception.dart';
 import 'package:trvlez_mobile/core/widgets/app_button.dart';
 
 /// Standard error state view displaying an error message and a retry action.
+///
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Core UI shared error state surface with actionable recovery.
+/// - Variants: Default full/inline error state.
+/// - Applicable States: Error message with optional retry callback.
+/// - Accessibility: Scalable typography (1.0-2.0), accessible retry button (≥ 48dp).
+/// - Validation Owner: [test/core/widgets/error_view_test.dart].
 class ErrorView extends StatelessWidget {
   const ErrorView({
     required this.message,

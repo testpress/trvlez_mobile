@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// Full-screen or centered loading state indicator.
+///
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Core UI shared loading state surface with optional progress message.
+/// - Variants: Default centered spinner with optional message.
+/// - Applicable States: Indeterminate loading.
+/// - Accessibility: Indeterminate progress semantics, scalable typography (1.0-2.0).
+/// - Validation Owner: [test/core/widgets/loading_view_test.dart].
 class LoadingView extends StatelessWidget {
   const LoadingView({this.message, super.key});
 

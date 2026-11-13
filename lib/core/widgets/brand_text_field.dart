@@ -4,8 +4,12 @@ import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
 
 /// The pill text field designed specifically for brand red screens.
 ///
-/// Complies with anti-slop guidelines: tap targets ≥ 48dp, explicit autofill hints,
-/// sensible keyboard actions, and error visibility.
+/// Component Contract (Playbook 04):
+/// - Owner & Role: Core UI brand-specific input field for brand red/dark backgrounds.
+/// - Variants: Default pill text field with optional obscurable toggle.
+/// - Applicable States: Default, focused, error, disabled, obscured.
+/// - Accessibility: Explicit labels, 48dp touch target, autofill hints, scalable typography.
+/// - Validation Owner: Screen test matrices consuming BrandTextField.
 class BrandTextField extends StatefulWidget {
   const BrandTextField({
     super.key,

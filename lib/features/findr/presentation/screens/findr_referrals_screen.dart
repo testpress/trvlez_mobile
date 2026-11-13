@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trvlez_mobile/app/theme/icons/app_icons.dart';
 import 'package:trvlez_mobile/app/theme/theme_extensions.dart';
-import 'package:trvlez_mobile/core/widgets/app_button.dart';
 import 'package:trvlez_mobile/core/widgets/app_pinned_header.dart';
+import 'package:trvlez_mobile/core/widgets/empty_view.dart';
 import 'package:trvlez_mobile/core/widgets/error_view.dart';
 import 'package:trvlez_mobile/core/widgets/loading_view.dart';
 import 'package:trvlez_mobile/features/findr/presentation/providers/findr_providers.dart';
@@ -112,9 +112,7 @@ class _ReferralsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final space = context.space;
-    final shape = context.shape;
     final sizes = context.sizes;
 
     final allReferrals = portfolio.hotelReferrals;
@@ -182,52 +180,14 @@ class _ReferralsContent extends StatelessWidget {
                 ),
               ),
               if (filteredList.isEmpty)
-                SliverPadding(
-                  padding: space.insetCard,
-                  sliver: SliverToBoxAdapter(
-                    child: Container(
-                      padding: space.insetCard,
-                      margin: EdgeInsets.only(top: space.stackSection),
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        borderRadius: shape.radiusControl,
-                        border: Border.all(
-                          color: colors.cardBorder,
-                          width: shape.borderDefault,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            AppIcons.building,
-                            size: sizes.iconXl,
-                            color: colors.textSecondary,
-                          ),
-                          SizedBox(height: space.stackItem),
-                          Text(
-                            'No recommendations in this category',
-                            style: context.text.titleSmall?.copyWith(
-                              color: colors.textPrimary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: space.stackTight),
-                          Text(
-                            'Submit a new partner hotel to lock your attribution claim',
-                            textAlign: TextAlign.center,
-                            style: context.text.bodySmall?.copyWith(
-                              color: colors.textSecondary,
-                            ),
-                          ),
-                          SizedBox(height: space.stackItem),
-                          AppButton(
-                            label: 'Recommend a hotel',
-                            onPressed: () => showReferHotelSheet(context),
-                          ),
-                        ],
-                      ),
-                    ),
+                SliverToBoxAdapter(
+                  child: EmptyView(
+                    icon: AppIcons.building,
+                    title: 'No recommendations in this category',
+                    subtitle:
+                        'Submit a new partner hotel to lock your attribution claim',
+                    actionLabel: 'Recommend a hotel',
+                    onAction: () => showReferHotelSheet(context),
                   ),
                 )
               else

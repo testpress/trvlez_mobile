@@ -49,7 +49,7 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 | --- | --- | --- | --- | --- |
 | TYP-01 | P0 | Root app caps the system scaler at 2.0 and turns non-default preferences into `TextScaler.linear(systemBase * factor)`. This discards platform nonlinear scaling and makes a named preference a false cross-device baseline. | `lib/app/app.dart:81-93`; `lib/core/design_tokens/text_scale_preset.dart`; `lib/features/profile/presentation/widgets/text_size_selector.dart:151` | ADR 0002; chapters 00, 03, 05, 06, 07 |
 | TYP-02 | P1 | Presentation code bypasses semantic `TextTheme` and primitive-access rules. Audit found 120 presentation/core-widget imports of `tokens/primitives` and 260 inline `TextStyle` calls in 67 presentation files. | Representative: `booking_light_field.dart:3-4, 43-47`; `anywhere_sent_screen.dart:57-76`; `my_trips_screen.dart:60-91` | Chapter 04; chapter 10 §4.5 |
-| TOK-01 | P1 | Shared buttons, fields, cards, sheets, and status surfaces are frequently restyled locally rather than being governed by a named component contract. | 101 button constructions and 13 local `*.styleFrom`/`ButtonStyle` constructions in presentation/core widgets; `my_trips_screen.dart:194+` is representative | Chapter 04 shared-component and screen-state contracts |
+| TOK-01 | P1 | [Resolved] Shared buttons, fields, cards, sheets, and status surfaces are frequently restyled locally rather than being governed by a named component contract. | Resolved in Phase 5; canonical contracts in core widgets with duplicates consolidated, target sizes enforced, and full state/accessibility coverage. | Chapter 04 shared-component and screen-state contracts |
 | LAY-01 | P1 | Four sheets derive maximum height from global window height, rather than their allocated constraints and keyboard/inset contract. | `room_dates_sheet.dart:47`; `check_in_option_picker_sheet.dart:25`; `notifications_sheet.dart:70`; `refer_hotel_bottom_sheet.dart:122` | Chapters 02–03 |
 | LAY-02 | P1 | Text-bearing UI uses `FittedBox(BoxFit.scaleDown)`, which can reduce accessibility text rather than wrap, scroll, or use an approved truncation policy. | `brand_alt_line.dart:52`; `brand_verify_screen.dart:262`; `two_step_code_screen.dart:251`; plus welcome/verification capture paths | Chapter 03 forbidden fixes; chapter 07 |
 | LAY-03 | P1 | Shared verification shell has a likely axis-token defect: its default bottom padding reads `space.insetScreen.left`; its pinned foot and `resizeToAvoidBottomInset: false` need a large-text/keyboard contract test. | `lib/core/widgets/brand_verify_screen.dart:92-128` | Chapters 02–03 |
@@ -214,11 +214,11 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 
 ### Work items
 
-- [ ] Build an inventory of existing shared controls and surfaces: buttons, text fields, cards, dialogs, sheets, app/pinned headers, navigation, error banners, empty states, loading indicators, status pills, and destructive-action confirmations.
-- [ ] For each real shared component, document adjacent to the public API its owner, intended role, named variants, applicable states, semantics, target size, overflow/directionality behaviour, and validation owner.
-- [ ] Consolidate only genuine duplicates. Examples requiring comparison: booking-specific buttons/fields versus `AppButton`/`AppTextField`, duplicate referral screen/sheet submission forms, and feature-local error banners.
-- [ ] Ensure interactive custom widgets use Material/Ink feedback or an equivalent accessible interaction treatment and meet target-size contracts.
-- [ ] Standardize loading, empty, error, and success/data treatment per the screen-state presentation contract without forcing unrelated screens into identical layouts.
+- [x] Build an inventory of existing shared controls and surfaces: buttons, text fields, cards, dialogs, sheets, app/pinned headers, navigation, error banners, empty states, loading indicators, status pills, and destructive-action confirmations.
+- [x] For each real shared component, document adjacent to the public API its owner, intended role, named variants, applicable states, semantics, target size, overflow/directionality behaviour, and validation owner.
+- [x] Consolidate only genuine duplicates. Examples requiring comparison: booking-specific buttons/fields versus `AppButton`/`AppTextField`, duplicate referral screen/sheet submission forms, and feature-local error banners.
+- [x] Ensure interactive custom widgets use Material/Ink feedback or an equivalent accessible interaction treatment and meet target-size contracts.
+- [x] Standardize loading, empty, error, and success/data treatment per the screen-state presentation contract without forcing unrelated screens into identical layouts.
 
 ### Acceptance criteria
 
