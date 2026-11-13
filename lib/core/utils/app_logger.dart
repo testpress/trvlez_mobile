@@ -34,7 +34,11 @@ class AppLogger {
     StackTrace? stackTrace,
   ]) {
     if (!kDebugMode && outputPrinter == null) return;
-    final errorString = error != null ? ' | error: $error' : '';
+    // Exception strings can embed transport payloads or platform data. Preserve
+    // a useful diagnostic category without serialising untrusted error content.
+    final errorString = error != null
+        ? ' | errorType: ${error.runtimeType}'
+        : '';
     final logLine = '[${level.name.toUpperCase()}] $message$errorString';
     if (outputPrinter != null) {
       outputPrinter!(logLine);

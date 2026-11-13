@@ -1,5 +1,7 @@
 # Phase 6 — Screen Matrix Validation & Accessibility Evidence
 
+**Status: automated evidence complete; runtime and assistive-technology evidence pending.**
+
 Per Playbook Chapter 02 (`docs/engineering/playbook/02-screen-construction-workflow.md`), Chapter 05 (`docs/engineering/playbook/05-visual-validation-standard.md`), Chapter 06 (`docs/engineering/playbook/06-testing-device-matrix.md`), and Chapter 07 (`docs/engineering/playbook/07-accessibility-and-performance.md`), this document records the validation matrix adoption, accessibility compliance, and layout defect remediations achieved in Phase 6.
 
 ---
@@ -59,5 +61,7 @@ Every canonical shared control and state surface now has automated accessibility
 
 - **Widget Matrix Tests**: Automated via `testMaterialScreenMatrix` across all 5 standard phone scenarios (`compact-android-gesture-text-1.0`, `regular-android-3button-text-1.0`, `compact-android-gesture-text-1.3`, `compact-android-gesture-text-2.0`, `regular-ios-home-indicator-text-1.0`) plus keyboard inset scenarios where inputs exist.
 - **Golden Tests**: Generated deterministically and committed to the repository for shared controls meeting the chapter 05 feasibility gate.
-- **Physical Device / Emulator Limitations**: Verification in this headless CI environment runs deterministically using Flutter's widget test harness with configured physical size, pixel ratio, and inset profiles matching physical reference devices. Physical device and live emulator execution will be captured during integration test runs on staging hardware.
+- **Physical Device / Emulator Limitations**: Deterministic widget tests do not substitute for runtime evidence. On 2026-11-13, `scripts/device_matrix.sh list-devices` could not start `adb` in the execution sandbox (`Operation not permitted`), and no iOS simulator runtime is available on this Linux host. Android-emulator and iOS-simulator captures, platform-maximum text-scale checks, TalkBack, and VoiceOver checks remain required before a release or a completed-Phase-6 claim.
+- **Integration scope**: `integration_test/auth_login_flow_test.dart` covers the login form and focused-password keyboard reachability. A camera/NFC platform-plugin flow still requires a supported Android or iOS runtime before it can provide the required platform evidence.
+- **Contrast audit**: The 2026-11-13 Guideline API audit corrected `AppButton`, `AppSegmentedControl`, `CheckInConsentTick`, and `AppErrorBanner`; their contract tests now include `textContrastGuideline` in the appropriate surface context. The audit also found contrast defects in legacy brand verification surfaces, including inactive step indicators and small cream copy. The verification-surface palette requires approved design-token remediation and remains open rather than being waived. `AlertDialog` contrast inspection remains a known Flutter Guideline API limitation in this test configuration, so that component retains semantic/tap assertions and needs runtime visual review.
 

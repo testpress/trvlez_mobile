@@ -44,7 +44,7 @@ class AppErrorBanner extends StatelessWidget {
         ? colors.brandButtonDisabledBackground
         : colors.feedbackError.withAlpha(70);
     final iconColor = isBrand ? colors.brandSecondary : colors.feedbackError;
-    final textColor = isBrand ? colors.brandOnSurface : colors.feedbackError;
+    final textColor = isBrand ? colors.brandOnSurface : colors.textPrimary;
     final iconData = isBrand
         ? AppIcons.alertCircle
         : Icons.error_outline_rounded;

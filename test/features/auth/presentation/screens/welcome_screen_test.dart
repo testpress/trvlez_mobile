@@ -49,5 +49,19 @@ void main() {
         await tester.ensureVisible(loginBtn);
       },
     );
+
+    testWidgets('exposes the animated wordmark as one labelled identity mark', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+
+      await tester.pumpWidget(const TestApp(child: WelcomeScreen()));
+
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('TrvlEz')),
+        matchesSemantics(label: 'TrvlEz', isImage: true),
+      );
+      semantics.dispose();
+    });
   });
 }

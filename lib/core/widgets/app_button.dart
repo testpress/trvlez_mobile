@@ -143,7 +143,7 @@ class AppButton extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
-              style: context.text.buttonLabel,
+              style: context.text.buttonLabel?.copyWith(color: foregroundColor),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -154,7 +154,7 @@ class AppButton extends StatelessWidget {
       child = Text(
         label,
         textAlign: TextAlign.center,
-        style: context.text.buttonLabel,
+        style: context.text.buttonLabel?.copyWith(color: foregroundColor),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );

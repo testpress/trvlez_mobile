@@ -75,7 +75,7 @@ class CheckInConsentTick extends StatelessWidget {
                     child: Text(
                       label,
                       style: context.text.labelMedium?.copyWith(
-                        color: colors.brandSecondary,
+                        color: colors.brandOnSurface,
                         height: 1.35,
                       ),
                     ),

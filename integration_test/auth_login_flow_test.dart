@@ -187,5 +187,42 @@ void main() {
       expect(fakeAuthRepository.lastEmail, 'traveler@trvlez.com');
       expect(fakeAuthRepository.lastPassword, 'ValidPassword123!');
     });
+
+    testWidgets(
+      'keeps the focused password field reachable with the keyboard',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              tokenStorageProvider.overrideWithValue(tokenStorage),
+              authRepositoryProvider.overrideWithValue(fakeAuthRepository),
+              propertiesProvider.overrideWith(() => FakePropertiesNotifier()),
+            ],
+            child: const TrvlEzApp(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.widgetWithText(AppButton, 'Sign in'));
+        await tester.pumpAndSettle();
+
+        final passwordInput = find.descendant(
+          of: find.byType(BrandTextField).last,
+          matching: find.byType(TextFormField),
+        );
+        await tester.tap(passwordInput);
+        await tester.pumpAndSettle();
+
+        final context = tester.element(passwordInput);
+        final visibleHeight =
+            MediaQuery.sizeOf(context).height -
+            MediaQuery.viewInsetsOf(context).bottom;
+        expect(
+          tester.getRect(passwordInput).bottom,
+          lessThanOrEqualTo(visibleHeight),
+        );
+        expect(find.widgetWithText(AppButton, 'Log in'), findsOneWidget);
+      },
+    );
   });
 }

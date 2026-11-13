@@ -168,72 +168,82 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                         child: Transform.scale(
                           scale: 1.0 - (0.1 * _lift.value),
-                          // Approved bounded-mark contract: the brand wordmark is an indivisible
-                          // identity graphic that must not wrap. FittedBox preserves presentation
-                          // without overflowing on extreme accessibility scales (>2.0x).
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // "TRVL"
-                                Opacity(
-                                  opacity: _trvl.value,
-                                  child: Transform.translate(
-                                    offset: Offset(-15 * (1 - _trvl.value), 0),
-                                    child: Text(
-                                      'TRVL',
-                                      style: context.text.displaySmall
-                                          ?.copyWith(
-                                            fontSize: wordmarkFontSize,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 0.5,
-                                            height: 1.0,
-                                            color: colors.brandOnSurface,
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: wordmarkGap),
-                                // Plane Glyph
-                                Opacity(
-                                  opacity: _plane.value,
-                                  child: Transform.translate(
-                                    offset: Offset(
-                                      -planeOffset * (1 - _plane.value),
-                                      0,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      'assets/art/plane_glyph.svg',
-                                      width: planeWidth,
-                                      colorFilter: ColorFilter.mode(
-                                        colors.brandSecondary,
-                                        BlendMode.srcIn,
+                          // This is a bounded, non-interactive identity mark—not
+                          // readable screen content. Its semantic label is supplied
+                          // by the parent; the visible text/glyph composition follows
+                          // the approved contract in phase-2 evidence.
+                          child: Semantics(
+                            image: true,
+                            label: 'TrvlEz',
+                            child: ExcludeSemantics(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // "TRVL"
+                                    Opacity(
+                                      opacity: _trvl.value,
+                                      child: Transform.translate(
+                                        offset: Offset(
+                                          -15 * (1 - _trvl.value),
+                                          0,
+                                        ),
+                                        child: Text(
+                                          'TRVL',
+                                          style: context.text.displaySmall
+                                              ?.copyWith(
+                                                fontSize: wordmarkFontSize,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.5,
+                                                height: 1.0,
+                                                color: colors.brandOnSurface,
+                                              ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                SizedBox(width: wordmarkGap),
-                                // "ez"
-                                Opacity(
-                                  opacity: _ez.value,
-                                  child: Transform.translate(
-                                    offset: Offset(15 * (1 - _ez.value), 0),
-                                    child: Text(
-                                      'ez',
-                                      style: context.text.displaySmall
-                                          ?.copyWith(
-                                            fontSize: wordmarkFontSize,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 0.5,
-                                            height: 1.0,
-                                            color: colors.brandSecondary,
+                                    SizedBox(width: wordmarkGap),
+                                    // Plane Glyph
+                                    Opacity(
+                                      opacity: _plane.value,
+                                      child: Transform.translate(
+                                        offset: Offset(
+                                          -planeOffset * (1 - _plane.value),
+                                          0,
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/art/plane_glyph.svg',
+                                          width: planeWidth,
+                                          colorFilter: ColorFilter.mode(
+                                            colors.brandSecondary,
+                                            BlendMode.srcIn,
                                           ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(width: wordmarkGap),
+                                    // "ez"
+                                    Opacity(
+                                      opacity: _ez.value,
+                                      child: Transform.translate(
+                                        offset: Offset(15 * (1 - _ez.value), 0),
+                                        child: Text(
+                                          'ez',
+                                          style: context.text.displaySmall
+                                              ?.copyWith(
+                                                fontSize: wordmarkFontSize,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.5,
+                                                height: 1.0,
+                                                color: colors.brandSecondary,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),

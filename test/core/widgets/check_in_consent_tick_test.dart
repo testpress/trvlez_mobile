@@ -47,12 +47,15 @@ void main() {
       final handle = tester.ensureSemantics();
       await tester.pumpWidget(
         TestApp(
-          child: Scaffold(
-            body: Center(
-              child: CheckInConsentTick(
-                agreed: false,
-                label: 'I agree to the terms',
-                onTap: () {},
+          child: Builder(
+            builder: (context) => Scaffold(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              body: Center(
+                child: CheckInConsentTick(
+                  agreed: false,
+                  label: 'I agree to the terms',
+                  onTap: () {},
+                ),
               ),
             ),
           ),
@@ -62,6 +65,7 @@ void main() {
       await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
       await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
       await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(textContrastGuideline));
       handle.dispose();
     });
   });

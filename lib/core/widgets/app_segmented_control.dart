@@ -74,7 +74,12 @@ class AppSegmentedControl extends StatelessWidget {
                               ]
                             : null,
                       ),
-                      child: label(context, i, i == selected),
+                      child: DefaultTextStyle.merge(
+                        style: context.text.labelLarge?.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                        child: label(context, i, i == selected),
+                      ),
                     ),
                   ),
                 ),

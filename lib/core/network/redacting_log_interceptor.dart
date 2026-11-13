@@ -1,28 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:trvlez_mobile/core/utils/app_logger.dart';
 
-/// Dio interceptor that safely logs HTTP traffic without exposing sensitive credentials,
-/// auth tokens, passports, or personal data.
+/// Dio interceptor that logs request lifecycle metadata without user data.
+///
+/// HTTP headers and bodies are deliberately excluded. A key-based redactor cannot
+/// safely classify every present or future API field, and debug logs are not an
+/// approved store for personal, verification, credential, or referral data.
 class RedactingLogInterceptor extends Interceptor {
   const RedactingLogInterceptor();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final sanitizedHeaders = AppLogger.sanitize(
-      Map<String, dynamic>.from(options.headers),
-    );
-    final sanitizedData = AppLogger.sanitize(options.data);
-    AppLogger.debug(
-      'HTTP --> ${options.method} ${options.uri.path} | headers: $sanitizedHeaders | body: $sanitizedData',
-    );
+    AppLogger.debug('HTTP --> ${options.method} ${options.uri.path}');
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    final sanitizedData = AppLogger.sanitize(response.data);
     AppLogger.debug(
-      'HTTP <-- ${response.statusCode} ${response.requestOptions.uri.path} | body: $sanitizedData',
+      'HTTP <-- ${response.statusCode} ${response.requestOptions.uri.path}',
     );
     handler.next(response);
   }

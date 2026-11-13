@@ -25,45 +25,40 @@ void main() {
       AppLogger.outputPrinter = null;
     });
 
-    test(
-      'onRequest redacts authorization header and sensitive body fields',
-      () {
-        const interceptor = RedactingLogInterceptor();
-        final options = RequestOptions(
-          path: '/api/v1/auth/login',
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer secret_jwt_token',
-            'Content-Type': 'application/json',
-          },
-          data: {
-            'email': 'user@example.com',
-            'password': 'SuperSecretPassword',
-          },
-        );
+    test('onRequest logs route metadata without headers or body fields', () {
+      const interceptor = RedactingLogInterceptor();
+      final options = RequestOptions(
+        path: '/api/v1/auth/login',
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer secret_jwt_token',
+          'Content-Type': 'application/json',
+        },
+        data: {'email': 'user@example.com', 'password': 'SuperSecretPassword'},
+      );
 
-        final handler = RequestInterceptorHandler();
-        interceptor.onRequest(options, handler);
+      final handler = RequestInterceptorHandler();
+      interceptor.onRequest(options, handler);
 
-        expect(capturedLogs.length, equals(1));
-        final log = capturedLogs.first;
-        expect(log, contains('POST /api/v1/auth/login'));
-        expect(log, contains('Authorization: [REDACTED]'));
-        expect(log, contains('password: [REDACTED]'));
-        expect(log, isNot(contains('secret_jwt_token')));
-        expect(log, isNot(contains('SuperSecretPassword')));
-      },
-    );
+      expect(capturedLogs.length, equals(1));
+      final log = capturedLogs.first;
+      expect(log, contains('POST /api/v1/auth/login'));
+      expect(log, isNot(contains('Authorization')));
+      expect(log, isNot(contains('email')));
+      expect(log, isNot(contains('user@example.com')));
+      expect(log, isNot(contains('secret_jwt_token')));
+      expect(log, isNot(contains('SuperSecretPassword')));
+    });
 
-    test('onResponse redacts sensitive response body fields', () {
+    test('onResponse logs route metadata without response body fields', () {
       const interceptor = RedactingLogInterceptor();
       final response = Response(
         requestOptions: RequestOptions(path: '/api/v1/auth/token'),
         statusCode: 200,
         data: {
-          'access_token': 'new_access_token_123',
-          'refresh_token': 'new_refresh_token_456',
-          'user_id': 'u-999',
+          'email': 'traveller@example.com',
+          'phone': '+15551234567',
+          'address_line_1': '1 Test Street',
         },
       );
 
@@ -73,10 +68,9 @@ void main() {
       expect(capturedLogs.length, equals(1));
       final log = capturedLogs.first;
       expect(log, contains('200 /api/v1/auth/token'));
-      expect(log, contains('access_token: [REDACTED]'));
-      expect(log, contains('refresh_token: [REDACTED]'));
-      expect(log, isNot(contains('new_access_token_123')));
-      expect(log, isNot(contains('new_refresh_token_456')));
+      expect(log, isNot(contains('traveller@example.com')));
+      expect(log, isNot(contains('+15551234567')));
+      expect(log, isNot(contains('1 Test Street')));
     });
 
     test('onError logs status code and path without dumping raw payload', () {

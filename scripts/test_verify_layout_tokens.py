@@ -87,13 +87,25 @@ class VerifyLayoutTokensTest(unittest.TestCase):
         })
         self.assertEqual(result.returncode, 0, result.stdout)
 
-    def test_allows_documented_guard_exception(self) -> None:
+    def test_rejects_unapproved_structured_guard_exception(self) -> None:
+        result = self.run_guard({
+            'features/example/presentation/widget.dart': (
+                'final style = TextStyle(fontSize: 12); '
+                '// guard-exception: Banned inline TextStyle | '
+                'legacy framework bridge; remove after migration | review: 2027-01-01\n'
+            ),
+        })
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Unapproved guard exception', result.stdout)
+
+    def test_rejects_unstructured_guard_exception(self) -> None:
         result = self.run_guard({
             'features/example/presentation/widget.dart': (
                 'final style = TextStyle(fontSize: 12); // allow-guard-exception\n'
             ),
         })
-        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Unstructured guard exception', result.stdout)
 
 
 if __name__ == '__main__':

@@ -32,6 +32,22 @@ APPROVED_COMPOSITION_BOUNDARIES = {
     'core/providers/repository_providers.dart',
 }
 
+# A temporary policy exception must identify the exact guard, explain the
+# user-facing safety rationale, and carry a review date. It must also be
+# centrally allowlisted by path and line; an inline comment alone is never a
+# policy bypass.
+GUARD_EXCEPTION_PATTERN = re.compile(
+    r'//\s*guard-exception:\s*'
+    r'(?P<rule>[A-Za-z][A-Za-z0-9 -]+?)\s*\|\s*'
+    r'(?P<reason>[^|]+?)\s*\|\s*'
+    r'review:\s*(?P<review_date>\d{4}-\d{2}-\d{2})\s*$'
+)
+
+# Key: (relative source path, one-based line, guard-rule name).
+# Value: approved rationale. Keep this empty unless an approved exception is
+# genuinely needed; each entry is intentionally reviewable in code review.
+APPROVED_GUARD_EXCEPTIONS: dict[tuple[str, int, str], str] = {}
+
 POLICY_PATTERNS = {
     'OS-specific layout branch': re.compile(r'\bPlatform\.is(?:Android|IOS)\b'),
     'Device-model layout branch': re.compile(
@@ -117,7 +133,32 @@ def main() -> int:
                     line = raw_line.strip()
                     if line.startswith('//') or line.startswith('/*') or line.startswith('*'):
                         continue
+                    exception = GUARD_EXCEPTION_PATTERN.search(raw_line)
+                    if exception:
+                        exception_key = (
+                            rel_path,
+                            line_no,
+                            exception.group('rule'),
+                        )
+                        approved_reason = APPROVED_GUARD_EXCEPTIONS.get(
+                            exception_key,
+                        )
+                        if approved_reason == exception.group('reason').strip():
+                            continue
+                        violations.append((
+                            rel_path,
+                            line_no,
+                            'Unapproved guard exception',
+                            line,
+                        ))
+                        continue
                     if '// allow-guard-exception' in line or '// allow-token-override' in line:
+                        violations.append((
+                            rel_path,
+                            line_no,
+                            'Unstructured guard exception',
+                            line,
+                        ))
                         continue
 
                     # Check global architecture and token policies

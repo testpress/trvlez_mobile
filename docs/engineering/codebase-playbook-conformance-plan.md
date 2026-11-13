@@ -1,6 +1,6 @@
 # Codebase Playbook Conformance Remediation Plan
 
-**Status:** completed
+**Status:** implementation complete; runtime validation evidence pending
 **Created:** 2026-11-11
 **Owner:** Mobile Engineering
 **Scope:** bring the existing Flutter application into conformance with the accepted engineering playbook and ADRs.
@@ -240,10 +240,10 @@ The build is healthy. It does **not** prove visual consistency, typography parit
 - [x] Convert material-screen tests from ad hoc `MaterialApp` wrappers to `TestApp`/`testAppWithProviders` where the screen requires theme, locale, text-scale, inset, or provider control.
 - [x] Add `testMaterialScreenMatrix` coverage screen-family by screen-family. Start with shared shells and high-risk inputs/pinned-footers: auth, profile, booking, Findr forms, verification capture/review, and reservations.
 - [x] Add usability assertions in each matrix: critical action/field visible and reachable, keyboard visibility, semantics, no overflow, and target-size contract when custom.
-- [x] Add applicable `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline`, and `textContrastGuideline` assertions for shared interactive components and materially changed interactive screens.
+- [ ] Add applicable `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline`, and `textContrastGuideline` assertions for shared interactive components and materially changed interactive screens.
 - [x] Expand goldens only for stable shared components that meet the feasibility gate. Record the documented fallback when they do not.
-- [x] Expand integration coverage from the login flow to one representative critical flow involving a form and one platform/system-UI flow where feasible.
-- [x] Collect validated `scripts/device_matrix.sh` sidecars for each material migration. For release-critical changes, collect one supported Android and one supported iOS physical-device evidence set. For typography discrepancies, complete the ADR 0002 paired worksheet before editing.
+- [x] Expand integration coverage from the login flow to one representative critical flow involving a form and one platform/system-UI flow where feasible. Runtime execution remains pending in the Phase 6 evidence note.
+- [ ] Collect validated `scripts/device_matrix.sh` sidecars for each material migration. For release-critical changes, collect one supported Android and one supported iOS physical-device evidence set. For typography discrepancies, complete the ADR 0002 paired worksheet before editing.
 
 ### Acceptance criteria
 

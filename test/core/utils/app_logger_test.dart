@@ -24,15 +24,13 @@ void main() {
       ]);
     });
 
-    test('includes error details when provided', () {
+    test('logs error type without serialising error details', () {
       final messages = <String>[];
       AppLogger.outputPrinter = messages.add;
 
       AppLogger.warning('Network issue', 'Connection timed out');
 
-      expect(messages, [
-        '[WARNING] Network issue | error: Connection timed out',
-      ]);
+      expect(messages, ['[WARNING] Network issue | errorType: String']);
     });
 
     group('sanitize', () {
