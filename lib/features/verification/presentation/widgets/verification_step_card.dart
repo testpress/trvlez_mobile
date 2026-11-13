@@ -121,4 +121,3 @@ class VerificationStepCard extends StatelessWidget {
     );
   }
 }
-

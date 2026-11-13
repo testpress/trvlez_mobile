@@ -153,4 +153,3 @@ class _WelcomeMotifLayerState extends State<WelcomeMotifLayer> {
     );
   }
 }
-

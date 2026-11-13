@@ -373,4 +373,3 @@ class MyTripsReservationCard extends ConsumerWidget {
     );
   }
 }
-

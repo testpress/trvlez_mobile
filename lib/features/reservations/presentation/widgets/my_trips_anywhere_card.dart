@@ -189,4 +189,3 @@ class MyTripsAnywhereCard extends StatelessWidget {
     );
   }
 }
-

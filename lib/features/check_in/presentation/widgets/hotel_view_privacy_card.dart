@@ -67,4 +67,3 @@ class HotelViewPrivacyCard extends StatelessWidget {
     );
   }
 }
-

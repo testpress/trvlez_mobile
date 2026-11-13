@@ -66,4 +66,3 @@ class HotelViewRegistrationFormCard extends StatelessWidget {
     );
   }
 }
-
